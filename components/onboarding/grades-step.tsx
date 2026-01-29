@@ -28,6 +28,16 @@ const qualificationTypes: { value: QualificationType; label: string }[] = [
 export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting }: GradesStepProps) {
   const [activeTab, setActiveTab] = useState<QualificationType>('higher')
 
+  const handleCompleteClick = () => {
+    alert('Button clicked in GradesStep!')
+    console.log('onComplete is:', onComplete)
+    if (onComplete) {
+      onComplete()
+    } else {
+      alert('onComplete is undefined!')
+    }
+  }
+
   const handleAddGrade = (gradeData: { subject: string; grade: string; predicted: boolean }) => {
     const newGrade: Grade = {
       ...gradeData,
@@ -171,7 +181,7 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
         </button>
         <button
           type="button"
-          onClick={onComplete}
+          onClick={handleCompleteClick}
           disabled={isSubmitting}
           className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
         >
