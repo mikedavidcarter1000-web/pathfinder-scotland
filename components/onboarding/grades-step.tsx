@@ -45,13 +45,8 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
 
   const existingSubjects = gradesForType(activeTab).map((g) => g.subject)
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onComplete()
-  }
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-1">Your grades</h2>
         <p className="text-gray-600">
@@ -175,7 +170,8 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
           Back
         </button>
         <button
-          type="submit"
+          type="button"
+          onClick={onComplete}
           disabled={isSubmitting}
           className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
         >
@@ -192,6 +188,6 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
           )}
         </button>
       </div>
-    </form>
+    </div>
   )
 }
