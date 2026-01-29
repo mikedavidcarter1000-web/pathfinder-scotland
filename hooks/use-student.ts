@@ -231,20 +231,40 @@ export function useSIMDLookup() {
     mutationFn: async (postcode: string) => {
       const normalised = postcode.replace(/\s/g, '').toUpperCase()
 
+      // First try exact match
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (supabase as any)
+      const { data: exactMatch, error: exactError } = await (supabase as any)
         .from('simd_postcodes')
         .select('*')
         .eq('postcode', normalised)
         .single()
 
-      if (error) {
-        if (error.code === 'PGRST116') {
+      if (exactMatch) {
+        return exactMatch as Tables<'simd_postcodes'>
+      }
+
+      // If no exact match, try prefix match (for partial postcodes like "EH4")
+      if (exactError?.code === 'PGRST116') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: prefixMatch, error: prefixError } = await (supabase as any)
+          .from('simd_postcodes')
+          .select('*')
+          .ilike('postcode', `${normalised}%`)
+          .limit(1)
+          .single()
+
+        if (prefixMatch) {
+          return prefixMatch as Tables<'simd_postcodes'>
+        }
+
+        if (prefixError?.code === 'PGRST116') {
           return null // Not found
         }
-        throw error
+        if (prefixError) throw prefixError
       }
-      return data as Tables<'simd_postcodes'> | null
+
+      if (exactError) throw exactError
+      return null
     },
   })
 }
