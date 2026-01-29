@@ -76,9 +76,16 @@ export default function OnboardingPage() {
   }, [studentLoading, student, router])
 
   const handleComplete = async () => {
-    if (!user) return
+    console.log('handleComplete called', { user, basicInfo, postcodeData, wideningAccess, grades })
+
+    if (!user) {
+      console.log('No user found, returning early')
+      setError('Not authenticated. Please sign in again.')
+      return
+    }
 
     setIsSubmitting(true)
+    setError(null)
 
     try {
       // Create student profile
