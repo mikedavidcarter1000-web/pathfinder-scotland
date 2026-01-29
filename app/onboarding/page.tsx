@@ -76,14 +76,17 @@ export default function OnboardingPage() {
   }, [studentLoading, student, router])
 
   const handleComplete = async () => {
+    alert('handleComplete called!') // Debug alert 1
     console.log('handleComplete called', { user, basicInfo, postcodeData, wideningAccess, grades })
 
     if (!user) {
       console.log('No user found, returning early')
+      alert('No user found!')
       setError('Not authenticated. Please sign in again.')
       return
     }
 
+    alert('Starting submission...') // Debug alert 2
     setIsSubmitting(true)
     setError(null)
 
@@ -103,6 +106,7 @@ export default function OnboardingPage() {
         first_generation: wideningAccess.firstGeneration,
       })
       console.log('Student created:', studentResult)
+      alert('Student created successfully!') // Debug alert 3
 
       // Bulk upsert grades if any were added
       if (grades.length > 0) {
