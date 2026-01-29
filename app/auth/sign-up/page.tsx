@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useSignUp } from '@/hooks/use-auth'
+import { SocialLoginButtons, SocialLoginDivider } from '@/components/auth/social-login-buttons'
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -101,6 +102,10 @@ export default function SignUpPage() {
             <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
             <p className="text-gray-600 mt-1">Start your university journey today</p>
           </div>
+
+          {/* Social Login */}
+          <SocialLoginButtons redirectTo="/onboarding" />
+          <SocialLoginDivider />
 
           {/* Error Message */}
           {(signUp.error || validationError) && (

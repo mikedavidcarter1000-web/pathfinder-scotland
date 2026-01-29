@@ -12,20 +12,54 @@ Pathfinder is a B2C SaaS platform helping Scottish students navigate university 
 
 ## Current Status
 - Core schema is deployed to Supabase (has real data - DO NOT reset)
-- Social login integration planned (Google, Apple, Facebook, GitHub, X, Reddit)
+- Social login UI implemented (Google, Apple, GitHub, X)
 - AI-generated imagery approach for visuals (not commissioned photography)
 
-## Pending Features (NOT YET IMPLEMENTED)
+### Social Login Setup (REQUIRES CONFIGURATION)
 
-### 1. Promo Code System
-- Ability to create promo codes for discounts
-- Track usage and redemptions
-- Expiry dates and usage limits
+UI is ready. To enable providers, configure in Supabase Dashboard > Authentication > Providers:
 
-### 2. GDPR/Data Security Features
-- `delete_user_data()` function - fully delete user and their data
-- `audit_log` table - track data access and changes
-- `export_user_data()` function - generate user data export for GDPR requests
+| Provider | Dashboard Setting | OAuth App Setup |
+|----------|-------------------|-----------------|
+| Google | Enable Google | [Google Cloud Console](https://console.cloud.google.com/apis/credentials) |
+| Apple | Enable Apple | [Apple Developer](https://developer.apple.com/account/resources/identifiers/list/serviceId) |
+| GitHub | Enable GitHub | [GitHub Developer Settings](https://github.com/settings/developers) |
+| X/Twitter | Enable Twitter | [Twitter Developer Portal](https://developer.twitter.com/en/portal/dashboard) |
+
+Callback URL for all providers: `https://qexfszbhmdducszupyzi.supabase.co/auth/v1/callback`
+
+## SIMD Postcode Data (COMPLETE)
+
+**Status:** 227,066 Scottish postcodes imported to database
+
+Source: [Scottish Government SIMD 2020v2](https://www.gov.scot/publications/scottish-index-of-multiple-deprivation-2020v2-postcode-look-up/)
+
+The `simd_postcodes` table now contains all Scottish postcodes with:
+- `postcode` - Normalized postcode (no spaces, uppercase)
+- `simd_decile` - 1 (most deprived) to 10 (least deprived)
+- `datazone` - Scottish Government datazone code
+
+**Usage:** When a student enters their postcode, the system automatically looks up their SIMD decile to determine eligibility for widening access programmes.
+
+## Completed Features
+
+### Promo Code System (COMPLETE)
+Tables: `promo_codes`, `promo_code_redemptions`
+Functions:
+- `validate_promo_code(code, user_id, amount)` - Check if code is valid
+- `redeem_promo_code(code, amount, order_id)` - Apply code to purchase
+- `get_promo_code_stats(code_id)` - Admin stats
+
+Sample codes created: `WELCOME10` (10% off), `STUDENT25` (25% off), `EARLYBIRD` (£5 off)
+
+### GDPR/Data Security (COMPLETE)
+Tables: `audit_log`
+Functions:
+- `export_user_data()` - GDPR Article 20 data portability
+- `delete_user_data()` - GDPR Article 17 right to erasure
+- `cleanup_old_audit_logs(days)` - Data retention management
+
+Audit triggers on: `students`, `saved_courses`, `student_grades`, `promo_codes`, `promo_code_redemptions`
 
 ## Important Commands
 

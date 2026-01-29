@@ -46,11 +46,27 @@ enable_confirmations = false
 enable_signup = false
 enable_confirmations = false
 
+# Social login providers - configure in Supabase Dashboard
+# Set client_id and secret from each provider's developer console
 [auth.external.google]
 enabled = false
+# client_id = "your-google-client-id"
+# secret = "your-google-client-secret"
+
+[auth.external.apple]
+enabled = false
+# client_id = "your-apple-service-id"
+# secret = "your-apple-secret-key"
 
 [auth.external.github]
 enabled = false
+# client_id = "your-github-client-id"
+# secret = "your-github-client-secret"
+
+[auth.external.twitter]
+enabled = false
+# client_id = "your-twitter-client-id"
+# secret = "your-twitter-client-secret"
 
 [analytics]
 enabled = false

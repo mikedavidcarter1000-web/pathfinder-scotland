@@ -43,3 +43,8 @@ next-env.d.ts
 # Supabase
 /supabase/.branches
 /supabase/.temp
+
+# Data files (large, can be regenerated)
+/data/
+*.xlsx
+simd_postcodes.xlsx

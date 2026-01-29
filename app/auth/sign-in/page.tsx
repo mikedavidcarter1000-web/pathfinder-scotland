@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSignIn } from '@/hooks/use-auth'
+import { SocialLoginButtons, SocialLoginDivider } from '@/components/auth/social-login-buttons'
 
 export default function SignInPage() {
   const router = useRouter()
@@ -50,6 +51,10 @@ export default function SignInPage() {
             <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
             <p className="text-gray-600 mt-1">Sign in to continue your journey</p>
           </div>
+
+          {/* Social Login */}
+          <SocialLoginButtons redirectTo={redirect} />
+          <SocialLoginDivider />
 
           {/* Error Message */}
           {signIn.error && (

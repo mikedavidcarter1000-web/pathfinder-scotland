@@ -163,19 +163,23 @@ export function useUpdatePassword() {
 }
 
 // OAuth Sign In
+export type OAuthProvider = 'google' | 'github' | 'facebook' | 'apple' | 'twitter'
+
 export function useOAuthSignIn() {
   const supabase = getSupabaseClient()
 
   return useMutation({
     mutationFn: async ({
       provider,
+      redirectTo,
     }: {
-      provider: 'google' | 'github' | 'facebook'
+      provider: OAuthProvider
+      redirectTo?: string
     }) => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback${redirectTo ? `?next=${encodeURIComponent(redirectTo)}` : ''}`,
         },
       })
       if (error) throw error

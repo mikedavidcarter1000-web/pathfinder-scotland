@@ -51,7 +51,7 @@ export function GradeInput({
   }
 
   return (
-    <div className="space-y-3" onKeyDown={handleKeyDown}
+    <div className="space-y-3" onKeyDown={handleKeyDown}>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Subject Input */}
         <div className="relative sm:col-span-2">

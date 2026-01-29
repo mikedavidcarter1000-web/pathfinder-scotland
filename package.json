@@ -11,7 +11,10 @@
     "type-check": "tsc --noEmit",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset",
-    "db:types": "supabase gen types typescript --local > types/database.ts"
+    "db:types": "supabase gen types typescript --local > types/database.ts",
+    "db:import-postcodes": "node scripts/auto_import.js",
+    "db:import-postcodes:api": "node scripts/import_via_api.js",
+    "db:import-postcodes:pg": "node scripts/import_postcodes_v2.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",
@@ -31,11 +34,13 @@
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.16",
+    "dotenv": "^17.2.3",
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.1.6",
     "pg": "^8.17.2",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.4.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "xlsx": "^0.18.5"
   }
 }
