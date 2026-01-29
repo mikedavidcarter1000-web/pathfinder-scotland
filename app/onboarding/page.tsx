@@ -88,8 +88,9 @@ export default function OnboardingPage() {
     setError(null)
 
     try {
+      console.log('Creating student profile...')
       // Create student profile
-      await createStudent.mutateAsync({
+      const studentResult = await createStudent.mutateAsync({
         email: user.email || '',
         first_name: basicInfo.firstName,
         last_name: basicInfo.lastName,
@@ -101,10 +102,12 @@ export default function OnboardingPage() {
         is_carer: wideningAccess.isCarer,
         first_generation: wideningAccess.firstGeneration,
       })
+      console.log('Student created:', studentResult)
 
       // Bulk upsert grades if any were added
       if (grades.length > 0) {
-        await bulkUpsertGrades.mutateAsync(
+        console.log('Saving grades...')
+        const gradesResult = await bulkUpsertGrades.mutateAsync(
           grades.map((g) => ({
             subject: g.subject,
             grade: g.grade,
@@ -112,13 +115,18 @@ export default function OnboardingPage() {
             qualification_type: g.qualificationType,
           }))
         )
+        console.log('Grades saved:', gradesResult)
       }
 
       // Redirect to dashboard
+      console.log('Redirecting to dashboard...')
       router.push('/dashboard')
     } catch (err) {
       console.error('Failed to complete onboarding:', err)
-      setError(err instanceof Error ? err.message : 'Failed to create profile. Please try again.')
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create profile. Please try again.'
+      console.error('Error message:', errorMessage)
+      alert('Error: ' + errorMessage) // Temporary alert for debugging
+      setError(errorMessage)
       setIsSubmitting(false)
     }
   }
