@@ -28,6 +28,30 @@ UI is ready. To enable providers, configure in Supabase Dashboard > Authenticati
 
 Callback URL for all providers: `https://qexfszbhmdducszupyzi.supabase.co/auth/v1/callback`
 
+### Stripe Integration (REQUIRES CONFIGURATION)
+
+Tables: `stripe_customers`, `stripe_products`, `stripe_prices`, `stripe_subscriptions`, `stripe_payments`
+
+**To enable:**
+1. Create Stripe account at https://dashboard.stripe.com
+2. Add to `.env.local`:
+   ```
+   STRIPE_SECRET_KEY=sk_test_...
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+   STRIPE_WEBHOOK_SECRET=whsec_...
+   NEXT_PUBLIC_STRIPE_STUDENT_PRICE_ID=price_...
+   NEXT_PUBLIC_STRIPE_PRO_PRICE_ID=price_...
+   ```
+3. Create products/prices in Stripe Dashboard
+4. Set up webhook endpoint: `https://yourdomain.com/api/stripe/webhook`
+
+**Webhook events to enable:**
+- `customer.subscription.created/updated/deleted`
+- `invoice.payment_succeeded/failed`
+- `product.created/updated`
+- `price.created/updated`
+- `checkout.session.completed`
+
 ## SIMD Postcode Data (COMPLETE)
 
 **Status:** 227,066 Scottish postcodes imported to database
@@ -60,6 +84,16 @@ Functions:
 - `cleanup_old_audit_logs(days)` - Data retention management
 
 Audit triggers on: `students`, `saved_courses`, `student_grades`, `promo_codes`, `promo_code_redemptions`
+
+### Stripe Payments (COMPLETE)
+Tables: `stripe_customers`, `stripe_products`, `stripe_prices`, `stripe_subscriptions`, `stripe_payments`
+API Routes:
+- `POST /api/stripe/checkout` - Create checkout session
+- `POST /api/stripe/portal` - Open billing portal
+- `POST /api/stripe/webhook` - Handle Stripe webhooks
+
+Hooks: `useSubscription()`, `useHasActiveSubscription()`, `useManageSubscription()`
+Pages: `/pricing` - Pricing page with 3 tiers (Free, Student £4.99/mo, Pro £9.99/mo)
 
 ## Important Commands
 
