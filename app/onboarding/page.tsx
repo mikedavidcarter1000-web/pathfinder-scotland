@@ -38,6 +38,7 @@ export default function OnboardingPage() {
 
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   // Form state
   const [basicInfo, setBasicInfo] = useState({
@@ -82,6 +83,7 @@ export default function OnboardingPage() {
     try {
       // Create student profile
       await createStudent.mutateAsync({
+        email: user.email || '',
         first_name: basicInfo.firstName,
         last_name: basicInfo.lastName,
         school_stage: basicInfo.schoolStage as 's3' | 's4' | 's5' | 's6' | 'college' | 'mature' | null,
@@ -107,8 +109,9 @@ export default function OnboardingPage() {
 
       // Redirect to dashboard
       router.push('/dashboard')
-    } catch (error) {
-      console.error('Failed to complete onboarding:', error)
+    } catch (err) {
+      console.error('Failed to complete onboarding:', err)
+      setError(err instanceof Error ? err.message : 'Failed to create profile. Please try again.')
       setIsSubmitting(false)
     }
   }
@@ -205,13 +208,21 @@ export default function OnboardingPage() {
           )}
 
           {currentStep === 4 && (
-            <GradesStep
-              grades={grades}
-              onChange={setGrades}
-              onComplete={handleComplete}
-              onBack={() => setCurrentStep(3)}
-              isSubmitting={isSubmitting}
-            />
+            <>
+              {error && (
+                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                  <p className="font-medium">Error</p>
+                  <p className="text-sm">{error}</p>
+                </div>
+              )}
+              <GradesStep
+                grades={grades}
+                onChange={setGrades}
+                onComplete={handleComplete}
+                onBack={() => setCurrentStep(3)}
+                isSubmitting={isSubmitting}
+              />
+            </>
           )}
         </div>
 
