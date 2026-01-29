@@ -29,8 +29,7 @@ export function GradeInput({
       !existingSubjects.includes(s)
   )
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleAddGrade = () => {
     if (subject && grade) {
       onAdd({ subject, grade, predicted })
       setSubject('')
@@ -44,8 +43,15 @@ export function GradeInput({
     setShowSuggestions(false)
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && subject && grade) {
+      e.preventDefault()
+      handleAddGrade()
+    }
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <div className="space-y-3" onKeyDown={handleKeyDown}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Subject Input */}
         <div className="relative sm:col-span-2">
@@ -112,14 +118,15 @@ export function GradeInput({
         </label>
 
         <button
-          type="submit"
+          type="button"
+          onClick={handleAddGrade}
           disabled={!subject || !grade}
           className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           Add grade
         </button>
       </div>
-    </form>
+    </div>
   )
 }
 
