@@ -5,8 +5,7 @@ import Link from 'next/link'
 import { useSubjectDetail, type ProgressionLink, type CareerLink } from '@/hooks/use-subjects'
 import { useStudentGrades } from '@/hooks/use-student'
 import {
-  CURRICULAR_AREA_COLOURS,
-  DEFAULT_CURRICULAR_AREA_COLOUR,
+  getCurricularAreaColour,
   QUALIFICATION_LEVEL_LABELS,
   RELEVANCE_STYLES,
 } from '@/lib/constants'
@@ -153,8 +152,7 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
   }
 
   const area = subject.curricular_area
-  const areaColour =
-    (area && CURRICULAR_AREA_COLOURS[area.name]) || DEFAULT_CURRICULAR_AREA_COLOUR
+  const areaColour = getCurricularAreaColour(area?.name)
 
   const levels: string[] = []
   if (subject.is_available_n3) levels.push('N3')

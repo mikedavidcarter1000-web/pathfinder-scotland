@@ -2,13 +2,10 @@
 
 import { useState, useMemo, Suspense } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useSubjects, useCurricularAreas, useCareerSectors } from '@/hooks/use-subjects'
 import type { QualificationLevel, SubjectWithArea } from '@/hooks/use-subjects'
-import {
-  CURRICULAR_AREA_COLOURS,
-  DEFAULT_CURRICULAR_AREA_COLOUR,
-} from '@/lib/constants'
+import { getCurricularAreaColour } from '@/lib/constants'
 
 type LevelFilter = 'all' | QualificationLevel
 
@@ -22,8 +19,17 @@ const LEVEL_BUTTONS: Array<{ value: LevelFilter; label: string }> = [
 ]
 
 function SubjectsPageContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const careerSectorParam = searchParams.get('career_sector') || ''
+
+  const goBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back()
+    } else {
+      router.push('/')
+    }
+  }
 
   const [search, setSearch] = useState('')
   const [areaId, setAreaId] = useState('')
@@ -80,11 +86,16 @@ function SubjectsPageContent() {
                 Browse every subject available across Scottish schools — from National 4 to Advanced Higher
               </p>
             </div>
-            <Link href="/" className="text-gray-500 hover:text-gray-700">
+            <button
+              type="button"
+              aria-label="Close"
+              onClick={goBack}
+              className="text-gray-500 hover:text-gray-700"
+            >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </Link>
+            </button>
           </div>
 
           {/* Career sector filter banner */}
@@ -250,8 +261,7 @@ function SubjectCard({
   highlightAcademyContent: boolean
 }) {
   const area = subject.curricular_area
-  const areaColour =
-    (area && CURRICULAR_AREA_COLOURS[area.name]) || DEFAULT_CURRICULAR_AREA_COLOUR
+  const areaColour = getCurricularAreaColour(area?.name)
 
   const levels: string[] = []
   if (subject.is_available_n4) levels.push('N4')

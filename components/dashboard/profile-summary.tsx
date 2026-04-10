@@ -154,6 +154,8 @@ export function ProfileSummary() {
           </p>
         </div>
         <button
+          type="button"
+          aria-label="Edit profile"
           onClick={startEditing}
           className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
         >

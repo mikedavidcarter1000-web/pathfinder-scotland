@@ -138,6 +138,30 @@ export function CourseCard({
             </div>
           )}
 
+          {/* Compact (list view) inline stats */}
+          {compact && (entryRequirements?.highers || entryRequirements?.ucas_points || course.duration_years) && (
+            <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3 text-xs">
+              {entryRequirements?.highers && (
+                <span className="text-gray-600">
+                  <span className="text-gray-400">Highers </span>
+                  <span className="font-semibold text-gray-900">{entryRequirements.highers}</span>
+                </span>
+              )}
+              {entryRequirements?.ucas_points && (
+                <span className="text-gray-600">
+                  <span className="text-gray-400">UCAS </span>
+                  <span className="font-semibold text-gray-900">{entryRequirements.ucas_points}</span>
+                </span>
+              )}
+              {course.duration_years && (
+                <span className="text-gray-600">
+                  <span className="text-gray-400">Duration </span>
+                  <span className="font-semibold text-gray-900">{course.duration_years} yrs</span>
+                </span>
+              )}
+            </div>
+          )}
+
           {/* Actions */}
           <div className="flex gap-2">
             <span className="flex-1 text-center py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">

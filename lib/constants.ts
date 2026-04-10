@@ -350,6 +350,20 @@ export const DEFAULT_CURRICULAR_AREA_COLOUR = {
   dot: 'bg-gray-400',
 }
 
+// Resolves a curricular area name to its colour palette, normalising case,
+// whitespace, and common punctuation variants ("&" vs "and") so that minor
+// seed differences don't cause a silent fall-through to the gray default.
+export function getCurricularAreaColour(name: string | null | undefined) {
+  if (!name) return DEFAULT_CURRICULAR_AREA_COLOUR
+  const exact = CURRICULAR_AREA_COLOURS[name]
+  if (exact) return exact
+  const normalised = name.trim().replace(/\s+&\s+/g, ' and ').toLowerCase()
+  for (const key of Object.keys(CURRICULAR_AREA_COLOURS)) {
+    if (key.toLowerCase() === normalised) return CURRICULAR_AREA_COLOURS[key]
+  }
+  return DEFAULT_CURRICULAR_AREA_COLOUR
+}
+
 // Short labels for SQA qualification levels used across pathway pages
 export const QUALIFICATION_LEVEL_LABELS: Record<string, string> = {
   bge: 'BGE',

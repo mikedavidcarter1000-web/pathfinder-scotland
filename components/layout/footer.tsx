@@ -39,7 +39,7 @@ export function Footer() {
               <span className="text-lg font-bold text-white">Pathfinder</span>
             </Link>
             <p className="text-sm text-gray-400 mb-4">
-              Helping Scottish students discover their perfect university course.
+              Built for Scottish students.
             </p>
             <div className="flex gap-4">
               <a
@@ -128,7 +128,7 @@ export function Footer() {
             &copy; {currentYear} Pathfinder Scotland. All rights reserved.
           </p>
           <p className="text-sm text-gray-500">
-            Made with care in Scotland
+            Built for Scottish students
           </p>
         </div>
       </div>

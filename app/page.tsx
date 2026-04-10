@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Footer } from '@/components/layout/footer'
 
 export default function HomePage() {
   return (
@@ -257,8 +256,6 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
-
-      <Footer />
     </div>
   )
 }

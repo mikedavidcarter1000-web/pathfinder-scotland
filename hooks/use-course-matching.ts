@@ -88,7 +88,13 @@ export function useMatchedCourses(filters?: {
   subjectArea?: string
   onlyEligible?: boolean
 }) {
-  const { data: courses, isLoading, error } = useCourses(filters) as { data: Course[] | undefined; isLoading: boolean; error: Error | null }
+  // Fetch a large enough window to support client-side pagination/filtering on
+  // the courses page without needing to re-hit the server on every page change.
+  const { data: courses, isLoading, error } = useCourses({
+    universityId: filters?.universityId,
+    subjectArea: filters?.subjectArea,
+    limit: 500,
+  }) as { data: Course[] | undefined; isLoading: boolean; error: Error | null }
   const gradeSummary = useGradeSummary()
   const { data: student } = useCurrentStudent() as { data: Student | null | undefined }
 

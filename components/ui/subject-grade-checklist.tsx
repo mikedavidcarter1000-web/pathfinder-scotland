@@ -182,7 +182,10 @@ export function SubjectGradeChecklist({
                   checked={checked}
                   onChange={(e) => {
                     if (e.target.checked) {
-                      setEntry(subject.id, subject.name, { grade: entry?.grade ?? '', predicted: entry?.predicted ?? false })
+                      setEntry(subject.id, subject.name, {
+                        grade: entry?.grade ?? '',
+                        predicted: entry?.predicted ?? true,
+                      })
                     } else {
                       removeEntry(subject.id, subject.name)
                     }
@@ -197,20 +200,21 @@ export function SubjectGradeChecklist({
               {checked && (
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <select
+                    aria-label={`Grade for ${subject.name}`}
                     value={entry?.grade ?? ''}
                     onChange={(e) =>
                       setEntry(subject.id, subject.name, { grade: e.target.value })
                     }
-                    className="px-2 py-1 text-sm border border-gray-300 rounded bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="px-3 py-1.5 text-sm font-medium border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[80px]"
                   >
-                    <option value="">Grade</option>
+                    <option value="">Grade…</option>
                     {grades.map((g) => (
                       <option key={g} value={g}>
                         {g}
                       </option>
                     ))}
                   </select>
-                  <label className="flex items-center gap-1 text-xs text-gray-600 cursor-pointer" title="Predicted grade">
+                  <label className="flex items-center gap-1 text-xs text-gray-600 cursor-pointer" title="Tick if this is a predicted grade (not yet awarded)">
                     <input
                       type="checkbox"
                       checked={entry?.predicted ?? false}
@@ -219,7 +223,7 @@ export function SubjectGradeChecklist({
                       }
                       className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    Pred.
+                    Predicted
                   </label>
                 </div>
               )}

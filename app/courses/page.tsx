@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useMatchedCourses } from '@/hooks/use-course-matching'
 import { useSubjectAreas, useSavedCourses, useToggleSaveCourse } from '@/hooks/use-courses'
 import { useUniversities } from '@/hooks/use-universities'
@@ -14,13 +15,25 @@ import { CourseCardSkeleton } from '@/components/ui/loading-skeletons'
 type EligibilityFilter = 'all' | 'eligible' | 'possible' | 'below'
 
 export default function CoursesPage() {
+  const router = useRouter()
   const { user } = useAuth()
   const gradeSummary = useGradeSummary()
+
+  const goBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back()
+    } else {
+      router.push('/')
+    }
+  }
+
   const [search, setSearch] = useState('')
   const [universityId, setUniversityId] = useState<string>('')
   const [subjectArea, setSubjectArea] = useState<string>('')
   const [eligibilityFilter, setEligibilityFilter] = useState<EligibilityFilter>('all')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [page, setPage] = useState(1)
+  const PAGE_SIZE = 12
 
   const { data: coursesWithEligibility, isLoading, error, stats } = useMatchedCourses({
     universityId: universityId || undefined,
@@ -53,6 +66,19 @@ export default function CoursesPage() {
     return courses
   }, [coursesWithEligibility, search, eligibilityFilter])
 
+  // Reset to first page whenever filters or search change so users don't land on
+  // an out-of-range page when the result set shrinks.
+  useEffect(() => {
+    setPage(1)
+  }, [search, universityId, subjectArea, eligibilityFilter])
+
+  const totalPages = Math.max(1, Math.ceil(filteredCourses.length / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const pagedCourses = useMemo(
+    () => filteredCourses.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+    [filteredCourses, currentPage]
+  )
+
   const clearFilters = () => {
     setSearch('')
     setUniversityId('')
@@ -75,14 +101,16 @@ export default function CoursesPage() {
                 Explore courses across Scottish universities
               </p>
             </div>
-            <Link
-              href="/"
+            <button
+              type="button"
+              aria-label="Close"
+              onClick={goBack}
               className="text-gray-500 hover:text-gray-700"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </Link>
+            </button>
           </div>
 
           {/* Eligibility Stats Banner */}
@@ -219,6 +247,9 @@ export default function CoursesPage() {
             {/* View Toggle */}
             <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
               <button
+                type="button"
+                aria-label="Grid view"
+                aria-pressed={viewMode === 'grid'}
                 onClick={() => setViewMode('grid')}
                 className={`p-2 rounded ${viewMode === 'grid' ? 'bg-white shadow-sm' : 'text-gray-500'}`}
               >
@@ -227,6 +258,9 @@ export default function CoursesPage() {
                 </svg>
               </button>
               <button
+                type="button"
+                aria-label="List view"
+                aria-pressed={viewMode === 'list'}
                 onClick={() => setViewMode('list')}
                 className={`p-2 rounded ${viewMode === 'list' ? 'bg-white shadow-sm' : 'text-gray-500'}`}
               >
@@ -296,19 +330,59 @@ export default function CoursesPage() {
 
         {/* Course Grid/List */}
         {!isLoading && filteredCourses && filteredCourses.length > 0 && (
-          <div className={`grid gap-6 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-            {filteredCourses.map((course) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                eligibility={course.eligibility}
-                compact={viewMode === 'list'}
-                showSaveButton={!!user}
-                isSaved={isSaved(course.id)}
-                onSave={() => toggleSave(course.id)}
-              />
-            ))}
-          </div>
+          <>
+            <div className={`grid gap-6 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+              {pagedCourses.map((course) => (
+                <CourseCard
+                  key={course.id}
+                  course={course}
+                  eligibility={course.eligibility}
+                  compact={viewMode === 'list'}
+                  showSaveButton={!!user}
+                  isSaved={isSaved(course.id)}
+                  onSave={() => toggleSave(course.id)}
+                />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <nav
+                aria-label="Courses pagination"
+                className="mt-8 flex items-center justify-between gap-4 flex-wrap"
+              >
+                <p className="text-sm text-gray-600">
+                  Page <span className="font-semibold text-gray-900">{currentPage}</span> of{' '}
+                  <span className="font-semibold text-gray-900">{totalPages}</span>
+                  <span className="text-gray-400"> · {filteredCourses.length} results</span>
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage <= 1}
+                    className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage >= totalPages}
+                    className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Next
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </nav>
+            )}
+          </>
         )}
       </div>
     </div>

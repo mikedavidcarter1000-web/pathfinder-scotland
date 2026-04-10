@@ -2,12 +2,12 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
 import { usePathways, useCareerSectors, type Stage, type SubjectWithArea } from '@/hooks/use-subjects'
 import {
-  CURRICULAR_AREA_COLOURS,
-  DEFAULT_CURRICULAR_AREA_COLOUR,
+  getCurricularAreaColour,
   QUALIFICATION_LEVEL_LABELS,
 } from '@/lib/constants'
 import type { Tables } from '@/types/database'
@@ -45,10 +45,40 @@ function matchesCompulsory(compulsoryName: string, subjectName: string): boolean
 }
 
 export default function PathwaysPage() {
+  const router = useRouter()
   const [yearGoingInto, setYearGoingInto] = useState<YearGoingInto | null>(null)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [expandedAreas, setExpandedAreas] = useState<Set<string>>(new Set())
   const [showBreadthTip, setShowBreadthTip] = useState(false)
+  const [subjectSearch, setSubjectSearch] = useState('')
+  const [shakenId, setShakenId] = useState<string | null>(null)
+  const [toast, setToast] = useState<string | null>(null)
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const goBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back()
+    } else {
+      router.push('/')
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
+      if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current)
+    }
+  }, [])
+
+  const flashCompulsory = (subject: SubjectWithArea) => {
+    setShakenId(subject.id)
+    setToast(`${subject.name} is compulsory and included automatically.`)
+    if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current)
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
+    shakeTimerRef.current = setTimeout(() => setShakenId(null), 500)
+    toastTimerRef.current = setTimeout(() => setToast(null), 2500)
+  }
   // Fixed-length array of 3 slots for ranked academy picks (null = empty slot)
   const [academyRankings, setAcademyRankings] = useState<(string | null)[]>([null, null, null])
 
@@ -111,7 +141,10 @@ export default function PathwaysPage() {
   }, [pathway, selectedIds])
 
   const toggleSubject = (subject: SubjectWithArea) => {
-    if (compulsoryIds.has(subject.id)) return
+    if (compulsoryIds.has(subject.id)) {
+      flashCompulsory(subject)
+      return
+    }
     setSelectedIds((prev) => {
       const next = new Set(prev)
       if (next.has(subject.id)) {
@@ -144,17 +177,31 @@ export default function PathwaysPage() {
   const limitReached = freeRequired > 0 && selectedFreeCount >= freeRequired
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full shadow-lg bg-gray-900 text-white text-sm font-medium animate-fade-in"
+        >
+          {toast}
+        </div>
+      )}
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-3xl font-bold text-gray-900">Plan Your Subject Choices</h1>
-            <Link href="/" className="text-gray-500 hover:text-gray-700">
+            <button
+              type="button"
+              aria-label="Close"
+              onClick={goBack}
+              className="text-gray-500 hover:text-gray-700"
+            >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </Link>
+            </button>
           </div>
           <p className="text-gray-600">
             Explore how different subject combinations shape your qualifications and future career options.
@@ -227,9 +274,36 @@ export default function PathwaysPage() {
 
               {/* Curricular area picker */}
               <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Step 2 — Pick your subjects
-                </h2>
+                <div className="flex items-baseline justify-between gap-3">
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Step 2 — Pick your subjects
+                  </h2>
+                </div>
+
+                <div className="relative">
+                  <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <input
+                    type="text"
+                    value={subjectSearch}
+                    onChange={(e) => setSubjectSearch(e.target.value)}
+                    placeholder="Search for a subject..."
+                    className="w-full pl-9 pr-9 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  {subjectSearch && (
+                    <button
+                      type="button"
+                      aria-label="Clear search"
+                      onClick={() => setSubjectSearch('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
 
                 {limitReached && (
                   <div className="flex items-start gap-2 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-sm text-green-800">
@@ -242,10 +316,32 @@ export default function PathwaysPage() {
                   </div>
                 )}
 
-                {pathway.subjectsByArea.map((group) => {
-                  const areaColour =
-                    CURRICULAR_AREA_COLOURS[group.area.name] || DEFAULT_CURRICULAR_AREA_COLOUR
-                  const expanded = expandedAreas.has(group.area.id)
+                {(() => {
+                  const needle = subjectSearch.trim().toLowerCase()
+                  const filteredGroups = needle
+                    ? pathway.subjectsByArea
+                        .map((g) => ({
+                          ...g,
+                          subjects: g.subjects.filter((s) =>
+                            s.name.toLowerCase().includes(needle)
+                          ),
+                        }))
+                        .filter((g) => g.subjects.length > 0)
+                    : pathway.subjectsByArea
+
+                  if (filteredGroups.length === 0) {
+                    return (
+                      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+                        <p className="text-sm text-gray-500">
+                          No subjects match &quot;{subjectSearch}&quot;. Try a different term.
+                        </p>
+                      </div>
+                    )
+                  }
+
+                  return filteredGroups.map((group) => {
+                  const areaColour = getCurricularAreaColour(group.area.name)
+                  const expanded = expandedAreas.has(group.area.id) || !!needle
                   const areaSelectedCount = group.subjects.filter((s) =>
                     selectedIds.has(s.id)
                   ).length
@@ -297,6 +393,7 @@ export default function PathwaysPage() {
                                 selected={isSelected}
                                 compulsory={isCompulsory}
                                 disabled={!isSelected && !isCompulsory && limitReached}
+                                shaken={shakenId === subject.id}
                                 areaColour={areaColour}
                                 onToggle={() => toggleSubject(subject)}
                               />
@@ -306,7 +403,8 @@ export default function PathwaysPage() {
                       )}
                     </div>
                   )
-                })}
+                  })
+                })()}
               </div>
 
               {/* Academies — shown as a separate Step 3 when going into S3 */}
@@ -508,6 +606,7 @@ function SubjectRow({
   selected,
   compulsory,
   disabled,
+  shaken,
   areaColour,
   onToggle,
 }: {
@@ -515,6 +614,7 @@ function SubjectRow({
   selected: boolean
   compulsory: boolean
   disabled: boolean
+  shaken: boolean
   areaColour: { bg: string; text: string; border: string; bar: string; dot: string }
   onToggle: () => void
 }) {
@@ -524,21 +624,21 @@ function SubjectRow({
       : subject.description
     : null
 
-  const isButtonDisabled = compulsory || disabled
-
   return (
     <div
       className={`transition-colors ${
         selected ? 'bg-blue-50' : disabled ? 'bg-gray-50/60' : 'hover:bg-gray-50'
-      }`}
+      } ${shaken ? 'animate-shake' : ''}`}
     >
       <button
         type="button"
         onClick={onToggle}
-        disabled={isButtonDisabled}
+        disabled={disabled}
+        aria-pressed={selected}
+        title={compulsory ? `${subject.name} is compulsory and included automatically.` : undefined}
         className={`w-full text-left px-5 py-3 flex items-start gap-3 ${
-          isButtonDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
-        } ${disabled ? 'opacity-50' : ''}`}
+          disabled ? 'cursor-not-allowed opacity-50' : compulsory ? 'cursor-help' : 'cursor-pointer'
+        }`}
       >
         <span
           className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 flex-shrink-0 ${
