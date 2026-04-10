@@ -1,6 +1,6 @@
 # Pathfinder Scotland - Claude Code Context
 
-**Last Updated:** 29 January 2026
+**Last Updated:** 10 April 2026
 
 ## Project Overview
 Pathfinder is a B2C SaaS platform helping Scottish students navigate university applications, with emphasis on widening access programmes and the Scottish education system.
@@ -8,7 +8,7 @@ Pathfinder is a B2C SaaS platform helping Scottish students navigate university 
 **Domain:** pathfinderscot.co.uk  
 **Tech Stack:** Supabase (PostgreSQL), Next.js (assumed)  
 **Project Location:** `C:\Users\marmu\pathfinder-scotland`  
-**Supabase Project Ref:** qexfszbhmducszupyzi
+**Supabase Project Ref:** qexfszbhmdducszupyzi
 
 ## Current Status
 - Core schema is deployed to Supabase (has real data - DO NOT reset)
@@ -95,6 +95,20 @@ API Routes:
 Hooks: `useSubscription()`, `useHasActiveSubscription()`, `useManageSubscription()`
 Pages: `/pricing` - Pricing page with 3 tiers (Free, Student £4.99/mo, Pro £9.99/mo)
 
+### Subject Pathway & Curriculum Layer (MIGRATION READY — PASTE SQL TO RUN)
+Migration: `supabase/migrations/20260410000002_create_subject_pathway_tables.sql`
+**Status:** SQL written locally. Must be pasted into Supabase SQL Editor to apply.
+
+Tables created:
+- `curricular_areas` — 8 CfE areas, seeded
+- `subjects` — SQA master subject list (structure only; data seeding is next step)
+- `subject_progressions` — qualification-level progression map with grade thresholds
+- `course_choice_rules` — year-group transition rules (s2→s3 through s5→s6), seeded with generic Scottish rules
+- `career_sectors` — career sector taxonomy (structure only; data seeding is next step)
+- `subject_career_sectors` — subject↔career junction with relevance weighting
+
+Also: `student_grades.subject_id` FK added (nullable) for gradual migration from free-text.
+
 ## Important Commands
 
 ```bash
@@ -102,7 +116,7 @@ Pages: `/pricing` - Pricing page with 3 tiers (Free, Student £4.99/mo, Pro £9.
 cd C:\Users\marmu\pathfinder-scotland
 
 # Link to Supabase (if needed)
-npx supabase link --project-ref qexfszbhmducszupyzi
+npx supabase link --project-ref qexfszbhmdducszupyzi
 
 # Push migrations (careful - check first)
 npx supabase db push
