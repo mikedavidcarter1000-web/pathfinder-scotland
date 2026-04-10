@@ -42,6 +42,11 @@ export function SearchBar({
     }
   }
 
+  // Live-filter parents via onSearch on every keystroke.
+  useEffect(() => {
+    if (onSearch) onSearch(query)
+  }, [query, onSearch])
+
   const handleFocus = () => {
     if (query.length >= 2) {
       setIsOpen(true)

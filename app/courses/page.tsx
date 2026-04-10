@@ -72,7 +72,7 @@ export default function CoursesPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Courses</h1>
               <p className="text-gray-600 mt-1">
-                Explore thousands of courses across Scottish universities
+                Explore courses across Scottish universities
               </p>
             </div>
             <Link

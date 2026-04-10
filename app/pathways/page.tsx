@@ -114,8 +114,15 @@ export default function PathwaysPage() {
     if (compulsoryIds.has(subject.id)) return
     setSelectedIds((prev) => {
       const next = new Set(prev)
-      if (next.has(subject.id)) next.delete(subject.id)
-      else next.add(subject.id)
+      if (next.has(subject.id)) {
+        next.delete(subject.id)
+        return next
+      }
+      const currentFreeCount = Math.max(0, prev.size - compulsoryIds.size)
+      if (freeRequired > 0 && currentFreeCount >= freeRequired) {
+        return prev
+      }
+      next.add(subject.id)
       return next
     })
   }
@@ -134,6 +141,7 @@ export default function PathwaysPage() {
   const reserveCount = pathway?.rule?.num_reserves ?? 0
   const compulsoryNames = pathway?.rule?.compulsory_subjects || []
   const selectedFreeCount = Math.max(0, selectedIds.size - compulsoryIds.size)
+  const limitReached = freeRequired > 0 && selectedFreeCount >= freeRequired
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -223,6 +231,17 @@ export default function PathwaysPage() {
                   Step 2 — Pick your subjects
                 </h2>
 
+                {limitReached && (
+                  <div className="flex items-start gap-2 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-sm text-green-800">
+                    <svg className="w-5 h-5 flex-shrink-0 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>
+                      You&apos;ve made all your choices. Deselect a subject to swap it.
+                    </span>
+                  </div>
+                )}
+
                 {pathway.subjectsByArea.map((group) => {
                   const areaColour =
                     CURRICULAR_AREA_COLOURS[group.area.name] || DEFAULT_CURRICULAR_AREA_COLOUR
@@ -268,16 +287,21 @@ export default function PathwaysPage() {
                       </button>
                       {expanded && (
                         <div className="border-t border-gray-100 divide-y divide-gray-100">
-                          {group.subjects.map((subject) => (
-                            <SubjectRow
-                              key={subject.id}
-                              subject={subject}
-                              selected={selectedIds.has(subject.id)}
-                              compulsory={compulsoryIds.has(subject.id)}
-                              areaColour={areaColour}
-                              onToggle={() => toggleSubject(subject)}
-                            />
-                          ))}
+                          {group.subjects.map((subject) => {
+                            const isSelected = selectedIds.has(subject.id)
+                            const isCompulsory = compulsoryIds.has(subject.id)
+                            return (
+                              <SubjectRow
+                                key={subject.id}
+                                subject={subject}
+                                selected={isSelected}
+                                compulsory={isCompulsory}
+                                disabled={!isSelected && !isCompulsory && limitReached}
+                                areaColour={areaColour}
+                                onToggle={() => toggleSubject(subject)}
+                              />
+                            )
+                          })}
                         </div>
                       )}
                     </div>
@@ -483,12 +507,14 @@ function SubjectRow({
   subject,
   selected,
   compulsory,
+  disabled,
   areaColour,
   onToggle,
 }: {
   subject: SubjectWithArea
   selected: boolean
   compulsory: boolean
+  disabled: boolean
   areaColour: { bg: string; text: string; border: string; bar: string; dot: string }
   onToggle: () => void
 }) {
@@ -498,19 +524,21 @@ function SubjectRow({
       : subject.description
     : null
 
+  const isButtonDisabled = compulsory || disabled
+
   return (
     <div
       className={`transition-colors ${
-        selected ? 'bg-blue-50' : 'hover:bg-gray-50'
+        selected ? 'bg-blue-50' : disabled ? 'bg-gray-50/60' : 'hover:bg-gray-50'
       }`}
     >
       <button
         type="button"
         onClick={onToggle}
-        disabled={compulsory}
+        disabled={isButtonDisabled}
         className={`w-full text-left px-5 py-3 flex items-start gap-3 ${
-          compulsory ? 'cursor-not-allowed' : 'cursor-pointer'
-        }`}
+          isButtonDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+        } ${disabled ? 'opacity-50' : ''}`}
       >
         <span
           className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 flex-shrink-0 ${

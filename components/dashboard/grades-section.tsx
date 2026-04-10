@@ -60,12 +60,13 @@ export function GradesSection() {
   }
 
   // Reconcile entries against DB grades: add new, update changed, delete removed.
+  // Ticking a subject persists it immediately with an empty grade so the counter
+  // updates — the student can fill in the grade later from the dropdown.
   const handleEntriesChange = async (nextEntries: GradeEntry[]) => {
     if (!grades) return
 
     const currentForTab = grades.filter((g) => g.qualification_type === activeTab)
 
-    // Build lookup of existing grades by subject_id (or name fallback)
     const existingByKey = new Map<string, StudentGrade>()
     for (const g of currentForTab) {
       const key = g.subject_id ?? g.subject.toLowerCase()
@@ -79,40 +80,31 @@ export function GradesSection() {
 
       const existing = existingByKey.get(key)
       if (!existing) {
-        // New entry — only persist if there's a grade picked
-        if (entry.grade) {
-          await addGrade.mutateAsync({
-            subject: entry.subject,
-            subject_id: entry.subject_id ?? null,
-            grade: entry.grade,
-            predicted: entry.predicted,
-            qualification_type: activeTab,
-          })
-        }
+        await addGrade.mutateAsync({
+          subject: entry.subject,
+          subject_id: entry.subject_id ?? null,
+          grade: entry.grade ?? '',
+          predicted: entry.predicted,
+          qualification_type: activeTab,
+        })
       } else {
-        // Existing entry — update if grade or predicted changed
         const changed =
           existing.grade !== entry.grade ||
           (existing.predicted ?? false) !== entry.predicted
         if (changed) {
-          if (!entry.grade) {
-            // Grade cleared: delete the row
-            await deleteGrade.mutateAsync(existing.id)
-          } else {
-            await updateGrade.mutateAsync({
-              gradeId: existing.id,
-              data: {
-                grade: entry.grade,
-                predicted: entry.predicted,
-                subject_id: entry.subject_id ?? existing.subject_id ?? null,
-              },
-            })
-          }
+          await updateGrade.mutateAsync({
+            gradeId: existing.id,
+            data: {
+              grade: entry.grade ?? '',
+              predicted: entry.predicted,
+              subject_id: entry.subject_id ?? existing.subject_id ?? null,
+            },
+          })
         }
       }
     }
 
-    // Delete any rows that are no longer present
+    // Delete rows that are no longer present (subject was unchecked).
     for (const [key, existing] of existingByKey) {
       if (!nextKeys.has(key)) {
         await deleteGrade.mutateAsync(existing.id)

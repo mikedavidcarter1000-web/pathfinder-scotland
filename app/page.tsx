@@ -16,10 +16,16 @@ export default function HomePage() {
             <span className="text-xl font-bold text-gray-900">Pathfinder</span>
           </Link>
           <div className="flex items-center gap-4">
+            <Link href="/subjects" className="hidden sm:inline text-gray-600 hover:text-gray-900 font-medium">
+              Subjects
+            </Link>
+            <Link href="/pathways" className="hidden sm:inline text-gray-600 hover:text-gray-900 font-medium">
+              Plan Choices
+            </Link>
             <Link href="/courses" className="text-gray-600 hover:text-gray-900 font-medium">
               Courses
             </Link>
-            <Link href="/universities" className="text-gray-600 hover:text-gray-900 font-medium">
+            <Link href="/universities" className="hidden sm:inline text-gray-600 hover:text-gray-900 font-medium">
               Universities
             </Link>
             <Link href="/auth/sign-in" className="text-gray-600 hover:text-gray-900 font-medium">
@@ -61,7 +67,7 @@ export default function HomePage() {
             </Link>
           </div>
           <p className="mt-6 text-blue-200 text-sm">
-            15 universities · Thousands of courses · Completely free
+            15 universities · Courses across Scotland · Completely free
           </p>
         </div>
       </section>
@@ -88,7 +94,7 @@ export default function HomePage() {
                   </svg>
                 ),
                 title: 'Discover Courses',
-                description: 'Search thousands of courses across all 15 Scottish universities. Filter by subject, entry requirements, or location.',
+                description: 'Search courses across all 15 Scottish universities. Filter by subject, entry requirements, or location.',
               },
               {
                 icon: (
@@ -187,7 +193,7 @@ export default function HomePage() {
       </section>
 
       {/* Universities Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
@@ -198,25 +204,26 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {[
               'Edinburgh', 'Glasgow', 'St Andrews', 'Aberdeen', 'Dundee',
               'Strathclyde', 'Heriot-Watt', 'Stirling', 'GCU', 'Napier',
               'RGU', 'UWS', 'QMU', 'UHI', 'RCS'
             ].map((uni) => (
-              <div
+              <Link
                 key={uni}
-                className="bg-gray-50 rounded-xl p-4 text-center hover:bg-gray-100 transition-colors"
+                href="/universities"
+                className="flex flex-col items-center justify-center gap-3 bg-white border border-gray-200 rounded-xl p-5 text-center shadow-sm hover:shadow-md hover:border-blue-300 hover:-translate-y-0.5 transition-all"
               >
-                <div className="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center mx-auto mb-2">
-                  <span className="text-lg font-bold text-gray-400">{uni.charAt(0)}</span>
+                <div className="w-14 h-14 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center">
+                  <span className="text-xl font-bold text-blue-700">{uni.charAt(0)}</span>
                 </div>
-                <span className="text-sm font-medium text-gray-700">{uni}</span>
-              </div>
+                <p className="text-sm font-semibold text-gray-900">{uni}</p>
+              </Link>
             ))}
           </div>
 
-          <div className="text-center mt-8">
+          <div className="text-center mt-10">
             <Link
               href="/universities"
               className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"

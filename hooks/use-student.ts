@@ -326,6 +326,7 @@ export function useGradeSummary() {
 
   const sortGrades = (quals: Tables<'student_grades'>[]) =>
     quals
+      .filter((g) => !!g.grade)
       .sort((a, b) => (gradeValues[b.grade] || 0) - (gradeValues[a.grade] || 0))
       .map((g) => g.grade)
       .join('')
