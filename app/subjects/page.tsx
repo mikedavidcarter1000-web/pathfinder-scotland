@@ -75,22 +75,23 @@ function SubjectsPageContent() {
   const showingAcademies = level === 'academy'
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-6">
+      <div style={{ backgroundColor: 'var(--pf-white)', borderBottom: '1px solid var(--pf-grey-100)' }}>
+        <div className="pf-container" style={{ paddingTop: '40px', paddingBottom: '32px' }}>
+          <div className="flex items-start justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Explore Subjects</h1>
-              <p className="text-gray-600 mt-1">
-                Browse every subject available across Scottish schools — from National 4 to Advanced Higher
+              <h1 style={{ marginBottom: '8px' }}>Explore Subjects</h1>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '1rem' }}>
+                Browse every subject available across Scottish schools — from National 4 to Advanced Higher.
               </p>
             </div>
             <button
               type="button"
               aria-label="Close"
               onClick={goBack}
-              className="text-gray-500 hover:text-gray-700"
+              style={{ color: 'var(--pf-grey-600)' }}
+              className="p-2 hover:opacity-80"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -100,21 +101,32 @@ function SubjectsPageContent() {
 
           {/* Career sector filter banner */}
           {activeCareerSector && (
-            <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg flex items-center gap-3">
-              <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div
+              className="mb-6 p-4 rounded-lg flex items-center gap-3"
+              style={{ backgroundColor: 'var(--pf-teal-100)' }}
+            >
+              <svg
+                className="w-5 h-5 flex-shrink-0"
+                style={{ color: 'var(--pf-teal-700)' }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
               <div className="flex-1">
-                <p className="text-sm font-medium text-blue-900">
+                <p style={{ color: 'var(--pf-teal-900)', fontWeight: 600, fontSize: '0.9375rem' }}>
                   Showing subjects linked to {activeCareerSector.name}
                 </p>
                 {activeCareerSector.description && (
-                  <p className="text-xs text-blue-700 mt-0.5">{activeCareerSector.description}</p>
+                  <p style={{ color: 'var(--pf-teal-700)', fontSize: '0.8125rem', marginTop: '2px' }}>
+                    {activeCareerSector.description}
+                  </p>
                 )}
               </div>
               <button
                 onClick={() => setCareerSectorId('')}
-                className="text-blue-700 hover:text-blue-900 text-sm font-medium"
+                style={{ color: 'var(--pf-teal-700)', fontWeight: 600, fontSize: '0.875rem' }}
               >
                 Clear
               </button>
@@ -122,27 +134,33 @@ function SubjectsPageContent() {
           )}
 
           {/* Search */}
-          <div className="mb-4">
-            <div className="relative">
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search subjects by name, description or skill..."
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
+          <div className="mb-4 relative">
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5"
+              style={{ color: 'var(--pf-grey-600)' }}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search subjects by name, description or skill..."
+              className="pf-input"
+              style={{ paddingLeft: '44px' }}
+            />
           </div>
 
           {/* Filters row */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 mb-4">
             <select
               value={areaId}
               onChange={(e) => setAreaId(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="pf-input"
+              style={{ width: 'auto', paddingRight: '32px' }}
             >
               <option value="">All Curricular Areas</option>
               {areas?.map((area) => (
@@ -153,42 +171,51 @@ function SubjectsPageContent() {
             </select>
 
             {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium"
-              >
+              <button onClick={clearFilters} className="pf-btn-ghost pf-btn-sm">
                 Clear filters
               </button>
             )}
           </div>
 
           {/* Level toggle buttons */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {LEVEL_BUTTONS.map((btn) => (
-              <button
-                key={btn.value}
-                onClick={() => setLevel(btn.value)}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  level === btn.value
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                {btn.label}
-              </button>
-            ))}
+          <div className="flex flex-wrap gap-2">
+            {LEVEL_BUTTONS.map((btn) => {
+              const active = level === btn.value
+              return (
+                <button
+                  key={btn.value}
+                  onClick={() => setLevel(btn.value)}
+                  className="transition-colors"
+                  style={{
+                    padding: '6px 16px',
+                    borderRadius: '9999px',
+                    fontSize: '0.875rem',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    backgroundColor: active ? 'var(--pf-teal-700)' : 'var(--pf-white)',
+                    color: active ? '#fff' : 'var(--pf-grey-900)',
+                    border: active ? '1px solid var(--pf-teal-700)' : '1px solid var(--pf-grey-300)',
+                  }}
+                >
+                  {btn.label}
+                </button>
+              )
+            })}
           </div>
         </div>
       </div>
 
       {/* Results */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="pf-container" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
         {/* Result count */}
         <div className="mb-6">
           {isLoading ? (
-            <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
+            <div
+              className="h-5 w-32 rounded animate-pulse"
+              style={{ backgroundColor: 'var(--pf-grey-100)' }}
+            />
           ) : (
-            <p className="text-gray-600">
+            <p style={{ color: 'var(--pf-grey-600)' }}>
               {filteredSubjects.length} {filteredSubjects.length === 1 ? 'subject' : 'subjects'} found
               {hasFilters && ' matching your filters'}
             </p>
@@ -197,8 +224,14 @@ function SubjectsPageContent() {
 
         {/* Error */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-700">Failed to load subjects. Please try again.</p>
+          <div
+            className="rounded-lg p-4 mb-6"
+            style={{
+              backgroundColor: 'rgba(239,68,68,0.08)',
+              color: 'var(--pf-red-500)',
+            }}
+          >
+            Failed to load subjects. Please try again.
           </div>
         )}
 
@@ -206,10 +239,10 @@ function SubjectsPageContent() {
         {isLoading && (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(9)].map((_, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 p-5 animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-3" />
-                <div className="h-3 bg-gray-200 rounded w-1/2 mb-4" />
-                <div className="h-12 bg-gray-100 rounded" />
+              <div key={i} className="pf-card animate-pulse">
+                <div className="h-4 rounded w-3/4 mb-3" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
+                <div className="h-3 rounded w-1/2 mb-4" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
+                <div className="h-12 rounded" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
               </div>
             ))}
           </div>
@@ -218,18 +251,26 @@ function SubjectsPageContent() {
         {/* Empty */}
         {!isLoading && filteredSubjects.length === 0 && (
           <div className="text-center py-16">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+              style={{ backgroundColor: 'var(--pf-grey-100)' }}
+            >
+              <svg
+                className="w-8 h-8"
+                style={{ color: 'var(--pf-grey-600)' }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No subjects found</h3>
-            <p className="text-gray-600 mb-4">Try adjusting your filters or search term.</p>
+            <h3 style={{ marginBottom: '8px' }}>No subjects found</h3>
+            <p style={{ color: 'var(--pf-grey-600)', marginBottom: '16px' }}>
+              Try adjusting your filters or search term.
+            </p>
             {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-              >
+              <button onClick={clearFilters} className="pf-btn-primary">
                 Clear all filters
               </button>
             )}
@@ -277,50 +318,51 @@ function SubjectCard({
     showRichContent && subject.why_choose ? subject.why_choose : subject.description
 
   return (
-    <Link href={`/subjects/${subject.id}`} className="block group">
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md hover:border-gray-300 transition-all h-full flex flex-col">
-        <div className={`h-1.5 bg-gradient-to-r ${areaColour.bar}`} />
+    <Link href={`/subjects/${subject.id}`} className="block group no-underline hover:no-underline">
+      <div
+        className="pf-card-hover h-full flex flex-col"
+        style={{ padding: 0, overflow: 'hidden' }}
+      >
+        <div className={`h-1 bg-gradient-to-r ${areaColour.bar}`} />
         <div className="p-5 flex-1 flex flex-col">
           <div className="mb-3">
-            <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors text-base line-clamp-2">
+            <h3
+              style={{ color: 'var(--pf-grey-900)', fontSize: '1.0625rem', marginBottom: '8px' }}
+              className="line-clamp-2"
+            >
               {subject.name}
             </h3>
             {area && (
-              <span
-                className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium mt-2 ${areaColour.bg} ${areaColour.text}`}
-              >
+              <span className={`pf-area-badge ${areaColour.bg} ${areaColour.text}`}>
                 {area.name}
               </span>
             )}
           </div>
 
-          {/* Level tags */}
+          {/* Level tags -- grey-100 bg, grey-900 text */}
           {levels.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-3">
               {levels.map((lvl) => (
-                <span
-                  key={lvl}
-                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700"
-                >
+                <span key={lvl} className="pf-badge-grey">
                   {lvl}
                 </span>
               ))}
             </div>
           )}
 
-          {/* Skills tags */}
+          {/* Skills tags -- teal-100 bg, teal-700 text */}
           {subject.skills_tags && subject.skills_tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-3">
               {subject.skills_tags.slice(0, 4).map((tag) => (
-                <span
-                  key={tag}
-                  className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700"
-                >
+                <span key={tag} className="pf-badge-teal">
                   {tag}
                 </span>
               ))}
               {subject.skills_tags.length > 4 && (
-                <span className="text-xs text-gray-500 self-center">
+                <span
+                  className="self-center"
+                  style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
+                >
                   +{subject.skills_tags.length - 4} more
                 </span>
               )}
@@ -329,11 +371,27 @@ function SubjectCard({
 
           {/* Description */}
           {descriptionToShow && (
-            <p className="text-sm text-gray-600 line-clamp-2 mb-4">{descriptionToShow}</p>
+            <p
+              className="line-clamp-2 mb-4"
+              style={{ color: 'var(--pf-grey-600)', fontSize: '0.875rem' }}
+            >
+              {descriptionToShow}
+            </p>
           )}
 
           <div className="mt-auto">
-            <span className="block w-full text-center py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
+            <span
+              className="block w-full text-center"
+              style={{
+                padding: '10px',
+                fontSize: '0.875rem',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                color: 'var(--pf-teal-700)',
+                backgroundColor: 'var(--pf-teal-100)',
+                borderRadius: '6px',
+              }}
+            >
               View details
             </span>
           </div>
@@ -347,8 +405,13 @@ export default function SubjectsPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="animate-pulse text-gray-500">Loading...</div>
+        <div
+          className="min-h-screen flex items-center justify-center"
+          style={{ backgroundColor: 'var(--pf-teal-50)' }}
+        >
+          <div className="animate-pulse" style={{ color: 'var(--pf-grey-600)' }}>
+            Loading...
+          </div>
         </div>
       }
     >

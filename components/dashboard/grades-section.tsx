@@ -46,12 +46,12 @@ export function GradesSection() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="pf-card">
         <div className="animate-pulse">
-          <div className="h-6 w-32 bg-gray-200 rounded mb-4" />
+          <div className="h-6 w-32 rounded mb-4" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-14 bg-gray-100 rounded-lg" />
+              <div key={i} className="h-14 rounded-lg" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
             ))}
           </div>
         </div>
@@ -116,29 +116,71 @@ export function GradesSection() {
     grades?.filter((g) => g.qualification_type === type).length ?? 0
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
+    <div className="pf-card">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Your Grades</h2>
+        <h2 style={{ margin: 0, fontSize: '1.125rem' }}>Your Grades</h2>
       </div>
 
       {/* Grade Summary */}
       {grades && grades.length > 0 && (
-        <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+        <div
+          className="grid grid-cols-3 gap-4 mb-6 rounded-lg"
+          style={{ padding: '16px', backgroundColor: 'var(--pf-teal-50)' }}
+        >
           <div className="text-center">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">Highers</p>
-            <p className="font-mono text-lg font-bold text-gray-900">
+            <p
+              style={{
+                fontSize: '0.75rem',
+                color: 'var(--pf-grey-600)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Highers
+            </p>
+            <p
+              className="pf-data-number"
+              style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--pf-grey-900)' }}
+            >
               {gradeSummary.highers || '-'}
             </p>
           </div>
-          <div className="text-center border-x border-gray-200">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">Adv. Highers</p>
-            <p className="font-mono text-lg font-bold text-gray-900">
+          <div
+            className="text-center"
+            style={{ borderLeft: '1px solid var(--pf-teal-100)', borderRight: '1px solid var(--pf-teal-100)' }}
+          >
+            <p
+              style={{
+                fontSize: '0.75rem',
+                color: 'var(--pf-grey-600)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Adv. Highers
+            </p>
+            <p
+              className="pf-data-number"
+              style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--pf-grey-900)' }}
+            >
               {gradeSummary.advancedHighers || '-'}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">UCAS Points</p>
-            <p className="font-mono text-lg font-bold text-blue-600">
+            <p
+              style={{
+                fontSize: '0.75rem',
+                color: 'var(--pf-grey-600)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              UCAS Points
+            </p>
+            <p
+              className="pf-data-number"
+              style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--pf-teal-700)' }}
+            >
               {gradeSummary.ucasPoints}
             </p>
           </div>
@@ -146,24 +188,40 @@ export function GradesSection() {
       )}
 
       {/* Qualification Type Tabs */}
-      <div className="flex gap-1 p-1 bg-gray-100 rounded-lg mb-4">
+      <div
+        className="flex gap-1 mb-4 rounded-lg"
+        style={{ padding: '4px', backgroundColor: 'var(--pf-grey-100)' }}
+      >
         {qualificationTypes.map((type) => {
           const count = countForType(type.value)
+          const active = activeTab === type.value
           return (
             <button
               key={type.value}
               onClick={() => setActiveTab(type.value)}
-              className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-                activeTab === type.value
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+              className="flex-1 transition-colors"
+              style={{
+                padding: '8px 12px',
+                fontSize: '0.875rem',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                borderRadius: '6px',
+                backgroundColor: active ? 'var(--pf-white)' : 'transparent',
+                color: active ? 'var(--pf-grey-900)' : 'var(--pf-grey-600)',
+                boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+              }}
             >
               {type.label}
               {count > 0 && (
-                <span className={`ml-1.5 px-1.5 py-0.5 text-xs rounded-full ${
-                  activeTab === type.value ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600'
-                }`}>
+                <span
+                  className="ml-1.5 rounded-full"
+                  style={{
+                    padding: '2px 8px',
+                    fontSize: '0.75rem',
+                    backgroundColor: active ? 'var(--pf-teal-100)' : 'var(--pf-grey-300)',
+                    color: active ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
+                  }}
+                >
                   {count}
                 </span>
               )}

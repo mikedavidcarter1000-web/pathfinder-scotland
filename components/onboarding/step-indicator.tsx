@@ -21,6 +21,13 @@ export function StepIndicator({ steps, currentStep, onStepClick }: StepIndicator
           const isCurrent = step.id === currentStep
           const isClickable = onStepClick && step.id < currentStep
 
+          const dotBg = isCompleted
+            ? 'var(--pf-teal-500)'
+            : isCurrent
+            ? 'var(--pf-teal-700)'
+            : 'var(--pf-grey-100)'
+          const dotColor = isCompleted || isCurrent ? '#fff' : 'var(--pf-grey-600)'
+
           return (
             <li
               key={step.id}
@@ -31,13 +38,14 @@ export function StepIndicator({ steps, currentStep, onStepClick }: StepIndicator
                   type="button"
                   onClick={() => isClickable && onStepClick(step.id)}
                   disabled={!isClickable}
-                  className={`relative flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
-                    isCompleted
-                      ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
-                      : isCurrent
-                      ? 'bg-blue-600'
-                      : 'bg-gray-200'
-                  } ${!isClickable ? 'cursor-default' : ''}`}
+                  className="relative flex items-center justify-center rounded-full transition-colors"
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    backgroundColor: dotBg,
+                    cursor: isClickable ? 'pointer' : 'default',
+                    border: isCurrent ? '3px solid var(--pf-teal-100)' : 'none',
+                  }}
                 >
                   {isCompleted ? (
                     <svg
@@ -55,9 +63,12 @@ export function StepIndicator({ steps, currentStep, onStepClick }: StepIndicator
                     </svg>
                   ) : (
                     <span
-                      className={`text-sm font-semibold ${
-                        isCurrent ? 'text-white' : 'text-gray-500'
-                      }`}
+                      style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        color: dotColor,
+                      }}
                     >
                       {step.id}
                     </span>
@@ -66,11 +77,15 @@ export function StepIndicator({ steps, currentStep, onStepClick }: StepIndicator
 
                 {/* Connector Line */}
                 {index !== steps.length - 1 && (
-                  <div className="hidden sm:block absolute top-5 left-10 w-full h-0.5">
+                  <div
+                    className="hidden sm:block absolute top-5 left-10 w-full"
+                    style={{ height: '2px' }}
+                  >
                     <div
-                      className={`h-full transition-colors ${
-                        isCompleted ? 'bg-blue-600' : 'bg-gray-200'
-                      }`}
+                      className="h-full transition-colors"
+                      style={{
+                        backgroundColor: isCompleted ? 'var(--pf-teal-500)' : 'var(--pf-grey-100)',
+                      }}
                     />
                   </div>
                 )}
@@ -79,14 +94,26 @@ export function StepIndicator({ steps, currentStep, onStepClick }: StepIndicator
               {/* Step Label */}
               <div className="mt-2">
                 <span
-                  className={`text-sm font-medium ${
-                    isCurrent ? 'text-blue-600' : isCompleted ? 'text-gray-900' : 'text-gray-500'
-                  }`}
+                  style={{
+                    fontSize: '0.875rem',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    color: isCurrent
+                      ? 'var(--pf-teal-700)'
+                      : isCompleted
+                      ? 'var(--pf-grey-900)'
+                      : 'var(--pf-grey-600)',
+                  }}
                 >
                   {step.title}
                 </span>
                 {step.description && (
-                  <p className="text-xs text-gray-500 hidden sm:block">{step.description}</p>
+                  <p
+                    className="hidden sm:block"
+                    style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
+                  >
+                    {step.description}
+                  </p>
                 )}
               </div>
             </li>
@@ -113,15 +140,30 @@ export function MobileStepIndicator({
   return (
     <div className="sm:hidden">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-900">{stepTitle}</span>
-        <span className="text-sm text-gray-500">
+        <span
+          style={{
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            color: 'var(--pf-grey-900)',
+            fontFamily: "'Space Grotesk', sans-serif",
+          }}
+        >
+          {stepTitle}
+        </span>
+        <span style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
           Step {currentStep} of {totalSteps}
         </span>
       </div>
-      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div
+        className="rounded-full overflow-hidden"
+        style={{ height: '8px', backgroundColor: 'var(--pf-grey-100)' }}
+      >
         <div
-          className="h-full bg-blue-600 transition-all duration-300"
-          style={{ width: `${progress}%` }}
+          className="h-full transition-all duration-300"
+          style={{
+            width: `${progress}%`,
+            backgroundColor: 'var(--pf-teal-500)',
+          }}
         />
       </div>
     </div>

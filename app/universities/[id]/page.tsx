@@ -18,7 +18,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[var(--pf-teal-50)]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="animate-pulse space-y-6">
             <div className="h-8 bg-gray-200 rounded w-1/3" />
@@ -32,11 +32,11 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
 
   if (error || !university) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--pf-teal-50)] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">University not found</h1>
           <p className="text-gray-600 mb-4">The university you're looking for doesn't exist.</p>
-          <Link href="/universities" className="text-blue-600 hover:text-blue-700 font-medium">
+          <Link href="/universities" className="text-[var(--pf-teal-700)] hover:text-[var(--pf-teal-900)] font-medium">
             Browse all universities
           </Link>
         </div>
@@ -49,7 +49,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
     : null
 
   const typeColors: Record<string, string> = {
-    ancient: 'bg-purple-100 text-purple-700',
+    ancient: 'bg-[var(--pf-teal-100)] text-[var(--pf-teal-700)]',
     traditional: 'bg-blue-100 text-blue-700',
     modern: 'bg-green-100 text-green-700',
     specialist: 'bg-orange-100 text-orange-700',
@@ -61,9 +61,9 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
   } | null
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--pf-teal-50)]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-[var(--pf-white)]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-gray-500 mb-4">
@@ -104,17 +104,17 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mt-4">
             {typeInfo && (
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${typeColors[university.type!] || 'bg-gray-100 text-gray-700'}`}>
+              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${typeColors[university.type!] || 'bg-[var(--pf-grey-100)] text-[var(--pf-grey-900)]'}`}>
                 {typeInfo.label}
               </span>
             )}
             {university.russell_group && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-700">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[rgba(245,158,11,0.12)] text-[var(--pf-amber-500)]">
                 Russell Group
               </span>
             )}
             {university.founded_year && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--pf-grey-100)] text-[var(--pf-grey-900)]">
                 Est. {university.founded_year}
               </span>
             )}
@@ -139,13 +139,13 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
             {wideningAccessInfo && (wideningAccessInfo.programs || wideningAccessInfo.eligibility_criteria) && (
               <section>
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Widening Access</h2>
-                <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
+                <div className="bg-[var(--pf-teal-50)] border border-[var(--pf-teal-100)] rounded-xl p-6">
                   {wideningAccessInfo.programs && wideningAccessInfo.programs.length > 0 && (
                     <div className="mb-4">
-                      <h3 className="font-medium text-purple-900 mb-2">Access Programmes</h3>
+                      <h3 className="font-medium text-[var(--pf-teal-900)] mb-2">Access Programmes</h3>
                       <div className="flex flex-wrap gap-2">
                         {wideningAccessInfo.programs.map((program) => (
-                          <span key={program} className="px-3 py-1 bg-purple-100 text-purple-700 text-sm rounded-full">
+                          <span key={program} className="px-3 py-1 bg-[var(--pf-teal-100)] text-[var(--pf-teal-700)] text-sm rounded-full">
                             {program}
                           </span>
                         ))}
@@ -154,10 +154,10 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
                   )}
                   {wideningAccessInfo.eligibility_criteria && wideningAccessInfo.eligibility_criteria.length > 0 && (
                     <div>
-                      <h3 className="font-medium text-purple-900 mb-2">Eligibility Criteria</h3>
+                      <h3 className="font-medium text-[var(--pf-teal-900)] mb-2">Eligibility Criteria</h3>
                       <ul className="space-y-1">
                         {wideningAccessInfo.eligibility_criteria.map((criteria) => (
-                          <li key={criteria} className="text-purple-700 text-sm flex items-center gap-2">
+                          <li key={criteria} className="text-[var(--pf-teal-700)] text-sm flex items-center gap-2">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
@@ -204,7 +204,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="pf-card">
               <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-3">
                 {university.website && (
@@ -212,14 +212,14 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
                     href={university.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors text-center"
+                    className="pf-btn-primary w-full"
                   >
                     Visit Website
                   </a>
                 )}
                 <Link
                   href={`/courses?universityId=${university.id}`}
-                  className="block w-full py-2 px-4 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors text-center"
+                  className="pf-btn-secondary w-full"
                 >
                   Browse All Courses
                 </Link>
@@ -227,7 +227,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
             </div>
 
             {/* Key Facts */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="pf-card">
               <h3 className="font-semibold text-gray-900 mb-4">Key Facts</h3>
               <dl className="space-y-3">
                 {university.founded_year && (

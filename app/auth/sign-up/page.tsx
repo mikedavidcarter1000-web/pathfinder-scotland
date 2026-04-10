@@ -19,18 +19,10 @@ export default function SignUpPage() {
   const signUp = useSignUp()
 
   const validatePassword = (password: string) => {
-    if (password.length < 8) {
-      return 'Password must be at least 8 characters'
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'Password must contain at least one uppercase letter'
-    }
-    if (!/[a-z]/.test(password)) {
-      return 'Password must contain at least one lowercase letter'
-    }
-    if (!/[0-9]/.test(password)) {
-      return 'Password must contain at least one number'
-    }
+    if (password.length < 8) return 'Password must be at least 8 characters'
+    if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter'
+    if (!/[a-z]/.test(password)) return 'Password must contain at least one lowercase letter'
+    if (!/[0-9]/.test(password)) return 'Password must contain at least one number'
     return null
   }
 
@@ -38,20 +30,17 @@ export default function SignUpPage() {
     e.preventDefault()
     setValidationError('')
 
-    // Validate password
     const passwordError = validatePassword(password)
     if (passwordError) {
       setValidationError(passwordError)
       return
     }
 
-    // Check passwords match
     if (password !== confirmPassword) {
       setValidationError('Passwords do not match')
       return
     }
 
-    // Check terms accepted
     if (!acceptTerms) {
       setValidationError('Please accept the terms and conditions')
       return
@@ -79,28 +68,58 @@ export default function SignUpPage() {
 
   const passwordStrength = getPasswordStrength()
   const strengthLabels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong']
-  const strengthColors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-500', 'bg-green-500']
+  const strengthColors = [
+    'var(--pf-red-500)',
+    'var(--pf-amber-500)',
+    'var(--pf-amber-500)',
+    'var(--pf-teal-500)',
+    'var(--pf-green-500)',
+  ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ backgroundColor: 'var(--pf-teal-50)' }}
+    >
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 no-underline hover:no-underline"
+          >
+            <div
+              className="w-10 h-10 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: 'var(--pf-teal-700)' }}
+            >
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <span className="text-2xl font-bold text-gray-900">Pathfinder</span>
+            <span
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700,
+                fontSize: '1.5rem',
+                color: 'var(--pf-grey-900)',
+              }}
+            >
+              Pathfinder
+            </span>
           </Link>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div
+          className="pf-card-flat"
+          style={{
+            padding: '32px',
+            boxShadow: '0 10px 30px rgba(12, 74, 66, 0.08)',
+          }}
+        >
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
-            <p className="text-gray-600 mt-1">Start your university journey today</p>
+            <h1 style={{ marginBottom: '4px' }}>Create your account</h1>
+            <p style={{ color: 'var(--pf-grey-600)' }}>Start your university journey today.</p>
           </div>
 
           {/* Social Login */}
@@ -109,14 +128,23 @@ export default function SignUpPage() {
 
           {/* Error Message */}
           {(signUp.error || validationError) && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div
+              className="mb-4 rounded-lg"
+              style={{
+                padding: '12px',
+                backgroundColor: 'rgba(239,68,68,0.08)',
+                border: '1px solid rgba(239,68,68,0.25)',
+                color: 'var(--pf-red-500)',
+                fontSize: '0.875rem',
+              }}
+            >
               {validationError || signUp.error?.message || 'An error occurred'}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="pf-label">
                 Email address
               </label>
               <input
@@ -125,13 +153,13 @@ export default function SignUpPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                className="pf-input"
                 placeholder="you@example.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="pf-label">
                 Password
               </label>
               <div className="relative">
@@ -141,13 +169,16 @@ export default function SignUpPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pr-10"
+                  className="pf-input"
+                  style={{ paddingRight: '44px' }}
                   placeholder="Create a strong password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  style={{ color: 'var(--pf-grey-600)' }}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,21 +200,26 @@ export default function SignUpPage() {
                     {[...Array(5)].map((_, i) => (
                       <div
                         key={i}
-                        className={`h-1 flex-1 rounded-full ${
-                          i < passwordStrength ? strengthColors[passwordStrength - 1] : 'bg-gray-200'
-                        }`}
+                        className="h-1 flex-1 rounded-full"
+                        style={{
+                          backgroundColor:
+                            i < passwordStrength
+                              ? strengthColors[passwordStrength - 1]
+                              : 'var(--pf-grey-100)',
+                        }}
                       />
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500">
-                    Password strength: {passwordStrength > 0 ? strengthLabels[passwordStrength - 1] : 'Too short'}
+                  <p style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}>
+                    Password strength:{' '}
+                    {passwordStrength > 0 ? strengthLabels[passwordStrength - 1] : 'Too short'}
                   </p>
                 </div>
               )}
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="confirmPassword" className="pf-label">
                 Confirm password
               </label>
               <input
@@ -192,15 +228,23 @@ export default function SignUpPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                  confirmPassword && confirmPassword !== password
-                    ? 'border-red-300 bg-red-50'
-                    : 'border-gray-300'
-                }`}
+                className="pf-input"
+                style={{
+                  borderColor:
+                    confirmPassword && confirmPassword !== password
+                      ? 'var(--pf-red-500)'
+                      : undefined,
+                  backgroundColor:
+                    confirmPassword && confirmPassword !== password
+                      ? 'rgba(239,68,68,0.04)'
+                      : undefined,
+                }}
                 placeholder="Confirm your password"
               />
               {confirmPassword && confirmPassword !== password && (
-                <p className="mt-1 text-xs text-red-600">Passwords do not match</p>
+                <p style={{ marginTop: '4px', fontSize: '0.75rem', color: 'var(--pf-red-500)' }}>
+                  Passwords do not match
+                </p>
               )}
             </div>
 
@@ -210,25 +254,22 @@ export default function SignUpPage() {
                 type="checkbox"
                 checked={acceptTerms}
                 onChange={(e) => setAcceptTerms(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="mt-1 h-4 w-4 rounded"
+                style={{ accentColor: 'var(--pf-teal-700)' }}
               />
-              <label htmlFor="terms" className="text-sm text-gray-600">
+              <label htmlFor="terms" style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
                 I agree to the{' '}
-                <Link href="/terms" className="text-blue-600 hover:underline">
+                <Link href="/terms" style={{ color: 'var(--pf-teal-500)' }}>
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" className="text-blue-600 hover:underline">
+                <Link href="/privacy" style={{ color: 'var(--pf-teal-500)' }}>
                   Privacy Policy
                 </Link>
               </label>
             </div>
 
-            <button
-              type="submit"
-              disabled={signUp.isPending}
-              className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
+            <button type="submit" disabled={signUp.isPending} className="pf-btn-primary w-full">
               {signUp.isPending ? (
                 <>
                   <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
@@ -244,9 +285,16 @@ export default function SignUpPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600">
+            <p style={{ color: 'var(--pf-grey-600)' }}>
               Already have an account?{' '}
-              <Link href="/auth/sign-in" className="text-blue-600 hover:text-blue-700 font-medium">
+              <Link
+                href="/auth/sign-in"
+                style={{
+                  color: 'var(--pf-teal-700)',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                }}
+              >
                 Sign in
               </Link>
             </p>

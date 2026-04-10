@@ -330,16 +330,18 @@ export const SIMD_DESCRIPTIONS = {
   10: 'Least deprived 10%',
 } as const
 
-// Curricular area badge colours (matches 8 CfE curricular areas in curricular_areas table)
+// Curricular area badge colours -- matches the Pathfinder design skill file.
+// Uses a 10%-opacity background + full-colour text, implemented with tailwind
+// classes that point at the same hex values defined in globals.css custom props.
 export const CURRICULAR_AREA_COLOURS: Record<string, { bg: string; text: string; border: string; bar: string; dot: string }> = {
-  Languages:                     { bg: 'bg-rose-50',    text: 'text-rose-700',    border: 'border-rose-200',    bar: 'from-rose-400 to-rose-500',       dot: 'bg-rose-500' },
-  Mathematics:                   { bg: 'bg-blue-50',    text: 'text-blue-700',    border: 'border-blue-200',    bar: 'from-blue-500 to-blue-600',       dot: 'bg-blue-500' },
-  Sciences:                      { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', bar: 'from-emerald-500 to-emerald-600', dot: 'bg-emerald-500' },
-  'Social Studies':              { bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-200',   bar: 'from-amber-400 to-amber-500',     dot: 'bg-amber-500' },
-  'Expressive Arts':             { bg: 'bg-purple-50',  text: 'text-purple-700',  border: 'border-purple-200',  bar: 'from-purple-500 to-purple-600',   dot: 'bg-purple-500' },
-  Technologies:                  { bg: 'bg-cyan-50',    text: 'text-cyan-700',    border: 'border-cyan-200',    bar: 'from-cyan-500 to-cyan-600',       dot: 'bg-cyan-500' },
-  'Religious and Moral Education':{ bg: 'bg-indigo-50', text: 'text-indigo-700',  border: 'border-indigo-200',  bar: 'from-indigo-500 to-indigo-600',   dot: 'bg-indigo-500' },
-  'Health and Wellbeing':        { bg: 'bg-teal-50',    text: 'text-teal-700',    border: 'border-teal-200',    bar: 'from-teal-500 to-teal-600',       dot: 'bg-teal-500' },
+  Languages:                      { bg: 'bg-blue-50',    text: 'text-blue-700',    border: 'border-blue-100',    bar: 'from-blue-500 to-blue-600',       dot: 'bg-blue-500' },
+  Mathematics:                    { bg: 'bg-indigo-50',  text: 'text-indigo-700',  border: 'border-indigo-100',  bar: 'from-indigo-500 to-indigo-600',   dot: 'bg-indigo-500' },
+  Sciences:                       { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-100', bar: 'from-emerald-500 to-emerald-600', dot: 'bg-emerald-500' },
+  'Social Studies':               { bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-100',   bar: 'from-amber-400 to-amber-500',     dot: 'bg-amber-500' },
+  'Expressive Arts':              { bg: 'bg-violet-50',  text: 'text-violet-700',  border: 'border-violet-100',  bar: 'from-violet-500 to-violet-600',   dot: 'bg-violet-500' },
+  Technologies:                   { bg: 'bg-slate-50',   text: 'text-slate-700',   border: 'border-slate-200',   bar: 'from-slate-500 to-slate-600',     dot: 'bg-slate-500' },
+  'Religious and Moral Education':{ bg: 'bg-rose-50',    text: 'text-rose-700',    border: 'border-rose-100',    bar: 'from-rose-500 to-rose-600',       dot: 'bg-rose-500' },
+  'Health and Wellbeing':         { bg: 'bg-teal-50',    text: 'text-teal-700',    border: 'border-teal-100',    bar: 'from-teal-500 to-teal-600',       dot: 'bg-teal-500' },
 }
 
 export const DEFAULT_CURRICULAR_AREA_COLOUR = {

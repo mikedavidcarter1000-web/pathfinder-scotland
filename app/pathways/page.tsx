@@ -177,72 +177,101 @@ export default function PathwaysPage() {
   const limitReached = freeRequired > 0 && selectedFreeCount >= freeRequired
 
   return (
-    <div className="bg-gray-50">
+    <div style={{ backgroundColor: 'var(--pf-teal-50)' }}>
       {toast && (
         <div
           role="status"
           aria-live="polite"
-          className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full shadow-lg bg-gray-900 text-white text-sm font-medium animate-fade-in"
+          className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-fade-in"
+          style={{
+            padding: '10px 20px',
+            borderRadius: '9999px',
+            boxShadow: '0 8px 24px rgba(12, 74, 66, 0.25)',
+            backgroundColor: 'var(--pf-teal-900)',
+            color: '#fff',
+            fontSize: '0.875rem',
+            fontWeight: 500,
+          }}
         >
           {toast}
         </div>
       )}
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-3xl font-bold text-gray-900">Plan Your Subject Choices</h1>
+      <div style={{ backgroundColor: 'var(--pf-white)' }}>
+        <div className="pf-container" style={{ paddingTop: '40px', paddingBottom: '32px' }}>
+          <div className="flex items-start justify-between gap-4 mb-2">
+            <h1>Plan Your Subject Choices</h1>
             <button
               type="button"
               aria-label="Close"
               onClick={goBack}
-              className="text-gray-500 hover:text-gray-700"
+              style={{ color: 'var(--pf-grey-600)' }}
+              className="p-2 hover:opacity-80"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
-          <p className="text-gray-600">
+          <p style={{ color: 'var(--pf-grey-600)' }}>
             Explore how different subject combinations shape your qualifications and future career options.
           </p>
         </div>
       </div>
 
       {/* Stage Selector */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="pf-container" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
+        <div className="pf-card mb-6">
+          <h2 style={{ marginBottom: '16px' }}>
             Step 1 — What year are you going into?
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {YEAR_BUTTONS.map((btn) => (
-              <button
-                key={btn.value}
-                onClick={() => setYearGoingInto(btn.value)}
-                className={`p-4 rounded-xl border-2 text-left transition-all ${
-                  yearGoingInto === btn.value
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50/50'
-                }`}
-              >
-                <div
-                  className={`text-2xl font-bold ${
-                    yearGoingInto === btn.value ? 'text-blue-700' : 'text-gray-900'
-                  }`}
+            {YEAR_BUTTONS.map((btn) => {
+              const active = yearGoingInto === btn.value
+              return (
+                <button
+                  key={btn.value}
+                  onClick={() => setYearGoingInto(btn.value)}
+                  className="text-left transition-all"
+                  style={{
+                    padding: '16px',
+                    borderRadius: '8px',
+                    backgroundColor: active ? 'var(--pf-teal-50)' : 'var(--pf-white)',
+                    border: active ? '2px solid var(--pf-teal-700)' : '2px solid var(--pf-grey-300)',
+                    boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                  }}
                 >
-                  {btn.label}
-                </div>
-                <div className="text-xs text-gray-500 mt-1">{btn.subtitle}</div>
-              </button>
-            ))}
+                  <div
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 700,
+                      fontSize: '1.5rem',
+                      color: active ? 'var(--pf-teal-700)' : 'var(--pf-grey-900)',
+                    }}
+                  >
+                    {btn.label}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--pf-grey-600)',
+                      marginTop: '4px',
+                    }}
+                  >
+                    {btn.subtitle}
+                  </div>
+                </button>
+              )
+            })}
           </div>
         </div>
 
         {/* Loading state for pathway data */}
         {yearGoingInto && isLoading && (
-          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-            <div className="animate-pulse text-gray-500">Loading your pathway options...</div>
+          <div className="pf-card p-12 text-center">
+            <div className="animate-pulse" style={{ color: 'var(--pf-grey-600)' }}>
+              Loading your pathway options...
+            </div>
           </div>
         )}
 
@@ -252,7 +281,14 @@ export default function PathwaysPage() {
             {/* Left: picker + rules */}
             <div className="lg:col-span-2 space-y-6">
               {/* Sticky progress bar */}
-              <div className="sticky top-0 z-20 -mx-4 px-4 py-3 bg-gray-50/95 backdrop-blur border-b border-gray-200">
+              <div
+                className="sticky z-20 -mx-4 px-4 py-3 backdrop-blur"
+                style={{
+                  top: '64px',
+                  backgroundColor: 'rgba(240, 250, 248, 0.95)',
+                  borderBottom: '1px solid var(--pf-grey-300)',
+                }}
+              >
                 <ProgressHeader
                   selectedFreeCount={selectedFreeCount}
                   freeRequired={freeRequired}
@@ -275,13 +311,17 @@ export default function PathwaysPage() {
               {/* Curricular area picker */}
               <div className="space-y-4">
                 <div className="flex items-baseline justify-between gap-3">
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    Step 2 — Pick your subjects
-                  </h2>
+                  <h2>Step 2 — Pick your subjects</h2>
                 </div>
 
                 <div className="relative">
-                  <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
+                    style={{ color: 'var(--pf-grey-600)' }}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <input
@@ -289,14 +329,16 @@ export default function PathwaysPage() {
                     value={subjectSearch}
                     onChange={(e) => setSubjectSearch(e.target.value)}
                     placeholder="Search for a subject..."
-                    className="w-full pl-9 pr-9 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="pf-input"
+                    style={{ paddingLeft: '36px', paddingRight: '36px', fontSize: '0.875rem' }}
                   />
                   {subjectSearch && (
                     <button
                       type="button"
                       aria-label="Clear search"
                       onClick={() => setSubjectSearch('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 -translate-y-1/2"
+                      style={{ color: 'var(--pf-grey-600)' }}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -306,11 +348,25 @@ export default function PathwaysPage() {
                 </div>
 
                 {limitReached && (
-                  <div className="flex items-start gap-2 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-sm text-green-800">
-                    <svg className="w-5 h-5 flex-shrink-0 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div
+                    className="flex items-start gap-2 rounded-lg"
+                    style={{
+                      padding: '12px 16px',
+                      backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                      border: '1px solid rgba(16, 185, 129, 0.25)',
+                      color: 'var(--pf-green-500)',
+                      fontSize: '0.875rem',
+                    }}
+                  >
+                    <svg
+                      className="w-5 h-5 flex-shrink-0 mt-0.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span>
+                    <span style={{ color: 'var(--pf-grey-900)' }}>
                       You&apos;ve made all your choices. Deselect a subject to swap it.
                     </span>
                   </div>
@@ -331,8 +387,8 @@ export default function PathwaysPage() {
 
                   if (filteredGroups.length === 0) {
                     return (
-                      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-                        <p className="text-sm text-gray-500">
+                      <div className="pf-card p-8 text-center">
+                        <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
                           No subjects match &quot;{subjectSearch}&quot;. Try a different term.
                         </p>
                       </div>
@@ -349,31 +405,35 @@ export default function PathwaysPage() {
                   return (
                     <div
                       key={group.area.id}
-                      className="bg-white rounded-xl border border-gray-200 overflow-hidden"
+                      className="pf-card-flat"
+                      style={{ overflow: 'hidden' }}
                     >
                       <button
                         onClick={() => toggleArea(group.area.id)}
-                        className="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                        className="w-full flex items-center justify-between transition-colors"
+                        style={{ padding: '16px 20px' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
                         <div className="flex items-center gap-3">
-                          <span
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${areaColour.bg} ${areaColour.text}`}
-                          >
+                          <span className={`pf-area-badge ${areaColour.bg} ${areaColour.text}`}>
                             {group.area.name}
                           </span>
-                          <span className="text-sm text-gray-500">
+                          <span style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
                             {group.subjects.length} subjects
                             {areaSelectedCount > 0 && (
-                              <span className="ml-2 text-blue-600 font-medium">
+                              <span
+                                className="ml-2"
+                                style={{ color: 'var(--pf-teal-700)', fontWeight: 600 }}
+                              >
                                 · {areaSelectedCount} selected
                               </span>
                             )}
                           </span>
                         </div>
                         <svg
-                          className={`w-5 h-5 text-gray-400 transition-transform ${
-                            expanded ? 'rotate-180' : ''
-                          }`}
+                          className={`w-5 h-5 transition-transform ${expanded ? 'rotate-180' : ''}`}
+                          style={{ color: 'var(--pf-grey-600)' }}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -382,7 +442,8 @@ export default function PathwaysPage() {
                         </svg>
                       </button>
                       {expanded && (
-                        <div className="border-t border-gray-100 divide-y divide-gray-100">
+                        <div style={{ borderTop: '1px solid var(--pf-grey-100)' }} className="divide-y divide-[var(--pf-grey-100)]">
+
                           {group.subjects.map((subject) => {
                             const isSelected = selectedIds.has(subject.id)
                             const isCompulsory = compulsoryIds.has(subject.id)
@@ -458,12 +519,19 @@ function ProgressHeader({
     <div>
       <div className="flex items-baseline justify-between mb-2">
         <div className="flex items-baseline gap-2">
-          <span className={`text-2xl font-bold ${complete ? 'text-green-600' : 'text-gray-900'}`}>
+          <span
+            className="pf-data-number"
+            style={{
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              color: complete ? 'var(--pf-green-500)' : 'var(--pf-grey-900)',
+            }}
+          >
             {selectedFreeCount} of {freeRequired}
           </span>
-          <span className="text-sm text-gray-500">choices made</span>
+          <span style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>choices made</span>
           {complete && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+            <span className="pf-badge-green inline-flex items-center gap-1">
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
               </svg>
@@ -471,16 +539,20 @@ function ProgressHeader({
             </span>
           )}
         </div>
-        <span className="text-xs text-gray-500">
+        <span style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}>
           + {compulsoryCount} compulsory = {totalRequired} total
         </span>
       </div>
-      <div className="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+      <div
+        className="rounded-full overflow-hidden"
+        style={{ height: '10px', backgroundColor: 'var(--pf-grey-100)' }}
+      >
         <div
-          className={`h-full transition-all duration-300 ${
-            complete ? 'bg-green-500' : 'bg-blue-600'
-          }`}
-          style={{ width: `${percent}%` }}
+          className="h-full transition-all duration-300"
+          style={{
+            width: `${percent}%`,
+            backgroundColor: complete ? 'var(--pf-green-500)' : 'var(--pf-teal-500)',
+          }}
         />
       </div>
     </div>
@@ -510,8 +582,10 @@ function RulesPanel({
 }) {
   if (!rule) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <p className="text-gray-500 text-sm">No choice rules found for this transition.</p>
+      <div className="pf-card">
+        <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.875rem' }}>
+          No choice rules found for this transition.
+        </p>
       </div>
     )
   }
@@ -519,7 +593,6 @@ function RulesPanel({
   const nonExamined = rule.non_examined_core || []
   const specialRules = rule.special_rules || []
 
-  // Build the student-friendly headline sentence
   const headline = compulsoryNames.length > 0
     ? `Pick ${freeRequired} subjects — ${compulsoryNames.join(' and ')} ${compulsoryNames.length === 1 ? 'is' : 'are'} already sorted for you.`
     : `Pick ${freeRequired} subjects.`
@@ -529,34 +602,42 @@ function RulesPanel({
     : null
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5">
+    <div
+      className="rounded-lg"
+      style={{
+        backgroundColor: 'var(--pf-teal-50)',
+        border: '1px solid var(--pf-teal-100)',
+        padding: '20px',
+      }}
+    >
       <div className="flex items-baseline justify-between mb-2">
-        <h2 className="text-base font-semibold text-gray-900">
-          Going into {yearLabel}
-        </h2>
+        <h3 style={{ margin: 0, fontSize: '1rem' }}>Going into {yearLabel}</h3>
       </div>
 
-      {/* Friendly headline */}
-      <p className="text-gray-700 leading-relaxed">
-        {headline}
-      </p>
+      <p style={{ color: 'var(--pf-grey-900)', lineHeight: 1.6 }}>{headline}</p>
       {reserveText && (
-        <p className="text-gray-700 leading-relaxed mt-1">{reserveText}</p>
+        <p style={{ color: 'var(--pf-grey-900)', lineHeight: 1.6, marginTop: '4px' }}>
+          {reserveText}
+        </p>
       )}
 
-      {/* Non-examined core as subtle note */}
       {nonExamined.length > 0 && (
-        <p className="text-xs text-gray-500 mt-3">
+        <p style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)', marginTop: '12px' }}>
           You&apos;ll also have {nonExamined.join(', ')} timetabled — these don&apos;t count toward your choices.
         </p>
       )}
 
-      {/* Collapsible breadth tip */}
       {rule.breadth_requirements && (
         <div className="mt-4">
           <button
             onClick={onToggleBreadthTip}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700"
+            className="inline-flex items-center gap-1.5"
+            style={{
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              color: 'var(--pf-teal-700)',
+              fontFamily: "'Space Grotesk', sans-serif",
+            }}
           >
             <svg
               className={`w-4 h-4 transition-transform ${showBreadthTip ? 'rotate-90' : ''}`}
@@ -569,23 +650,43 @@ function RulesPanel({
             Tip for picking a balanced mix
           </button>
           {showBreadthTip && (
-            <p className="mt-2 p-3 bg-blue-50 text-sm text-blue-900 rounded-lg border border-blue-100">
+            <p
+              className="mt-2 rounded-lg"
+              style={{
+                padding: '12px',
+                backgroundColor: 'var(--pf-teal-100)',
+                color: 'var(--pf-teal-900)',
+                fontSize: '0.875rem',
+              }}
+            >
               {rule.breadth_requirements}
             </p>
           )}
         </div>
       )}
 
-      {/* Special rules as compact info badges */}
       {specialRules.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-2">
           {specialRules.map((srule, idx) => (
             <span
               key={idx}
-              className="inline-flex items-start gap-1.5 max-w-full px-2.5 py-1 rounded-lg text-xs bg-amber-50 border border-amber-200 text-amber-900"
+              className="inline-flex items-start gap-1.5 max-w-full rounded-lg"
+              style={{
+                padding: '6px 10px',
+                fontSize: '0.75rem',
+                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
+                color: 'var(--pf-grey-900)',
+              }}
               title={srule}
             >
-              <svg className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-3.5 h-3.5 flex-shrink-0 mt-0.5"
+                style={{ color: 'var(--pf-amber-500)' }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span className="leading-snug">{srule}</span>
@@ -624,11 +725,22 @@ function SubjectRow({
       : subject.description
     : null
 
+  const rowBg = selected
+    ? 'var(--pf-teal-100)'
+    : disabled
+    ? 'var(--pf-grey-100)'
+    : 'transparent'
+
   return (
     <div
-      className={`transition-colors ${
-        selected ? 'bg-blue-50' : disabled ? 'bg-gray-50/60' : 'hover:bg-gray-50'
-      } ${shaken ? 'animate-shake' : ''}`}
+      className={`transition-colors ${shaken ? 'animate-shake' : ''}`}
+      style={{ backgroundColor: rowBg }}
+      onMouseEnter={(e) => {
+        if (!selected && !disabled) e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = rowBg
+      }}
     >
       <button
         type="button"
@@ -636,16 +748,22 @@ function SubjectRow({
         disabled={disabled}
         aria-pressed={selected}
         title={compulsory ? `${subject.name} is compulsory and included automatically.` : undefined}
-        className={`w-full text-left px-5 py-3 flex items-start gap-3 ${
-          disabled ? 'cursor-not-allowed opacity-50' : compulsory ? 'cursor-help' : 'cursor-pointer'
+        className={`w-full text-left flex items-start gap-3 ${
+          disabled ? 'cursor-not-allowed' : compulsory ? 'cursor-help' : 'cursor-pointer'
         }`}
+        style={{
+          padding: '12px 20px',
+          opacity: disabled ? 0.5 : 1,
+        }}
       >
         <span
-          className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 flex-shrink-0 ${
-            selected
-              ? 'bg-blue-600 border-blue-600 text-white'
-              : 'border-gray-300'
-          } ${compulsory ? 'opacity-80' : ''}`}
+          className="mt-0.5 w-5 h-5 rounded flex items-center justify-center flex-shrink-0"
+          style={{
+            backgroundColor: selected ? 'var(--pf-teal-700)' : 'transparent',
+            border: selected ? '2px solid var(--pf-teal-700)' : '2px solid var(--pf-grey-300)',
+            color: '#fff',
+            opacity: compulsory ? 0.8 : 1,
+          }}
           aria-hidden="true"
         >
           {selected && (
@@ -662,22 +780,30 @@ function SubjectRow({
               aria-hidden="true"
               title={subject.curricular_area?.name ?? ''}
             />
-            <span className="text-sm font-medium text-gray-900">{subject.name}</span>
+            <span style={{ fontSize: '0.875rem', fontWeight: 500, color: disabled ? 'var(--pf-grey-600)' : 'var(--pf-grey-900)' }}>
+              {subject.name}
+            </span>
             {compulsory && (
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide bg-gray-200 text-gray-700">
+              <span className="pf-badge-grey" style={{ fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Compulsory
               </span>
             )}
             <Link
               href={`/subjects/${subject.id}`}
               onClick={(e) => e.stopPropagation()}
-              className="text-xs text-blue-600 hover:text-blue-700 ml-auto"
+              className="ml-auto"
+              style={{ fontSize: '0.75rem', color: 'var(--pf-teal-700)', fontWeight: 600 }}
             >
               Details →
             </Link>
           </div>
           {truncatedDescription && (
-            <p className="text-xs text-gray-500 mt-1 ml-4 line-clamp-1">{truncatedDescription}</p>
+            <p
+              className="line-clamp-1 mt-1 ml-4"
+              style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
+            >
+              {truncatedDescription}
+            </p>
           )}
         </div>
       </button>
@@ -718,8 +844,8 @@ function AcademyPicker({
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Step 3 — Choose your Academy</h2>
-        <p className="text-sm text-gray-600 mt-1">
+        <h2>Step 3 — Choose your Academy</h2>
+        <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', marginTop: '4px' }}>
           Rank your top 3 Academy choices. Not all options run every year, so having reserves helps.
         </p>
       </div>
@@ -731,36 +857,70 @@ function AcademyPicker({
           return (
             <div
               key={academy.id}
-              className={`rounded-xl border p-5 transition-all ${
-                ranked
-                  ? 'border-purple-400 bg-purple-50/50 shadow-sm'
-                  : 'border-gray-200 bg-white hover:border-purple-200'
-              }`}
+              className="rounded-lg transition-all"
+              style={{
+                padding: '20px',
+                backgroundColor: ranked ? 'var(--pf-teal-50)' : 'var(--pf-white)',
+                border: ranked ? '2px solid var(--pf-teal-500)' : '1px solid var(--pf-grey-300)',
+                boxShadow: ranked ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+              }}
             >
               <div className="flex items-start justify-between gap-3 mb-2">
-                <h3 className="font-semibold text-gray-900">{academy.name}</h3>
+                <h3 style={{ margin: 0, fontSize: '1rem' }}>{academy.name}</h3>
                 {ranked && (
-                  <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-purple-600 text-white text-sm font-bold">
+                  <span
+                    className="inline-flex items-center justify-center rounded-full"
+                    style={{
+                      width: '28px',
+                      height: '28px',
+                      backgroundColor: 'var(--pf-teal-700)',
+                      color: '#fff',
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontSize: '0.875rem',
+                      fontWeight: 700,
+                    }}
+                  >
                     {rank + 1}
                   </span>
                 )}
               </div>
 
               {academy.description && (
-                <p className="text-sm text-gray-600 mb-3 line-clamp-3">{academy.description}</p>
+                <p
+                  className="line-clamp-3 mb-3"
+                  style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}
+                >
+                  {academy.description}
+                </p>
               )}
 
               {academy.why_choose && (
-                <div className="mb-3 pt-3 border-t border-gray-100">
-                  <p className="text-xs font-semibold text-purple-700 uppercase tracking-wide mb-1">
+                <div className="mb-3 pt-3" style={{ borderTop: '1px solid var(--pf-grey-100)' }}>
+                  <p
+                    style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      color: 'var(--pf-teal-700)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      marginBottom: '4px',
+                    }}
+                  >
                     Why choose this
                   </p>
-                  <p className="text-sm text-gray-700 line-clamp-3">{academy.why_choose}</p>
+                  <p
+                    className="line-clamp-3"
+                    style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)' }}
+                  >
+                    {academy.why_choose}
+                  </p>
                 </div>
               )}
 
               <div className="flex items-center gap-2 pt-2">
-                <label className="text-xs font-medium text-gray-600">Rank:</label>
+                <label style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--pf-grey-600)' }}>
+                  Rank:
+                </label>
                 <select
                   value={ranked ? rank + 1 : ''}
                   onChange={(e) => {
@@ -768,7 +928,8 @@ function AcademyPicker({
                     if (!v) clearRank(academy.id)
                     else setRank(academy.id, parseInt(v, 10) - 1)
                   }}
-                  className="text-sm px-2 py-1 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="pf-input"
+                  style={{ width: 'auto', padding: '6px 10px', fontSize: '0.875rem' }}
                 >
                   <option value="">—</option>
                   <option value="1">1st choice</option>
@@ -779,7 +940,8 @@ function AcademyPicker({
                   <button
                     type="button"
                     onClick={() => clearRank(academy.id)}
-                    className="text-xs text-gray-500 hover:text-red-600 ml-auto"
+                    className="ml-auto"
+                    style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
                   >
                     Clear
                   </button>
@@ -791,16 +953,32 @@ function AcademyPicker({
       </div>
 
       {rankings.some((r) => r !== null) && (
-        <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
-          <p className="text-sm font-medium text-purple-900 mb-1">Your ranking</p>
-          <ol className="text-sm text-purple-800 space-y-0.5">
+        <div
+          className="rounded-lg"
+          style={{
+            padding: '16px',
+            backgroundColor: 'var(--pf-teal-50)',
+            border: '1px solid var(--pf-teal-100)',
+          }}
+        >
+          <p
+            style={{
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              color: 'var(--pf-teal-900)',
+              marginBottom: '4px',
+            }}
+          >
+            Your ranking
+          </p>
+          <ol style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)' }} className="space-y-0.5">
             {rankings.map((id, idx) => {
               if (!id) return null
               const academy = academies.find((a) => a.id === id)
               if (!academy) return null
               return (
                 <li key={id}>
-                  <span className="font-semibold">{idx + 1}.</span> {academy.name}
+                  <span style={{ fontWeight: 600 }}>{idx + 1}.</span> {academy.name}
                 </li>
               )
             })}
@@ -885,27 +1063,58 @@ function PathwayPreview({
 
   if (selectedSubjects.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="pf-card text-center">
+        <div
+          className="rounded-full flex items-center justify-center mx-auto mb-3"
+          style={{
+            width: '48px',
+            height: '48px',
+            backgroundColor: 'var(--pf-teal-100)',
+          }}
+        >
+          <svg
+            className="w-6 h-6"
+            style={{ color: 'var(--pf-teal-700)' }}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h3 className="font-semibold text-gray-900 mb-1">Your pathway preview</h3>
-        <p className="text-sm text-gray-500">
+        <h3 style={{ marginBottom: '4px' }}>Your pathway preview</h3>
+        <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
           Select subjects to see where they lead, which university courses open up, and which career sectors you&apos;d cover.
         </p>
       </div>
     )
   }
 
+  const sectionTitleStyle: React.CSSProperties = {
+    fontSize: '0.75rem',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    color: 'var(--pf-grey-600)',
+    fontWeight: 600,
+    marginBottom: '12px',
+  }
+
   return (
     <div className="space-y-4">
       {/* Selected summary */}
-      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+      <div
+        className="rounded-lg"
+        style={{
+          padding: '16px',
+          backgroundColor: 'var(--pf-teal-100)',
+        }}
+      >
         <div className="flex items-baseline justify-between mb-1">
-          <h3 className="font-semibold text-blue-900">Your selection</h3>
-          <span className="text-sm text-blue-700">
+          <h3 style={{ margin: 0, fontSize: '1rem', color: 'var(--pf-teal-900)' }}>Your selection</h3>
+          <span
+            className="pf-data-number"
+            style={{ fontSize: '0.875rem', color: 'var(--pf-teal-700)', fontWeight: 600 }}
+          >
             {selectedSubjects.length} / {totalRequired}
           </span>
         </div>
@@ -913,7 +1122,15 @@ function PathwayPreview({
           {selectedSubjects.map((s) => (
             <span
               key={s.id}
-              className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white border border-blue-200 text-blue-800"
+              className="inline-flex items-center"
+              style={{
+                padding: '4px 10px',
+                borderRadius: '9999px',
+                fontSize: '0.75rem',
+                fontWeight: 500,
+                backgroundColor: 'var(--pf-white)',
+                color: 'var(--pf-teal-700)',
+              }}
             >
               {s.name}
             </span>
@@ -922,10 +1139,8 @@ function PathwayPreview({
       </div>
 
       {/* Where these subjects lead */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="font-semibold text-gray-900 mb-3 text-sm uppercase tracking-wide">
-          Where these subjects lead
-        </h3>
+      <div className="pf-card">
+        <h3 style={sectionTitleStyle}>Where these subjects lead</h3>
         <ul className="space-y-2">
           {selectedSubjects.map((s) => {
             const nextLevel = s.is_available_adv_higher
@@ -936,16 +1151,22 @@ function PathwayPreview({
               ? QUALIFICATION_LEVEL_LABELS.n5
               : null
             return (
-              <li key={s.id} className="flex items-start gap-2 text-sm">
-                <svg className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <li key={s.id} className="flex items-start gap-2" style={{ fontSize: '0.875rem' }}>
+                <svg
+                  className="w-4 h-4 mt-0.5 flex-shrink-0"
+                  style={{ color: 'var(--pf-teal-500)' }}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
                 <span>
-                  <span className="font-medium text-gray-900">{s.name}</span>
+                  <span style={{ fontWeight: 500, color: 'var(--pf-grey-900)' }}>{s.name}</span>
                   {nextLevel ? (
-                    <span className="text-gray-600"> → {nextLevel}</span>
+                    <span style={{ color: 'var(--pf-grey-600)' }}> → {nextLevel}</span>
                   ) : (
-                    <span className="text-gray-500"> (elective)</span>
+                    <span style={{ color: 'var(--pf-grey-600)' }}> (elective)</span>
                   )}
                 </span>
               </li>
@@ -955,33 +1176,52 @@ function PathwayPreview({
       </div>
 
       {/* Matching university courses */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="font-semibold text-gray-900 mb-3 text-sm uppercase tracking-wide">
-          University courses you could apply for
-        </h3>
+      <div className="pf-card">
+        <h3 style={sectionTitleStyle}>University courses you could apply for</h3>
         {matchingCourses === undefined ? (
-          <p className="text-sm text-gray-500">Loading...</p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>Loading...</p>
         ) : matchingCourses.length === 0 ? (
-          <p className="text-sm text-gray-500">
+          <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
             No courses in our database list these subjects as explicit requirements yet.
           </p>
         ) : (
-          <ul className="space-y-2 max-h-56 overflow-y-auto">
+          <ul className="space-y-2 max-h-56 overflow-y-auto scrollbar-thin">
             {matchingCourses.slice(0, 10).map((c) => (
               <li key={c.id}>
                 <Link
                   href={`/courses/${c.id}`}
-                  className="block text-sm hover:bg-gray-50 rounded-lg p-2 -mx-2 transition-colors"
+                  className="block rounded-lg no-underline hover:no-underline"
+                  style={{
+                    padding: '8px 8px',
+                    margin: '0 -8px',
+                    transition: 'background-color 0.15s',
+                    fontSize: '0.875rem',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
-                  <div className="font-medium text-gray-900 line-clamp-1">{c.name}</div>
+                  <div
+                    className="line-clamp-1"
+                    style={{ fontWeight: 500, color: 'var(--pf-grey-900)' }}
+                  >
+                    {c.name}
+                  </div>
                   {c.university && (
-                    <div className="text-xs text-gray-500 line-clamp-1">{c.university.name}</div>
+                    <div
+                      className="line-clamp-1"
+                      style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
+                    >
+                      {c.university.name}
+                    </div>
                   )}
                 </Link>
               </li>
             ))}
             {matchingCourses.length > 10 && (
-              <li className="text-xs text-gray-500 pt-1 text-center">
+              <li
+                className="text-center pt-1"
+                style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
+              >
                 and {matchingCourses.length - 10} more...
               </li>
             )}
@@ -990,26 +1230,21 @@ function PathwayPreview({
       </div>
 
       {/* Career sectors covered */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="pf-card">
         <div className="flex items-baseline justify-between mb-3">
-          <h3 className="font-semibold text-gray-900 text-sm uppercase tracking-wide">
-            Career sectors covered
-          </h3>
+          <h3 style={{ ...sectionTitleStyle, marginBottom: 0 }}>Career sectors covered</h3>
           {totalSectors > 0 && (
-            <span className="text-xs text-gray-500">
+            <span style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}>
               {uniqueSectors.length} / {totalSectors}
             </span>
           )}
         </div>
         {uniqueSectors.length === 0 ? (
-          <p className="text-sm text-gray-500">Loading...</p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>Loading...</p>
         ) : (
           <div className="flex flex-wrap gap-1.5">
             {uniqueSectors.map((sec) => (
-              <span
-                key={sec.id}
-                className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100"
-              >
+              <span key={sec.id} className="pf-badge-green">
                 {sec.name}
               </span>
             ))}
@@ -1017,7 +1252,10 @@ function PathwayPreview({
         )}
       </div>
 
-      <p className="text-xs text-gray-500 text-center">
+      <p
+        className="text-center"
+        style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
+      >
         This tool is for exploration only — your actual subject choices are recorded through the dashboard.
       </p>
     </div>

@@ -121,51 +121,34 @@ export default function OnboardingPage() {
     }
   }
 
-  // Loading state
   if (authLoading || studentLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--pf-teal-50)' }}
+      >
         <div className="text-center">
-          <svg className="animate-spin w-8 h-8 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
+          <svg
+            className="animate-spin w-8 h-8 mx-auto mb-4"
+            style={{ color: 'var(--pf-teal-700)' }}
+            fill="none"
+            viewBox="0 0 24 24"
+          >
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
-          <p className="text-gray-600">Loading...</p>
+          <p style={{ color: 'var(--pf-grey-600)' }}>Loading...</p>
         </div>
       </div>
     )
   }
 
-  // Not authenticated
-  if (!user) {
-    return null
-  }
-
-  // Already has profile
-  if (student) {
-    return null
-  }
+  if (!user) return null
+  if (student) return null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-3xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <span className="text-xl font-bold text-gray-900">Pathfinder</span>
-            </Link>
-            <span className="text-sm text-gray-500">Complete your profile</span>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-3xl mx-auto px-4 py-8">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+      <main className="max-w-3xl mx-auto px-4" style={{ paddingTop: '40px', paddingBottom: '64px' }}>
         {/* Desktop Step Indicator */}
         <div className="hidden sm:block mb-8">
           <StepIndicator
@@ -185,7 +168,13 @@ export default function OnboardingPage() {
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+        <div
+          className="pf-card-flat"
+          style={{
+            padding: '28px',
+            boxShadow: '0 10px 30px rgba(12, 74, 66, 0.08)',
+          }}
+        >
           {currentStep === 1 && (
             <BasicInfoStep
               data={basicInfo}
@@ -215,9 +204,17 @@ export default function OnboardingPage() {
           {currentStep === 4 && (
             <>
               {error && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-                  <p className="font-medium">Error</p>
-                  <p className="text-sm">{error}</p>
+                <div
+                  className="mb-4 rounded-lg"
+                  style={{
+                    padding: '16px',
+                    backgroundColor: 'rgba(239,68,68,0.08)',
+                    border: '1px solid rgba(239,68,68,0.25)',
+                    color: 'var(--pf-red-500)',
+                  }}
+                >
+                  <p style={{ fontWeight: 600 }}>Error</p>
+                  <p style={{ fontSize: '0.875rem' }}>{error}</p>
                 </div>
               )}
               <GradesStep
@@ -233,9 +230,9 @@ export default function OnboardingPage() {
 
         {/* Help Link */}
         <div className="text-center mt-6">
-          <p className="text-sm text-gray-500">
+          <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
             Need help?{' '}
-            <Link href="/help" className="text-blue-600 hover:text-blue-700">
+            <Link href="/help" style={{ color: 'var(--pf-teal-500)' }}>
               Contact support
             </Link>
           </p>

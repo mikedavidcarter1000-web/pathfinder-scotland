@@ -19,12 +19,12 @@ export function SavedCoursesSection() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="pf-card">
         <div className="animate-pulse">
-          <div className="h-6 w-32 bg-gray-200 rounded mb-4" />
+          <div className="h-6 w-32 rounded mb-4" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-20 bg-gray-100 rounded-lg" />
+              <div key={i} className="h-20 rounded-lg" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
             ))}
           </div>
         </div>
@@ -71,26 +71,52 @@ export function SavedCoursesSection() {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
+    <div className="pf-card">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Saved Courses</h2>
+        <h2 style={{ margin: 0, fontSize: '1.125rem' }}>Saved Courses</h2>
         <Link
           href="/courses"
-          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+          style={{
+            fontSize: '0.875rem',
+            color: 'var(--pf-teal-700)',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+          }}
         >
           Browse courses
         </Link>
       </div>
 
       {!savedCourses || savedCourses.length === 0 ? (
-        <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-          <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div
+          className="text-center rounded-lg"
+          style={{
+            padding: '32px 16px',
+            backgroundColor: 'var(--pf-teal-50)',
+            border: '1px dashed var(--pf-teal-500)',
+          }}
+        >
+          <svg
+            className="w-8 h-8 mx-auto mb-2"
+            style={{ color: 'var(--pf-teal-500)' }}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>
-          <p className="text-gray-500 text-sm">No courses saved yet</p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+            No courses saved yet
+          </p>
           <Link
             href="/courses"
-            className="mt-2 inline-block text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="mt-2 inline-block"
+            style={{
+              fontSize: '0.875rem',
+              color: 'var(--pf-teal-700)',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+            }}
           >
             Start exploring courses
           </Link>
@@ -107,22 +133,32 @@ export function SavedCoursesSection() {
             return (
               <div
                 key={savedCourse.id}
-                className="group flex items-center gap-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="group flex items-center gap-4 rounded-lg transition-colors"
+                style={{ padding: '12px', backgroundColor: 'var(--pf-teal-50)' }}
               >
-                <Link href={`/courses/${course.id}`} className="flex-1 min-w-0">
+                <Link href={`/courses/${course.id}`} className="flex-1 min-w-0 no-underline hover:no-underline">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <h3 className="font-medium text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                      <h3
+                        className="truncate"
+                        style={{ fontSize: '0.9375rem', color: 'var(--pf-grey-900)', margin: 0 }}
+                      >
                         {course.name}
                       </h3>
-                      <p className="text-sm text-gray-500 truncate">
+                      <p
+                        className="truncate"
+                        style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}
+                      >
                         {course.university?.name}
                       </p>
                     </div>
                     {eligibility && <EligibilityBadge status={eligibility} size="sm" />}
                   </div>
                   {entryReqs?.highers && (
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p
+                      className="mt-1"
+                      style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
+                    >
                       Requires: {entryReqs.highers}
                     </p>
                   )}
@@ -130,7 +166,16 @@ export function SavedCoursesSection() {
                 <button
                   onClick={() => handleRemove(course.id)}
                   disabled={removeCourse.isPending}
-                  className="flex-shrink-0 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded opacity-0 group-hover:opacity-100 transition-all"
+                  className="flex-shrink-0 p-1.5 rounded transition-all opacity-0 group-hover:opacity-100"
+                  style={{ color: 'var(--pf-grey-600)' }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = 'var(--pf-red-500)'
+                    e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.08)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = 'var(--pf-grey-600)'
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                  }}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -143,7 +188,13 @@ export function SavedCoursesSection() {
           {savedCourses.length > 5 && (
             <Link
               href="/courses"
-              className="block text-center text-sm text-blue-600 hover:text-blue-700 font-medium py-2"
+              className="block text-center py-2"
+              style={{
+                fontSize: '0.875rem',
+                color: 'var(--pf-teal-700)',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+              }}
             >
               View all {savedCourses.length} saved courses
             </Link>
@@ -153,16 +204,22 @@ export function SavedCoursesSection() {
 
       {/* UCAS Reminder */}
       {savedCourses && savedCourses.length > 0 && savedCourses.length < 5 && (
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-center gap-2 text-blue-700">
+        <div
+          className="mt-4 rounded-lg"
+          style={{
+            padding: '12px',
+            backgroundColor: 'var(--pf-teal-100)',
+          }}
+        >
+          <div className="flex items-center gap-2" style={{ color: 'var(--pf-teal-700)' }}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-sm font-medium">
+            <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>
               {5 - savedCourses.length} more {savedCourses.length === 4 ? 'spot' : 'spots'} available
             </span>
           </div>
-          <p className="text-xs text-blue-600 mt-1">
+          <p style={{ fontSize: '0.75rem', color: 'var(--pf-teal-900)', marginTop: '4px' }}>
             UCAS allows up to 5 course choices on your application.
           </p>
         </div>

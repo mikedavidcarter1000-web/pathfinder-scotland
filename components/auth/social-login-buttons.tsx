@@ -6,12 +6,10 @@ interface SocialLoginButtonsProps {
   redirectTo?: string
 }
 
-const providers: { id: OAuthProvider; name: string; icon: JSX.Element; bgColor: string; textColor: string }[] = [
+const providers: { id: OAuthProvider; name: string; icon: JSX.Element }[] = [
   {
     id: 'google',
     name: 'Google',
-    bgColor: 'bg-white hover:bg-gray-50 border border-gray-300',
-    textColor: 'text-gray-700',
     icon: (
       <svg className="w-5 h-5" viewBox="0 0 24 24">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -24,8 +22,6 @@ const providers: { id: OAuthProvider; name: string; icon: JSX.Element; bgColor: 
   {
     id: 'apple',
     name: 'Apple',
-    bgColor: 'bg-black hover:bg-gray-900',
-    textColor: 'text-white',
     icon: (
       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
         <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
@@ -35,8 +31,6 @@ const providers: { id: OAuthProvider; name: string; icon: JSX.Element; bgColor: 
   {
     id: 'github',
     name: 'GitHub',
-    bgColor: 'bg-gray-900 hover:bg-gray-800',
-    textColor: 'text-white',
     icon: (
       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
         <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z" />
@@ -46,8 +40,6 @@ const providers: { id: OAuthProvider; name: string; icon: JSX.Element; bgColor: 
   {
     id: 'twitter',
     name: 'X',
-    bgColor: 'bg-black hover:bg-gray-900',
-    textColor: 'text-white',
     icon: (
       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -71,7 +63,19 @@ export function SocialLoginButtons({ redirectTo }: SocialLoginButtonsProps) {
           type="button"
           onClick={() => handleSocialLogin(provider.id)}
           disabled={oauthSignIn.isPending}
-          className={`w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 ${provider.bgColor} ${provider.textColor}`}
+          className="w-full flex items-center justify-center gap-3 transition-colors disabled:opacity-50"
+          style={{
+            padding: '10px 16px',
+            borderRadius: '8px',
+            border: '1px solid var(--pf-grey-300)',
+            backgroundColor: 'var(--pf-white)',
+            color: 'var(--pf-grey-900)',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+            fontSize: '0.9375rem',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-white)')}
         >
           {provider.icon}
           <span>Continue with {provider.name}</span>
@@ -85,10 +89,18 @@ export function SocialLoginDivider() {
   return (
     <div className="relative my-6">
       <div className="absolute inset-0 flex items-center">
-        <div className="w-full border-t border-gray-300" />
+        <div className="w-full" style={{ borderTop: '1px solid var(--pf-grey-300)' }} />
       </div>
-      <div className="relative flex justify-center text-sm">
-        <span className="px-4 bg-white text-gray-500">or continue with email</span>
+      <div className="relative flex justify-center" style={{ fontSize: '0.875rem' }}>
+        <span
+          style={{
+            padding: '0 16px',
+            backgroundColor: 'var(--pf-white)',
+            color: 'var(--pf-grey-600)',
+          }}
+        >
+          or continue with email
+        </span>
       </div>
     </div>
   )

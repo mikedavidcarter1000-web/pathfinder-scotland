@@ -14,7 +14,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[var(--pf-teal-50)]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="animate-pulse space-y-6">
             <div className="h-8 bg-gray-200 rounded w-1/3" />
@@ -28,11 +28,11 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
 
   if (error || !course) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--pf-teal-50)] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Course not found</h1>
           <p className="text-gray-600 mb-4">The course you're looking for doesn't exist.</p>
-          <Link href="/courses" className="text-blue-600 hover:text-blue-700 font-medium">
+          <Link href="/courses" className="text-[var(--pf-teal-700)] hover:text-[var(--pf-teal-900)] font-medium">
             Browse all courses
           </Link>
         </div>
@@ -66,9 +66,9 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
     : null
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--pf-teal-50)]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-[var(--pf-white)]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-gray-500 mb-4">
@@ -110,22 +110,22 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mt-4">
             {degreeInfo && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--pf-teal-100)] text-[var(--pf-teal-700)]">
                 {degreeInfo.label}
               </span>
             )}
             {course.subject_area && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--pf-teal-100)] text-[var(--pf-teal-700)]">
                 {course.subject_area}
               </span>
             )}
             {course.ucas_code && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--pf-grey-100)] text-[var(--pf-grey-900)]">
                 UCAS: {course.ucas_code}
               </span>
             )}
             {course.duration_years && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--pf-grey-100)] text-[var(--pf-grey-900)]">
                 {course.duration_years} years
               </span>
             )}
@@ -149,7 +149,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
             {/* Entry Requirements */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Entry Requirements</h2>
-              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="pf-card-flat overflow-hidden">
                 {entryRequirements ? (
                   <div className="divide-y divide-gray-100">
                     {entryRequirements.highers && (
@@ -175,7 +175,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
                         <span className="text-gray-600 block mb-2">Required Subjects</span>
                         <div className="flex flex-wrap gap-2">
                           {entryRequirements.required_subjects.map((subject) => (
-                            <span key={subject} className="px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded">
+                            <span key={subject} className="px-2 py-1 bg-[var(--pf-grey-100)] text-[var(--pf-grey-900)] text-sm rounded">
                               {subject}
                             </span>
                           ))}
@@ -193,8 +193,8 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
             {wideningAccess && (wideningAccess.simd20_offer || wideningAccess.simd40_offer || wideningAccess.care_experienced_offer) && (
               <section>
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Widening Access Offers</h2>
-                <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
-                  <p className="text-purple-700 text-sm mb-4">
+                <div className="bg-[var(--pf-teal-50)] border border-[var(--pf-teal-100)] rounded-xl p-6">
+                  <p className="text-[var(--pf-teal-700)] text-sm mb-4">
                     Lower entry requirements may be available if you meet certain criteria.
                   </p>
                   <div className="space-y-3">
@@ -225,10 +225,10 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="pf-card">
               <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                <button className="w-full py-2 px-4 pf-btn-primary">
                   Save to Shortlist
                 </button>
                 {course.course_url && (
@@ -236,7 +236,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
                     href={course.course_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full py-2 px-4 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors text-center"
+                    className="block w-full py-2 px-4 bg-[var(--pf-grey-100)] text-[var(--pf-grey-900)] font-medium rounded-lg hover:bg-gray-200 transition-colors text-center"
                   >
                     View on University Site
                   </a>
@@ -256,7 +256,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
 
             {/* University Info */}
             {university && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="pf-card">
                 <h3 className="font-semibold text-gray-900 mb-4">University</h3>
                 <Link href={`/universities/${university.id}`} className="block group">
                   <div className="flex items-center gap-3">
@@ -275,7 +275,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
             )}
 
             {/* Key Facts */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="pf-card">
               <h3 className="font-semibold text-gray-900 mb-4">Key Facts</h3>
               <dl className="space-y-3">
                 {course.duration_years && (

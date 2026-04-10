@@ -1,164 +1,210 @@
 import Link from 'next/link'
 
 export default function HomePage() {
-  return (
-    <div className="min-h-screen">
-      {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-            </div>
-            <span className="text-xl font-bold text-gray-900">Pathfinder</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/subjects" className="hidden sm:inline text-gray-600 hover:text-gray-900 font-medium">
-              Subjects
-            </Link>
-            <Link href="/pathways" className="hidden sm:inline text-gray-600 hover:text-gray-900 font-medium">
-              Plan Choices
-            </Link>
-            <Link href="/courses" className="text-gray-600 hover:text-gray-900 font-medium">
-              Courses
-            </Link>
-            <Link href="/universities" className="hidden sm:inline text-gray-600 hover:text-gray-900 font-medium">
-              Universities
-            </Link>
-            <Link href="/auth/sign-in" className="text-gray-600 hover:text-gray-900 font-medium">
-              Sign in
-            </Link>
-            <Link
-              href="/auth/sign-up"
-              className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Get started
-            </Link>
-          </div>
-        </div>
-      </nav>
+  const features = [
+    {
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      ),
+      title: 'Plan Your Subjects',
+      description:
+        'Pick SQA courses that keep doors open. See transitions from S2 through S6 and how each choice shapes your options.',
+    },
+    {
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      title: 'Check Eligibility',
+      description:
+        'Enter your grades and instantly see which courses you qualify for. We factor in widening access schemes automatically.',
+    },
+    {
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      ),
+      title: 'Build Your Shortlist',
+      description:
+        'Save courses, add notes, and prioritise your choices. Export when you are ready to apply through UCAS.',
+    },
+  ]
 
+  const unis = [
+    'Edinburgh', 'Glasgow', 'St Andrews', 'Aberdeen', 'Dundee',
+    'Strathclyde', 'Heriot-Watt', 'Stirling', 'GCU', 'Napier',
+    'RGU', 'UWS', 'QMU', 'UHI', 'RCS',
+  ]
+
+  return (
+    <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-24 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            Find Your Path to
-            <span className="block text-blue-200">Scottish Universities</span>
-          </h1>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Discover courses, check your eligibility, and plan your journey to higher education.
-            Designed for Scottish students from S3 to S6 and beyond.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/auth/sign-up"
-              className="px-8 py-4 bg-white text-blue-700 font-semibold rounded-xl hover:bg-blue-50 transition-colors text-lg"
-            >
-              Start exploring free
-            </Link>
-            <Link
-              href="/courses"
-              className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-xl hover:bg-white/10 transition-colors text-lg"
-            >
-              Browse courses
-            </Link>
+      <section
+        style={{
+          backgroundColor: 'var(--pf-teal-50)',
+          paddingTop: '64px',
+          paddingBottom: '64px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <div className="pf-container relative" style={{ zIndex: 1 }}>
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Copy */}
+            <div>
+              <span
+                className="pf-badge-teal mb-4 inline-flex"
+                style={{ marginBottom: '20px' }}
+              >
+                Built for Scottish students
+              </span>
+              <h1
+                style={{
+                  fontSize: 'clamp(2rem, 5vw, 3rem)',
+                  lineHeight: 1.1,
+                  marginBottom: '20px',
+                  color: 'var(--pf-grey-900)',
+                }}
+              >
+                Find your path to Scottish universities.
+              </h1>
+              <p
+                style={{
+                  fontSize: '1.125rem',
+                  color: 'var(--pf-grey-600)',
+                  lineHeight: 1.6,
+                  marginBottom: '32px',
+                  maxWidth: '520px',
+                }}
+              >
+                From S3 subject choices to university offers. Pathfinder helps you pick the right SQA
+                qualifications, check entry requirements, and plan your route with confidence.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link href="/auth/sign-up" className="pf-btn-primary">
+                  Start planning free
+                </Link>
+                <Link href="/subjects" className="pf-btn-secondary">
+                  Explore subjects
+                </Link>
+              </div>
+
+              {/* Trust bar */}
+              <div
+                className="flex flex-wrap items-center gap-x-6 gap-y-2"
+                style={{ marginTop: '32px' }}
+              >
+                <TrustItem label="15 Scottish universities" />
+                <TrustItem label="100+ courses" />
+                <TrustItem label="Widening access built in" />
+              </div>
+            </div>
+
+            {/* Pathway illustration */}
+            <div className="hidden lg:flex items-center justify-center">
+              <PathwayIllustration />
+            </div>
           </div>
-          <p className="mt-6 text-blue-200 text-sm">
-            15 universities · Courses across Scotland · Completely free
-          </p>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+      {/* Features Section -- white */}
+      <section className="pf-section pf-section-white">
+        <div className="pf-container">
+          <div className="text-center" style={{ marginBottom: '48px' }}>
+            <h2 style={{ marginBottom: '12px' }}>
               Everything you need to plan your future
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              From discovering courses to checking entry requirements, Pathfinder helps you
-              every step of the way.
+            <p
+              style={{
+                color: 'var(--pf-grey-600)',
+                fontSize: '1.0625rem',
+                maxWidth: '560px',
+                margin: '0 auto',
+              }}
+            >
+              From discovering courses to checking entry requirements, Pathfinder guides you every step of the way.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: (
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                ),
-                title: 'Discover Courses',
-                description: 'Search courses across all 15 Scottish universities. Filter by subject, entry requirements, or location.',
-              },
-              {
-                icon: (
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                ),
-                title: 'Check Eligibility',
-                description: 'Enter your grades and instantly see which courses you qualify for. We factor in widening access schemes too.',
-              },
-              {
-                icon: (
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                ),
-                title: 'Build Your Shortlist',
-                description: 'Save courses, add notes, and prioritise your choices. Export your list when you are ready to apply through UCAS.',
-              },
-            ].map((feature, i) => (
-              <div key={i} className="text-center p-6">
-                <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="grid md:grid-cols-3 gap-6">
+            {features.map((feature, i) => (
+              <div key={i} className="pf-card">
+                <div
+                  className="flex items-center justify-center mb-4"
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '10px',
+                    backgroundColor: 'var(--pf-teal-100)',
+                    color: 'var(--pf-teal-700)',
+                  }}
+                >
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <h3 style={{ marginBottom: '8px' }}>{feature.title}</h3>
+                <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
+                  {feature.description}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Widening Access Section */}
-      <section className="py-20 bg-gradient-to-br from-purple-50 to-indigo-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+      {/* Widening Access Section -- grey */}
+      <section className="pf-section pf-section-grey">
+        <div className="pf-container">
+          <div className="grid md:grid-cols-2 gap-10 items-center">
             <div>
-              <span className="inline-block px-3 py-1 bg-purple-100 text-purple-700 text-sm font-medium rounded-full mb-4">
+              <span className="pf-badge-amber inline-flex mb-4" style={{ marginBottom: '16px' }}>
                 Widening Access
               </span>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Lower entry requirements could be available to you
+              <h2 style={{ marginBottom: '16px' }}>
+                Lower entry requirements could be available to you.
               </h2>
-              <p className="text-lg text-gray-600 mb-6">
-                If you live in an SIMD20 or SIMD40 area, have care experience, are a young carer,
-                or are first in your family to attend university, you may qualify for reduced
-                entry requirements at many Scottish universities.
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem', marginBottom: '20px' }}>
+                If you live in an SIMD20 or SIMD40 area, have care experience, are a young carer, or
+                are first in your family to attend university, you may qualify for reduced entry
+                requirements at many Scottish universities.
               </p>
-              <ul className="space-y-3 mb-6">
+              <ul className="space-y-3" style={{ marginBottom: '24px' }}>
                 {[
                   'Automatic SIMD lookup from your postcode',
                   'See adjusted offers based on your circumstances',
                   'Learn about access programmes like SWAP and REACH',
                 ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-gray-700">{item}</span>
+                  <li key={i} className="flex items-start gap-3">
+                    <span
+                      className="flex-shrink-0"
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        borderRadius: '9999px',
+                        backgroundColor: 'var(--pf-teal-100)',
+                        color: 'var(--pf-teal-700)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginTop: '2px',
+                      }}
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                    <span style={{ color: 'var(--pf-grey-900)' }}>{item}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 href="/widening-access"
-                className="inline-flex items-center gap-2 text-purple-600 font-medium hover:text-purple-700"
+                style={{ color: 'var(--pf-teal-500)', fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif" }}
+                className="inline-flex items-center gap-2"
               >
                 Learn more about widening access
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,67 +212,74 @@ export default function HomePage() {
                 </svg>
               </Link>
             </div>
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h3 className="font-semibold text-gray-900 mb-4">Example: Computer Science at Edinburgh</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center pb-3 border-b border-gray-100">
-                  <span className="text-gray-600">Standard offer</span>
-                  <span className="font-semibold text-gray-900">AAAA</span>
-                </div>
-                <div className="flex justify-between items-center pb-3 border-b border-gray-100">
-                  <span className="text-gray-600">SIMD40 offer</span>
-                  <span className="font-semibold text-green-600">AAAB</span>
-                </div>
-                <div className="flex justify-between items-center pb-3 border-b border-gray-100">
-                  <span className="text-gray-600">SIMD20 offer</span>
-                  <span className="font-semibold text-green-600">AABB</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Care experienced</span>
-                  <span className="font-semibold text-green-600">AABB</span>
-                </div>
+
+            <div className="pf-card" style={{ padding: '28px' }}>
+              <h3 style={{ marginBottom: '16px' }}>Example: Computer Science at Edinburgh</h3>
+              <div className="space-y-3">
+                <OfferRow label="Standard offer" value="AAAA" />
+                <OfferRow label="SIMD40 offer" value="AAAB" highlight />
+                <OfferRow label="SIMD20 offer" value="AABB" highlight />
+                <OfferRow label="Care experienced" value="AABB" highlight last />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Universities Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              All 15 Scottish Universities
-            </h2>
-            <p className="text-xl text-gray-600">
+      {/* Universities Section -- white */}
+      <section className="pf-section pf-section-white">
+        <div className="pf-container">
+          <div className="text-center" style={{ marginBottom: '40px' }}>
+            <h2 style={{ marginBottom: '12px' }}>All 15 Scottish universities</h2>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem' }}>
               From ancient institutions to modern universities, explore them all.
             </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-            {[
-              'Edinburgh', 'Glasgow', 'St Andrews', 'Aberdeen', 'Dundee',
-              'Strathclyde', 'Heriot-Watt', 'Stirling', 'GCU', 'Napier',
-              'RGU', 'UWS', 'QMU', 'UHI', 'RCS'
-            ].map((uni) => (
+            {unis.map((uni) => (
               <Link
                 key={uni}
                 href="/universities"
-                className="flex flex-col items-center justify-center gap-3 bg-white border border-gray-200 rounded-xl p-5 text-center shadow-sm hover:shadow-md hover:border-blue-300 hover:-translate-y-0.5 transition-all"
+                className="pf-card-hover flex flex-col items-center justify-center gap-3 text-center no-underline hover:no-underline"
+                style={{ padding: '20px' }}
               >
-                <div className="w-14 h-14 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center">
-                  <span className="text-xl font-bold text-blue-700">{uni.charAt(0)}</span>
+                <div
+                  className="flex items-center justify-center"
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '10px',
+                    backgroundColor: 'var(--pf-teal-100)',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 700,
+                      fontSize: '1.25rem',
+                      color: 'var(--pf-teal-700)',
+                    }}
+                  >
+                    {uni.charAt(0)}
+                  </span>
                 </div>
-                <p className="text-sm font-semibold text-gray-900">{uni}</p>
+                <p
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    color: 'var(--pf-grey-900)',
+                  }}
+                >
+                  {uni}
+                </p>
               </Link>
             ))}
           </div>
 
-          <div className="text-center mt-10">
-            <Link
-              href="/universities"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
-            >
+          <div className="text-center" style={{ marginTop: '40px' }}>
+            <Link href="/universities" className="pf-btn-secondary">
               View all universities
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -236,18 +289,30 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-blue-600">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+      {/* CTA Section -- dark teal */}
+      <section
+        className="pf-section"
+        style={{ backgroundColor: 'var(--pf-teal-900)' }}
+      >
+        <div className="pf-container text-center">
+          <h2 style={{ color: '#fff', marginBottom: '16px', fontSize: '2rem' }}>
             Ready to find your path?
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
-            Create your free account and start exploring courses in minutes.
+          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.125rem', marginBottom: '32px' }}>
+            Create your free account and start planning in minutes.
           </p>
           <Link
             href="/auth/sign-up"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-700 font-semibold rounded-xl hover:bg-blue-50 transition-colors text-lg"
+            className="inline-flex items-center gap-2 no-underline hover:no-underline"
+            style={{
+              backgroundColor: '#fff',
+              color: 'var(--pf-teal-900)',
+              padding: '14px 28px',
+              borderRadius: '8px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              fontSize: '1rem',
+            }}
           >
             Get started for free
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,5 +322,134 @@ export default function HomePage() {
         </div>
       </section>
     </div>
+  )
+}
+
+/* -------------------------------------------------------------- */
+
+function TrustItem({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <svg
+        className="w-4 h-4"
+        style={{ color: 'var(--pf-green-500)' }}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={3}
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+      <span style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)', fontWeight: 500 }}>
+        {label}
+      </span>
+    </div>
+  )
+}
+
+function OfferRow({
+  label,
+  value,
+  highlight,
+  last,
+}: {
+  label: string
+  value: string
+  highlight?: boolean
+  last?: boolean
+}) {
+  return (
+    <div
+      className="flex justify-between items-center"
+      style={{
+        paddingBottom: last ? 0 : '12px',
+        borderBottom: last ? 'none' : '1px solid var(--pf-grey-100)',
+      }}
+    >
+      <span style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>{label}</span>
+      <span
+        className="pf-data-number"
+        style={{
+          fontSize: '1rem',
+          color: highlight ? 'var(--pf-green-500)' : 'var(--pf-grey-900)',
+          fontWeight: 600,
+        }}
+      >
+        {value}
+      </span>
+    </div>
+  )
+}
+
+function PathwayIllustration() {
+  return (
+    <svg
+      viewBox="0 0 440 400"
+      width="100%"
+      style={{ maxWidth: '440px', height: 'auto' }}
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="pf-line" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#14907E" />
+          <stop offset="100%" stopColor="#0F6B5E" />
+        </linearGradient>
+      </defs>
+
+      {/* Background shape */}
+      <circle cx="220" cy="200" r="180" fill="#E6F5F2" opacity="0.5" />
+      <circle cx="220" cy="200" r="130" fill="#E6F5F2" opacity="0.6" />
+
+      {/* Connecting lines (pathways) */}
+      <path d="M 60 200 Q 140 80, 220 200 T 380 200" stroke="url(#pf-line)" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.7" />
+      <path d="M 60 200 Q 140 320, 220 200 T 380 200" stroke="url(#pf-line)" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.7" />
+      <path d="M 60 200 L 220 200 L 380 200" stroke="#14907E" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.4" strokeDasharray="4 6" />
+
+      {/* Nodes -- S2 -> S6 -> University */}
+      <g>
+        {/* Start (S2) */}
+        <circle cx="60" cy="200" r="22" fill="#0F6B5E" />
+        <circle cx="60" cy="200" r="26" fill="none" stroke="#0F6B5E" strokeWidth="2" opacity="0.25" />
+        <text x="60" y="205" textAnchor="middle" fill="#fff" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="13">
+          S2
+        </text>
+
+        {/* Middle (S4) */}
+        <circle cx="220" cy="80" r="18" fill="#14907E" />
+        <text x="220" y="85" textAnchor="middle" fill="#fff" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="11">
+          S4
+        </text>
+
+        <circle cx="220" cy="200" r="22" fill="#14907E" />
+        <text x="220" y="205" textAnchor="middle" fill="#fff" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="13">
+          S5
+        </text>
+
+        <circle cx="220" cy="320" r="18" fill="#14907E" />
+        <text x="220" y="325" textAnchor="middle" fill="#fff" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="11">
+          S6
+        </text>
+
+        {/* End (University) */}
+        <circle cx="380" cy="200" r="28" fill="#0C4A42" />
+        <circle cx="380" cy="200" r="34" fill="none" stroke="#0C4A42" strokeWidth="2" opacity="0.25" />
+        <g transform="translate(380 200)">
+          <path
+            d="M -12 4 L 0 -4 L 12 4 L 12 10 L 0 14 L -12 10 Z"
+            fill="#fff"
+          />
+          <path d="M -12 4 L 12 4" stroke="#fff" strokeWidth="1" />
+        </g>
+      </g>
+
+      {/* Subject dots floating */}
+      <g opacity="0.7">
+        <circle cx="130" cy="140" r="6" fill="#3B82F6" />
+        <circle cx="150" cy="270" r="6" fill="#10B981" />
+        <circle cx="300" cy="135" r="6" fill="#6366F1" />
+        <circle cx="310" cy="265" r="6" fill="#F59E0B" />
+      </g>
+    </svg>
   )
 }

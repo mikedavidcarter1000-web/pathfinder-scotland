@@ -4,25 +4,58 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Pathfinder design tokens -- single source of truth */
+
+    /* Primary -- teal/green */
+    --pf-teal-900: #0C4A42;
+    --pf-teal-700: #0F6B5E;
+    --pf-teal-500: #14907E;
+    --pf-teal-100: #E6F5F2;
+    --pf-teal-50:  #F0FAF8;
+
+    /* Neutral */
+    --pf-white:    #FFFFFF;
+    --pf-grey-900: #1A1A2E;
+    --pf-grey-600: #4A4A5A;
+    --pf-grey-300: #D1D1DB;
+    --pf-grey-100: #F4F4F6;
+
+    /* Status */
+    --pf-amber-500: #F59E0B;
+    --pf-green-500: #10B981;
+    --pf-red-500:   #EF4444;
+
+    /* Curricular areas */
+    --pf-area-languages:    #3B82F6;
+    --pf-area-mathematics:  #6366F1;
+    --pf-area-sciences:     #10B981;
+    --pf-area-social:       #F59E0B;
+    --pf-area-expressive:   #8B5CF6;
+    --pf-area-technologies: #64748B;
+    --pf-area-rme:          #F43F5E;
+    --pf-area-health:       #14B8A6;
+
+    /* Shadcn-compat tokens (kept so existing components using `border`/`ring` still work).
+       Mapped onto the Pathfinder palette. */
+    --background: 168 50% 97%;            /* pf-teal-50 */
+    --foreground: 240 27% 14%;            /* pf-grey-900 */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 27% 14%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --popover-foreground: 240 27% 14%;
+    --primary: 172 76% 24%;               /* pf-teal-700 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 10% 96%;             /* pf-grey-100 */
+    --secondary-foreground: 240 27% 14%;
+    --muted: 240 10% 96%;
+    --muted-foreground: 240 10% 32%;      /* pf-grey-600 */
+    --accent: 170 64% 92%;                /* pf-teal-100 */
+    --accent-foreground: 172 76% 24%;
+    --destructive: 0 84% 60%;             /* pf-red-500 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 11% 84%;                /* pf-grey-300 */
+    --input: 240 11% 84%;
+    --ring: 172 74% 32%;                  /* pf-teal-500 */
     --radius: 0.5rem;
   }
 
@@ -30,71 +63,329 @@
     @apply border-border;
   }
 
+  html {
+    background-color: var(--pf-teal-50);
+  }
+
   body {
-    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    color: var(--pf-grey-900);
+    background-color: var(--pf-teal-50);
+    line-height: 1.6;
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    color: var(--pf-grey-900);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  h1 {
+    font-weight: 700;
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-weight: 600;
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+
+  a {
+    color: var(--pf-teal-500);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  ::selection {
+    background-color: var(--pf-teal-100);
+    color: var(--pf-teal-900);
   }
 }
 
 @layer components {
+  /* ------------------------------------------------------------- */
+  /* Buttons                                                        */
+  /* ------------------------------------------------------------- */
+  .pf-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding: 12px 24px;
+    text-decoration: none;
+  }
+
+  .pf-btn-primary {
+    @apply pf-btn;
+    background-color: var(--pf-teal-700);
+    color: var(--pf-white);
+  }
+  .pf-btn-primary:hover {
+    background-color: var(--pf-teal-900);
+    text-decoration: none;
+  }
+
+  .pf-btn-secondary {
+    @apply pf-btn;
+    background-color: var(--pf-white);
+    color: var(--pf-teal-700);
+    border: 1px solid var(--pf-teal-700);
+  }
+  .pf-btn-secondary:hover {
+    background-color: var(--pf-teal-50);
+    text-decoration: none;
+  }
+
+  .pf-btn-ghost {
+    @apply pf-btn;
+    background-color: transparent;
+    color: var(--pf-teal-500);
+  }
+  .pf-btn-ghost:hover {
+    background-color: var(--pf-teal-50);
+    text-decoration: none;
+  }
+
+  .pf-btn-sm {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+  }
+
+  /* Legacy aliases (mapped onto Pathfinder tokens) */
   .btn-primary {
-    @apply px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply pf-btn-primary;
   }
-
   .btn-secondary {
-    @apply px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply pf-btn-secondary;
   }
-
   .btn-outline {
-    @apply px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply pf-btn-secondary;
   }
 
-  .input {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors;
+  /* ------------------------------------------------------------- */
+  /* Cards                                                          */
+  /* ------------------------------------------------------------- */
+  .pf-card {
+    background-color: var(--pf-white);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    padding: 24px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
 
+  .pf-card-hover {
+    @apply pf-card;
+    cursor: pointer;
+  }
+  .pf-card-hover:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .pf-card-flat {
+    background-color: var(--pf-white);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Legacy aliases */
   .card {
-    @apply bg-white rounded-xl border border-gray-200 shadow-sm;
+    @apply pf-card-flat;
   }
-
   .card-hover {
-    @apply card hover:shadow-md hover:border-gray-300 transition-all;
+    @apply pf-card-flat;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .card-hover:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
   }
 
+  /* ------------------------------------------------------------- */
+  /* Badges / Pills                                                 */
+  /* ------------------------------------------------------------- */
+  .pf-badge {
+    @apply inline-flex items-center;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    line-height: 1.2;
+  }
+
+  .pf-badge-teal {
+    @apply pf-badge;
+    background-color: var(--pf-teal-100);
+    color: var(--pf-teal-700);
+  }
+  .pf-badge-grey {
+    @apply pf-badge;
+    background-color: var(--pf-grey-100);
+    color: var(--pf-grey-900);
+  }
+  .pf-badge-amber {
+    @apply pf-badge;
+    background-color: rgba(245, 158, 11, 0.12);
+    color: var(--pf-amber-500);
+  }
+  .pf-badge-green {
+    @apply pf-badge;
+    background-color: rgba(16, 185, 129, 0.12);
+    color: var(--pf-green-500);
+  }
+  .pf-badge-red {
+    @apply pf-badge;
+    background-color: rgba(239, 68, 68, 0.12);
+    color: var(--pf-red-500);
+  }
+
+  /* Legacy badge classes mapped */
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply pf-badge;
   }
-
   .badge-blue {
-    @apply badge bg-blue-100 text-blue-800;
+    @apply pf-badge-teal;
   }
-
   .badge-green {
-    @apply badge bg-green-100 text-green-800;
+    @apply pf-badge-green;
   }
-
   .badge-yellow {
-    @apply badge bg-yellow-100 text-yellow-800;
+    @apply pf-badge-amber;
   }
-
   .badge-red {
-    @apply badge bg-red-100 text-red-800;
+    @apply pf-badge-red;
   }
-
   .badge-gray {
-    @apply badge bg-gray-100 text-gray-800;
+    @apply pf-badge-grey;
+  }
+  .badge-purple {
+    @apply pf-badge-teal;
   }
 
-  .badge-purple {
-    @apply badge bg-purple-100 text-purple-800;
+  /* Curricular area badges -- light background, full-colour text */
+  .pf-area-badge {
+    @apply inline-flex items-center;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    line-height: 1.2;
+  }
+  .pf-area-languages-badge     { background-color: rgba(59, 130, 246, 0.1);  color: var(--pf-area-languages); }
+  .pf-area-mathematics-badge   { background-color: rgba(99, 102, 241, 0.1);  color: var(--pf-area-mathematics); }
+  .pf-area-sciences-badge      { background-color: rgba(16, 185, 129, 0.1);  color: var(--pf-area-sciences); }
+  .pf-area-social-badge        { background-color: rgba(245, 158, 11, 0.1);  color: var(--pf-area-social); }
+  .pf-area-expressive-badge    { background-color: rgba(139, 92, 246, 0.1);  color: var(--pf-area-expressive); }
+  .pf-area-technologies-badge  { background-color: rgba(100, 116, 139, 0.1); color: var(--pf-area-technologies); }
+  .pf-area-rme-badge           { background-color: rgba(244, 63, 94, 0.1);   color: var(--pf-area-rme); }
+  .pf-area-health-badge        { background-color: rgba(20, 184, 166, 0.1);  color: var(--pf-area-health); }
+
+  /* ------------------------------------------------------------- */
+  /* Forms                                                          */
+  /* ------------------------------------------------------------- */
+  .pf-input {
+    @apply w-full;
+    background-color: var(--pf-white);
+    border: 1px solid var(--pf-grey-300);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: var(--pf-grey-900);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .pf-input:focus {
+    outline: 2px solid var(--pf-teal-500);
+    outline-offset: 0;
+    border-color: var(--pf-teal-500);
+  }
+  .pf-input::placeholder {
+    color: var(--pf-grey-600);
+  }
+  .pf-input:disabled {
+    background-color: var(--pf-grey-100);
+    cursor: not-allowed;
+  }
+
+  .pf-label {
+    display: block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--pf-grey-900);
+    margin-bottom: 6px;
+  }
+
+  /* Legacy alias */
+  .input {
+    @apply pf-input;
+  }
+
+  /* ------------------------------------------------------------- */
+  /* Layout helpers                                                 */
+  /* ------------------------------------------------------------- */
+  .pf-container {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .pf-section {
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+
+  @media (max-width: 640px) {
+    .pf-section {
+      padding-top: 48px;
+      padding-bottom: 48px;
+    }
+  }
+
+  .pf-section-white {
+    background-color: var(--pf-white);
+  }
+  .pf-section-grey {
+    background-color: var(--pf-grey-100);
+  }
+  .pf-section-teal {
+    background-color: var(--pf-teal-50);
+  }
+  .pf-section-dark {
+    background-color: var(--pf-teal-900);
+    color: var(--pf-white);
+  }
+
+  /* Typography helpers */
+  .pf-data-number {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    font-feature-settings: 'tnum';
   }
 
   .section-title {
-    @apply text-2xl font-bold text-gray-900 mb-2;
+    @apply text-2xl mb-2;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    color: var(--pf-grey-900);
   }
-
   .section-description {
-    @apply text-gray-600 mb-6;
+    @apply mb-6;
+    color: var(--pf-grey-600);
   }
 }
 
@@ -106,15 +397,12 @@
   .animate-fade-in {
     animation: fadeIn 0.3s ease-in-out;
   }
-
   .animate-slide-up {
     animation: slideUp 0.3s ease-out;
   }
-
   .animate-slide-down {
     animation: slideDown 0.3s ease-out;
   }
-
   .animate-shake {
     animation: shake 0.4s ease-in-out;
   }
@@ -124,93 +412,59 @@
     20%, 60% { transform: translateX(-4px); }
     40%, 80% { transform: translateX(4px); }
   }
-
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
-
   @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
-
   @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Custom scrollbar */
   .scrollbar-thin {
     scrollbar-width: thin;
   }
-
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
-
   .scrollbar-thin::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--pf-grey-100);
     border-radius: 3px;
   }
-
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: var(--pf-grey-300);
     border-radius: 3px;
   }
-
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
+    background: var(--pf-grey-600);
   }
 
-  /* Hide scrollbar but keep functionality */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
 
-  /* Focus visible styles */
   .focus-ring {
-    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2;
-  }
-
-  /* Gradient text */
-  .text-gradient {
-    @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    --tw-ring-color: var(--pf-teal-500);
   }
 }
 
-/* Print styles */
 @media print {
   .no-print {
     display: none !important;
   }
-
   .print-break-before {
     page-break-before: always;
   }
-
   .print-break-after {
     page-break-after: always;
   }

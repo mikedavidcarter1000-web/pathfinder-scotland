@@ -28,20 +28,22 @@ export default function UniversitiesPage() {
   const hasFilters = typeFilter || cityFilter
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-6">
+      <div style={{ backgroundColor: 'var(--pf-white)' }}>
+        <div className="pf-container" style={{ paddingTop: '40px', paddingBottom: '32px' }}>
+          <div className="flex items-start justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Universities</h1>
-              <p className="text-gray-600 mt-1">
+              <h1 style={{ marginBottom: '4px' }}>Universities</h1>
+              <p style={{ color: 'var(--pf-grey-600)' }}>
                 Explore all 15 Scottish universities
               </p>
             </div>
             <Link
               href="/"
-              className="text-gray-500 hover:text-gray-700"
+              style={{ color: 'var(--pf-grey-600)' }}
+              className="p-2 hover:opacity-80"
+              aria-label="Back to home"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -54,7 +56,8 @@ export default function UniversitiesPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="pf-input"
+              style={{ width: 'auto' }}
             >
               <option value="">All Types</option>
               {Object.entries(UNIVERSITY_TYPES).map(([key, value]) => (
@@ -67,7 +70,8 @@ export default function UniversitiesPage() {
             <select
               value={cityFilter}
               onChange={(e) => setCityFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="pf-input"
+              style={{ width: 'auto' }}
             >
               <option value="">All Cities</option>
               {cities.map((city) => (
@@ -78,10 +82,7 @@ export default function UniversitiesPage() {
             </select>
 
             {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium"
-              >
+              <button onClick={clearFilters} className="pf-btn-ghost pf-btn-sm">
                 Clear filters
               </button>
             )}
@@ -90,54 +91,64 @@ export default function UniversitiesPage() {
       </div>
 
       {/* University Type Explainer */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="pf-container" style={{ paddingTop: '24px' }}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Object.entries(UNIVERSITY_TYPES).map(([key, value]) => (
-            <button
-              key={key}
-              onClick={() => setTypeFilter(typeFilter === key ? '' : key)}
-              className={`p-4 rounded-xl border text-left transition-all ${
-                typeFilter === key
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 bg-white hover:border-gray-300'
-              }`}
-            >
-              <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium mb-2 ${
-                key === 'ancient' ? 'bg-purple-100 text-purple-700' :
-                key === 'traditional' ? 'bg-blue-100 text-blue-700' :
-                key === 'modern' ? 'bg-green-100 text-green-700' :
-                'bg-orange-100 text-orange-700'
-              }`}>
-                {value.label}
-              </span>
-              <p className="text-sm text-gray-600">{value.description}</p>
-            </button>
-          ))}
+          {Object.entries(UNIVERSITY_TYPES).map(([key, value]) => {
+            const active = typeFilter === key
+            return (
+              <button
+                key={key}
+                onClick={() => setTypeFilter(typeFilter === key ? '' : key)}
+                className="text-left transition-all rounded-lg"
+                style={{
+                  padding: '16px',
+                  backgroundColor: active ? 'var(--pf-teal-50)' : 'var(--pf-white)',
+                  border: active ? '2px solid var(--pf-teal-500)' : '1px solid var(--pf-grey-300)',
+                  boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                }}
+              >
+                <span className="pf-badge-teal inline-flex" style={{ marginBottom: '8px' }}>
+                  {value.label}
+                </span>
+                <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+                  {value.description}
+                </p>
+              </button>
+            )
+          })}
         </div>
       </div>
 
       {/* Results */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="pf-container" style={{ paddingTop: '32px', paddingBottom: '48px' }}>
         {/* Results Count */}
         <div className="mb-6">
           {isLoading ? (
-            <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
+            <div
+              className="h-5 w-32 rounded animate-pulse"
+              style={{ backgroundColor: 'var(--pf-grey-100)' }}
+            />
           ) : (
-            <p className="text-gray-600">
+            <p style={{ color: 'var(--pf-grey-600)' }}>
               {filteredUniversities?.length || 0} universities
               {hasFilters && ' matching your filters'}
             </p>
           )}
         </div>
 
-        {/* Error State */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-700">Failed to load universities. Please try again.</p>
+          <div
+            className="rounded-lg mb-6"
+            style={{
+              padding: '16px',
+              backgroundColor: 'rgba(239,68,68,0.08)',
+              color: 'var(--pf-red-500)',
+            }}
+          >
+            Failed to load universities. Please try again.
           </div>
         )}
 
-        {/* Loading State */}
         {isLoading && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
@@ -146,80 +157,78 @@ export default function UniversitiesPage() {
           </div>
         )}
 
-        {/* Empty State */}
         {!isLoading && filteredUniversities?.length === 0 && (
           <div className="text-center py-16">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+              style={{ backgroundColor: 'var(--pf-teal-100)' }}
+            >
+              <svg
+                className="w-8 h-8"
+                style={{ color: 'var(--pf-teal-700)' }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No universities found</h3>
-            <p className="text-gray-600 mb-4">
+            <h3 style={{ marginBottom: '8px' }}>No universities found</h3>
+            <p style={{ color: 'var(--pf-grey-600)', marginBottom: '16px' }}>
               Try adjusting your filters.
             </p>
             {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-              >
+              <button onClick={clearFilters} className="pf-btn-primary">
                 Clear all filters
               </button>
             )}
           </div>
         )}
 
-        {/* University Grid */}
         {!isLoading && filteredUniversities && filteredUniversities.length > 0 && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUniversities.map((university) => (
-              <UniversityCard
-                key={university.id}
-                university={university}
-              />
+              <UniversityCard key={university.id} university={university} />
             ))}
           </div>
         )}
       </div>
 
       {/* Info Section */}
-      <div className="bg-white border-t border-gray-200 mt-12">
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">About Scottish Universities</h2>
+      <div style={{ backgroundColor: 'var(--pf-white)' }}>
+        <div className="pf-container" style={{ paddingTop: '48px', paddingBottom: '48px' }}>
+          <h2 style={{ marginBottom: '24px' }}>About Scottish Universities</h2>
           <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Ancient Universities</h3>
-              <p className="text-gray-600 mb-4">
-                Scotland is home to four of the UK&apos;s six ancient universities, founded before 1600.
-                St Andrews (1413), Glasgow (1451), Aberdeen (1495), and Edinburgh (1582) are
-                steeped in tradition and academic excellence.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Russell Group</h3>
-              <p className="text-gray-600 mb-4">
-                Two Scottish universities - Edinburgh and Glasgow - are members of the Russell Group,
-                a collective of 24 leading UK research universities committed to maintaining the
-                highest standards of research and education.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Free Tuition</h3>
-              <p className="text-gray-600 mb-4">
-                Scottish students studying at Scottish universities don&apos;t pay tuition fees.
-                The Student Awards Agency Scotland (SAAS) covers tuition costs for eligible students.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Four-Year Degrees</h3>
-              <p className="text-gray-600 mb-4">
-                Most Scottish undergraduate degrees are four years, compared to three years in
-                England. This allows for a broader education and more time to specialise.
-              </p>
-            </div>
+            <InfoBlock title="Ancient Universities">
+              Scotland is home to four of the UK&apos;s six ancient universities, founded before 1600.
+              St Andrews (1413), Glasgow (1451), Aberdeen (1495), and Edinburgh (1582) are steeped
+              in tradition and academic excellence.
+            </InfoBlock>
+            <InfoBlock title="Russell Group">
+              Two Scottish universities — Edinburgh and Glasgow — are members of the Russell Group,
+              a collective of 24 leading UK research universities committed to maintaining the
+              highest standards of research and education.
+            </InfoBlock>
+            <InfoBlock title="Free Tuition">
+              Scottish students studying at Scottish universities don&apos;t pay tuition fees. The
+              Student Awards Agency Scotland (SAAS) covers tuition costs for eligible students.
+            </InfoBlock>
+            <InfoBlock title="Four-Year Degrees">
+              Most Scottish undergraduate degrees are four years, compared to three years in England.
+              This allows for a broader education and more time to specialise.
+            </InfoBlock>
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+function InfoBlock({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h3 style={{ marginBottom: '8px' }}>{title}</h3>
+      <p style={{ color: 'var(--pf-grey-600)', lineHeight: 1.6 }}>{children}</p>
     </div>
   )
 }

@@ -90,14 +90,14 @@ export default function CoursesPage() {
   const hasGrades = gradeSummary.totalGrades > 0
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-6">
+      <div style={{ backgroundColor: 'var(--pf-white)' }}>
+        <div className="pf-container" style={{ paddingTop: '40px', paddingBottom: '32px' }}>
+          <div className="flex items-start justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Courses</h1>
-              <p className="text-gray-600 mt-1">
+              <h1 style={{ marginBottom: '4px' }}>Courses</h1>
+              <p style={{ color: 'var(--pf-grey-600)' }}>
                 Explore courses across Scottish universities
               </p>
             </div>
@@ -105,7 +105,8 @@ export default function CoursesPage() {
               type="button"
               aria-label="Close"
               onClick={goBack}
-              className="text-gray-500 hover:text-gray-700"
+              style={{ color: 'var(--pf-grey-600)' }}
+              className="p-2 hover:opacity-80"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -115,44 +116,47 @@ export default function CoursesPage() {
 
           {/* Eligibility Stats Banner */}
           {hasGrades && stats && (
-            <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg">
+            <div
+              className="mb-6 rounded-lg"
+              style={{ padding: '16px', backgroundColor: 'var(--pf-teal-50)' }}
+            >
               <div className="flex flex-wrap items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <StatPill
+                  label={`${stats.eligible} Eligible`}
+                  sub="Meet requirements"
+                  accent="var(--pf-green-500)"
+                  icon={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{stats.eligible} Eligible</p>
-                    <p className="text-xs text-gray-500">Meet requirements</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  }
+                />
+                <StatPill
+                  label={`${stats.possible} Possible`}
+                  sub="Close to requirements"
+                  accent="var(--pf-amber-500)"
+                  icon={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{stats.possible} Possible</p>
-                    <p className="text-xs text-gray-500">Close to requirements</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  }
+                />
+                <StatPill
+                  label={`${stats.total} Total`}
+                  sub="All courses"
+                  accent="var(--pf-teal-700)"
+                  icon={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{stats.total} Total</p>
-                    <p className="text-xs text-gray-500">All courses</p>
-                  </div>
-                </div>
+                  }
+                />
                 <div className="flex-1" />
-                <p className="text-sm text-gray-600">
-                  Based on your <span className="font-medium">{gradeSummary.highers || 'grades'}</span>
+                <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+                  Based on your{' '}
+                  <span style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}>
+                    {gradeSummary.highers || 'grades'}
+                  </span>
                 </p>
               </div>
             </div>
@@ -160,20 +164,30 @@ export default function CoursesPage() {
 
           {/* No Grades Banner */}
           {user && !hasGrades && (
-            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div
+              className="mb-6 rounded-lg"
+              style={{
+                padding: '16px',
+                backgroundColor: 'rgba(245,158,11,0.08)',
+                border: '1px solid rgba(245,158,11,0.25)',
+              }}
+            >
               <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5 flex-shrink-0"
+                  style={{ color: 'var(--pf-amber-500)' }}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div className="flex-1">
-                  <p className="text-sm text-yellow-800">
+                  <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)' }}>
                     Add your grades to see which courses you&apos;re eligible for.
                   </p>
                 </div>
-                <Link
-                  href="/dashboard"
-                  className="px-3 py-1.5 text-sm font-medium text-yellow-700 bg-yellow-100 hover:bg-yellow-200 rounded-lg transition-colors"
-                >
+                <Link href="/dashboard" className="pf-btn-secondary pf-btn-sm">
                   Add grades
                 </Link>
               </div>
@@ -194,7 +208,8 @@ export default function CoursesPage() {
             <select
               value={universityId}
               onChange={(e) => setUniversityId(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="pf-input"
+              style={{ width: 'auto' }}
             >
               <option value="">All Universities</option>
               {universities?.map((uni) => (
@@ -207,7 +222,8 @@ export default function CoursesPage() {
             <select
               value={subjectArea}
               onChange={(e) => setSubjectArea(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="pf-input"
+              style={{ width: 'auto' }}
             >
               <option value="">All Subjects</option>
               {subjectAreas?.map((subject) => (
@@ -217,14 +233,16 @@ export default function CoursesPage() {
               ))}
             </select>
 
-            {/* Eligibility Filter */}
             {hasGrades && (
               <select
                 value={eligibilityFilter}
                 onChange={(e) => setEligibilityFilter(e.target.value as EligibilityFilter)}
-                className={`px-4 py-2 border rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                  eligibilityFilter !== 'all' ? 'border-blue-300 bg-blue-50' : 'border-gray-300'
-                }`}
+                className="pf-input"
+                style={{
+                  width: 'auto',
+                  backgroundColor: eligibilityFilter !== 'all' ? 'var(--pf-teal-50)' : 'var(--pf-white)',
+                  borderColor: eligibilityFilter !== 'all' ? 'var(--pf-teal-500)' : 'var(--pf-grey-300)',
+                }}
               >
                 <option value="all">All Eligibility</option>
                 <option value="eligible">Eligible Only</option>
@@ -234,10 +252,7 @@ export default function CoursesPage() {
             )}
 
             {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium"
-              >
+              <button onClick={clearFilters} className="pf-btn-ghost pf-btn-sm">
                 Clear filters
               </button>
             )}
@@ -245,13 +260,21 @@ export default function CoursesPage() {
             <div className="flex-1" />
 
             {/* View Toggle */}
-            <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+            <div
+              className="flex items-center gap-1 rounded-lg"
+              style={{ padding: '4px', backgroundColor: 'var(--pf-grey-100)' }}
+            >
               <button
                 type="button"
                 aria-label="Grid view"
                 aria-pressed={viewMode === 'grid'}
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded ${viewMode === 'grid' ? 'bg-white shadow-sm' : 'text-gray-500'}`}
+                className="p-2 rounded"
+                style={{
+                  backgroundColor: viewMode === 'grid' ? 'var(--pf-white)' : 'transparent',
+                  boxShadow: viewMode === 'grid' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                  color: viewMode === 'grid' ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
+                }}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -262,7 +285,12 @@ export default function CoursesPage() {
                 aria-label="List view"
                 aria-pressed={viewMode === 'list'}
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded ${viewMode === 'list' ? 'bg-white shadow-sm' : 'text-gray-500'}`}
+                className="p-2 rounded"
+                style={{
+                  backgroundColor: viewMode === 'list' ? 'var(--pf-white)' : 'transparent',
+                  boxShadow: viewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                  color: viewMode === 'list' ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
+                }}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -274,13 +302,16 @@ export default function CoursesPage() {
       </div>
 
       {/* Results */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="pf-container" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
         {/* Results Count */}
         <div className="mb-6">
           {isLoading ? (
-            <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
+            <div
+              className="h-5 w-32 rounded animate-pulse"
+              style={{ backgroundColor: 'var(--pf-grey-100)' }}
+            />
           ) : (
-            <p className="text-gray-600">
+            <p style={{ color: 'var(--pf-grey-600)' }}>
               {filteredCourses?.length || 0} courses found
               {hasFilters && ' matching your filters'}
             </p>
@@ -289,8 +320,15 @@ export default function CoursesPage() {
 
         {/* Error State */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-700">Failed to load courses. Please try again.</p>
+          <div
+            className="rounded-lg mb-6"
+            style={{
+              padding: '16px',
+              backgroundColor: 'rgba(239,68,68,0.08)',
+              color: 'var(--pf-red-500)',
+            }}
+          >
+            Failed to load courses. Please try again.
           </div>
         )}
 
@@ -306,22 +344,28 @@ export default function CoursesPage() {
         {/* Empty State */}
         {!isLoading && filteredCourses?.length === 0 && (
           <div className="text-center py-16">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+              style={{ backgroundColor: 'var(--pf-teal-100)' }}
+            >
+              <svg
+                className="w-8 h-8"
+                style={{ color: 'var(--pf-teal-700)' }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No courses found</h3>
-            <p className="text-gray-600 mb-4">
+            <h3 style={{ marginBottom: '8px' }}>No courses found</h3>
+            <p style={{ color: 'var(--pf-grey-600)', marginBottom: '16px' }}>
               {eligibilityFilter !== 'all'
                 ? `No ${eligibilityFilter} courses match your current filters.`
                 : 'Try adjusting your filters or search term.'}
             </p>
             {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-              >
+              <button onClick={clearFilters} className="pf-btn-primary">
                 Clear all filters
               </button>
             )}
@@ -351,17 +395,21 @@ export default function CoursesPage() {
                 aria-label="Courses pagination"
                 className="mt-8 flex items-center justify-between gap-4 flex-wrap"
               >
-                <p className="text-sm text-gray-600">
-                  Page <span className="font-semibold text-gray-900">{currentPage}</span> of{' '}
-                  <span className="font-semibold text-gray-900">{totalPages}</span>
-                  <span className="text-gray-400"> · {filteredCourses.length} results</span>
+                <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+                  Page{' '}
+                  <span style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}>{currentPage}</span>{' '}
+                  of{' '}
+                  <span style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}>{totalPages}</span>
+                  <span style={{ color: 'var(--pf-grey-600)' }}>
+                    {' '}· {filteredCourses.length} results
+                  </span>
                 </p>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={currentPage <= 1}
-                    className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="pf-btn-secondary pf-btn-sm"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -372,7 +420,7 @@ export default function CoursesPage() {
                     type="button"
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={currentPage >= totalPages}
-                    className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="pf-btn-primary pf-btn-sm"
                   >
                     Next
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -384,6 +432,42 @@ export default function CoursesPage() {
             )}
           </>
         )}
+      </div>
+    </div>
+  )
+}
+
+function StatPill({
+  label,
+  sub,
+  accent,
+  icon,
+}: {
+  label: string
+  sub: string
+  accent: string
+  icon: React.ReactNode
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <div
+        className="w-8 h-8 rounded-full flex items-center justify-center"
+        style={{ backgroundColor: `${accent}1A`, color: accent }}
+      >
+        {icon}
+      </div>
+      <div>
+        <p
+          style={{
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            color: 'var(--pf-grey-900)',
+            fontFamily: "'Space Grotesk', sans-serif",
+          }}
+        >
+          {label}
+        </p>
+        <p style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}>{sub}</p>
       </div>
     </div>
   )

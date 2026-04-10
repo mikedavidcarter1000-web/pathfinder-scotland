@@ -53,20 +53,39 @@ export function CourseCard({
   } | null
 
   return (
-    <Link href={`/courses/${course.id}`} className="block group">
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md hover:border-gray-300 transition-all">
-        {/* University Color Bar */}
-        <div className="h-1.5 bg-gradient-to-r from-blue-500 to-blue-600" />
+    <Link href={`/courses/${course.id}`} className="block group no-underline hover:no-underline">
+      <div
+        className="pf-card-hover"
+        style={{ padding: 0, overflow: 'hidden', height: '100%' }}
+      >
+        {/* Top accent bar */}
+        <div
+          style={{
+            height: '4px',
+            background: 'linear-gradient(90deg, var(--pf-teal-500), var(--pf-teal-700))',
+          }}
+        />
 
-        <div className={compact ? 'p-4' : 'p-5'}>
+        <div style={{ padding: compact ? '16px' : '20px' }}>
           {/* Header */}
           <div className="flex justify-between items-start gap-3 mb-3">
             <div className="flex-1 min-w-0">
-              <h3 className={`font-semibold text-gray-900 group-hover:text-blue-600 transition-colors ${compact ? 'text-sm' : 'text-base'} line-clamp-2`}>
+              <h3
+                className="line-clamp-2"
+                style={{
+                  fontSize: compact ? '0.9375rem' : '1.0625rem',
+                  color: 'var(--pf-grey-900)',
+                  margin: 0,
+                  marginBottom: '4px',
+                }}
+              >
                 {course.name}
               </h3>
               {course.university && (
-                <p className="text-sm text-gray-500 mt-0.5 truncate">
+                <p
+                  className="truncate"
+                  style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}
+                >
                   {course.university.name}
                 </p>
               )}
@@ -76,11 +95,20 @@ export function CourseCard({
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className={`flex-shrink-0 p-1.5 rounded-lg transition-colors ${
-                  isSaved
-                    ? 'text-red-500 bg-red-50 hover:bg-red-100'
-                    : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
-                }`}
+                className="flex-shrink-0 p-1.5 rounded-lg transition-colors"
+                style={{
+                  color: isSaved ? 'var(--pf-red-500)' : 'var(--pf-grey-600)',
+                  backgroundColor: isSaved ? 'rgba(239,68,68,0.08)' : 'transparent',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = 'var(--pf-red-500)'
+                  e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.08)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = isSaved ? 'var(--pf-red-500)' : 'var(--pf-grey-600)'
+                  e.currentTarget.style.backgroundColor = isSaved ? 'rgba(239,68,68,0.08)' : 'transparent'
+                }}
+                aria-label={isSaved ? 'Remove from saved' : 'Save course'}
               >
                 <svg
                   className="w-5 h-5"
@@ -102,61 +130,88 @@ export function CourseCard({
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-3">
             {eligibility && <EligibilityBadge status={eligibility} size="sm" />}
-            {course.degree_type && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                {course.degree_type}
-              </span>
-            )}
-            {course.subject_area && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-                {course.subject_area}
-              </span>
-            )}
+            {course.degree_type && <span className="pf-badge-grey">{course.degree_type}</span>}
+            {course.subject_area && <span className="pf-badge-teal">{course.subject_area}</span>}
           </div>
 
           {/* Requirements */}
           {!compact && entryRequirements && (
-            <div className="space-y-1.5 mb-4 text-sm">
+            <div
+              className="mb-4 space-y-1.5"
+              style={{ fontSize: '0.875rem' }}
+            >
               {entryRequirements.highers && (
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Highers</span>
-                  <span className="font-medium text-gray-900">{entryRequirements.highers}</span>
+                  <span style={{ color: 'var(--pf-grey-600)' }}>Highers</span>
+                  <span
+                    className="pf-data-number"
+                    style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}
+                  >
+                    {entryRequirements.highers}
+                  </span>
                 </div>
               )}
               {entryRequirements.ucas_points && (
                 <div className="flex justify-between">
-                  <span className="text-gray-500">UCAS Points</span>
-                  <span className="font-medium text-gray-900">{entryRequirements.ucas_points}</span>
+                  <span style={{ color: 'var(--pf-grey-600)' }}>UCAS Points</span>
+                  <span
+                    className="pf-data-number"
+                    style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}
+                  >
+                    {entryRequirements.ucas_points}
+                  </span>
                 </div>
               )}
               {course.duration_years && (
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Duration</span>
-                  <span className="font-medium text-gray-900">{course.duration_years} years</span>
+                  <span style={{ color: 'var(--pf-grey-600)' }}>Duration</span>
+                  <span
+                    className="pf-data-number"
+                    style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}
+                  >
+                    {course.duration_years} years
+                  </span>
                 </div>
               )}
             </div>
           )}
 
-          {/* Compact (list view) inline stats */}
           {compact && (entryRequirements?.highers || entryRequirements?.ucas_points || course.duration_years) && (
-            <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3 text-xs">
+            <div
+              className="flex flex-wrap gap-x-4 gap-y-1 mb-3"
+              style={{ fontSize: '0.75rem' }}
+            >
               {entryRequirements?.highers && (
-                <span className="text-gray-600">
-                  <span className="text-gray-400">Highers </span>
-                  <span className="font-semibold text-gray-900">{entryRequirements.highers}</span>
+                <span style={{ color: 'var(--pf-grey-600)' }}>
+                  Highers{' '}
+                  <span
+                    className="pf-data-number"
+                    style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}
+                  >
+                    {entryRequirements.highers}
+                  </span>
                 </span>
               )}
               {entryRequirements?.ucas_points && (
-                <span className="text-gray-600">
-                  <span className="text-gray-400">UCAS </span>
-                  <span className="font-semibold text-gray-900">{entryRequirements.ucas_points}</span>
+                <span style={{ color: 'var(--pf-grey-600)' }}>
+                  UCAS{' '}
+                  <span
+                    className="pf-data-number"
+                    style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}
+                  >
+                    {entryRequirements.ucas_points}
+                  </span>
                 </span>
               )}
               {course.duration_years && (
-                <span className="text-gray-600">
-                  <span className="text-gray-400">Duration </span>
-                  <span className="font-semibold text-gray-900">{course.duration_years} yrs</span>
+                <span style={{ color: 'var(--pf-grey-600)' }}>
+                  Duration{' '}
+                  <span
+                    className="pf-data-number"
+                    style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}
+                  >
+                    {course.duration_years} yrs
+                  </span>
                 </span>
               )}
             </div>
@@ -164,17 +219,34 @@ export function CourseCard({
 
           {/* Actions */}
           <div className="flex gap-2">
-            <span className="flex-1 text-center py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
+            <span
+              className="flex-1 text-center"
+              style={{
+                padding: '10px',
+                fontSize: '0.875rem',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                color: 'var(--pf-teal-700)',
+                backgroundColor: 'var(--pf-teal-100)',
+                borderRadius: '6px',
+              }}
+            >
               View details
             </span>
             {onCompare && (
               <button
                 onClick={handleCompare}
-                className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  isComparing
-                    ? 'bg-purple-100 text-purple-700'
-                    : 'bg-gray-100 text-gray-700 hover:bg-purple-50 hover:text-purple-700'
-                }`}
+                className="transition-colors"
+                style={{
+                  padding: '10px 14px',
+                  fontSize: '0.875rem',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  borderRadius: '6px',
+                  backgroundColor: isComparing ? 'var(--pf-teal-100)' : 'var(--pf-grey-100)',
+                  color: isComparing ? 'var(--pf-teal-700)' : 'var(--pf-grey-900)',
+                }}
+                aria-label="Toggle compare"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
