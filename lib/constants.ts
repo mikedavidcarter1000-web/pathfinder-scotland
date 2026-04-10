@@ -330,6 +330,42 @@ export const SIMD_DESCRIPTIONS = {
   10: 'Least deprived 10%',
 } as const
 
+// Curricular area badge colours (matches 8 CfE curricular areas in curricular_areas table)
+export const CURRICULAR_AREA_COLOURS: Record<string, { bg: string; text: string; border: string; bar: string }> = {
+  Languages:                     { bg: 'bg-rose-50',    text: 'text-rose-700',    border: 'border-rose-200',    bar: 'from-rose-400 to-rose-500' },
+  Mathematics:                   { bg: 'bg-blue-50',    text: 'text-blue-700',    border: 'border-blue-200',    bar: 'from-blue-500 to-blue-600' },
+  Sciences:                      { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', bar: 'from-emerald-500 to-emerald-600' },
+  'Social Studies':              { bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-200',   bar: 'from-amber-400 to-amber-500' },
+  'Expressive Arts':             { bg: 'bg-purple-50',  text: 'text-purple-700',  border: 'border-purple-200',  bar: 'from-purple-500 to-purple-600' },
+  Technologies:                  { bg: 'bg-cyan-50',    text: 'text-cyan-700',    border: 'border-cyan-200',    bar: 'from-cyan-500 to-cyan-600' },
+  'Religious and Moral Education':{ bg: 'bg-indigo-50', text: 'text-indigo-700',  border: 'border-indigo-200',  bar: 'from-indigo-500 to-indigo-600' },
+  'Health and Wellbeing':        { bg: 'bg-teal-50',    text: 'text-teal-700',    border: 'border-teal-200',    bar: 'from-teal-500 to-teal-600' },
+}
+
+export const DEFAULT_CURRICULAR_AREA_COLOUR = {
+  bg: 'bg-gray-50',
+  text: 'text-gray-700',
+  border: 'border-gray-200',
+  bar: 'from-gray-400 to-gray-500',
+}
+
+// Short labels for SQA qualification levels used across pathway pages
+export const QUALIFICATION_LEVEL_LABELS: Record<string, string> = {
+  bge: 'BGE',
+  n3: 'N3',
+  n4: 'N4',
+  n5: 'N5',
+  higher: 'Higher',
+  adv_higher: 'Advanced Higher',
+}
+
+// Relevance style for subject ↔ career sector links
+export const RELEVANCE_STYLES: Record<string, { bg: string; text: string; border: string; label: string }> = {
+  essential:   { bg: 'bg-red-50',     text: 'text-red-700',    border: 'border-red-200',    label: 'Essential' },
+  recommended: { bg: 'bg-yellow-50',  text: 'text-yellow-700', border: 'border-yellow-200', label: 'Recommended' },
+  related:     { bg: 'bg-blue-50',    text: 'text-blue-700',   border: 'border-blue-200',   label: 'Related' },
+}
+
 // URLs
 export const EXTERNAL_URLS = {
   ucas: 'https://www.ucas.com',

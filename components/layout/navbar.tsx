@@ -15,6 +15,8 @@ export function Navbar() {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', auth: true },
+    { name: 'Subjects', href: '/subjects', auth: false },
+    { name: 'Plan Choices', href: '/pathways', auth: false },
     { name: 'Courses', href: '/courses', auth: false },
     { name: 'Universities', href: '/universities', auth: false },
     { name: 'Saved', href: '/saved', auth: true },
