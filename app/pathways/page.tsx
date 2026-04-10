@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
@@ -30,14 +30,35 @@ const YEAR_TO_CURRENT_STAGE: Record<YearGoingInto, Stage> = {
   s6: 's5',
 }
 
+// Match a compulsory subject name from the rule against a subject row.
+// The rule uses short names like "English" or "Mathematics", but the
+// subjects table may have slight variations. Try exact, then prefix match.
+function matchesCompulsory(compulsoryName: string, subjectName: string): boolean {
+  const c = compulsoryName.trim().toLowerCase()
+  const s = subjectName.trim().toLowerCase()
+  if (c === s) return true
+  if (s.startsWith(c + ' ') || s.startsWith(c + '(')) return true
+  // Handle "Maths" vs "Mathematics"
+  if (c === 'maths' && s === 'mathematics') return true
+  if (c === 'mathematics' && s === 'maths') return true
+  return false
+}
+
 export default function PathwaysPage() {
   const [yearGoingInto, setYearGoingInto] = useState<YearGoingInto | null>(null)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [expandedAreas, setExpandedAreas] = useState<Set<string>>(new Set())
+  const [showBreadthTip, setShowBreadthTip] = useState(false)
+  // Fixed-length array of 3 slots for ranked academy picks (null = empty slot)
+  const [academyRankings, setAcademyRankings] = useState<(string | null)[]>([null, null, null])
 
   const currentStage = yearGoingInto ? YEAR_TO_CURRENT_STAGE[yearGoingInto] : null
   const { data: pathway, isLoading } = usePathways(currentStage)
   const { data: careerSectors } = useCareerSectors()
+
+  // Track which stage we've applied pre-selection for so we don't overwrite
+  // user selections when React Query refetches the same data.
+  const appliedStageRef = useRef<YearGoingInto | null>(null)
 
   // Expand all curricular areas by default when pathway loads
   useEffect(() => {
@@ -46,30 +67,31 @@ export default function PathwaysPage() {
     }
   }, [pathway?.stage, pathway?.subjectsByArea])
 
-  // Pre-select compulsory subjects whenever the pathway rules change
+  // Reset + pre-select compulsory subjects when the user changes stage
   useEffect(() => {
-    if (!pathway?.rule || !pathway?.subjectsByArea) return
-    const compulsoryNames = pathway.rule.compulsory_subjects || []
-    if (compulsoryNames.length === 0) return
+    if (!yearGoingInto) {
+      setSelectedIds(new Set())
+      setAcademyRankings([])
+      appliedStageRef.current = null
+      return
+    }
 
+    if (!pathway?.rule || !pathway?.subjectsByArea) return
+
+    // Skip if we've already seeded selections for this stage (prevents
+    // user selections being wiped when React Query refetches).
+    if (appliedStageRef.current === yearGoingInto) return
+
+    const compulsoryNames = pathway.rule.compulsory_subjects || []
     const allSubjects = pathway.subjectsByArea.flatMap((g) => g.subjects)
     const toPreselect = allSubjects
-      .filter((s) => compulsoryNames.some((cn) => cn.toLowerCase() === s.name.toLowerCase()))
+      .filter((s) => compulsoryNames.some((cn) => matchesCompulsory(cn, s.name)))
       .map((s) => s.id)
 
-    if (toPreselect.length === 0) return
-
-    setSelectedIds((prev) => {
-      const next = new Set(prev)
-      for (const id of toPreselect) next.add(id)
-      return next
-    })
-  }, [pathway?.rule, pathway?.subjectsByArea])
-
-  // Reset selections when stage changes
-  useEffect(() => {
-    setSelectedIds(new Set())
-  }, [yearGoingInto])
+    setSelectedIds(new Set(toPreselect))
+    setAcademyRankings([null, null, null])
+    appliedStageRef.current = yearGoingInto
+  }, [yearGoingInto, pathway?.rule, pathway?.subjectsByArea])
 
   const compulsoryIds = useMemo(() => {
     if (!pathway?.rule || !pathway?.subjectsByArea) return new Set<string>()
@@ -77,22 +99,19 @@ export default function PathwaysPage() {
     const allSubjects = pathway.subjectsByArea.flatMap((g) => g.subjects)
     return new Set(
       allSubjects
-        .filter((s) => names.some((cn) => cn.toLowerCase() === s.name.toLowerCase()))
+        .filter((s) => names.some((cn) => matchesCompulsory(cn, s.name)))
         .map((s) => s.id)
     )
   }, [pathway?.rule, pathway?.subjectsByArea])
 
   const selectedSubjects = useMemo(() => {
     if (!pathway) return [] as SubjectWithArea[]
-    const all = [
-      ...pathway.subjectsByArea.flatMap((g) => g.subjects),
-      ...pathway.academySubjects,
-    ]
+    const all = pathway.subjectsByArea.flatMap((g) => g.subjects)
     return all.filter((s) => selectedIds.has(s.id))
   }, [pathway, selectedIds])
 
   const toggleSubject = (subject: SubjectWithArea) => {
-    if (compulsoryIds.has(subject.id)) return // cannot deselect compulsory
+    if (compulsoryIds.has(subject.id)) return
     setSelectedIds((prev) => {
       const next = new Set(prev)
       if (next.has(subject.id)) next.delete(subject.id)
@@ -111,7 +130,10 @@ export default function PathwaysPage() {
   }
 
   const totalRequired = pathway?.rule?.total_subjects ?? 0
-  const selectedCount = selectedIds.size
+  const freeRequired = pathway?.rule?.num_free_choices ?? 0
+  const reserveCount = pathway?.rule?.num_reserves ?? 0
+  const compulsoryNames = pathway?.rule?.compulsory_subjects || []
+  const selectedFreeCount = Math.max(0, selectedIds.size - compulsoryIds.size)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -134,7 +156,7 @@ export default function PathwaysPage() {
 
       {/* Stage Selector */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8">
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Step 1 — What year are you going into?
           </h2>
@@ -171,13 +193,28 @@ export default function PathwaysPage() {
 
         {/* Main planning UI */}
         {yearGoingInto && !isLoading && pathway && (
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Left: rules + picker */}
+          <div className="grid lg:grid-cols-3 gap-6">
+            {/* Left: picker + rules */}
             <div className="lg:col-span-2 space-y-6">
+              {/* Sticky progress bar */}
+              <div className="sticky top-0 z-20 -mx-4 px-4 py-3 bg-gray-50/95 backdrop-blur border-b border-gray-200">
+                <ProgressHeader
+                  selectedFreeCount={selectedFreeCount}
+                  freeRequired={freeRequired}
+                  compulsoryCount={compulsoryIds.size}
+                  totalRequired={totalRequired}
+                />
+              </div>
+
+              {/* Simplified rules panel */}
               <RulesPanel
                 rule={pathway.rule}
-                selectedCount={selectedCount}
                 yearLabel={YEAR_BUTTONS.find((y) => y.value === yearGoingInto)?.label ?? ''}
+                showBreadthTip={showBreadthTip}
+                onToggleBreadthTip={() => setShowBreadthTip((v) => !v)}
+                freeRequired={freeRequired}
+                reserveCount={reserveCount}
+                compulsoryNames={compulsoryNames}
               />
 
               {/* Curricular area picker */}
@@ -237,6 +274,7 @@ export default function PathwaysPage() {
                               subject={subject}
                               selected={selectedIds.has(subject.id)}
                               compulsory={compulsoryIds.has(subject.id)}
+                              areaColour={areaColour}
                               onToggle={() => toggleSubject(subject)}
                             />
                           ))}
@@ -245,37 +283,16 @@ export default function PathwaysPage() {
                     </div>
                   )
                 })}
-
-                {/* Academies — only shown when going into S3 */}
-                {yearGoingInto === 's3' && pathway.academySubjects.length > 0 && (
-                  <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                    <div className="px-5 py-4 bg-purple-50 border-b border-purple-100">
-                      <div className="flex items-center gap-3">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
-                          Academies
-                        </span>
-                        <span className="text-sm text-purple-700">
-                          Enrichment and elective programmes
-                        </span>
-                      </div>
-                      <p className="text-xs text-purple-600 mt-2">
-                        Most schools ask students to rank a small number of Academy options. These don&apos;t replace SQA qualifications but develop skills that feed into senior phase choices.
-                      </p>
-                    </div>
-                    <div className="divide-y divide-gray-100">
-                      {pathway.academySubjects.map((subject) => (
-                        <SubjectRow
-                          key={subject.id}
-                          subject={subject}
-                          selected={selectedIds.has(subject.id)}
-                          compulsory={false}
-                          onToggle={() => toggleSubject(subject)}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
+
+              {/* Academies — shown as a separate Step 3 when going into S3 */}
+              {yearGoingInto === 's3' && pathway.academySubjects.length > 0 && (
+                <AcademyPicker
+                  academies={pathway.academySubjects}
+                  rankings={academyRankings}
+                  onChange={setAcademyRankings}
+                />
+              )}
             </div>
 
             {/* Right: pathway preview */}
@@ -295,14 +312,79 @@ export default function PathwaysPage() {
   )
 }
 
+// ──────────────────────────────────────────────────────────────────────────
+// Progress header (sticky)
+// ──────────────────────────────────────────────────────────────────────────
+
+function ProgressHeader({
+  selectedFreeCount,
+  freeRequired,
+  compulsoryCount,
+  totalRequired,
+}: {
+  selectedFreeCount: number
+  freeRequired: number
+  compulsoryCount: number
+  totalRequired: number
+}) {
+  const percent = freeRequired > 0
+    ? Math.min(100, (selectedFreeCount / freeRequired) * 100)
+    : 0
+  const complete = selectedFreeCount >= freeRequired && freeRequired > 0
+
+  return (
+    <div>
+      <div className="flex items-baseline justify-between mb-2">
+        <div className="flex items-baseline gap-2">
+          <span className={`text-2xl font-bold ${complete ? 'text-green-600' : 'text-gray-900'}`}>
+            {selectedFreeCount} of {freeRequired}
+          </span>
+          <span className="text-sm text-gray-500">choices made</span>
+          {complete && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+              All picked
+            </span>
+          )}
+        </div>
+        <span className="text-xs text-gray-500">
+          + {compulsoryCount} compulsory = {totalRequired} total
+        </span>
+      </div>
+      <div className="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+        <div
+          className={`h-full transition-all duration-300 ${
+            complete ? 'bg-green-500' : 'bg-blue-600'
+          }`}
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+    </div>
+  )
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Simplified, student-friendly rules panel
+// ──────────────────────────────────────────────────────────────────────────
+
 function RulesPanel({
   rule,
-  selectedCount,
   yearLabel,
+  showBreadthTip,
+  onToggleBreadthTip,
+  freeRequired,
+  reserveCount,
+  compulsoryNames,
 }: {
   rule: Tables<'course_choice_rules'> | null
-  selectedCount: number
   yearLabel: string
+  showBreadthTip: boolean
+  onToggleBreadthTip: () => void
+  freeRequired: number
+  reserveCount: number
+  compulsoryNames: string[]
 }) {
   if (!rule) {
     return (
@@ -312,100 +394,80 @@ function RulesPanel({
     )
   }
 
-  const compulsory = rule.compulsory_subjects || []
-  const freeCount = rule.num_free_choices
-  const reserveCount = rule.num_reserves ?? 0
   const nonExamined = rule.non_examined_core || []
   const specialRules = rule.special_rules || []
 
+  // Build the student-friendly headline sentence
+  const headline = compulsoryNames.length > 0
+    ? `Pick ${freeRequired} subjects — ${compulsoryNames.join(' and ')} ${compulsoryNames.length === 1 ? 'is' : 'are'} already sorted for you.`
+    : `Pick ${freeRequired} subjects.`
+
+  const reserveText = reserveCount > 0
+    ? `Choose ${reserveCount} reserve${reserveCount > 1 ? 's' : ''} in case your top picks aren't available.`
+    : null
+
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <div className="flex items-baseline justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">
-          Going into {yearLabel} — choice rules
+    <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="flex items-baseline justify-between mb-2">
+        <h2 className="text-base font-semibold text-gray-900">
+          Going into {yearLabel}
         </h2>
-        <span className="text-sm text-gray-500">
-          {selectedCount} of {rule.total_subjects} selected
-        </span>
       </div>
 
-      {/* Progress bar */}
-      <div className="mb-6">
-        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-blue-600 transition-all"
-            style={{
-              width: `${Math.min(100, (selectedCount / Math.max(1, rule.total_subjects)) * 100)}%`,
-            }}
-          />
-        </div>
-      </div>
-
-      <p className="text-gray-700 mb-4">
-        You need to choose <span className="font-semibold">{rule.total_subjects} subjects</span>
-        {compulsory.length > 0 && (
-          <>
-            , including <span className="font-semibold">{compulsory.join(' and ')}</span>
-          </>
-        )}
-        .
+      {/* Friendly headline */}
+      <p className="text-gray-700 leading-relaxed">
+        {headline}
       </p>
-
-      <div className="grid sm:grid-cols-2 gap-4 mb-4">
-        {compulsory.length > 0 && (
-          <div>
-            <dt className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
-              Compulsory
-            </dt>
-            <dd className="text-sm text-gray-900">{compulsory.join(', ')}</dd>
-          </div>
-        )}
-        <div>
-          <dt className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
-            Free choices
-          </dt>
-          <dd className="text-sm text-gray-900">{freeCount}</dd>
-        </div>
-        {reserveCount > 0 && (
-          <div>
-            <dt className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
-              Reserves
-            </dt>
-            <dd className="text-sm text-gray-900">
-              {reserveCount} {reserveCount === 1 ? 'reserve' : 'reserves'}
-            </dd>
-          </div>
-        )}
-      </div>
-
-      {rule.breadth_requirements && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
-          <p className="text-xs font-semibold text-blue-900 uppercase tracking-wide mb-1">
-            Breadth recommendation
-          </p>
-          <p className="text-sm text-blue-800">{rule.breadth_requirements}</p>
-        </div>
+      {reserveText && (
+        <p className="text-gray-700 leading-relaxed mt-1">{reserveText}</p>
       )}
 
+      {/* Non-examined core as subtle note */}
       {nonExamined.length > 0 && (
-        <p className="text-xs text-gray-500 mb-3">
-          <span className="font-semibold">Also timetabled (not counted in choices):</span>{' '}
-          {nonExamined.join(', ')}
+        <p className="text-xs text-gray-500 mt-3">
+          You&apos;ll also have {nonExamined.join(', ')} timetabled — these don&apos;t count toward your choices.
         </p>
       )}
 
-      {specialRules.length > 0 && (
-        <div className="mt-4 space-y-2">
-          {specialRules.map((srule, idx) => (
-            <div
-              key={idx}
-              className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-100 rounded-lg"
+      {/* Collapsible breadth tip */}
+      {rule.breadth_requirements && (
+        <div className="mt-4">
+          <button
+            onClick={onToggleBreadthTip}
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700"
+          >
+            <svg
+              className={`w-4 h-4 transition-transform ${showBreadthTip ? 'rotate-90' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <svg className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            Tip for picking a balanced mix
+          </button>
+          {showBreadthTip && (
+            <p className="mt-2 p-3 bg-blue-50 text-sm text-blue-900 rounded-lg border border-blue-100">
+              {rule.breadth_requirements}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Special rules as compact info badges */}
+      {specialRules.length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {specialRules.map((srule, idx) => (
+            <span
+              key={idx}
+              className="inline-flex items-start gap-1.5 max-w-full px-2.5 py-1 rounded-lg text-xs bg-amber-50 border border-amber-200 text-amber-900"
+              title={srule}
+            >
+              <svg className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-xs text-amber-900">{srule}</p>
-            </div>
+              <span className="leading-snug">{srule}</span>
+            </span>
           ))}
         </div>
       )}
@@ -413,71 +475,217 @@ function RulesPanel({
   )
 }
 
+// ──────────────────────────────────────────────────────────────────────────
+// Subject row
+// ──────────────────────────────────────────────────────────────────────────
+
 function SubjectRow({
   subject,
   selected,
   compulsory,
+  areaColour,
   onToggle,
 }: {
   subject: SubjectWithArea
   selected: boolean
   compulsory: boolean
+  areaColour: { bg: string; text: string; border: string; bar: string; dot: string }
   onToggle: () => void
 }) {
-  const [showPreview, setShowPreview] = useState(false)
+  const truncatedDescription = subject.description
+    ? subject.description.length > 80
+      ? subject.description.slice(0, 80).trim() + '…'
+      : subject.description
+    : null
+
   return (
     <div
-      className={`px-5 py-3 transition-colors ${
-        selected ? 'bg-blue-50/40' : 'hover:bg-gray-50'
+      className={`transition-colors ${
+        selected ? 'bg-blue-50' : 'hover:bg-gray-50'
       }`}
     >
-      <div className="flex items-start gap-3">
-        <button
-          onClick={onToggle}
-          disabled={compulsory}
-          aria-label={selected ? `Deselect ${subject.name}` : `Select ${subject.name}`}
-          className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 flex-shrink-0 transition-colors ${
+      <button
+        type="button"
+        onClick={onToggle}
+        disabled={compulsory}
+        className={`w-full text-left px-5 py-3 flex items-start gap-3 ${
+          compulsory ? 'cursor-not-allowed' : 'cursor-pointer'
+        }`}
+      >
+        <span
+          className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 flex-shrink-0 ${
             selected
               ? 'bg-blue-600 border-blue-600 text-white'
-              : 'border-gray-300 hover:border-blue-500'
-          } ${compulsory ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
+              : 'border-gray-300'
+          } ${compulsory ? 'opacity-80' : ''}`}
+          aria-hidden="true"
         >
           {selected && (
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
             </svg>
           )}
-        </button>
+        </span>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={() => setShowPreview((v) => !v)}
-              className="text-sm font-medium text-gray-900 hover:text-blue-600 text-left"
-            >
-              {subject.name}
-            </button>
+            <span
+              className={`w-2 h-2 rounded-full ${areaColour.dot}`}
+              aria-hidden="true"
+              title={subject.curricular_area?.name ?? ''}
+            />
+            <span className="text-sm font-medium text-gray-900">{subject.name}</span>
             {compulsory && (
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide bg-gray-100 text-gray-600">
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide bg-gray-200 text-gray-700">
                 Compulsory
               </span>
             )}
             <Link
               href={`/subjects/${subject.id}`}
-              className="text-xs text-blue-600 hover:text-blue-700"
+              onClick={(e) => e.stopPropagation()}
+              className="text-xs text-blue-600 hover:text-blue-700 ml-auto"
             >
               Details →
             </Link>
           </div>
-
-          {selected && showPreview && subject.description && (
-            <p className="text-xs text-gray-600 mt-2 line-clamp-3">{subject.description}</p>
+          {truncatedDescription && (
+            <p className="text-xs text-gray-500 mt-1 ml-4 line-clamp-1">{truncatedDescription}</p>
           )}
         </div>
-      </div>
+      </button>
     </div>
   )
 }
+
+// ──────────────────────────────────────────────────────────────────────────
+// Academy picker — S3 only
+// ──────────────────────────────────────────────────────────────────────────
+
+function AcademyPicker({
+  academies,
+  rankings,
+  onChange,
+}: {
+  academies: SubjectWithArea[]
+  rankings: (string | null)[]
+  onChange: (rankings: (string | null)[]) => void
+}) {
+  const rankOf = (id: string) => rankings.indexOf(id) // -1 if not ranked
+  const isRanked = (id: string) => rankOf(id) !== -1
+
+  const setRank = (id: string, newRank: number) => {
+    // Start by clearing this id from any existing slot
+    const next = rankings.map((r) => (r === id ? null : r))
+    if (newRank >= 0 && newRank < 3) {
+      // If the target slot is occupied, bump that id out
+      next[newRank] = id
+    }
+    onChange(next)
+  }
+
+  const clearRank = (id: string) => {
+    onChange(rankings.map((r) => (r === id ? null : r)))
+  }
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900">Step 3 — Choose your Academy</h2>
+        <p className="text-sm text-gray-600 mt-1">
+          Rank your top 3 Academy choices. Not all options run every year, so having reserves helps.
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        {academies.map((academy) => {
+          const rank = rankOf(academy.id)
+          const ranked = isRanked(academy.id)
+          return (
+            <div
+              key={academy.id}
+              className={`rounded-xl border p-5 transition-all ${
+                ranked
+                  ? 'border-purple-400 bg-purple-50/50 shadow-sm'
+                  : 'border-gray-200 bg-white hover:border-purple-200'
+              }`}
+            >
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <h3 className="font-semibold text-gray-900">{academy.name}</h3>
+                {ranked && (
+                  <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-purple-600 text-white text-sm font-bold">
+                    {rank + 1}
+                  </span>
+                )}
+              </div>
+
+              {academy.description && (
+                <p className="text-sm text-gray-600 mb-3 line-clamp-3">{academy.description}</p>
+              )}
+
+              {academy.why_choose && (
+                <div className="mb-3 pt-3 border-t border-gray-100">
+                  <p className="text-xs font-semibold text-purple-700 uppercase tracking-wide mb-1">
+                    Why choose this
+                  </p>
+                  <p className="text-sm text-gray-700 line-clamp-3">{academy.why_choose}</p>
+                </div>
+              )}
+
+              <div className="flex items-center gap-2 pt-2">
+                <label className="text-xs font-medium text-gray-600">Rank:</label>
+                <select
+                  value={ranked ? rank + 1 : ''}
+                  onChange={(e) => {
+                    const v = e.target.value
+                    if (!v) clearRank(academy.id)
+                    else setRank(academy.id, parseInt(v, 10) - 1)
+                  }}
+                  className="text-sm px-2 py-1 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                >
+                  <option value="">—</option>
+                  <option value="1">1st choice</option>
+                  <option value="2">2nd choice</option>
+                  <option value="3">3rd choice</option>
+                </select>
+                {ranked && (
+                  <button
+                    type="button"
+                    onClick={() => clearRank(academy.id)}
+                    className="text-xs text-gray-500 hover:text-red-600 ml-auto"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {rankings.some((r) => r !== null) && (
+        <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
+          <p className="text-sm font-medium text-purple-900 mb-1">Your ranking</p>
+          <ol className="text-sm text-purple-800 space-y-0.5">
+            {rankings.map((id, idx) => {
+              if (!id) return null
+              const academy = academies.find((a) => a.id === id)
+              if (!academy) return null
+              return (
+                <li key={id}>
+                  <span className="font-semibold">{idx + 1}.</span> {academy.name}
+                </li>
+              )
+            })}
+          </ol>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Pathway preview sidebar
+// ──────────────────────────────────────────────────────────────────────────
 
 function PathwayPreview({
   selectedSubjects,
@@ -492,7 +700,6 @@ function PathwayPreview({
   const selectedIds = selectedSubjects.map((s) => s.id)
   const selectedNames = selectedSubjects.map((s) => s.name)
 
-  // Fetch career sector coverage for selected subjects
   const { data: sectorLinks } = useQuery({
     queryKey: ['pathway-preview-sectors', selectedIds.sort().join(',')],
     queryFn: async () => {
@@ -512,7 +719,6 @@ function PathwayPreview({
     enabled: selectedIds.length > 0,
   })
 
-  // Fetch matching university courses (simple fetch + client-side filter)
   const { data: matchingCourses } = useQuery({
     queryKey: ['pathway-preview-courses', selectedNames.sort().join(',')],
     queryFn: async () => {

@@ -115,23 +115,33 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
         </div>
       )}
 
-      <p className="text-sm text-gray-500">
-        All criteria are optional. You can skip this step if none apply to you.
-      </p>
-
-      <div className="flex gap-3 pt-4">
+      <div className="pt-4 space-y-3">
+        {/* Primary actions: Skip OR Continue, given equal weight */}
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              onChange({ careExperienced: false, isCarer: false, firstGeneration: false })
+              onNext()
+            }}
+            className="flex-1 py-3 px-4 bg-white border-2 border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors"
+          >
+            None of these apply
+          </button>
+          <button
+            type="submit"
+            disabled={selectedCount === 0}
+            className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+          >
+            Continue{selectedCount > 0 ? ` (${selectedCount})` : ''}
+          </button>
+        </div>
         <button
           type="button"
           onClick={onBack}
-          className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
+          className="w-full py-2 text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors"
         >
-          Back
-        </button>
-        <button
-          type="submit"
-          className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
-        >
-          Continue
+          ← Back
         </button>
       </div>
     </form>

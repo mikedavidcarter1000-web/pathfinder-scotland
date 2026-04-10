@@ -17,6 +17,7 @@ import type { QualificationType } from '@/lib/grades'
 
 interface Grade {
   subject: string
+  subject_id?: string | null
   grade: string
   predicted: boolean
   qualificationType: QualificationType
@@ -76,24 +77,16 @@ export default function OnboardingPage() {
   }, [studentLoading, student, router])
 
   const handleComplete = async () => {
-    alert('handleComplete called!') // Debug alert 1
-    console.log('handleComplete called', { user, basicInfo, postcodeData, wideningAccess, grades })
-
     if (!user) {
-      console.log('No user found, returning early')
-      alert('No user found!')
       setError('Not authenticated. Please sign in again.')
       return
     }
 
-    alert('Starting submission...') // Debug alert 2
     setIsSubmitting(true)
     setError(null)
 
     try {
-      console.log('Creating student profile...')
-      // Create student profile
-      const studentResult = await createStudent.mutateAsync({
+      await createStudent.mutateAsync({
         email: user.email || '',
         first_name: basicInfo.firstName,
         last_name: basicInfo.lastName,
@@ -105,31 +98,24 @@ export default function OnboardingPage() {
         is_carer: wideningAccess.isCarer,
         first_generation: wideningAccess.firstGeneration,
       })
-      console.log('Student created:', studentResult)
-      alert('Student created successfully!') // Debug alert 3
 
-      // Bulk upsert grades if any were added
-      if (grades.length > 0) {
-        console.log('Saving grades...')
-        const gradesResult = await bulkUpsertGrades.mutateAsync(
-          grades.map((g) => ({
+      // Bulk upsert grades if any were added (only those with an actual grade picked)
+      const gradesToSave = grades.filter((g) => g.grade)
+      if (gradesToSave.length > 0) {
+        await bulkUpsertGrades.mutateAsync(
+          gradesToSave.map((g) => ({
             subject: g.subject,
+            subject_id: g.subject_id ?? null,
             grade: g.grade,
             predicted: g.predicted,
             qualification_type: g.qualificationType,
           }))
         )
-        console.log('Grades saved:', gradesResult)
       }
 
-      // Redirect to dashboard
-      console.log('Redirecting to dashboard...')
       router.push('/dashboard')
     } catch (err) {
-      console.error('Failed to complete onboarding:', err)
       const errorMessage = err instanceof Error ? err.message : 'Failed to create profile. Please try again.'
-      console.error('Error message:', errorMessage)
-      alert('Error: ' + errorMessage) // Temporary alert for debugging
       setError(errorMessage)
       setIsSubmitting(false)
     }

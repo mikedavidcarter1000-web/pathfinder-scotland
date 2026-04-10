@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { GradeInput, GradeListItem } from '@/components/ui/grade-input'
+import { useState, useMemo } from 'react'
+import { SubjectGradeChecklist, type GradeEntry } from '@/components/ui/subject-grade-checklist'
 import type { QualificationType } from '@/lib/grades'
 
 interface Grade {
   subject: string
+  subject_id?: string | null
   grade: string
   predicted: boolean
   qualificationType: QualificationType
@@ -28,39 +29,42 @@ const qualificationTypes: { value: QualificationType; label: string }[] = [
 export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting }: GradesStepProps) {
   const [activeTab, setActiveTab] = useState<QualificationType>('higher')
 
-  const handleCompleteClick = () => {
-    alert('Button clicked in GradesStep!')
-    console.log('onComplete is:', onComplete)
-    if (onComplete) {
-      onComplete()
-    } else {
-      alert('onComplete is undefined!')
-    }
-  }
+  // Convert the parent Grade[] to GradeEntry[] for the active tab
+  const activeEntries = useMemo<GradeEntry[]>(() => {
+    return grades
+      .filter((g) => g.qualificationType === activeTab)
+      .map((g) => ({
+        subject: g.subject,
+        subject_id: g.subject_id ?? null,
+        grade: g.grade,
+        predicted: g.predicted,
+      }))
+  }, [grades, activeTab])
 
-  const handleAddGrade = (gradeData: { subject: string; grade: string; predicted: boolean }) => {
-    const newGrade: Grade = {
-      ...gradeData,
+  const handleEntriesChange = (nextEntries: GradeEntry[]) => {
+    // Keep grades for other qualification types, replace ones for activeTab
+    const others = grades.filter((g) => g.qualificationType !== activeTab)
+    const updated: Grade[] = nextEntries.map((e) => ({
+      subject: e.subject,
+      subject_id: e.subject_id,
+      grade: e.grade,
+      predicted: e.predicted,
       qualificationType: activeTab,
-    }
-    onChange([...grades, newGrade])
-  }
-
-  const handleRemoveGrade = (index: number) => {
-    onChange(grades.filter((_, i) => i !== index))
+    }))
+    onChange([...others, ...updated])
   }
 
   const gradesForType = (type: QualificationType) =>
     grades.filter((g) => g.qualificationType === type)
 
-  const existingSubjects = gradesForType(activeTab).map((g) => g.subject)
+  const totalGradeCount = grades.filter((g) => g.grade).length
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-1">Your grades</h2>
         <p className="text-gray-600">
-          Add your current or predicted grades. This helps us match you with suitable courses.
+          Tick the subjects you&apos;re taking and pick your grade. This helps us match you with suitable courses.
         </p>
       </div>
 
@@ -92,66 +96,23 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
         })}
       </div>
 
-      {/* Grade Input */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <GradeInput
-          qualificationType={activeTab}
-          onAdd={handleAddGrade}
-          existingSubjects={existingSubjects}
-        />
-      </div>
-
-      {/* Grade List */}
-      <div>
-        <h3 className="text-sm font-medium text-gray-700 mb-3">
-          {qualificationTypes.find((t) => t.value === activeTab)?.label} ({gradesForType(activeTab).length})
-        </h3>
-
-        {gradesForType(activeTab).length === 0 ? (
-          <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-            <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <p className="text-gray-500 text-sm">
-              No {qualificationTypes.find((t) => t.value === activeTab)?.label.toLowerCase()} added yet
-            </p>
-            <p className="text-gray-400 text-xs mt-1">
-              Use the form above to add your grades
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {gradesForType(activeTab).map((grade, index) => {
-              const globalIndex = grades.findIndex(
-                (g) =>
-                  g.subject === grade.subject &&
-                  g.qualificationType === grade.qualificationType
-              )
-              return (
-                <GradeListItem
-                  key={`${grade.qualificationType}-${grade.subject}`}
-                  subject={grade.subject}
-                  grade={grade.grade}
-                  predicted={grade.predicted}
-                  onRemove={() => handleRemoveGrade(globalIndex)}
-                />
-              )
-            })}
-          </div>
-        )}
-      </div>
+      {/* Checklist */}
+      <SubjectGradeChecklist
+        qualificationType={activeTab}
+        entries={activeEntries}
+        onChange={handleEntriesChange}
+      />
 
       {/* Summary */}
-      {grades.length > 0 && (
+      {totalGradeCount > 0 && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-medium text-blue-900 mb-2">Grade Summary</h4>
+          <h4 className="font-medium text-blue-900 mb-2">Grade summary</h4>
           <div className="grid grid-cols-3 gap-4 text-sm">
             {qualificationTypes.map((type) => {
-              const typeGrades = gradesForType(type.value)
+              const typeGrades = gradesForType(type.value).filter((g) => g.grade)
               const gradeString = typeGrades
                 .map((g) => g.grade)
                 .sort()
-                .reverse()
                 .join('')
               return (
                 <div key={type.value}>
@@ -167,7 +128,7 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
       )}
 
       <p className="text-sm text-gray-500">
-        You can add more grades or update them later from your dashboard.
+        You can update your grades any time from your dashboard.
       </p>
 
       <div className="flex gap-3 pt-4">
@@ -181,7 +142,7 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
         </button>
         <button
           type="button"
-          onClick={handleCompleteClick}
+          onClick={onComplete}
           disabled={isSubmitting}
           className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
         >
