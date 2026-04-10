@@ -128,7 +128,7 @@ VALUES
     ARRAY['English', 'Mathematics'],
     5,
     1,
-    ARRAY[],
+    ARRAY[]::text[],
     'Students typically choose 7 subjects for National 4 or National 5; breadth expected across sciences, humanities, and a creative/technical subject',
     ARRAY[
       'National 4 does not require a SQA exam — assessed by the school',
@@ -139,10 +139,10 @@ VALUES
   (
     's4_to_s5',
     5,
-    ARRAY[],
+    ARRAY[]::text[],
     5,
     1,
-    ARRAY[],
+    ARRAY[]::text[],
     'Students typically sit 4–6 Highers; universities usually look for 5 Highers for competitive courses',
     ARRAY[
       'A minimum of grade C at National 5 is usually required to attempt Higher in the same subject',
@@ -154,10 +154,10 @@ VALUES
   (
     's5_to_s6',
     4,
-    ARRAY[],
+    ARRAY[]::text[],
     4,
     1,
-    ARRAY[],
+    ARRAY[]::text[],
     'Students typically take 2–3 Advanced Highers alongside additional Highers or specialist study; focus on areas relevant to university application',
     ARRAY[
       'Advanced Higher requires a grade B or above at Higher in the same or closely related subject',

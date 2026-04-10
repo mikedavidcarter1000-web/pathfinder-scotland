@@ -53,6 +53,72 @@ export type Database = {
         }
         Relationships: []
       }
+      career_sectors: {
+        Row: {
+          description: string | null
+          display_order: number | null
+          id: string
+          name: string
+        }
+        Insert: {
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          name: string
+        }
+        Update: {
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      course_choice_rules: {
+        Row: {
+          breadth_requirements: string | null
+          compulsory_subjects: string[] | null
+          created_at: string | null
+          id: string
+          is_generic: boolean | null
+          non_examined_core: string[] | null
+          num_free_choices: number
+          num_reserves: number | null
+          school_id: string | null
+          special_rules: string[] | null
+          total_subjects: number
+          transition: string
+        }
+        Insert: {
+          breadth_requirements?: string | null
+          compulsory_subjects?: string[] | null
+          created_at?: string | null
+          id?: string
+          is_generic?: boolean | null
+          non_examined_core?: string[] | null
+          num_free_choices: number
+          num_reserves?: number | null
+          school_id?: string | null
+          special_rules?: string[] | null
+          total_subjects: number
+          transition: string
+        }
+        Update: {
+          breadth_requirements?: string | null
+          compulsory_subjects?: string[] | null
+          created_at?: string | null
+          id?: string
+          is_generic?: boolean | null
+          non_examined_core?: string[] | null
+          num_free_choices?: number
+          num_reserves?: number | null
+          school_id?: string | null
+          special_rules?: string[] | null
+          total_subjects?: number
+          transition?: string
+        }
+        Relationships: []
+      }
       courses: {
         Row: {
           course_url: string | null
@@ -111,6 +177,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      curricular_areas: {
+        Row: {
+          display_order: number
+          id: string
+          name: string
+        }
+        Insert: {
+          display_order: number
+          id?: string
+          name: string
+        }
+        Update: {
+          display_order?: number
+          id?: string
+          name?: string
+        }
+        Relationships: []
       }
       promo_code_redemptions: {
         Row: {
@@ -509,6 +593,7 @@ export type Database = {
           qualification_type: Database["public"]["Enums"]["qualification_type"]
           student_id: string
           subject: string
+          subject_id: string | null
           updated_at: string | null
           year: number | null
         }
@@ -520,6 +605,7 @@ export type Database = {
           qualification_type: Database["public"]["Enums"]["qualification_type"]
           student_id: string
           subject: string
+          subject_id?: string | null
           updated_at?: string | null
           year?: number | null
         }
@@ -531,6 +617,7 @@ export type Database = {
           qualification_type?: Database["public"]["Enums"]["qualification_type"]
           student_id?: string
           subject?: string
+          subject_id?: string | null
           updated_at?: string | null
           year?: number | null
         }
@@ -540,6 +627,13 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_grades_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
             referencedColumns: ["id"]
           },
         ]
@@ -591,6 +685,155 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      subject_career_sectors: {
+        Row: {
+          career_sector_id: string
+          relevance: string | null
+          subject_id: string
+        }
+        Insert: {
+          career_sector_id: string
+          relevance?: string | null
+          subject_id: string
+        }
+        Update: {
+          career_sector_id?: string
+          relevance?: string | null
+          subject_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subject_career_sectors_career_sector_id_fkey"
+            columns: ["career_sector_id"]
+            isOneToOne: false
+            referencedRelation: "career_sectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subject_career_sectors_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subject_progressions: {
+        Row: {
+          from_level: string
+          from_subject_id: string | null
+          id: string
+          min_grade: string | null
+          notes: string | null
+          recommended_grade: string | null
+          to_level: string
+          to_subject_id: string | null
+        }
+        Insert: {
+          from_level: string
+          from_subject_id?: string | null
+          id?: string
+          min_grade?: string | null
+          notes?: string | null
+          recommended_grade?: string | null
+          to_level: string
+          to_subject_id?: string | null
+        }
+        Update: {
+          from_level?: string
+          from_subject_id?: string | null
+          id?: string
+          min_grade?: string | null
+          notes?: string | null
+          recommended_grade?: string | null
+          to_level?: string
+          to_subject_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subject_progressions_from_subject_id_fkey"
+            columns: ["from_subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subject_progressions_to_subject_id_fkey"
+            columns: ["to_subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subjects: {
+        Row: {
+          assessment_type: string | null
+          created_at: string | null
+          curricular_area_id: string | null
+          description: string | null
+          id: string
+          is_academy: boolean | null
+          is_available_adv_higher: boolean | null
+          is_available_higher: boolean | null
+          is_available_n3: boolean | null
+          is_available_n4: boolean | null
+          is_available_n5: boolean | null
+          is_npa: boolean | null
+          name: string
+          skills_tags: string[] | null
+          sqa_course_code: string | null
+          typical_availability: string | null
+          why_choose: string | null
+        }
+        Insert: {
+          assessment_type?: string | null
+          created_at?: string | null
+          curricular_area_id?: string | null
+          description?: string | null
+          id?: string
+          is_academy?: boolean | null
+          is_available_adv_higher?: boolean | null
+          is_available_higher?: boolean | null
+          is_available_n3?: boolean | null
+          is_available_n4?: boolean | null
+          is_available_n5?: boolean | null
+          is_npa?: boolean | null
+          name: string
+          skills_tags?: string[] | null
+          sqa_course_code?: string | null
+          typical_availability?: string | null
+          why_choose?: string | null
+        }
+        Update: {
+          assessment_type?: string | null
+          created_at?: string | null
+          curricular_area_id?: string | null
+          description?: string | null
+          id?: string
+          is_academy?: boolean | null
+          is_available_adv_higher?: boolean | null
+          is_available_higher?: boolean | null
+          is_available_n3?: boolean | null
+          is_available_n4?: boolean | null
+          is_available_n5?: boolean | null
+          is_npa?: boolean | null
+          name?: string
+          skills_tags?: string[] | null
+          sqa_course_code?: string | null
+          typical_availability?: string | null
+          why_choose?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subjects_curricular_area_id_fkey"
+            columns: ["curricular_area_id"]
+            isOneToOne: false
+            referencedRelation: "curricular_areas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       universities: {
         Row: {
