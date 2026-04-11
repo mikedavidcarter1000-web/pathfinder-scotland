@@ -8,8 +8,10 @@ import {
   type SubjectWithArea,
   type CurricularArea,
   type ExploreCareerSectorRow,
+  type CareerRole,
 } from '@/hooks/use-subjects'
-import { getCurricularAreaColour } from '@/lib/constants'
+import { getCurricularAreaColour, AI_ROLE_SOURCE } from '@/lib/constants'
+import { AiRoleBadge } from '@/components/ui/ai-role-badge'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
 import { classifyError } from '@/lib/errors'
@@ -246,6 +248,11 @@ export default function ExplorePage() {
                       ))}
                     </div>
                   </section>
+                )}
+
+                {/* Section 3b — Specific roles + AI ratings */}
+                {exploreData.reachable_roles.length > 0 && (
+                  <ReachableRolesSection roles={exploreData.reachable_roles} />
                 )}
 
                 {/* Section 4 — CTAs */}
@@ -520,6 +527,206 @@ function ExploreSubjectCard({ subject }: { subject: SubjectWithArea }) {
         </div>
       </div>
     </Link>
+  )
+}
+
+function ReachableRolesSection({
+  roles,
+}: {
+  roles: Array<CareerRole & { sector_name: string }>
+}) {
+  // Show the most resilient and most exposed sets, plus a small spotlight
+  // on any new AI roles connected to the chosen areas.
+  const resilient = roles.filter((r) => r.ai_rating <= 3 && !r.is_new_ai_role).slice(0, 8)
+  const transforming = roles.filter((r) => r.ai_rating >= 7 && !r.is_new_ai_role).slice(0, 6)
+  const newAi = roles.filter((r) => r.is_new_ai_role).slice(0, 6)
+
+  return (
+    <section
+      aria-labelledby="section-roles"
+      style={{ marginTop: '56px' }}
+    >
+      <div style={{ marginBottom: '20px' }}>
+        <span
+          className="pf-badge-blue inline-flex"
+          style={{ marginBottom: '10px' }}
+        >
+          The road ahead
+        </span>
+        <h2 id="section-roles" style={{ fontSize: '1.25rem', marginBottom: '4px' }}>
+          Specific jobs your subjects could lead to
+        </h2>
+        <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
+          AI is reshaping every career, but the picture is more nuanced than the headlines.
+          Roles change — they don&apos;t all disappear.
+        </p>
+      </div>
+
+      {resilient.length > 0 && (
+        <div
+          className="pf-card"
+          style={{
+            padding: '20px 24px',
+            borderLeft: '3px solid var(--pf-green-500)',
+            backgroundColor: 'rgba(16, 185, 129, 0.05)',
+            marginBottom: '16px',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '1rem',
+              color: 'var(--pf-green-500)',
+              marginBottom: '4px',
+            }}
+          >
+            These careers are highly resilient to AI change
+          </h3>
+          <p
+            style={{
+              fontSize: '0.8125rem',
+              color: 'var(--pf-grey-600)',
+              marginBottom: '12px',
+            }}
+          >
+            Roles where human strengths — care, judgment, physical work, relationships — keep
+            people at the centre of the job.
+          </p>
+          <RoleChipList roles={resilient} />
+        </div>
+      )}
+
+      {transforming.length > 0 && (
+        <div
+          className="pf-card"
+          style={{
+            padding: '20px 24px',
+            borderLeft: '3px solid #C2410C',
+            backgroundColor: 'rgba(249, 115, 22, 0.05)',
+            marginBottom: '16px',
+          }}
+        >
+          <h3 style={{ fontSize: '1rem', color: '#C2410C', marginBottom: '4px' }}>
+            These careers will change significantly — but people who adapt will thrive
+          </h3>
+          <p
+            style={{
+              fontSize: '0.8125rem',
+              color: 'var(--pf-grey-600)',
+              marginBottom: '12px',
+            }}
+          >
+            Routine tasks are being automated, freeing up time for the strategic, creative,
+            and advisory work that&apos;s now valued more than ever.
+          </p>
+          <RoleChipList roles={transforming} />
+        </div>
+      )}
+
+      {newAi.length > 0 && (
+        <div
+          className="pf-card"
+          style={{
+            padding: '20px 24px',
+            borderTop: '3px solid var(--pf-green-500)',
+            backgroundColor: 'rgba(16, 185, 129, 0.04)',
+            marginBottom: '16px',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '1rem',
+              color: 'var(--pf-green-500)',
+              marginBottom: '4px',
+            }}
+          >
+            New careers created by AI
+          </h3>
+          <p
+            style={{
+              fontSize: '0.8125rem',
+              color: 'var(--pf-grey-600)',
+              marginBottom: '12px',
+            }}
+          >
+            Jobs that didn&apos;t exist a decade ago. Students starting school now will be among
+            the first generation to step straight into them.
+          </p>
+          <RoleChipList roles={newAi} />
+        </div>
+      )}
+
+      <p
+        style={{
+          fontSize: '0.6875rem',
+          color: 'var(--pf-grey-600)',
+          marginTop: '12px',
+          lineHeight: 1.6,
+          maxWidth: '720px',
+        }}
+      >
+        {AI_ROLE_SOURCE}
+      </p>
+    </section>
+  )
+}
+
+function RoleChipList({
+  roles,
+}: {
+  roles: Array<CareerRole & { sector_name: string }>
+}) {
+  return (
+    <ul
+      style={{
+        listStyle: 'none',
+        padding: 0,
+        margin: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+      }}
+    >
+      {roles.map((role) => (
+        <li
+          key={role.id}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
+            padding: '8px 0',
+            borderTop: '1px solid var(--pf-grey-100)',
+            fontSize: '0.875rem',
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                color: 'var(--pf-grey-900)',
+                margin: 0,
+                fontSize: '0.875rem',
+              }}
+            >
+              {role.title}
+            </p>
+            {role.sector_name && (
+              <p
+                style={{
+                  fontSize: '0.75rem',
+                  color: 'var(--pf-grey-600)',
+                  margin: 0,
+                }}
+              >
+                {role.sector_name}
+              </p>
+            )}
+          </div>
+          <AiRoleBadge rating={role.ai_rating} size="sm" />
+        </li>
+      ))}
+    </ul>
   )
 }
 

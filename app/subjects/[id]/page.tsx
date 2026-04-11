@@ -4,16 +4,22 @@ import { use, useMemo } from 'react'
 import Link from 'next/link'
 import {
   useSubjectDetail,
+  useSubjectCareerRoles,
   type ProgressionLink,
   type CareerLink,
   type RelatedCourse,
+  type SubjectCareerRole,
 } from '@/hooks/use-subjects'
 import { useStudentGrades } from '@/hooks/use-student'
 import {
   getCurricularAreaColour,
   QUALIFICATION_LEVEL_LABELS,
   RELEVANCE_STYLES,
+  AI_ROLE_SOURCE,
+  AI_ROLE_TIER_META,
+  getAiRoleTier,
 } from '@/lib/constants'
+import { AiRoleBadge } from '@/components/ui/ai-role-badge'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
 import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
@@ -56,6 +62,7 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
   const { id } = use(params)
   const { data: subject, isLoading, error, refetch } = useSubjectDetail(id)
   const { data: studentGrades } = useStudentGrades() as { data: StudentGrade[] | undefined }
+  const { data: careerRoles } = useSubjectCareerRoles(id)
 
   useAuthErrorRedirect([error])
 
@@ -454,6 +461,10 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
               </section>
             )}
 
+            {careerRoles && careerRoles.length > 0 && (
+              <CareerRolesSection roles={careerRoles} subjectName={subject.name} />
+            )}
+
             {subject.related_courses.length > 0 && (
               <section>
                 <h2 style={{ marginBottom: '16px' }}>
@@ -762,6 +773,233 @@ function CourseLevelGroup({
         ))}
       </div>
     </div>
+  )
+}
+
+function CareerRolesSection({
+  roles,
+  subjectName,
+}: {
+  roles: SubjectCareerRole[]
+  subjectName: string
+}) {
+  // Group roles by sector for easier scanning.
+  type SectorGroup = {
+    sectorId: string
+    sectorName: string
+    roles: SubjectCareerRole[]
+  }
+  const groups: SectorGroup[] = (() => {
+    const map = new Map<string, SectorGroup>()
+    for (const role of roles) {
+      if (!role.career_sector) continue
+      const key = role.career_sector.id
+      let g = map.get(key)
+      if (!g) {
+        g = {
+          sectorId: role.career_sector.id,
+          sectorName: role.career_sector.name,
+          roles: [],
+        }
+        map.set(key, g)
+      }
+      g.roles.push(role)
+    }
+    return Array.from(map.values()).sort((a, b) => a.sectorName.localeCompare(b.sectorName))
+  })()
+
+  const sectorCount = groups.length
+  const avgRating =
+    roles.length > 0
+      ? roles.reduce((acc, r) => acc + r.ai_rating, 0) / roles.length
+      : 0
+  const newAiRoles = roles.filter((r) => r.is_new_ai_role)
+
+  return (
+    <section aria-labelledby="career-roles-heading">
+      <h2 id="career-roles-heading" style={{ marginBottom: '8px' }}>
+        Career roles requiring this subject
+      </h2>
+      <p
+        style={{
+          fontSize: '0.875rem',
+          color: 'var(--pf-grey-600)',
+          marginBottom: '16px',
+        }}
+      >
+        This subject connects to{' '}
+        <strong style={{ color: 'var(--pf-grey-900)' }}>
+          {roles.length} career role{roles.length === 1 ? '' : 's'}
+        </strong>{' '}
+        across{' '}
+        <strong style={{ color: 'var(--pf-grey-900)' }}>
+          {sectorCount} sector{sectorCount === 1 ? '' : 's'}
+        </strong>
+        . Average AI impact:{' '}
+        <strong
+          style={{
+            color: AI_ROLE_TIER_META[getAiRoleTier(avgRating)].text,
+          }}
+        >
+          {avgRating.toFixed(1)}/10
+        </strong>
+        .
+      </p>
+
+      <div className="space-y-4">
+        {groups.map((group) => (
+          <div key={group.sectorId} className="pf-card" style={{ padding: '18px 20px' }}>
+            <div
+              className="flex items-baseline justify-between"
+              style={{ gap: '12px', marginBottom: '12px' }}
+            >
+              <Link
+                href={`/careers/${group.sectorId}`}
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.9375rem',
+                  color: 'var(--pf-grey-900)',
+                  textDecoration: 'none',
+                }}
+              >
+                {group.sectorName}
+              </Link>
+              <span style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}>
+                {group.roles.length} role{group.roles.length === 1 ? '' : 's'}
+              </span>
+            </div>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {group.roles.map((role, idx) => (
+                <li
+                  key={role.id}
+                  style={{
+                    paddingTop: idx === 0 ? 0 : '10px',
+                    paddingBottom: '10px',
+                    borderTop: idx === 0 ? 'none' : '1px solid var(--pf-grey-100)',
+                  }}
+                >
+                  <div className="flex items-start justify-between" style={{ gap: '12px' }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <Link
+                        href={`/careers/${group.sectorId}`}
+                        style={{
+                          fontFamily: "'Space Grotesk', sans-serif",
+                          fontWeight: 600,
+                          fontSize: '0.875rem',
+                          color: 'var(--pf-grey-900)',
+                          textDecoration: 'none',
+                        }}
+                      >
+                        {role.title}
+                      </Link>
+                      <p
+                        style={{
+                          fontSize: '0.75rem',
+                          color: 'var(--pf-grey-600)',
+                          marginTop: '2px',
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {role.ai_description}
+                      </p>
+                    </div>
+                    <AiRoleBadge rating={role.ai_rating} size="sm" showLabel={false} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      {newAiRoles.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <div
+            className="flex items-center"
+            style={{ gap: '8px', marginBottom: '8px' }}
+          >
+            <span
+              aria-hidden="true"
+              className="inline-flex items-center justify-center"
+              style={{
+                width: '24px',
+                height: '24px',
+                borderRadius: '6px',
+                backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                color: 'var(--pf-green-500)',
+              }}
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                <polyline points="17 6 23 6 23 12" />
+              </svg>
+            </span>
+            <h3
+              style={{
+                fontSize: '0.9375rem',
+                margin: 0,
+                color: 'var(--pf-grey-900)',
+              }}
+            >
+              Emerging AI careers linked to {subjectName}
+            </h3>
+          </div>
+          <ul
+            style={{
+              listStyle: 'none',
+              padding: 0,
+              margin: 0,
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '8px',
+            }}
+          >
+            {newAiRoles.map((role) => (
+              <li key={role.id}>
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 12px',
+                    borderRadius: '9999px',
+                    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    fontSize: '0.75rem',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    color: 'var(--pf-green-500)',
+                  }}
+                >
+                  {role.title}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <p
+        style={{
+          fontSize: '0.6875rem',
+          color: 'var(--pf-grey-600)',
+          marginTop: '16px',
+          lineHeight: 1.6,
+        }}
+      >
+        {AI_ROLE_SOURCE}
+      </p>
+    </section>
   )
 }
 

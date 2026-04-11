@@ -1,23 +1,22 @@
 'use client'
 
-import { use, useMemo } from 'react'
+import { use, useMemo, useState } from 'react'
 import Link from 'next/link'
 import {
   useCareerSectorPageData,
   type CareerSubjectRow,
   type CareerSectorPageCourse,
+  type CareerRole,
 } from '@/hooks/use-subjects'
 import {
   getCurricularAreaColour,
   RELEVANCE_STYLES,
   DEGREE_TYPES,
-  AI_IMPACT_META,
-  AI_IMPACT_DEFAULT_SOURCE,
-  isAiImpactRating,
+  AI_ROLE_SOURCE,
 } from '@/lib/constants'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
-import { AiImpactBadge } from '@/components/ui/ai-impact-badge'
+import { AiRoleBadge } from '@/components/ui/ai-role-badge'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import type { CareerSector } from '@/hooks/use-subjects'
@@ -243,6 +242,18 @@ export default function CareerSectorDetailPage({
       .sort((a, b) => a.name.localeCompare(b.name))
   }, [data])
 
+  const allLinkedSubjects = useMemo(
+    () =>
+      data
+        ? [
+            ...data.subjects_by_relevance.essential,
+            ...data.subjects_by_relevance.recommended,
+            ...data.subjects_by_relevance.related,
+          ]
+        : [],
+    [data]
+  )
+
   if (isLoading) {
     return (
       <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
@@ -290,7 +301,7 @@ export default function CareerSectorDetailPage({
     )
   }
 
-  const { sector, subjects_by_relevance, related_courses } = data
+  const { sector, subjects_by_relevance, related_courses, career_roles } = data
   const tone = classifyGrowth(sector.growth_outlook)
   const growth = GROWTH_BADGE[tone]
   const exampleJobs = (sector.example_jobs || []) as string[]
@@ -553,8 +564,12 @@ export default function CareerSectorDetailPage({
         {/* Section 4b — Alternative routes into this career */}
         <AlternativeRoutes />
 
-        {/* Section 4c — AI & the Future */}
-        <AiFutureSection sector={sector} />
+        {/* Section 4c — AI & the Future (full role-level breakdown) */}
+        <AiFutureSection
+          sector={sector}
+          roles={career_roles}
+          linkedSubjects={allLinkedSubjects}
+        />
 
         {/* Section 4d — Explore Further (external links) */}
         <ExploreFurther sector={sector} />
@@ -873,126 +888,617 @@ function AlternativeRoutes() {
   )
 }
 
-function AiFutureSection({ sector }: { sector: CareerSector }) {
-  const rating = isAiImpactRating(sector.ai_impact_rating) ? sector.ai_impact_rating : null
-  if (!rating) return null
+type RoleSort = 'rating-asc' | 'rating-desc' | 'alpha'
 
-  const meta = AI_IMPACT_META[rating]
-  const source = sector.ai_impact_source ?? AI_IMPACT_DEFAULT_SOURCE
+function AiFutureSection({
+  sector,
+  roles,
+  linkedSubjects,
+}: {
+  sector: CareerSector
+  roles: CareerRole[]
+  linkedSubjects: CareerSubjectRow[]
+}) {
+  const [sort, setSort] = useState<RoleSort>('rating-asc')
+
+  const existingRoles = useMemo(() => roles.filter((r) => !r.is_new_ai_role), [roles])
+  const newAiRoles = useMemo(() => roles.filter((r) => r.is_new_ai_role), [roles])
+
+  const sortedRoles = useMemo(() => {
+    const arr = [...existingRoles]
+    if (sort === 'rating-asc') {
+      arr.sort((a, b) =>
+        a.ai_rating !== b.ai_rating ? a.ai_rating - b.ai_rating : a.title.localeCompare(b.title)
+      )
+    } else if (sort === 'rating-desc') {
+      arr.sort((a, b) =>
+        a.ai_rating !== b.ai_rating ? b.ai_rating - a.ai_rating : a.title.localeCompare(b.title)
+      )
+    } else {
+      arr.sort((a, b) => a.title.localeCompare(b.title))
+    }
+    return arr
+  }, [existingRoles, sort])
+
+  // Build a name → subject lookup so the SQA paragraph can wire matched
+  // subject names to /subjects/[id] links without an extra round trip.
+  const subjectByName = useMemo(() => {
+    const map = new Map<string, CareerSubjectRow>()
+    for (const s of linkedSubjects) {
+      map.set(s.name.toLowerCase(), s)
+    }
+    return map
+  }, [linkedSubjects])
+
+  const hasNarrative = !!sector.ai_sector_narrative
+  const hasAnyContent =
+    hasNarrative ||
+    roles.length > 0 ||
+    sector.sqa_subjects_text ||
+    sector.apprenticeships_text ||
+    sector.scottish_context
+
+  if (!hasAnyContent) return null
 
   return (
-    <section aria-labelledby="ai-future-heading">
-      <h2 id="ai-future-heading" style={{ marginBottom: '6px' }}>
-        AI &amp; the future of this career
-      </h2>
-      <p
-        style={{
-          color: 'var(--pf-grey-600)',
-          fontSize: '0.9375rem',
-          marginBottom: '20px',
-          maxWidth: '760px',
-        }}
-      >
-        How artificial intelligence is likely to reshape this sector over the next decade, based
-        on published research.
-      </p>
+    <section aria-labelledby="ai-future-heading" className="space-y-8">
+      <div>
+        <h2 id="ai-future-heading" style={{ marginBottom: '6px' }}>
+          AI &amp; the future of this career
+        </h2>
+        <p
+          style={{
+            color: 'var(--pf-grey-600)',
+            fontSize: '0.9375rem',
+            maxWidth: '760px',
+          }}
+        >
+          How artificial intelligence is likely to reshape this sector over the next decade,
+          job by job — based on published research.
+        </p>
+      </div>
 
-      <div className="pf-card" style={{ padding: '24px' }}>
-        <div style={{ marginBottom: '16px' }}>
-          <AiImpactBadge rating={rating} size="lg" />
-        </div>
-
-        {sector.ai_impact_description && (
+      {/* Sector overview narrative */}
+      {hasNarrative && (
+        <div
+          className="pf-card"
+          style={{ padding: '24px', borderLeft: '3px solid var(--pf-blue-700)' }}
+        >
           <p
             style={{
               color: 'var(--pf-grey-900)',
               fontSize: '0.9375rem',
-              lineHeight: 1.6,
-              marginBottom: '20px',
-              maxWidth: '720px',
+              lineHeight: 1.7,
+              margin: 0,
             }}
           >
-            {sector.ai_impact_description}
-          </p>
-        )}
-
-        <div
-          style={{
-            padding: '16px 18px',
-            borderRadius: '8px',
-            backgroundColor: 'var(--pf-blue-100)',
-            color: 'var(--pf-blue-900)',
-            marginBottom: '20px',
-          }}
-        >
-          <p
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 600,
-              fontSize: '0.875rem',
-              marginBottom: '4px',
-              color: 'var(--pf-blue-900)',
-            }}
-          >
-            Our advice
-          </p>
-          <p
-            style={{
-              fontSize: '0.875rem',
-              lineHeight: 1.6,
-              color: 'var(--pf-blue-900)',
-            }}
-          >
-            The best strategy is to develop adaptable skills alongside specialist knowledge.
-            Learning to work with AI tools is an advantage in every career.
+            {sector.ai_sector_narrative}
           </p>
         </div>
+      )}
 
-        <Link
-          href="/blog/ai-changing-careers"
-          style={{
-            color: 'var(--pf-blue-700)',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 600,
-            fontSize: '0.875rem',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
-          }}
-        >
-          Read more: How AI is changing careers
-          <svg
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2.5}
-            viewBox="0 0 24 24"
-            aria-hidden="true"
+      {/* Job roles table */}
+      {sortedRoles.length > 0 && (
+        <div>
+          <div
+            className="flex flex-wrap items-baseline justify-between"
+            style={{ gap: '12px', marginBottom: '12px' }}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
+            <h3 style={{ fontSize: '1.0625rem', margin: 0 }}>
+              Specific job roles ({sortedRoles.length})
+            </h3>
+            <RoleSortToggle sort={sort} onChange={setSort} />
+          </div>
+          <RoleTable roles={sortedRoles} />
+        </div>
+      )}
 
-        <p
+      {/* New AI roles */}
+      {newAiRoles.length > 0 && <NewAiRolesSection roles={newAiRoles} />}
+
+      {/* SQA subjects */}
+      {sector.sqa_subjects_text && (
+        <div>
+          <h3 style={{ fontSize: '1.0625rem', marginBottom: '8px' }}>
+            SQA subjects that lead here
+          </h3>
+          <div className="pf-card" style={{ padding: '20px 24px' }}>
+            <p
+              style={{
+                color: 'var(--pf-grey-900)',
+                fontSize: '0.9375rem',
+                lineHeight: 1.7,
+                margin: 0,
+              }}
+            >
+              {renderSubjectsText(sector.sqa_subjects_text, subjectByName)}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Apprenticeship pathways */}
+      {sector.apprenticeships_text && (
+        <div>
+          <h3 style={{ fontSize: '1.0625rem', marginBottom: '8px' }}>
+            Apprenticeship pathways
+          </h3>
+          <div className="pf-card" style={{ padding: '20px 24px' }}>
+            <p
+              style={{
+                color: 'var(--pf-grey-900)',
+                fontSize: '0.9375rem',
+                lineHeight: 1.7,
+                marginBottom: '12px',
+              }}
+            >
+              {sector.apprenticeships_text}
+            </p>
+            <div className="flex flex-wrap" style={{ gap: '12px' }}>
+              <Link
+                href="/pathways/alternatives"
+                style={{
+                  color: 'var(--pf-blue-700)',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                See all alternative pathways →
+              </Link>
+              <a
+                href="https://www.apprenticeships.scot"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: 'var(--pf-blue-700)',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                }}
+              >
+                apprenticeships.scot ↗
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Scottish context callout */}
+      {sector.scottish_context && (
+        <div
           style={{
-            fontSize: '0.75rem',
-            color: 'var(--pf-grey-600)',
-            marginTop: '20px',
-            lineHeight: 1.5,
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '14px',
+            padding: '20px 22px',
+            borderRadius: '8px',
+            backgroundColor: 'var(--pf-blue-100)',
+            borderLeft: '4px solid var(--pf-blue-700)',
           }}
+          role="note"
+          aria-label="Scottish context"
         >
-          {source}
-        </p>
-        <p
-          className="sr-only"
-          aria-live="polite"
-        >
-          AI impact rating for {sector.name}: {meta.label}. {meta.summary}.
-        </p>
-      </div>
+          <span
+            aria-hidden="true"
+            style={{
+              fontSize: '1.5rem',
+              lineHeight: 1,
+              filter: 'saturate(1.1)',
+            }}
+          >
+            🏴󠁧󠁢󠁳󠁣󠁴󠁿
+          </span>
+          <div>
+            <p
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                color: 'var(--pf-blue-900)',
+                margin: 0,
+                marginBottom: '4px',
+              }}
+            >
+              Scottish context
+            </p>
+            <p
+              style={{
+                fontSize: '0.9375rem',
+                lineHeight: 1.6,
+                color: 'var(--pf-blue-900)',
+                margin: 0,
+              }}
+            >
+              {sector.scottish_context}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Source attribution */}
+      <p
+        style={{
+          fontSize: '0.75rem',
+          color: 'var(--pf-grey-600)',
+          lineHeight: 1.6,
+          maxWidth: '820px',
+        }}
+      >
+        {AI_ROLE_SOURCE}
+      </p>
     </section>
   )
+}
+
+function RoleSortToggle({
+  sort,
+  onChange,
+}: {
+  sort: RoleSort
+  onChange: (next: RoleSort) => void
+}) {
+  const options: Array<{ value: RoleSort; label: string }> = [
+    { value: 'rating-asc', label: 'Most resilient first' },
+    { value: 'rating-desc', label: 'Most exposed first' },
+    { value: 'alpha', label: 'A–Z' },
+  ]
+  return (
+    <div className="flex flex-wrap" role="group" aria-label="Sort roles" style={{ gap: '6px' }}>
+      {options.map((opt) => {
+        const active = sort === opt.value
+        return (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => onChange(opt.value)}
+            aria-pressed={active}
+            style={{
+              padding: '6px 12px',
+              borderRadius: '9999px',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              fontSize: '0.75rem',
+              border: active
+                ? '1px solid var(--pf-blue-700)'
+                : '1px solid var(--pf-grey-300)',
+              backgroundColor: active ? 'var(--pf-blue-100)' : 'var(--pf-white)',
+              color: active ? 'var(--pf-blue-700)' : 'var(--pf-grey-600)',
+              cursor: 'pointer',
+            }}
+          >
+            {opt.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function RoleTable({ roles }: { roles: CareerRole[] }) {
+  return (
+    <div
+      className="pf-card"
+      style={{ padding: 0, overflow: 'hidden' }}
+    >
+      <div className="overflow-x-auto">
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'separate',
+            borderSpacing: 0,
+            fontSize: '0.875rem',
+          }}
+        >
+          <thead>
+            <tr style={{ backgroundColor: 'var(--pf-grey-100)' }}>
+              <th
+                scope="col"
+                style={{
+                  textAlign: 'left',
+                  padding: '12px 16px',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  color: 'var(--pf-grey-600)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Role
+              </th>
+              <th
+                scope="col"
+                style={{
+                  textAlign: 'left',
+                  padding: '12px 16px',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  color: 'var(--pf-grey-600)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                AI rating
+              </th>
+              <th
+                scope="col"
+                style={{
+                  textAlign: 'left',
+                  padding: '12px 16px',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  color: 'var(--pf-grey-600)',
+                  minWidth: '260px',
+                }}
+              >
+                What changes
+              </th>
+              <th
+                scope="col"
+                style={{
+                  textAlign: 'left',
+                  padding: '12px 16px',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  color: 'var(--pf-grey-600)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Salary
+              </th>
+              <th
+                scope="col"
+                style={{
+                  textAlign: 'left',
+                  padding: '12px 16px',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  color: 'var(--pf-grey-600)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Outlook
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {roles.map((role, idx) => (
+              <tr
+                key={role.id}
+                style={{
+                  borderTop: idx === 0 ? '1px solid var(--pf-grey-100)' : 'none',
+                  backgroundColor: idx % 2 === 0 ? 'var(--pf-white)' : 'rgba(244,244,246,0.4)',
+                }}
+              >
+                <td
+                  style={{
+                    padding: '14px 16px',
+                    color: 'var(--pf-grey-900)',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    verticalAlign: 'top',
+                  }}
+                >
+                  {role.title}
+                </td>
+                <td style={{ padding: '14px 16px', verticalAlign: 'top' }}>
+                  <AiRoleBadge rating={role.ai_rating} size="md" />
+                </td>
+                <td
+                  style={{
+                    padding: '14px 16px',
+                    color: 'var(--pf-grey-600)',
+                    lineHeight: 1.55,
+                    verticalAlign: 'top',
+                  }}
+                >
+                  {role.ai_description}
+                </td>
+                <td
+                  style={{
+                    padding: '14px 16px',
+                    color: 'var(--pf-grey-900)',
+                    fontSize: '0.8125rem',
+                    verticalAlign: 'top',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {role.salary_entry || role.salary_experienced ? (
+                    <>
+                      {role.salary_entry && (
+                        <span style={{ color: 'var(--pf-grey-600)' }}>{role.salary_entry}</span>
+                      )}
+                      {role.salary_entry && role.salary_experienced && (
+                        <span style={{ color: 'var(--pf-grey-300)' }}> → </span>
+                      )}
+                      {role.salary_experienced && <span>{role.salary_experienced}</span>}
+                    </>
+                  ) : (
+                    <span style={{ color: 'var(--pf-grey-300)' }}>—</span>
+                  )}
+                </td>
+                <td
+                  style={{
+                    padding: '14px 16px',
+                    color: 'var(--pf-grey-600)',
+                    fontSize: '0.8125rem',
+                    verticalAlign: 'top',
+                  }}
+                >
+                  {role.growth_outlook || (
+                    <span style={{ color: 'var(--pf-grey-300)' }}>—</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+function NewAiRolesSection({ roles }: { roles: CareerRole[] }) {
+  return (
+    <div>
+      <div className="flex items-center" style={{ gap: '10px', marginBottom: '8px' }}>
+        <span
+          aria-hidden="true"
+          className="inline-flex items-center justify-center"
+          style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '8px',
+            backgroundColor: 'rgba(16, 185, 129, 0.12)',
+            color: 'var(--pf-green-500)',
+          }}
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+            <polyline points="17 6 23 6 23 12" />
+          </svg>
+        </span>
+        <h3 style={{ margin: 0, fontSize: '1.0625rem' }}>
+          New careers created by AI
+        </h3>
+      </div>
+      <p
+        style={{
+          fontSize: '0.875rem',
+          color: 'var(--pf-grey-600)',
+          marginBottom: '16px',
+          maxWidth: '720px',
+        }}
+      >
+        These roles barely existed five years ago. Students starting school now will be the
+        first generation to step straight into them.
+      </p>
+      <div
+        className="grid gap-3"
+        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}
+      >
+        {roles.map((role) => (
+          <div
+            key={role.id}
+            className="pf-card"
+            style={{
+              padding: '18px 20px',
+              borderTop: '3px solid var(--pf-green-500)',
+              backgroundColor: 'rgba(16, 185, 129, 0.04)',
+            }}
+          >
+            <h4
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.9375rem',
+                color: 'var(--pf-grey-900)',
+                margin: 0,
+                marginBottom: '8px',
+              }}
+            >
+              {role.title}
+            </h4>
+            <p
+              style={{
+                fontSize: '0.8125rem',
+                color: 'var(--pf-grey-600)',
+                lineHeight: 1.55,
+                marginBottom: '12px',
+              }}
+            >
+              {role.ai_description}
+            </p>
+            <div className="flex flex-wrap items-center" style={{ gap: '8px' }}>
+              <AiRoleBadge rating={role.ai_rating} size="sm" showLabel={false} />
+              {role.salary_experienced && (
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--pf-grey-600)',
+                  }}
+                >
+                  up to {role.salary_experienced}
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Splits the SQA subjects paragraph at commas/semicolons and turns any
+// segment whose head matches a linked subject name into a /subjects/[id]
+// link. Falls back to plain text for unmatched segments (e.g. "N5/Higher").
+function renderSubjectsText(
+  text: string,
+  subjectByName: Map<string, CareerSubjectRow>
+): React.ReactNode {
+  const parts = text.split(/([,;])/)
+  return parts.map((part, idx) => {
+    if (part === ',' || part === ';') return <span key={idx}>{part}</span>
+    const trimmed = part.trim()
+    if (!trimmed) return <span key={idx}>{part}</span>
+    // Try to find the longest matching subject prefix in the segment.
+    let matched: CareerSubjectRow | null = null
+    let matchedName = ''
+    for (const [lower, subj] of subjectByName) {
+      if (trimmed.toLowerCase().startsWith(lower) && lower.length > matchedName.length) {
+        matched = subj
+        matchedName = lower
+      }
+    }
+    if (!matched) {
+      return <span key={idx}>{part}</span>
+    }
+    const headLength = matchedName.length
+    const head = trimmed.slice(0, headLength)
+    const tail = trimmed.slice(headLength)
+    const leading = part.slice(0, part.indexOf(trimmed))
+    return (
+      <span key={idx}>
+        {leading}
+        <Link
+          href={`/subjects/${matched.id}`}
+          style={{
+            color: 'var(--pf-blue-700)',
+            fontWeight: 600,
+            textDecoration: 'none',
+          }}
+        >
+          {head}
+        </Link>
+        {tail}
+      </span>
+    )
+  })
 }
 
 function ExploreFurther({ sector }: { sector: ExploreFurtherSector }) {

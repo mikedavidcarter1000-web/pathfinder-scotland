@@ -8,6 +8,7 @@ export function Footer() {
     product: [
       { label: 'Discover', href: '/discover' },
       { label: 'Careers', href: '/careers' },
+      { label: 'AI & Careers', href: '/ai-careers' },
       { label: 'Subjects', href: '/subjects' },
       { label: 'Plan Choices', href: '/pathways' },
       { label: 'Alternative Pathways', href: '/pathways/alternatives' },

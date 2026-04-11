@@ -505,8 +505,70 @@ export const AI_IMPACT_META: Record<
 export const AI_IMPACT_DEFAULT_SOURCE =
   'Based on research by Anthropic (2024), OpenAI/University of Pennsylvania (2023), and McKinsey Global Institute (2023). Last updated April 2026.'
 
+// Extended source attribution shown alongside per-role 1-10 ratings.
+export const AI_ROLE_SOURCE =
+  'AI impact ratings based on research by Anthropic (2024), OpenAI/University of Pennsylvania (2023), McKinsey Global Institute (2023-2025), World Economic Forum Future of Jobs Report 2025, and Oxford Martin School. Last updated April 2026.'
+
 export function isAiImpactRating(value: string | null | undefined): value is AiImpactRating {
   return value === 'human-centric' || value === 'ai-augmented' || value === 'ai-exposed'
+}
+
+// Per-role AI rating uses a 1-10 scale where 1 = most resilient to AI change
+// and 10 = most exposed. Tiers are intentionally aligned with the existing
+// 3-tier sector palette so the page reads consistently.
+export type AiRoleTier = 'resilient' | 'evolving' | 'transforming' | 'reshaped'
+
+export const AI_ROLE_TIER_META: Record<
+  AiRoleTier,
+  {
+    label: string
+    description: string
+    bg: string
+    text: string
+    border: string
+    range: string
+  }
+> = {
+  resilient: {
+    label: 'Resilient',
+    description: 'Roles where human strengths dominate. AI assists but cannot replace.',
+    bg: 'rgba(16, 185, 129, 0.12)',
+    text: 'var(--pf-green-500)',
+    border: 'rgba(16, 185, 129, 0.4)',
+    range: '1-3',
+  },
+  evolving: {
+    label: 'Evolving',
+    description: 'AI changes how the work is done. People who learn to work with AI thrive.',
+    bg: 'rgba(245, 158, 11, 0.14)',
+    text: 'var(--pf-amber-500)',
+    border: 'rgba(245, 158, 11, 0.4)',
+    range: '4-6',
+  },
+  transforming: {
+    label: 'Transforming',
+    description: 'Significant AI-driven change. Routine tasks automated; the role shifts toward strategy and judgment.',
+    bg: 'rgba(249, 115, 22, 0.14)',
+    text: '#C2410C',
+    border: 'rgba(249, 115, 22, 0.4)',
+    range: '7-9',
+  },
+  reshaped: {
+    label: 'Reshaped',
+    description: 'The role as it exists today is largely automated. New careers emerge alongside.',
+    bg: 'rgba(239, 68, 68, 0.12)',
+    text: 'var(--pf-red-500)',
+    border: 'rgba(239, 68, 68, 0.4)',
+    range: '10',
+  },
+}
+
+export function getAiRoleTier(rating: number | null | undefined): AiRoleTier {
+  if (rating == null) return 'evolving'
+  if (rating <= 3) return 'resilient'
+  if (rating <= 6) return 'evolving'
+  if (rating <= 9) return 'transforming'
+  return 'reshaped'
 }
 
 // URLs

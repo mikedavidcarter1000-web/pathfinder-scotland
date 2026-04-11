@@ -6,6 +6,7 @@ import type {
   CurricularArea,
   SubjectWithArea,
   CareerSector,
+  CareerRole,
   CourseChoiceRule,
 } from './use-subjects'
 
@@ -58,6 +59,9 @@ export type SimulatorData = {
   subjectToSectors: Map<string, Set<string>>
   sectorToSubjects: Map<string, Set<string>>
   progressionsBySubject: Map<string, SubjectProgressionRow[]>
+  rolesBySector: Map<string, CareerRole[]>
+  subjectToRoles: Map<string, Set<string>>
+  rolesById: Map<string, CareerRole>
 }
 
 /**
@@ -81,6 +85,8 @@ export function useSimulatorData() {
         sectorsResult,
         linksResult,
         progResult,
+        rolesResult,
+        roleSubjectsResult,
       ] = await Promise.all([
         supabase
           .from('subjects')
@@ -101,6 +107,12 @@ export function useSimulatorData() {
         supabase
           .from('subject_progressions')
           .select('from_subject_id, to_subject_id, from_level, to_level, min_grade'),
+        supabase
+          .from('career_roles')
+          .select('*')
+          .order('ai_rating', { ascending: true })
+          .order('title', { ascending: true }),
+        supabase.from('career_role_subjects').select('career_role_id, subject_id'),
       ])
 
       if (subjectsResult.error) throw subjectsResult.error
@@ -110,6 +122,8 @@ export function useSimulatorData() {
       if (sectorsResult.error) throw sectorsResult.error
       if (linksResult.error) throw linksResult.error
       if (progResult.error) throw progResult.error
+      if (rolesResult.error) throw rolesResult.error
+      if (roleSubjectsResult.error) throw roleSubjectsResult.error
 
       const subjects = (subjectsResult.data as unknown as SubjectWithArea[]) || []
       const subjectsById = new Map(subjects.map((s) => [s.id, s]))
@@ -216,6 +230,35 @@ export function useSimulatorData() {
         arr.push({ from_level: p.from_level, to_level: p.to_level, min_grade: p.min_grade })
       }
 
+      // Group career roles by sector for the per-sector dropdowns, and build
+      // a subject → role-id reverse index so we can answer "which roles can
+      // this subject combo unlock" without re-querying.
+      const rolesById = new Map<string, CareerRole>()
+      const rolesBySector = new Map<string, CareerRole[]>()
+      for (const role of (rolesResult.data as CareerRole[]) || []) {
+        rolesById.set(role.id, role)
+        let arr = rolesBySector.get(role.career_sector_id)
+        if (!arr) {
+          arr = []
+          rolesBySector.set(role.career_sector_id, arr)
+        }
+        arr.push(role)
+      }
+
+      const subjectToRoles = new Map<string, Set<string>>()
+      for (const link of (roleSubjectsResult.data as Array<{
+        career_role_id: string | null
+        subject_id: string | null
+      }>) || []) {
+        if (!link.subject_id || !link.career_role_id) continue
+        let set = subjectToRoles.get(link.subject_id)
+        if (!set) {
+          set = new Set<string>()
+          subjectToRoles.set(link.subject_id, set)
+        }
+        set.add(link.career_role_id)
+      }
+
       return {
         subjects,
         subjectsById,
@@ -227,6 +270,9 @@ export function useSimulatorData() {
         subjectToSectors,
         sectorToSubjects,
         progressionsBySubject,
+        rolesBySector,
+        subjectToRoles,
+        rolesById,
       }
     },
   })
@@ -244,6 +290,14 @@ export type PathwaySummaryEntry = {
   progressions: SubjectProgressionRow[]
 }
 
+export type AiResilienceSummary = {
+  reachableRoles: CareerRole[]
+  averageRating: number | null
+  topResilient: CareerRole[]
+  topTransforming: CareerRole[]
+  rolesBySectorCovered: Map<string, CareerRole[]>
+}
+
 export type ImpactResult = {
   eligibleCourses: SimulatorCourse[]
   eligibleCount: number
@@ -253,6 +307,7 @@ export type ImpactResult = {
   uncoveredSectorIds: Set<string>
   sectorAddBy: Map<string, SubjectWithArea[]>
   pathwaySummary: PathwaySummaryEntry[]
+  aiResilience: AiResilienceSummary
 }
 
 /**
@@ -352,6 +407,45 @@ export function calculateSimulatorImpact(
   }
   pathwaySummary.sort((a, b) => a.subject.name.localeCompare(b.subject.name))
 
+  // AI resilience summary: walk every selected subject → reachable career
+  // role, dedupe, then surface average rating + top resilient/transforming
+  // roles. The role-by-sector map is keyed only by sectors the student
+  // already touches via at least one role.
+  const reachableRoleIds = new Set<string>()
+  for (const subId of selectedIds) {
+    const roleIds = data.subjectToRoles.get(subId)
+    if (roleIds) for (const rid of roleIds) reachableRoleIds.add(rid)
+  }
+  const reachableRoles: CareerRole[] = []
+  for (const rid of reachableRoleIds) {
+    const role = data.rolesById.get(rid)
+    if (role) reachableRoles.push(role)
+  }
+  reachableRoles.sort((a, b) => {
+    if (a.ai_rating !== b.ai_rating) return a.ai_rating - b.ai_rating
+    return a.title.localeCompare(b.title)
+  })
+
+  const averageRating =
+    reachableRoles.length > 0
+      ? reachableRoles.reduce((acc, r) => acc + r.ai_rating, 0) / reachableRoles.length
+      : null
+
+  const topResilient = reachableRoles.slice(0, 3)
+  const topTransforming = [...reachableRoles]
+    .sort((a, b) => b.ai_rating - a.ai_rating)
+    .slice(0, 3)
+
+  const rolesBySectorCovered = new Map<string, CareerRole[]>()
+  for (const role of reachableRoles) {
+    let arr = rolesBySectorCovered.get(role.career_sector_id)
+    if (!arr) {
+      arr = []
+      rolesBySectorCovered.set(role.career_sector_id, arr)
+    }
+    arr.push(role)
+  }
+
   return {
     eligibleCourses,
     eligibleCount: eligibleCourses.length,
@@ -361,6 +455,13 @@ export function calculateSimulatorImpact(
     uncoveredSectorIds,
     sectorAddBy,
     pathwaySummary,
+    aiResilience: {
+      reachableRoles,
+      averageRating,
+      topResilient,
+      topTransforming,
+      rolesBySectorCovered,
+    },
   }
 }
 

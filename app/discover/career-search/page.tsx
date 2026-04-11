@@ -8,9 +8,15 @@ import {
   useCareerSectorDetail,
   type CareerSectorWithCount,
   type CareerSubjectRow,
+  type CareerRole,
 } from '@/hooks/use-subjects'
 import { useCourses } from '@/hooks/use-courses'
-import { getCurricularAreaColour, RELEVANCE_STYLES } from '@/lib/constants'
+import {
+  getCurricularAreaColour,
+  RELEVANCE_STYLES,
+  AI_ROLE_SOURCE,
+} from '@/lib/constants'
+import { AiRoleBadge } from '@/components/ui/ai-role-badge'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
 import { classifyError } from '@/lib/errors'
@@ -309,6 +315,11 @@ function CareerSearchPageContent() {
                     </svg>
                   </Link>
                 </div>
+
+                {/* Job roles grouped by AI impact level */}
+                {detail.career_roles.length > 0 && (
+                  <SectorRolesPanel roles={detail.career_roles} />
+                )}
 
                 {/* Essential */}
                 {detail.subjects_by_relevance.essential.length > 0 && (
@@ -706,6 +717,248 @@ function SubjectCard({ subject }: { subject: CareerSubjectRow }) {
         </div>
       </div>
     </Link>
+  )
+}
+
+function SectorRolesPanel({ roles }: { roles: CareerRole[] }) {
+  const resilient = roles.filter((r) => !r.is_new_ai_role && r.ai_rating <= 3)
+  const evolving = roles.filter((r) => !r.is_new_ai_role && r.ai_rating >= 4 && r.ai_rating <= 6)
+  const transforming = roles.filter((r) => !r.is_new_ai_role && r.ai_rating >= 7 && r.ai_rating <= 9)
+  const reshaped = roles.filter((r) => !r.is_new_ai_role && r.ai_rating === 10)
+  const newAiRoles = roles.filter((r) => r.is_new_ai_role)
+
+  return (
+    <section aria-labelledby="sector-roles-heading">
+      <h2 id="sector-roles-heading" style={{ marginTop: '8px', marginBottom: '4px', fontSize: '1.25rem' }}>
+        Job roles in this sector
+      </h2>
+      <p
+        style={{
+          color: 'var(--pf-grey-600)',
+          fontSize: '0.9375rem',
+          marginBottom: '20px',
+        }}
+      >
+        How AI is shaping each job, grouped by how much the role is changing.
+      </p>
+
+      <div className="space-y-5">
+        {resilient.length > 0 && (
+          <RoleGroupCard
+            title="Resilient roles"
+            subtitle="AI assists, but the role stays human at its core."
+            range="1–3"
+            accent="var(--pf-green-500)"
+            bg="rgba(16, 185, 129, 0.05)"
+            roles={resilient}
+          />
+        )}
+        {evolving.length > 0 && (
+          <RoleGroupCard
+            title="Evolving roles"
+            subtitle="AI changes how the work is done. People who learn to use it thrive."
+            range="4–6"
+            accent="var(--pf-amber-500)"
+            bg="rgba(245, 158, 11, 0.05)"
+            roles={evolving}
+          />
+        )}
+        {transforming.length > 0 && (
+          <RoleGroupCard
+            title="Transforming roles"
+            subtitle="Routine tasks automated; the role shifts toward strategy and judgment."
+            range="7–9"
+            accent="#C2410C"
+            bg="rgba(249, 115, 22, 0.05)"
+            roles={transforming}
+          />
+        )}
+        {reshaped.length > 0 && (
+          <RoleGroupCard
+            title="Reshaped roles"
+            subtitle="The job as it exists today is largely automated. New careers emerge alongside."
+            range="10"
+            accent="var(--pf-red-500)"
+            bg="rgba(239, 68, 68, 0.05)"
+            roles={reshaped}
+          />
+        )}
+        {newAiRoles.length > 0 && (
+          <div
+            className="pf-card"
+            style={{
+              padding: '20px 24px',
+              borderTop: '3px solid var(--pf-green-500)',
+              backgroundColor: 'rgba(16, 185, 129, 0.04)',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '0.9375rem',
+                color: 'var(--pf-grey-900)',
+                marginBottom: '4px',
+              }}
+            >
+              New careers you could pioneer
+            </h3>
+            <p
+              style={{
+                fontSize: '0.8125rem',
+                color: 'var(--pf-grey-600)',
+                marginBottom: '12px',
+              }}
+            >
+              Roles created in the last few years that didn&apos;t exist for previous generations.
+            </p>
+            <ul
+              style={{
+                listStyle: 'none',
+                padding: 0,
+                margin: 0,
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '8px',
+              }}
+            >
+              {newAiRoles.map((role) => (
+                <li key={role.id}>
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      padding: '6px 12px',
+                      borderRadius: '9999px',
+                      backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      fontSize: '0.75rem',
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 600,
+                      color: 'var(--pf-green-500)',
+                    }}
+                  >
+                    {role.title}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <p
+        style={{
+          fontSize: '0.6875rem',
+          color: 'var(--pf-grey-600)',
+          marginTop: '16px',
+          lineHeight: 1.6,
+        }}
+      >
+        {AI_ROLE_SOURCE}
+      </p>
+    </section>
+  )
+}
+
+function RoleGroupCard({
+  title,
+  subtitle,
+  range,
+  accent,
+  bg,
+  roles,
+}: {
+  title: string
+  subtitle: string
+  range: string
+  accent: string
+  bg: string
+  roles: CareerRole[]
+}) {
+  return (
+    <div
+      className="pf-card"
+      style={{
+        padding: '20px 24px',
+        borderLeft: `3px solid ${accent}`,
+        backgroundColor: bg,
+      }}
+    >
+      <div
+        className="flex items-baseline justify-between"
+        style={{ gap: '12px', marginBottom: '4px' }}
+      >
+        <h3 style={{ fontSize: '1rem', color: accent, margin: 0 }}>{title}</h3>
+        <span
+          style={{
+            fontSize: '0.75rem',
+            color: accent,
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+          }}
+        >
+          AI rating {range}
+        </span>
+      </div>
+      <p
+        style={{
+          fontSize: '0.8125rem',
+          color: 'var(--pf-grey-600)',
+          marginBottom: '12px',
+        }}
+      >
+        {subtitle}
+      </p>
+      <ul
+        style={{
+          listStyle: 'none',
+          padding: 0,
+          margin: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+        }}
+      >
+        {roles.map((role) => (
+          <li
+            key={role.id}
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              gap: '12px',
+              padding: '8px 0',
+              borderTop: '1px solid var(--pf-grey-100)',
+            }}
+          >
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  color: 'var(--pf-grey-900)',
+                  margin: 0,
+                  marginBottom: '2px',
+                }}
+              >
+                {role.title}
+              </p>
+              <p
+                style={{
+                  fontSize: '0.75rem',
+                  color: 'var(--pf-grey-600)',
+                  lineHeight: 1.5,
+                  margin: 0,
+                }}
+              >
+                {role.ai_description}
+              </p>
+            </div>
+            <AiRoleBadge rating={role.ai_rating} size="sm" showLabel={false} />
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 

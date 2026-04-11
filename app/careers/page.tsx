@@ -88,6 +88,86 @@ export default function CareersIndexPage() {
             </p>
           </div>
 
+          {/* AI & Careers banner */}
+          <Link
+            href="/ai-careers"
+            className="no-underline hover:no-underline"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '14px',
+              padding: '14px 18px',
+              borderRadius: '8px',
+              backgroundColor: 'var(--pf-blue-100)',
+              borderLeft: '4px solid var(--pf-blue-700)',
+              color: 'var(--pf-blue-900)',
+              marginBottom: '20px',
+            }}
+          >
+            <span
+              aria-hidden="true"
+              className="inline-flex items-center justify-center"
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                backgroundColor: 'var(--pf-blue-700)',
+                color: '#fff',
+                flexShrink: 0,
+              }}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 2L4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
+                <path d="M9 12l2 2 4-4" />
+              </svg>
+            </span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.9375rem',
+                  color: 'var(--pf-blue-900)',
+                  margin: 0,
+                  marginBottom: '2px',
+                }}
+              >
+                See how AI affects every career sector
+              </p>
+              <p
+                style={{
+                  fontSize: '0.8125rem',
+                  color: 'var(--pf-blue-900)',
+                  opacity: 0.85,
+                  margin: 0,
+                }}
+              >
+                A 1–10 rating for every job role, with research from Anthropic, OpenAI, and the
+                World Economic Forum.
+              </p>
+            </div>
+            <span
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                color: 'var(--pf-blue-700)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              AI &amp; Careers →
+            </span>
+          </Link>
+
           {/* Search */}
           <label htmlFor="careers-search" className="sr-only">
             Search career sectors

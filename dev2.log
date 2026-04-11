@@ -1,8 +1,3 @@
-
-> pathfinder-scotland@0.1.0 dev
-> next dev
-
-⚠ Port 3000 is in use by process 8712, using available port 3001 instead.
 ▲ Next.js 16.1.6 (Turbopack)
 - Local:         http://localhost:3001
 - Network:       http://172.21.0.1:3001
@@ -11,18 +6,11 @@
   · serverActions
 
 ✓ Starting...
-⚠ Turbopack's filesystem cache has been deleted because we previously detected an internal error in Turbopack. Builds or page loads may be slower as a result.
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-✓ Ready in 7.3s
-○ Compiling /careers ...
-
-thread 'tokio-runtime-worker' (20748) panicked at C:\actions-runner\_work\next.js\next.js\turbopack\crates\turbo-tasks\src\spawn.rs:64:23:
-OS can't spawn worker thread: Insufficient system resources exist to complete the requested service. (os error 1450)
-note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-
-thread 'tokio-runtime-worker' (3880) panicked at C:\actions-runner\_work\next.js\next.js\turbopack\crates\turbo-tasks\src\spawn.rs:64:23:
-OS can't spawn worker thread: The paging file is too small for this operation to complete. (os error 1455)
-memory allocation of 16384memory allocation of memory allocation of 64 bytes failed
-memory allocation of  bytes failed
-42memory allocation of memory allocation of 42 bytes failed
-[?25h
+✓ Ready in 1467ms
+○ Compiling /ai-careers ...
+ GET /ai-careers 200 in 4.5s (compile: 3.6s, proxy.ts: 149ms, render: 742ms)
+ GET /careers 200 in 295ms (compile: 144ms, proxy.ts: 10ms, render: 141ms)
+ GET /simulator 200 in 488ms (compile: 301ms, proxy.ts: 8ms, render: 179ms)
+ GET /discover/career-search 200 in 996ms (compile: 821ms, proxy.ts: 7ms, render: 168ms)
+ GET /discover/explore 200 in 1054ms (compile: 878ms, proxy.ts: 9ms, render: 168ms)

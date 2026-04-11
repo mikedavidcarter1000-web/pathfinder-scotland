@@ -13,6 +13,7 @@ export type CourseChoiceRule = Tables<'course_choice_rules'>
 export type Course = Tables<'courses'>
 export type University = Tables<'universities'>
 export type CourseSubjectRequirement = Tables<'course_subject_requirements'>
+export type CareerRole = Tables<'career_roles'>
 
 export type QualificationLevel = 'n4' | 'n5' | 'higher' | 'adv_higher' | 'npa' | 'academy'
 export type Stage = 's2' | 's3' | 's4' | 's5'
@@ -400,6 +401,7 @@ export type CareerSectorDetail = {
     related: CareerSubjectRow[]
   }
   all_subjects: CareerSubjectRow[]
+  career_roles: CareerRole[]
 }
 
 /**
@@ -488,10 +490,20 @@ export function useCareerSectorDetail(sectorId: string | null) {
         related: rows.filter((r) => r.relevance === 'related' || !r.relevance),
       }
 
+      // 4. Granular career roles for the sector (if any).
+      const { data: roles, error: rolesErr } = await supabase
+        .from('career_roles')
+        .select('*')
+        .eq('career_sector_id', sectorId)
+        .order('ai_rating', { ascending: true })
+        .order('title', { ascending: true })
+      if (rolesErr) throw rolesErr
+
       return {
         sector: sector as CareerSector,
         subjects_by_relevance,
         all_subjects: rows,
+        career_roles: (roles as CareerRole[]) || [],
       }
     },
     enabled: !!sectorId,
@@ -508,6 +520,7 @@ export type CareerSectorPageCourse = Pick<
 
 export type CareerSectorPageData = CareerSectorDetail & {
   related_courses: CareerSectorPageCourse[]
+  career_roles: CareerRole[]
 }
 
 /**
@@ -613,14 +626,136 @@ export function useCareerSectorPageData(sectorId: string | null) {
         relatedCourses = (courses as unknown as CareerSectorPageCourse[]) || []
       }
 
+      // 4. Granular career roles within this sector with their 1-10 AI ratings.
+      const { data: roles, error: rolesErr } = await supabase
+        .from('career_roles')
+        .select('*')
+        .eq('career_sector_id', sectorId)
+        .order('ai_rating', { ascending: true })
+        .order('title', { ascending: true })
+      if (rolesErr) throw rolesErr
+
       return {
         sector: typedSector,
         subjects_by_relevance,
         all_subjects: rows,
         related_courses: relatedCourses,
+        career_roles: (roles as CareerRole[]) || [],
       }
     },
     enabled: !!sectorId,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Per-role AI impact hooks
+// ──────────────────────────────────────────────────────────────────────────
+
+export type SubjectCareerRole = CareerRole & {
+  career_sector: Pick<CareerSector, 'id' | 'name'> | null
+  relevance: string | null
+}
+
+/**
+ * Fetch every career_role linked to a given subject (via career_role_subjects),
+ * with the parent sector joined so we can group by sector in the UI.
+ */
+export function useSubjectCareerRoles(subjectId: string | null) {
+  const supabase = getSupabaseClient()
+
+  return useQuery<SubjectCareerRole[]>({
+    queryKey: ['subject-career-roles', subjectId],
+    queryFn: async () => {
+      if (!subjectId) return []
+      const { data, error } = await supabase
+        .from('career_role_subjects')
+        .select(
+          `
+          relevance,
+          career_role:career_roles(
+            *,
+            career_sector:career_sectors(id, name)
+          )
+        `
+        )
+        .eq('subject_id', subjectId)
+      if (error) throw error
+
+      type Row = {
+        relevance: string | null
+        career_role:
+          | (CareerRole & {
+              career_sector: Pick<CareerSector, 'id' | 'name'> | null
+            })
+          | null
+      }
+
+      return ((data as unknown as Row[]) || [])
+        .filter((r): r is Row & { career_role: NonNullable<Row['career_role']> } => !!r.career_role)
+        .map((r) => ({
+          ...r.career_role,
+          career_sector: r.career_role.career_sector,
+          relevance: r.relevance,
+        }))
+        .sort((a, b) => {
+          if (a.ai_rating !== b.ai_rating) return a.ai_rating - b.ai_rating
+          return a.title.localeCompare(b.title)
+        })
+    },
+    enabled: !!subjectId,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+export type AiCareersHubData = {
+  sectors: CareerSector[]
+  rolesBySector: Map<string, CareerRole[]>
+  allRoles: Array<CareerRole & { sector_name: string }>
+}
+
+/**
+ * Bulk fetch for the /ai-careers hub: every sector + every role in one go,
+ * organised both by sector (for the explorer) and as a flat list (for search).
+ */
+export function useAiCareersHubData() {
+  const supabase = getSupabaseClient()
+
+  return useQuery<AiCareersHubData>({
+    queryKey: ['ai-careers-hub'],
+    queryFn: async () => {
+      const [sectorsRes, rolesRes] = await Promise.all([
+        supabase
+          .from('career_sectors')
+          .select('*')
+          .order('display_order', { nullsFirst: false })
+          .order('name'),
+        supabase
+          .from('career_roles')
+          .select('*')
+          .order('ai_rating', { ascending: true })
+          .order('title', { ascending: true }),
+      ])
+      if (sectorsRes.error) throw sectorsRes.error
+      if (rolesRes.error) throw rolesRes.error
+
+      const sectors = (sectorsRes.data as CareerSector[]) || []
+      const sectorNameById = new Map(sectors.map((s) => [s.id, s.name]))
+
+      const allRoles: Array<CareerRole & { sector_name: string }> = []
+      const rolesBySector = new Map<string, CareerRole[]>()
+      for (const role of (rolesRes.data as CareerRole[]) || []) {
+        allRoles.push({ ...role, sector_name: sectorNameById.get(role.career_sector_id) ?? '' })
+        let arr = rolesBySector.get(role.career_sector_id)
+        if (!arr) {
+          arr = []
+          rolesBySector.set(role.career_sector_id, arr)
+        }
+        arr.push(role)
+      }
+
+      return { sectors, rolesBySector, allRoles }
+    },
     staleTime: 5 * 60 * 1000,
   })
 }
@@ -635,6 +770,7 @@ export type ExploreData = {
     subjects: SubjectWithArea[]
   }>
   suggested_sectors: ExploreCareerSectorRow[]
+  reachable_roles: Array<CareerRole & { sector_name: string }>
 }
 
 /**
@@ -684,6 +820,7 @@ export function useExploreData(curricularAreaIds: string[]) {
       //    count of how many selected subjects touch it).
       const subjectIds = typedSubjects.map((s) => s.id)
       let suggested_sectors: ExploreCareerSectorRow[] = []
+      let reachable_roles: Array<CareerRole & { sector_name: string }> = []
       if (subjectIds.length > 0) {
         const { data: links, error: linksErr } = await supabase
           .from('subject_career_sectors')
@@ -726,11 +863,43 @@ export function useExploreData(curricularAreaIds: string[]) {
             }
             return (a.display_order ?? 999) - (b.display_order ?? 999)
           })
+
+        // 4. Reachable career roles via career_role_subjects (any subject in
+        //    a selected area). Dedupe by role id, sort by AI rating asc.
+        const { data: roleLinks, error: roleErr } = await supabase
+          .from('career_role_subjects')
+          .select(
+            `
+            career_role:career_roles(*, career_sector:career_sectors(name))
+          `
+          )
+          .in('subject_id', subjectIds)
+        if (roleErr) throw roleErr
+
+        type RoleLinkRow = {
+          career_role:
+            | (CareerRole & { career_sector: { name: string } | null })
+            | null
+        }
+        const roleMap = new Map<string, CareerRole & { sector_name: string }>()
+        for (const row of (roleLinks as unknown as RoleLinkRow[]) || []) {
+          if (!row.career_role) continue
+          if (roleMap.has(row.career_role.id)) continue
+          roleMap.set(row.career_role.id, {
+            ...row.career_role,
+            sector_name: row.career_role.career_sector?.name ?? '',
+          })
+        }
+        reachable_roles = Array.from(roleMap.values()).sort((a, b) => {
+          if (a.ai_rating !== b.ai_rating) return a.ai_rating - b.ai_rating
+          return a.title.localeCompare(b.title)
+        })
       }
 
       return {
         subjects_by_area,
         suggested_sectors,
+        reachable_roles,
       }
     },
     enabled: curricularAreaIds.length > 0,

@@ -27,8 +27,9 @@ import { useToast } from '@/components/ui/toast'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ParentNotice } from '@/components/ui/parent-notice'
 import { AiImpactDot } from '@/components/ui/ai-impact-badge'
-import { AI_IMPACT_META, isAiImpactRating } from '@/lib/constants'
-import type { SubjectWithArea } from '@/hooks/use-subjects'
+import { AiRoleBadge, AiRoleDot } from '@/components/ui/ai-role-badge'
+import { AI_IMPACT_META, isAiImpactRating, getAiRoleTier, AI_ROLE_TIER_META } from '@/lib/constants'
+import type { SubjectWithArea, CareerRole } from '@/hooks/use-subjects'
 
 const STAGES: SimulatorStage[] = ['s3', 's4', 's5', 's6']
 
@@ -1204,55 +1205,20 @@ function ImpactPanel({
                 AI-exposed
               </span>
             </div>
-            <div
-              className="grid gap-2"
-              style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))' }}
-            >
+            <div className="space-y-2">
               {data.careerSectors.map((sector) => {
                 const covered = impact.coveredSectorIds.has(sector.id)
-                const aiRating = isAiImpactRating(sector.ai_impact_rating)
-                  ? sector.ai_impact_rating
-                  : null
-                const aiTitle = aiRating
-                  ? `AI impact: ${AI_IMPACT_META[aiRating].label} — ${AI_IMPACT_META[aiRating].summary}`
-                  : undefined
+                const sectorRoles = data.rolesBySector.get(sector.id) ?? []
+                const reachableInSector =
+                  impact.aiResilience.rolesBySectorCovered.get(sector.id) ?? []
                 return (
-                  <Link
+                  <SectorRoleRow
                     key={sector.id}
-                    href={`/careers/${sector.id}`}
-                    className="no-underline hover:no-underline"
-                    style={{
-                      padding: '8px 12px',
-                      borderRadius: '6px',
-                      backgroundColor: covered
-                        ? 'rgba(16, 185, 129, 0.1)'
-                        : 'var(--pf-grey-100)',
-                      color: covered ? 'var(--pf-green-500)' : 'var(--pf-grey-600)',
-                      fontSize: '0.8125rem',
-                      fontWeight: covered ? 600 : 400,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                    }}
-                  >
-                    {covered ? (
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        aria-hidden="true"
-                      >
-                        <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    ) : (
-                      <span style={{ width: '12px' }} />
-                    )}
-                    <span style={{ flex: 1 }}>{sector.name}</span>
-                    {aiRating && <AiImpactDot rating={aiRating} size={8} title={aiTitle} />}
-                  </Link>
+                    sector={sector}
+                    covered={covered}
+                    sectorRoles={sectorRoles}
+                    reachableRoles={reachableInSector}
+                  />
                 )
               })}
             </div>
@@ -1299,6 +1265,9 @@ function ImpactPanel({
               </details>
             )}
           </Section>
+
+          {/* Section C2 — AI resilience summary */}
+          <AiResilienceSection impact={impact} />
 
           {/* Section D — Pathway summary */}
           <Section title="Your pathway summary">
@@ -1572,6 +1541,174 @@ function ComparisonPanel({
           items={onlyInB.map((s) => s.name)}
         />
       </div>
+
+      {/* AI resilience side-by-side */}
+      <div
+        style={{
+          marginTop: '24px',
+          paddingTop: '24px',
+          borderTop: '1px solid var(--pf-grey-100)',
+        }}
+      >
+        <h3
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+            fontSize: '0.9375rem',
+            color: 'var(--pf-grey-900)',
+            margin: 0,
+            marginBottom: '12px',
+          }}
+        >
+          AI resilience side-by-side
+        </h3>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <ComparisonAiCard
+            label="Option A"
+            accent="var(--pf-blue-700)"
+            summary={impactA.aiResilience}
+          />
+          <ComparisonAiCard
+            label="Option B"
+            accent="var(--pf-amber-500)"
+            summary={impactB.aiResilience}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ComparisonAiCard({
+  label,
+  accent,
+  summary,
+}: {
+  label: string
+  accent: string
+  summary: ImpactResult['aiResilience']
+}) {
+  if (summary.reachableRoles.length === 0) {
+    return (
+      <div
+        style={{
+          padding: '16px',
+          borderRadius: '8px',
+          border: '1px solid var(--pf-grey-300)',
+          borderTop: `3px solid ${accent}`,
+          backgroundColor: 'var(--pf-white)',
+        }}
+      >
+        <p
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+            fontSize: '0.75rem',
+            color: accent,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            margin: 0,
+            marginBottom: '6px',
+          }}
+        >
+          {label}
+        </p>
+        <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', margin: 0 }}>
+          No reachable roles for this combination yet.
+        </p>
+      </div>
+    )
+  }
+  const avg = summary.averageRating ?? 0
+  const tier = AI_ROLE_TIER_META[getAiRoleTier(avg)]
+  return (
+    <div
+      style={{
+        padding: '16px',
+        borderRadius: '8px',
+        border: '1px solid var(--pf-grey-300)',
+        borderTop: `3px solid ${accent}`,
+        backgroundColor: 'var(--pf-white)',
+      }}
+    >
+      <p
+        style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          fontSize: '0.75rem',
+          color: accent,
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+          margin: 0,
+          marginBottom: '8px',
+        }}
+      >
+        {label}
+      </p>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          gap: '8px',
+          marginBottom: '4px',
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700,
+            fontSize: '1.5rem',
+            color: tier.text,
+          }}
+        >
+          {avg.toFixed(1)}
+          <span style={{ opacity: 0.6, fontSize: '0.875rem' }}>/10</span>
+        </span>
+        <span style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}>
+          avg AI impact
+        </span>
+      </div>
+      <p style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)', margin: 0, marginBottom: '10px' }}>
+        {summary.reachableRoles.length} role
+        {summary.reachableRoles.length === 1 ? '' : 's'} reachable
+      </p>
+      {summary.topResilient.length > 0 && (
+        <div style={{ marginBottom: '8px' }}>
+          <p
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              fontSize: '0.6875rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              color: 'var(--pf-green-500)',
+              margin: 0,
+              marginBottom: '4px',
+            }}
+          >
+            Most resilient
+          </p>
+          <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+            {summary.topResilient.slice(0, 3).map((r) => (
+              <li
+                key={r.id}
+                style={{
+                  fontSize: '0.75rem',
+                  color: 'var(--pf-grey-900)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '2px 0',
+                }}
+              >
+                <AiRoleDot rating={r.ai_rating} size={6} />
+                <span style={{ flex: 1, minWidth: 0 }}>{r.title}</span>
+                <span style={{ color: 'var(--pf-grey-600)' }}>{r.ai_rating}/10</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }
@@ -1693,6 +1830,311 @@ function DiffList({
           (no unique subjects)
         </p>
       )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// AI resilience UI helpers
+// ─────────────────────────────────────────────────────────────────────────
+
+function SectorRoleRow({
+  sector,
+  covered,
+  sectorRoles,
+  reachableRoles,
+}: {
+  sector: { id: string; name: string; ai_impact_rating: string | null }
+  covered: boolean
+  sectorRoles: CareerRole[]
+  reachableRoles: CareerRole[]
+}) {
+  const aiRating = isAiImpactRating(sector.ai_impact_rating) ? sector.ai_impact_rating : null
+  const aiTitle = aiRating
+    ? `AI impact: ${AI_IMPACT_META[aiRating].label} — ${AI_IMPACT_META[aiRating].summary}`
+    : undefined
+
+  // Use reachableRoles if any (subset opened by current selection); otherwise
+  // fall back to all roles in the sector so the dropdown still has content.
+  const visibleRoles = reachableRoles.length > 0 ? reachableRoles : sectorRoles
+  const hasRoles = visibleRoles.length > 0
+  const reachableLabel = covered && reachableRoles.length > 0
+    ? `${reachableRoles.length} role${reachableRoles.length === 1 ? '' : 's'} reachable`
+    : sectorRoles.length > 0
+      ? `${sectorRoles.length} role${sectorRoles.length === 1 ? '' : 's'} in sector`
+      : null
+
+  return (
+    <details
+      style={{
+        borderRadius: '6px',
+        backgroundColor: covered ? 'rgba(16, 185, 129, 0.08)' : 'var(--pf-grey-100)',
+        padding: '0',
+      }}
+    >
+      <summary
+        style={{
+          padding: '8px 12px',
+          listStyle: 'none',
+          cursor: hasRoles ? 'pointer' : 'default',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+        }}
+      >
+        {covered ? (
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--pf-green-500)"
+            strokeWidth="3"
+            aria-hidden="true"
+            style={{ flexShrink: 0 }}
+          >
+            <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        ) : (
+          <span style={{ width: '14px', flexShrink: 0 }} />
+        )}
+        <Link
+          href={`/careers/${sector.id}`}
+          className="no-underline hover:no-underline"
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            fontSize: '0.8125rem',
+            fontWeight: covered ? 600 : 500,
+            color: covered ? 'var(--pf-green-500)' : 'var(--pf-grey-600)',
+            flex: 1,
+            minWidth: 0,
+          }}
+        >
+          {sector.name}
+        </Link>
+        {reachableLabel && (
+          <span
+            style={{
+              fontSize: '0.6875rem',
+              color: 'var(--pf-grey-600)',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 500,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {reachableLabel}
+          </span>
+        )}
+        {aiRating && <AiImpactDot rating={aiRating} size={8} title={aiTitle} />}
+        {hasRoles && (
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            style={{ color: 'var(--pf-grey-600)', flexShrink: 0 }}
+            aria-hidden="true"
+          >
+            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+      </summary>
+      {hasRoles && (
+        <ul
+          style={{
+            listStyle: 'none',
+            padding: '4px 12px 12px 36px',
+            margin: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '6px',
+          }}
+        >
+          {visibleRoles.map((role) => (
+            <li
+              key={role.id}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.75rem',
+              }}
+            >
+              <AiRoleDot rating={role.ai_rating} size={8} />
+              <span style={{ color: 'var(--pf-grey-900)', flex: 1, minWidth: 0 }}>
+                {role.title}
+              </span>
+              <span
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  color: AI_ROLE_TIER_META[getAiRoleTier(role.ai_rating)].text,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {role.ai_rating}/10
+              </span>
+              {role.is_new_ai_role && (
+                <span
+                  style={{
+                    fontSize: '0.625rem',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    color: 'var(--pf-green-500)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                    padding: '2px 6px',
+                    borderRadius: '9999px',
+                  }}
+                >
+                  NEW
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </details>
+  )
+}
+
+function AiResilienceSection({ impact }: { impact: ImpactResult }) {
+  const summary = impact.aiResilience
+  if (summary.reachableRoles.length === 0) {
+    return (
+      <Section title="AI resilience snapshot">
+        <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+          Pick a few subjects to see how AI is shaping the careers your choices unlock.
+        </p>
+      </Section>
+    )
+  }
+
+  const avg = summary.averageRating ?? 0
+  const avgTier = AI_ROLE_TIER_META[getAiRoleTier(avg)]
+
+  return (
+    <Section title="AI resilience snapshot">
+      <p
+        style={{
+          fontSize: '0.8125rem',
+          color: 'var(--pf-grey-600)',
+          marginBottom: '12px',
+        }}
+      >
+        Based on your subject choices, you could access{' '}
+        <strong style={{ color: 'var(--pf-grey-900)' }}>
+          {summary.reachableRoles.length} role{summary.reachableRoles.length === 1 ? '' : 's'}
+        </strong>
+        .
+      </p>
+      <div
+        style={{
+          padding: '12px 14px',
+          borderRadius: '8px',
+          backgroundColor: avgTier.bg,
+          marginBottom: '14px',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'baseline',
+            gap: '8px',
+            marginBottom: '2px',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700,
+              fontSize: '1.5rem',
+              color: avgTier.text,
+            }}
+          >
+            {avg.toFixed(1)}
+            <span style={{ opacity: 0.6, fontSize: '0.875rem' }}>/10</span>
+          </span>
+          <span
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              fontSize: '0.8125rem',
+              color: avgTier.text,
+            }}
+          >
+            average AI impact ({avgTier.label})
+          </span>
+        </div>
+        <p style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)', margin: 0 }}>
+          {avgTier.description}
+        </p>
+      </div>
+      {summary.topResilient.length > 0 && (
+        <ResilienceList
+          title="Most resilient roles"
+          tone="resilient"
+          roles={summary.topResilient}
+        />
+      )}
+      {summary.topTransforming.length > 0 &&
+        summary.topTransforming[0].id !== summary.topResilient[0]?.id && (
+          <ResilienceList
+            title="Roles facing most change"
+            tone="transforming"
+            roles={summary.topTransforming}
+          />
+        )}
+    </Section>
+  )
+}
+
+function ResilienceList({
+  title,
+  tone,
+  roles,
+}: {
+  title: string
+  tone: 'resilient' | 'transforming'
+  roles: CareerRole[]
+}) {
+  const colour =
+    tone === 'resilient' ? 'var(--pf-green-500)' : AI_ROLE_TIER_META.transforming.text
+  return (
+    <div style={{ marginBottom: '12px' }}>
+      <p
+        style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          fontSize: '0.6875rem',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+          color: colour,
+          marginBottom: '6px',
+        }}
+      >
+        {title}
+      </p>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        {roles.map((role) => (
+          <li
+            key={role.id}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '4px 0',
+              fontSize: '0.8125rem',
+              color: 'var(--pf-grey-900)',
+            }}
+          >
+            <AiRoleDot rating={role.ai_rating} size={8} />
+            <span style={{ flex: 1, minWidth: 0 }}>{role.title}</span>
+            <AiRoleBadge rating={role.ai_rating} size="sm" showLabel={false} />
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

@@ -29,6 +29,7 @@ export function Navbar() {
     { name: 'Discover', href: '/discover', auth: false },
     { name: 'Dashboard', href: '/dashboard', auth: true },
     { name: 'Careers', href: '/careers', auth: false },
+    { name: 'AI & Careers', href: '/ai-careers', auth: false },
     { name: 'Subjects', href: '/subjects', auth: false },
     { name: 'Plan Choices', href: '/pathways', auth: false },
     { name: 'Alternatives', href: '/pathways/alternatives', auth: false },
