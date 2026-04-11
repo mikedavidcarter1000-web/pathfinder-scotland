@@ -387,6 +387,231 @@ export type CareerSectorWithCount = CareerSector & {
   subject_count: number
 }
 
+export type CareerSubjectRow = SubjectWithArea & {
+  relevance: string | null
+  course_count: number
+}
+
+export type CareerSectorDetail = {
+  sector: CareerSector
+  subjects_by_relevance: {
+    essential: CareerSubjectRow[]
+    recommended: CareerSubjectRow[]
+    related: CareerSubjectRow[]
+  }
+  all_subjects: CareerSubjectRow[]
+}
+
+/**
+ * Fetch a career sector with every linked subject (grouped by relevance),
+ * each subject's curricular area, and a count of related university courses.
+ * Powers the /discover/career-search reverse lookup.
+ */
+export function useCareerSectorDetail(sectorId: string | null) {
+  const supabase = getSupabaseClient()
+
+  return useQuery<CareerSectorDetail | null>({
+    queryKey: ['career-sector-detail', sectorId],
+    queryFn: async () => {
+      if (!sectorId) return null
+
+      // 1. Fetch sector metadata.
+      const { data: sector, error: sectorErr } = await supabase
+        .from('career_sectors')
+        .select('*')
+        .eq('id', sectorId)
+        .single()
+      if (sectorErr) throw sectorErr
+      if (!sector) return null
+
+      // 2. Fetch subject links for this sector, joining the subject + area.
+      const { data: links, error: linksErr } = await supabase
+        .from('subject_career_sectors')
+        .select(
+          `
+          relevance,
+          subject:subjects(
+            *,
+            curricular_area:curricular_areas(*)
+          )
+        `
+        )
+        .eq('career_sector_id', sectorId)
+      if (linksErr) throw linksErr
+
+      type LinkRow = {
+        relevance: string | null
+        subject: (Subject & { curricular_area: CurricularArea | null }) | null
+      }
+
+      const typedLinks = (links as unknown as LinkRow[]) || []
+
+      // 3. Count related courses per subject in a single query.
+      const subjectIds = typedLinks
+        .map((l) => l.subject?.id)
+        .filter((id): id is string => !!id)
+
+      const countMap = new Map<string, number>()
+      if (subjectIds.length > 0) {
+        const { data: reqs, error: reqErr } = await supabase
+          .from('course_subject_requirements')
+          .select('subject_id, course_id')
+          .in('subject_id', subjectIds)
+        if (reqErr) throw reqErr
+        const uniqPerSubject = new Map<string, Set<string>>()
+        for (const row of (reqs || []) as Array<{ subject_id: string; course_id: string }>) {
+          let set = uniqPerSubject.get(row.subject_id)
+          if (!set) {
+            set = new Set<string>()
+            uniqPerSubject.set(row.subject_id, set)
+          }
+          set.add(row.course_id)
+        }
+        for (const [id, set] of uniqPerSubject) {
+          countMap.set(id, set.size)
+        }
+      }
+
+      // 4. Shape into rows + group by relevance.
+      const rows: CareerSubjectRow[] = typedLinks
+        .filter((l): l is LinkRow & { subject: Subject & { curricular_area: CurricularArea | null } } => !!l.subject)
+        .map((l) => ({
+          ...l.subject,
+          relevance: l.relevance,
+          course_count: countMap.get(l.subject.id) ?? 0,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name))
+
+      const subjects_by_relevance = {
+        essential: rows.filter((r) => r.relevance === 'essential'),
+        recommended: rows.filter((r) => r.relevance === 'recommended'),
+        related: rows.filter((r) => r.relevance === 'related' || !r.relevance),
+      }
+
+      return {
+        sector: sector as CareerSector,
+        subjects_by_relevance,
+        all_subjects: rows,
+      }
+    },
+    enabled: !!sectorId,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+export type ExploreCareerSectorRow = CareerSector & {
+  matched_subject_count: number
+}
+
+export type ExploreData = {
+  subjects_by_area: Array<{
+    area: CurricularArea
+    subjects: SubjectWithArea[]
+  }>
+  suggested_sectors: ExploreCareerSectorRow[]
+}
+
+/**
+ * Fetch subjects from the chosen curricular areas plus the career sectors
+ * those subjects connect to. Powers the /discover/explore guided flow.
+ */
+export function useExploreData(curricularAreaIds: string[]) {
+  const supabase = getSupabaseClient()
+
+  const key = [...curricularAreaIds].sort().join(',')
+
+  return useQuery<ExploreData | null>({
+    queryKey: ['explore-data', key],
+    queryFn: async () => {
+      if (curricularAreaIds.length === 0) return null
+
+      // 1. Fetch subjects in the selected areas, with curricular area joined.
+      const { data: subjects, error: subjectErr } = await supabase
+        .from('subjects')
+        .select('*, curricular_area:curricular_areas(*)')
+        .in('curricular_area_id', curricularAreaIds)
+        .eq('is_academy', false)
+        .order('name')
+      if (subjectErr) throw subjectErr
+
+      const typedSubjects = (subjects as unknown as SubjectWithArea[]) || []
+
+      // 2. Group subjects by curricular area (only areas with any subjects).
+      const areaMap = new Map<string, { area: CurricularArea; subjects: SubjectWithArea[] }>()
+      for (const s of typedSubjects) {
+        if (!s.curricular_area) continue
+        const existing = areaMap.get(s.curricular_area.id)
+        if (existing) {
+          existing.subjects.push(s)
+        } else {
+          areaMap.set(s.curricular_area.id, {
+            area: s.curricular_area,
+            subjects: [s],
+          })
+        }
+      }
+      const subjects_by_area = Array.from(areaMap.values()).sort(
+        (a, b) => a.area.display_order - b.area.display_order
+      )
+
+      // 3. Find career sectors connected to these subjects (with per-sector
+      //    count of how many selected subjects touch it).
+      const subjectIds = typedSubjects.map((s) => s.id)
+      let suggested_sectors: ExploreCareerSectorRow[] = []
+      if (subjectIds.length > 0) {
+        const { data: links, error: linksErr } = await supabase
+          .from('subject_career_sectors')
+          .select(
+            `
+            subject_id,
+            career_sector:career_sectors(*)
+          `
+          )
+          .in('subject_id', subjectIds)
+        if (linksErr) throw linksErr
+
+        type LinkRow = {
+          subject_id: string
+          career_sector: CareerSector | null
+        }
+
+        const sectorCounts = new Map<string, { sector: CareerSector; subjectIds: Set<string> }>()
+        for (const row of (links as unknown as LinkRow[]) || []) {
+          if (!row.career_sector) continue
+          const existing = sectorCounts.get(row.career_sector.id)
+          if (existing) {
+            existing.subjectIds.add(row.subject_id)
+          } else {
+            sectorCounts.set(row.career_sector.id, {
+              sector: row.career_sector,
+              subjectIds: new Set<string>([row.subject_id]),
+            })
+          }
+        }
+
+        suggested_sectors = Array.from(sectorCounts.values())
+          .map((entry) => ({
+            ...entry.sector,
+            matched_subject_count: entry.subjectIds.size,
+          }))
+          .sort((a, b) => {
+            if (b.matched_subject_count !== a.matched_subject_count) {
+              return b.matched_subject_count - a.matched_subject_count
+            }
+            return (a.display_order ?? 999) - (b.display_order ?? 999)
+          })
+      }
+
+      return {
+        subjects_by_area,
+        suggested_sectors,
+      }
+    },
+    enabled: curricularAreaIds.length > 0,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 /**
  * Fetch all career sectors with count of linked subjects.
  */

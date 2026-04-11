@@ -158,6 +158,61 @@ export default function DashboardPage() {
         <ProgressChecklist />
       </div>
 
+      {/* Discover prompt — surfaces the dual-path entry point for students
+          who still feel lost even with an account set up. */}
+      <div className="mb-6">
+        <Link
+          href="/discover"
+          className="pf-card-hover no-underline hover:no-underline flex items-center gap-4"
+          style={{ padding: '20px 24px' }}
+        >
+          <div
+            className="flex items-center justify-center flex-shrink-0"
+            style={{
+              width: '52px',
+              height: '52px',
+              borderRadius: '12px',
+              backgroundColor: 'var(--pf-blue-100)',
+              color: 'var(--pf-blue-700)',
+            }}
+            aria-hidden="true"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.24 7.76l-2.12 5.66-5.66 2.12 2.12-5.66 5.66-2.12z" />
+              <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: 'var(--pf-grey-900)',
+                marginBottom: '2px',
+              }}
+            >
+              Not sure where to start? Discover your path
+            </p>
+            <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+              Explore careers and subjects, whether you have an idea or you&apos;re still figuring it out.
+            </p>
+          </div>
+          <svg
+            className="w-5 h-5 flex-shrink-0"
+            style={{ color: 'var(--pf-blue-700)' }}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
+      </div>
+
       {/* Widening Access Highlight (only renders if eligible) */}
       <div className="mb-6">
         <WideningAccessCard />

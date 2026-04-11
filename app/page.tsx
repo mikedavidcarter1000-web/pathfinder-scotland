@@ -148,10 +148,10 @@ export default function HomePage() {
                   Start planning free
                 </Link>
                 <Link
-                  href="/subjects"
+                  href="/discover"
                   className="pf-btn-secondary w-full sm:w-auto justify-center"
                 >
-                  Explore subjects
+                  Discover your path
                 </Link>
               </div>
 
