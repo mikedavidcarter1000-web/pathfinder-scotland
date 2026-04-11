@@ -53,11 +53,93 @@ export type Database = {
         }
         Relationships: []
       }
+      career_role_subjects: {
+        Row: {
+          career_role_id: string
+          relevance: string | null
+          subject_id: string
+        }
+        Insert: {
+          career_role_id: string
+          relevance?: string | null
+          subject_id: string
+        }
+        Update: {
+          career_role_id?: string
+          relevance?: string | null
+          subject_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "career_role_subjects_career_role_id_fkey"
+            columns: ["career_role_id"]
+            isOneToOne: false
+            referencedRelation: "career_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "career_role_subjects_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      career_roles: {
+        Row: {
+          ai_description: string
+          ai_rating: number
+          career_sector_id: string
+          created_at: string | null
+          growth_outlook: string | null
+          id: string
+          is_new_ai_role: boolean | null
+          salary_entry: string | null
+          salary_experienced: string | null
+          title: string
+        }
+        Insert: {
+          ai_description: string
+          ai_rating: number
+          career_sector_id: string
+          created_at?: string | null
+          growth_outlook?: string | null
+          id?: string
+          is_new_ai_role?: boolean | null
+          salary_entry?: string | null
+          salary_experienced?: string | null
+          title: string
+        }
+        Update: {
+          ai_description?: string
+          ai_rating?: number
+          career_sector_id?: string
+          created_at?: string | null
+          growth_outlook?: string | null
+          id?: string
+          is_new_ai_role?: boolean | null
+          salary_entry?: string | null
+          salary_experienced?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "career_roles_career_sector_id_fkey"
+            columns: ["career_sector_id"]
+            isOneToOne: false
+            referencedRelation: "career_sectors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       career_sectors: {
         Row: {
           ai_impact_description: string | null
           ai_impact_rating: string | null
           ai_impact_source: string | null
+          ai_sector_narrative: string | null
+          apprenticeships_text: string | null
           course_subject_areas: string[] | null
           description: string | null
           display_order: number | null
@@ -68,11 +150,15 @@ export type Database = {
           name: string
           salary_range_entry: string | null
           salary_range_experienced: string | null
+          scottish_context: string | null
+          sqa_subjects_text: string | null
         }
         Insert: {
           ai_impact_description?: string | null
           ai_impact_rating?: string | null
           ai_impact_source?: string | null
+          ai_sector_narrative?: string | null
+          apprenticeships_text?: string | null
           course_subject_areas?: string[] | null
           description?: string | null
           display_order?: number | null
@@ -83,11 +169,15 @@ export type Database = {
           name: string
           salary_range_entry?: string | null
           salary_range_experienced?: string | null
+          scottish_context?: string | null
+          sqa_subjects_text?: string | null
         }
         Update: {
           ai_impact_description?: string | null
           ai_impact_rating?: string | null
           ai_impact_source?: string | null
+          ai_sector_narrative?: string | null
+          apprenticeships_text?: string | null
           course_subject_areas?: string[] | null
           description?: string | null
           display_order?: number | null
@@ -98,6 +188,8 @@ export type Database = {
           name?: string
           salary_range_entry?: string | null
           salary_range_experienced?: string | null
+          scottish_context?: string | null
+          sqa_subjects_text?: string | null
         }
         Relationships: []
       }
@@ -659,6 +751,45 @@ export type Database = {
         }
         Relationships: []
       }
+      student_academy_choices: {
+        Row: {
+          created_at: string | null
+          id: string
+          rank_order: number
+          student_id: string
+          subject_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          rank_order: number
+          student_id: string
+          subject_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          rank_order?: number
+          student_id?: string
+          subject_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_academy_choices_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_academy_choices_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       student_grades: {
         Row: {
           created_at: string | null
@@ -715,33 +846,33 @@ export type Database = {
       }
       student_subject_choices: {
         Row: {
+          created_at: string | null
           id: string
+          is_reserve: boolean | null
+          rank_order: number | null
           student_id: string
           subject_id: string
           transition: string
-          rank_order: number | null
-          is_reserve: boolean | null
-          created_at: string | null
           updated_at: string | null
         }
         Insert: {
+          created_at?: string | null
           id?: string
+          is_reserve?: boolean | null
+          rank_order?: number | null
           student_id: string
           subject_id: string
           transition: string
-          rank_order?: number | null
-          is_reserve?: boolean | null
-          created_at?: string | null
           updated_at?: string | null
         }
         Update: {
+          created_at?: string | null
           id?: string
+          is_reserve?: boolean | null
+          rank_order?: number | null
           student_id?: string
           subject_id?: string
           transition?: string
-          rank_order?: number | null
-          is_reserve?: boolean | null
-          created_at?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -754,45 +885,6 @@ export type Database = {
           },
           {
             foreignKeyName: "student_subject_choices_subject_id_fkey"
-            columns: ["subject_id"]
-            isOneToOne: false
-            referencedRelation: "subjects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      student_academy_choices: {
-        Row: {
-          id: string
-          student_id: string
-          subject_id: string
-          rank_order: number
-          created_at: string | null
-        }
-        Insert: {
-          id?: string
-          student_id: string
-          subject_id: string
-          rank_order: number
-          created_at?: string | null
-        }
-        Update: {
-          id?: string
-          student_id?: string
-          subject_id?: string
-          rank_order?: number
-          created_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "student_academy_choices_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "students"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "student_academy_choices_subject_id_fkey"
             columns: ["subject_id"]
             isOneToOne: false
             referencedRelation: "subjects"
