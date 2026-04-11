@@ -129,100 +129,138 @@ export type Database = {
         Row: {
           access_method: string | null
           access_platform: string | null
+          administering_body: string | null
           affiliate_commission: string | null
           affiliate_cookie_days: number | null
           affiliate_network: string | null
           affiliate_url: string | null
+          application_deadline: string | null
+          application_process: string | null
+          award_details: Json | null
           category: string
           created_at: string | null
           description: string
           discount_type: string | null
           discount_value: string
           eligibility_college: boolean | null
+          eligibility_details: string | null
           eligibility_s1_s4: boolean | null
           eligibility_s5_s6: boolean | null
           eligibility_university: boolean | null
           id: string
+          income_thresholds: Json | null
           is_active: boolean | null
           is_care_experienced_only: boolean | null
           is_government_scheme: boolean | null
           is_means_tested: boolean | null
+          is_repayable: boolean | null
           is_scotland_only: boolean | null
+          last_verified: string | null
           max_age: number | null
           min_age: number | null
           name: string
           priority_score: number | null
           provider: string
+          related_university_id: string | null
           seasonal_notes: string | null
           short_description: string | null
           updated_at: string | null
           url: string
+          verification_notes: string | null
         }
         Insert: {
           access_method?: string | null
           access_platform?: string | null
+          administering_body?: string | null
           affiliate_commission?: string | null
           affiliate_cookie_days?: number | null
           affiliate_network?: string | null
           affiliate_url?: string | null
+          application_deadline?: string | null
+          application_process?: string | null
+          award_details?: Json | null
           category: string
           created_at?: string | null
           description: string
           discount_type?: string | null
           discount_value: string
           eligibility_college?: boolean | null
+          eligibility_details?: string | null
           eligibility_s1_s4?: boolean | null
           eligibility_s5_s6?: boolean | null
           eligibility_university?: boolean | null
           id?: string
+          income_thresholds?: Json | null
           is_active?: boolean | null
           is_care_experienced_only?: boolean | null
           is_government_scheme?: boolean | null
           is_means_tested?: boolean | null
+          is_repayable?: boolean | null
           is_scotland_only?: boolean | null
+          last_verified?: string | null
           max_age?: number | null
           min_age?: number | null
           name: string
           priority_score?: number | null
           provider: string
+          related_university_id?: string | null
           seasonal_notes?: string | null
           short_description?: string | null
           updated_at?: string | null
           url: string
+          verification_notes?: string | null
         }
         Update: {
           access_method?: string | null
           access_platform?: string | null
+          administering_body?: string | null
           affiliate_commission?: string | null
           affiliate_cookie_days?: number | null
           affiliate_network?: string | null
           affiliate_url?: string | null
+          application_deadline?: string | null
+          application_process?: string | null
+          award_details?: Json | null
           category?: string
           created_at?: string | null
           description?: string
           discount_type?: string | null
           discount_value?: string
           eligibility_college?: boolean | null
+          eligibility_details?: string | null
           eligibility_s1_s4?: boolean | null
           eligibility_s5_s6?: boolean | null
           eligibility_university?: boolean | null
           id?: string
+          income_thresholds?: Json | null
           is_active?: boolean | null
           is_care_experienced_only?: boolean | null
           is_government_scheme?: boolean | null
           is_means_tested?: boolean | null
+          is_repayable?: boolean | null
           is_scotland_only?: boolean | null
+          last_verified?: string | null
           max_age?: number | null
           min_age?: number | null
           name?: string
           priority_score?: number | null
           provider?: string
+          related_university_id?: string | null
           seasonal_notes?: string | null
           short_description?: string | null
           updated_at?: string | null
           url?: string
+          verification_notes?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "student_benefits_related_university_id_fkey"
+            columns: ["related_university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       career_role_subjects: {
         Row: {

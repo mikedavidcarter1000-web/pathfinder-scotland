@@ -112,6 +112,32 @@ export function useUniversityCities() {
   return cities.sort() as string[]
 }
 
+// Fetch student_benefits records linked to a specific university via the
+// related_university_id foreign key — used by the university detail page to
+// show university-specific widening-access bursaries and CE top-ups.
+export function useUniversityBenefits(universityId: string | null) {
+  const supabase = getSupabaseClient()
+
+  return useQuery<Tables<'student_benefits'>[]>({
+    queryKey: ['university-benefits', universityId],
+    queryFn: async () => {
+      if (!universityId) return []
+
+      const { data, error } = await supabase
+        .from('student_benefits')
+        .select('*')
+        .eq('related_university_id', universityId)
+        .eq('is_active', true)
+        .order('priority_score', { ascending: false })
+
+      if (error) throw error
+      return data || []
+    },
+    enabled: !!universityId,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 // Fetch courses for a specific university
 export function useUniversityCourses(universityId: string | null) {
   const supabase = getSupabaseClient()

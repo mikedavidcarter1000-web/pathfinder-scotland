@@ -2,7 +2,11 @@
 
 import { use } from 'react'
 import Link from 'next/link'
-import { useUniversity, useUniversityCourses } from '@/hooks/use-universities'
+import {
+  useUniversity,
+  useUniversityBenefits,
+  useUniversityCourses,
+} from '@/hooks/use-universities'
 import { CourseCard } from '@/components/ui/course-card'
 import { CourseCardSkeleton } from '@/components/ui/loading-skeletons'
 import { Skeleton } from '@/components/ui/loading-skeleton'
@@ -26,6 +30,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
     refetch: () => void
   }
   const { data: courses, isLoading: coursesLoading } = useUniversityCourses(id) as { data: Course[] | undefined; isLoading: boolean }
+  const { data: uniBenefits } = useUniversityBenefits(id)
 
   useAuthErrorRedirect([error])
 
@@ -273,6 +278,11 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
                 waCourseExamples={waCourseExamples}
                 legacyInfo={wideningAccessInfo}
               />
+            )}
+
+            {/* Financial Support — university-specific benefits/bursaries */}
+            {uniBenefits && uniBenefits.length > 0 && (
+              <FinancialSupportSection benefits={uniBenefits} />
             )}
 
             {/* Courses */}
@@ -957,5 +967,80 @@ function UniversityLinksCard({
         ))}
       </ul>
     </div>
+  )
+}
+
+function FinancialSupportSection({
+  benefits,
+}: {
+  benefits: Tables<'student_benefits'>[]
+}) {
+  return (
+    <section>
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">Financial Support</h2>
+      <p className="text-sm text-gray-600 mb-4">
+        University-specific bursaries and accommodation support on top of SAAS funding.
+      </p>
+      <div className="grid gap-4">
+        {benefits.map((b) => (
+          <div
+            key={b.id}
+            className="pf-card"
+            style={{
+              borderLeft: '4px solid var(--pf-blue-700)',
+              padding: '20px',
+            }}
+          >
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <h3 className="font-semibold text-gray-900" style={{ fontSize: '1rem' }}>
+                {b.name}
+              </h3>
+              {b.is_care_experienced_only && (
+                <span
+                  className="pf-badge"
+                  style={{
+                    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                    color: '#B45309',
+                    fontSize: '0.6875rem',
+                  }}
+                >
+                  Care-experienced
+                </span>
+              )}
+            </div>
+            <div
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 700,
+                fontSize: '1.125rem',
+                color: 'var(--pf-blue-700)',
+                marginBottom: '8px',
+              }}
+            >
+              {b.discount_value}
+            </div>
+            <p className="text-sm text-gray-600">
+              {b.short_description || b.description}
+            </p>
+            {b.eligibility_details && (
+              <p className="text-xs text-gray-500 mt-2">
+                <strong>Eligibility:</strong> {b.eligibility_details}
+              </p>
+            )}
+            {b.url && (
+              <a
+                href={b.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium mt-3 inline-block"
+                style={{ color: 'var(--pf-blue-700)' }}
+              >
+                Details on university site →
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
   )
 }

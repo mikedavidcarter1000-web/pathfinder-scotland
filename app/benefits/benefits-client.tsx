@@ -174,6 +174,15 @@ export function BenefitsClient({
         </div>
       </section>
 
+      {/* Personalised support estimate (logged-in students only) */}
+      {student && (
+        <section style={{ backgroundColor: 'var(--pf-white)', paddingTop: '32px' }}>
+          <div className="pf-container">
+            <SupportEstimateCard student={student} />
+          </div>
+        </section>
+      )}
+
       {/* Recommendations rail */}
       <section style={{ backgroundColor: 'var(--pf-white)', paddingTop: '32px' }}>
         <div className="pf-container">
@@ -285,6 +294,11 @@ export function BenefitsClient({
                 label="Show means-tested"
                 checked={includeMeansTested}
                 onChange={setIncludeMeansTested}
+              />
+              <ToggleRow
+                label="Care-experienced only"
+                checked={showCareExperiencedOnly}
+                onChange={setShowCareExperiencedOnly}
               />
             </div>
           </div>
@@ -446,6 +460,106 @@ export function BenefitsClient({
           </div>
         </div>
       </section>
+    </div>
+  )
+}
+
+// Compute a rough, transparent estimate of a student's annual support package
+// from known profile signals (care-experienced, school stage, SIMD). Household
+// income isn't on the students table, so we use SIMD decile as a proxy: decile
+// 1–2 triggers the largest means-tested awards, decile 3–4 the smaller tier.
+function SupportEstimateCard({ student }: { student: Student }) {
+  const items: Array<{ label: string; amount: number }> = []
+
+  const simd = student.simd_decile ?? null
+  const stage = student.school_stage ?? null
+  const isCare = !!student.care_experienced
+  const isYoungEnoughForBus = stage !== 'mature'
+  const isUniOrCollege = stage === 'college' || stage === 'mature'
+  const isSchoolPupil =
+    stage === 's2' || stage === 's3' || stage === 's4' ||
+    stage === 's5' || stage === 's6'
+  const isS5orS6 = stage === 's5' || stage === 's6'
+
+  if (isCare && stage === 'mature') {
+    items.push({ label: 'Care Experienced Students Bursary', amount: 9000 })
+    items.push({ label: 'Summer Accommodation Grant', amount: 1330 })
+  }
+
+  if (simd !== null && simd <= 2 && stage === 'mature') {
+    items.push({ label: 'Young Students Bursary (estimated)', amount: 2000 })
+  } else if (simd !== null && simd <= 4 && stage === 'mature') {
+    items.push({ label: 'Young Students Bursary (estimated)', amount: 1125 })
+  }
+
+  if (isS5orS6 && simd !== null && simd <= 4) {
+    items.push({ label: 'Education Maintenance Allowance (~38 weeks)', amount: 1140 })
+  }
+
+  if (isYoungEnoughForBus) {
+    items.push({ label: 'Free bus travel (est. value)', amount: 500 })
+  }
+
+  if (isSchoolPupil || isUniOrCollege) {
+    items.push({ label: 'Free NHS prescriptions / eye tests', amount: 60 })
+  }
+
+  const total = items.reduce((acc, i) => acc + i.amount, 0)
+  if (items.length === 0) return null
+
+  return (
+    <div
+      className="pf-card mb-6"
+      style={{
+        borderLeft: '4px solid var(--pf-blue-700)',
+        padding: '24px',
+        backgroundColor: 'var(--pf-white)',
+      }}
+    >
+      <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 mb-3">
+        <h2 style={{ fontSize: '1.25rem', marginBottom: 0 }}>
+          Your estimated annual support package
+        </h2>
+        <div
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 700,
+            fontSize: '1.75rem',
+            color: 'var(--pf-blue-700)',
+          }}
+        >
+          £{total.toLocaleString('en-GB')}/year
+        </div>
+      </div>
+      <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', marginBottom: '12px' }}>
+        Based on your profile ({[
+          isCare && 'care-experienced',
+          simd !== null && `SIMD decile ${simd}`,
+          stage && `stage: ${stage.toUpperCase()}`,
+        ].filter(Boolean).join(', ')}).
+      </p>
+      <ul style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)', listStyle: 'none', padding: 0 }}>
+        {items.map((i) => (
+          <li
+            key={i.label}
+            className="flex justify-between"
+            style={{ padding: '6px 0', borderBottom: '1px solid var(--pf-grey-100)' }}
+          >
+            <span>{i.label}</span>
+            <strong style={{ fontWeight: 600 }}>£{i.amount.toLocaleString('en-GB')}</strong>
+          </li>
+        ))}
+      </ul>
+      <p
+        style={{
+          marginTop: '12px',
+          fontSize: '0.75rem',
+          color: 'var(--pf-grey-600)',
+          fontStyle: 'italic',
+        }}
+      >
+        This is an estimate — apply to each scheme individually to confirm your actual entitlement.
+      </p>
     </div>
   )
 }
