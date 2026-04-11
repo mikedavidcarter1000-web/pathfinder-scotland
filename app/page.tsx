@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { FaqAccordion, type FaqItem } from '@/components/ui/faq-accordion'
+import { SearchBar } from '@/components/ui/search-bar'
 
 const faqItems: FaqItem[] = [
   {
@@ -153,6 +154,22 @@ export default function HomePage() {
                 >
                   Discover your path
                 </Link>
+              </div>
+
+              {/* Or search */}
+              <div style={{ marginTop: '24px', maxWidth: '520px' }}>
+                <p
+                  style={{
+                    fontSize: '0.8125rem',
+                    color: 'var(--pf-grey-600)',
+                    marginBottom: '8px',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 500,
+                  }}
+                >
+                  Or search for anything...
+                </p>
+                <SearchBar placeholder="Try 'Chemistry', 'Edinburgh' or 'Medicine'" />
               </div>
 
               {/* Trust bar */}

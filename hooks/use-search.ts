@@ -2,53 +2,39 @@ import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
 import { getSupabaseClient } from '@/lib/supabase'
 import type { Tables, Enums } from '@/types/database'
+import type { SearchResults } from '@/app/api/search/route'
 
-interface SearchResults {
-  courses: (Tables<'courses'> & { university?: Tables<'universities'> })[]
-  universities: Tables<'universities'>[]
-}
+export type { SearchResults } from '@/app/api/search/route'
 
 interface UseSearchOptions {
   enabled?: boolean
-  limit?: number
+}
+
+const EMPTY_RESULTS: SearchResults = {
+  subjects: [],
+  courses: [],
+  universities: [],
+  careerSectors: [],
+}
+
+async function fetchSearch(query: string): Promise<SearchResults> {
+  if (!query || query.length < 2) return EMPTY_RESULTS
+
+  const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`)
+  if (!res.ok) {
+    throw new Error(`Search request failed: ${res.status}`)
+  }
+  return res.json()
 }
 
 export function useSearch(query: string, options: UseSearchOptions = {}) {
-  const { enabled = true, limit = 10 } = options
-  const supabase = getSupabaseClient()
+  const { enabled = true } = options
 
   return useQuery<SearchResults>({
     queryKey: ['search', query],
-    queryFn: async () => {
-      if (!query || query.length < 2) {
-        return { courses: [], universities: [] }
-      }
-
-      const searchTerm = `%${query}%`
-
-      const [coursesResponse, universitiesResponse] = await Promise.all([
-        supabase
-          .from('courses')
-          .select(`
-            *,
-            university:universities(*)
-          `)
-          .or(`name.ilike.${searchTerm},subject_area.ilike.${searchTerm}`)
-          .limit(limit),
-        supabase
-          .from('universities')
-          .select('*')
-          .or(`name.ilike.${searchTerm},city.ilike.${searchTerm}`)
-          .limit(limit),
-      ])
-
-      return {
-        courses: (coursesResponse.data || []) as (Tables<'courses'> & { university?: Tables<'universities'> })[],
-        universities: (universitiesResponse.data || []) as Tables<'universities'>[],
-      }
-    },
+    queryFn: () => fetchSearch(query),
     enabled: enabled && query.length >= 2,
-    staleTime: 30 * 1000, // 30 seconds
+    staleTime: 60 * 1000,
   })
 }
 
@@ -70,44 +56,8 @@ export function useDebouncedSearch(
   return useSearch(debouncedQuery, searchOptions)
 }
 
-export function useSearchSuggestions(query: string) {
-  const supabase = getSupabaseClient()
-
-  return useQuery<string[]>({
-    queryKey: ['search-suggestions', query],
-    queryFn: async () => {
-      if (!query || query.length < 2) return []
-
-      const { data: courses } = await supabase
-        .from('courses')
-        .select('name')
-        .ilike('name', `%${query}%`)
-        .limit(5)
-
-      const { data: subjects } = await supabase
-        .from('courses')
-        .select('subject_area')
-        .ilike('subject_area', `%${query}%`)
-        .limit(5)
-
-      const suggestions = new Set<string>()
-
-      const courseList = (courses || []) as { name: string }[]
-      const subjectList = (subjects || []) as { subject_area: string | null }[]
-
-      courseList.forEach((c) => suggestions.add(c.name))
-      subjectList.forEach((s) => {
-        if (s.subject_area) suggestions.add(s.subject_area)
-      })
-
-      return Array.from(suggestions).slice(0, 8)
-    },
-    enabled: query.length >= 2,
-    staleTime: 60 * 1000,
-  })
-}
-
-// Hook for filtering and sorting search results
+// Advanced course filtering -- still queries Supabase directly since it's
+// a per-page use case that needs flexible filter composition.
 export function useFilteredSearch(
   query: string,
   filters: {
