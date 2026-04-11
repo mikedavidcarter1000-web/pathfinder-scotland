@@ -247,20 +247,22 @@
     background-color: var(--pf-grey-100);
     color: var(--pf-grey-900);
   }
+  /* Status badges use a darker text shade than the namesake brand colour so
+     the foreground / background contrast clears WCAG AA on the 12% tint. */
   .pf-badge-amber {
     @apply pf-badge;
     background-color: rgba(245, 158, 11, 0.12);
-    color: var(--pf-amber-500);
+    color: #B45309;
   }
   .pf-badge-green {
     @apply pf-badge;
     background-color: rgba(16, 185, 129, 0.12);
-    color: var(--pf-green-500);
+    color: #047857;
   }
   .pf-badge-red {
     @apply pf-badge;
     background-color: rgba(239, 68, 68, 0.12);
-    color: var(--pf-red-500);
+    color: #B91C1C;
   }
 
   /* Legacy badge classes mapped */
@@ -286,7 +288,11 @@
     @apply pf-badge-blue;
   }
 
-  /* Curricular area badges -- light background, full-colour text */
+  /* Curricular area badges -- light tint background, darker text variant.
+     Each badge keeps the area's colour identity but uses a darkened text
+     shade so the foreground / background contrast clears WCAG AA (≥4.5:1).
+     Pure brand-colour text on a 10% tint of the same colour fails contrast,
+     so the text shade is one step darker than the headline area swatch. */
   .pf-area-badge {
     @apply inline-flex items-center;
     border-radius: 9999px;
@@ -295,14 +301,14 @@
     padding: 4px 12px;
     line-height: 1.2;
   }
-  .pf-area-languages-badge     { background-color: rgba(59, 130, 246, 0.1);  color: var(--pf-area-languages); }
-  .pf-area-mathematics-badge   { background-color: rgba(99, 102, 241, 0.1);  color: var(--pf-area-mathematics); }
-  .pf-area-sciences-badge      { background-color: rgba(16, 185, 129, 0.1);  color: var(--pf-area-sciences); }
-  .pf-area-social-badge        { background-color: rgba(245, 158, 11, 0.1);  color: var(--pf-area-social); }
-  .pf-area-expressive-badge    { background-color: rgba(139, 92, 246, 0.1);  color: var(--pf-area-expressive); }
-  .pf-area-technologies-badge  { background-color: rgba(100, 116, 139, 0.1); color: var(--pf-area-technologies); }
-  .pf-area-rme-badge           { background-color: rgba(244, 63, 94, 0.1);   color: var(--pf-area-rme); }
-  .pf-area-health-badge        { background-color: rgba(20, 184, 166, 0.1);  color: var(--pf-area-health); }
+  .pf-area-languages-badge     { background-color: rgba(59, 130, 246, 0.1);  color: #1D4ED8; }
+  .pf-area-mathematics-badge   { background-color: rgba(99, 102, 241, 0.1);  color: #4338CA; }
+  .pf-area-sciences-badge      { background-color: rgba(16, 185, 129, 0.1);  color: #047857; }
+  .pf-area-social-badge        { background-color: rgba(245, 158, 11, 0.1);  color: #B45309; }
+  .pf-area-expressive-badge    { background-color: rgba(139, 92, 246, 0.1);  color: #6D28D9; }
+  .pf-area-technologies-badge  { background-color: rgba(100, 116, 139, 0.1); color: #475569; }
+  .pf-area-rme-badge           { background-color: rgba(244, 63, 94, 0.1);   color: #BE123C; }
+  .pf-area-health-badge        { background-color: rgba(20, 184, 166, 0.1);  color: #0F766E; }
 
   /* ------------------------------------------------------------- */
   /* Forms                                                          */
@@ -508,6 +514,64 @@
   .focus-ring {
     @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
     --tw-ring-color: var(--pf-blue-500);
+  }
+
+  /* Skip-to-main-content link: visually hidden until focused, then  */
+  /* slides into view at top-left. Keeps the page reachable for      */
+  /* keyboard users without forcing them through the entire navbar.  */
+  .pf-skip-link {
+    position: absolute;
+    top: -40px;
+    left: 8px;
+    z-index: 100;
+    padding: 12px 20px;
+    background-color: var(--pf-blue-700);
+    color: var(--pf-white);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    border-radius: 0 0 8px 8px;
+    text-decoration: none;
+    transition: top 0.15s ease-in-out;
+  }
+  .pf-skip-link:focus {
+    top: 0;
+    outline: 2px solid var(--pf-white);
+    outline-offset: 2px;
+    text-decoration: none;
+  }
+}
+
+/* ------------------------------------------------------------- */
+/* Reduced motion -- respect users who prefer minimal animation. */
+/* Disables decorative motion (hover lifts, slide-ins, shimmer)  */
+/* without breaking smooth scroll or essential focus indicators. */
+/* ------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .pf-card-hover:hover,
+  .card-hover:hover {
+    transform: none !important;
+  }
+
+  .pf-skeleton::after {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-slide-down,
+  .animate-shake {
+    animation: none !important;
   }
 }
 

@@ -1,12 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth, useSignOut } from '@/hooks/use-auth'
 import { UserMenu } from '@/components/auth/user-menu'
-import { SearchBar } from '@/components/ui/search-bar'
 import { getInitials } from '@/lib/utils'
+
+const SearchBar = lazy(() =>
+  import('@/components/ui/search-bar').then((m) => ({ default: m.SearchBar }))
+)
 
 export function Navbar() {
   const pathname = usePathname()
@@ -92,13 +96,13 @@ export function Navbar() {
               href={user ? '/dashboard' : '/'}
               className="flex items-center gap-2 text-white no-underline hover:no-underline"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src="/logo-white.svg"
                 alt=""
                 role="presentation"
                 width={32}
                 height={32}
+                priority
                 style={{ display: 'block', flexShrink: 0 }}
               />
               <span
@@ -204,15 +208,24 @@ export function Navbar() {
             </div>
           </div>
 
-          {/* Search Bar (Expandable) */}
+          {/* Search Bar (Expandable) -- lazy-loaded only when activated */}
           {searchOpen && (
             <div className="py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.12)' }}>
-              <SearchBar
-                autoFocus
-                placeholder="Search courses, universities..."
-                className="max-w-xl mx-auto"
-                onClose={() => setSearchOpen(false)}
-              />
+              <Suspense
+                fallback={
+                  <div
+                    className="max-w-xl mx-auto h-12 rounded-lg pf-skeleton"
+                    aria-hidden="true"
+                  />
+                }
+              >
+                <SearchBar
+                  autoFocus
+                  placeholder="Search courses, universities..."
+                  className="max-w-xl mx-auto"
+                  onClose={() => setSearchOpen(false)}
+                />
+              </Suspense>
             </div>
           )}
         </div>

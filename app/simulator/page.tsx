@@ -961,9 +961,23 @@ function ImpactPanel({
   const visibleEligible = impact.eligibleCourses.slice(0, 10)
   const visibleMissed = impact.missedOpportunities.slice(0, 5)
 
+  // Concise summary that gets re-announced when subject selections change.
+  // Kept short on purpose: screen-reader users don't want a paragraph every
+  // time they toggle a subject.
+  const liveSummary =
+    selected.size === 0
+      ? ''
+      : `${impact.eligibleCount} of ${impact.totalCourses} courses match. ${impact.coveredSectorIds.size} of ${data.careerSectors.length} career sectors covered.`
+
   return (
-    <div className="pf-card" style={{ padding: '20px' }}>
-      <h2 style={{ fontSize: '1.125rem', marginBottom: '4px', color: 'var(--pf-grey-900)' }}>
+    <div className="pf-card" style={{ padding: '20px' }} aria-labelledby="impact-panel-title">
+      <div className="sr-only" aria-live="polite" aria-atomic="true" role="status">
+        {liveSummary}
+      </div>
+      <h2
+        id="impact-panel-title"
+        style={{ fontSize: '1.125rem', marginBottom: '4px', color: 'var(--pf-grey-900)' }}
+      >
         Your impact
       </h2>
       <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', marginBottom: '20px' }}>

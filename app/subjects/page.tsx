@@ -166,15 +166,20 @@ function SubjectsPageContent() {
           </div>
 
           {/* Level toggle buttons — wraps to multiple rows on mobile */}
-          <div className="flex flex-wrap gap-2">
+          <div
+            role="radiogroup"
+            aria-label="Filter by qualification level"
+            className="flex flex-wrap gap-2"
+          >
             {LEVEL_BUTTONS.map((btn) => {
               const active = level === btn.value
               return (
                 <button
                   key={btn.value}
                   onClick={() => setLevel(btn.value)}
+                  role="radio"
+                  aria-checked={active}
                   aria-label={btn.ariaLabel}
-                  aria-pressed={active}
                   className="transition-colors inline-flex items-center justify-center"
                   style={{
                     padding: '10px 16px',

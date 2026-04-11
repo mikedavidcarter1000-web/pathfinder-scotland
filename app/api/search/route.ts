@@ -61,7 +61,10 @@ export async function GET(request: NextRequest) {
   const cached = cacheGet(cacheKey)
   if (cached) {
     return NextResponse.json(cached, {
-      headers: { 'X-Search-Cache': 'HIT' },
+      headers: {
+        'X-Search-Cache': 'HIT',
+        'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300',
+      },
     })
   }
 
@@ -101,6 +104,9 @@ export async function GET(request: NextRequest) {
   cacheSet(cacheKey, results)
 
   return NextResponse.json(results, {
-    headers: { 'X-Search-Cache': 'MISS' },
+    headers: {
+      'X-Search-Cache': 'MISS',
+      'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300',
+    },
   })
 }

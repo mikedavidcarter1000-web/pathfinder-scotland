@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSignUp } from '@/hooks/use-auth'
@@ -113,13 +114,13 @@ function SignUpContent() {
             href="/"
             className="inline-flex items-center gap-2 no-underline hover:no-underline"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src="/logo.svg"
               alt=""
               role="presentation"
               width={40}
               height={40}
+              priority
               style={{ display: 'block', flexShrink: 0 }}
             />
             <span

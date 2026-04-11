@@ -86,7 +86,7 @@ export function WelcomeStep({ onStart }: WelcomeStepProps) {
             />
           </svg>
         </div>
-        <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 1.75rem)' }}>Let&apos;s set up your Pathfinder profile</h1>
+        <h2 style={{ fontSize: 'clamp(1.5rem, 5vw, 1.75rem)' }}>Let&apos;s set up your Pathfinder profile</h2>
         <p
           style={{
             color: 'var(--pf-grey-600)',

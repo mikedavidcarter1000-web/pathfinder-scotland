@@ -1,5 +1,8 @@
 import type { Metadata } from 'next'
 
+// Subject taxonomy changes rarely — let the static shell revalidate hourly.
+export const revalidate = 3600
+
 export const metadata: Metadata = {
   title: 'Explore SQA Subjects',
   description:

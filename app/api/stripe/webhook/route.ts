@@ -1,18 +1,34 @@
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+// Lazy singletons so import-time evaluation doesn't blow up the build when
+// Stripe / service-role env vars are unset (e.g. CI without billing wired
+// up). The webhook only runs in environments where Stripe is configured.
+let stripeClient: Stripe | null = null
+function getStripe(): Stripe {
+  if (stripeClient) return stripeClient
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not set')
+  }
+  stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY)
+  return stripeClient
+}
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
-
-// Create admin Supabase client for webhook operations
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { persistSession: false } }
-)
+let supabaseAdminClient: SupabaseClient | null = null
+function getSupabaseAdmin(): SupabaseClient {
+  if (supabaseAdminClient) return supabaseAdminClient
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error('Supabase admin credentials are not set')
+  }
+  supabaseAdminClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    { auth: { persistSession: false } }
+  )
+  return supabaseAdminClient
+}
 
 export async function POST(req: Request) {
   const body = await req.text()
@@ -23,6 +39,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'No signature' }, { status: 400 })
   }
 
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+  if (!webhookSecret) {
+    return NextResponse.json({ error: 'Webhook not configured' }, { status: 503 })
+  }
+
+  const stripe = getStripe()
   let event: Stripe.Event
 
   try {
@@ -80,7 +102,7 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string
 
   // Get user ID from customer
-  const { data: customer } = await supabaseAdmin
+  const { data: customer } = await getSupabaseAdmin()
     .from('stripe_customers')
     .select('user_id')
     .eq('stripe_customer_id', customerId)
@@ -94,7 +116,7 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   const priceId = subscription.items.data[0]?.price?.id
   const sub = subscription as any // Type workaround for Stripe API changes
 
-  await supabaseAdmin.from('stripe_subscriptions').upsert(
+  await getSupabaseAdmin().from('stripe_subscriptions').upsert(
     {
       user_id: customer.user_id,
       stripe_subscription_id: subscription.id,
@@ -126,7 +148,7 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  await supabaseAdmin
+  await getSupabaseAdmin()
     .from('stripe_subscriptions')
     .update({
       status: 'canceled',
@@ -139,13 +161,13 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string
   const inv = invoice as any // Type workaround for Stripe API changes
 
-  const { data: customer } = await supabaseAdmin
+  const { data: customer } = await getSupabaseAdmin()
     .from('stripe_customers')
     .select('user_id')
     .eq('stripe_customer_id', customerId)
     .single()
 
-  await supabaseAdmin.from('stripe_payments').insert({
+  await getSupabaseAdmin().from('stripe_payments').insert({
     user_id: customer?.user_id,
     stripe_payment_intent_id: inv.payment_intent as string,
     stripe_customer_id: customerId,
@@ -162,13 +184,13 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string
   const inv = invoice as any // Type workaround for Stripe API changes
 
-  const { data: customer } = await supabaseAdmin
+  const { data: customer } = await getSupabaseAdmin()
     .from('stripe_customers')
     .select('user_id')
     .eq('stripe_customer_id', customerId)
     .single()
 
-  await supabaseAdmin.from('stripe_payments').insert({
+  await getSupabaseAdmin().from('stripe_payments').insert({
     user_id: customer?.user_id,
     stripe_payment_intent_id: inv.payment_intent as string,
     stripe_customer_id: customerId,
@@ -181,7 +203,7 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
 }
 
 async function handleProductChange(product: Stripe.Product) {
-  await supabaseAdmin.from('stripe_products').upsert(
+  await getSupabaseAdmin().from('stripe_products').upsert(
     {
       stripe_product_id: product.id,
       name: product.name,
@@ -195,13 +217,13 @@ async function handleProductChange(product: Stripe.Product) {
 
 async function handlePriceChange(price: Stripe.Price) {
   // Get product reference
-  const { data: product } = await supabaseAdmin
+  const { data: product } = await getSupabaseAdmin()
     .from('stripe_products')
     .select('id')
     .eq('stripe_product_id', price.product as string)
     .single()
 
-  await supabaseAdmin.from('stripe_prices').upsert(
+  await getSupabaseAdmin().from('stripe_prices').upsert(
     {
       stripe_price_id: price.id,
       product_id: product?.id,

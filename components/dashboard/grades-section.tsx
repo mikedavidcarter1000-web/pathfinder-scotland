@@ -122,8 +122,18 @@ export function GradesSection() {
   const countForType = (type: QualificationType) =>
     grades?.filter((g) => g.qualification_type === type).length ?? 0
 
+  const totalGradeCount = grades?.length ?? 0
+  // Polite live announcement so screen-reader users hear the running tally
+  // each time they tick or untick a subject in the checklist below.
+  const liveCountMessage = grades
+    ? `${totalGradeCount} ${totalGradeCount === 1 ? 'grade' : 'grades'} recorded`
+    : ''
+
   return (
     <div className="pf-card">
+      <div className="sr-only" aria-live="polite" aria-atomic="true" role="status">
+        {liveCountMessage}
+      </div>
       <div className="flex items-center justify-between mb-4">
         <h2 style={{ margin: 0, fontSize: '1.125rem' }}>Your Grades</h2>
       </div>

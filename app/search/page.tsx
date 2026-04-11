@@ -76,6 +76,7 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
+      <h1 className="sr-only">Search results</h1>
       {/* Search Header */}
       <div
         className="sticky top-0 z-10"

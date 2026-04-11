@@ -191,8 +191,21 @@ export function SearchBar({
   cursor += universities.length
   const careersStart = cursor
 
+  // Polite live-region message that screen readers announce when results
+  // arrive. Empty string while typing/loading so we don't interrupt.
+  const liveMessage = !showResultsDropdown
+    ? ''
+    : isLoading
+      ? 'Searching…'
+      : !hasResults
+        ? `No results for ${query}`
+        : `${totalResults} ${totalResults === 1 ? 'result' : 'results'} for ${query}`
+
   return (
     <div ref={containerRef} className={`relative ${className}`}>
+      <div className="sr-only" aria-live="polite" aria-atomic="true" role="status">
+        {liveMessage}
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="relative">
           <input

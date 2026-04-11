@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 export default function NotFound() {
   return (
-    <main
+    <div
       style={{
         backgroundColor: 'var(--pf-blue-50)',
         minHeight: 'calc(100vh - 64px)',
@@ -78,6 +78,6 @@ export default function NotFound() {
           </Link>
         </div>
       </div>
-    </main>
+    </div>
   )
 }

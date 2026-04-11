@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useUpdatePassword } from '@/hooks/use-auth'
@@ -89,13 +90,13 @@ export default function ResetPasswordPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 no-underline hover:no-underline">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src="/logo.svg"
               alt=""
               role="presentation"
               width={40}
               height={40}
+              priority
               style={{ display: 'block', flexShrink: 0 }}
             />
             <span

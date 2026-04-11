@@ -722,7 +722,12 @@ function ProgressHeader({
   const complete = selectedFreeCount >= freeRequired && freeRequired > 0
 
   return (
-    <div>
+    <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      aria-label={`${selectedFreeCount} of ${freeRequired} choices made${complete ? ', all picked' : ''}`}
+    >
       <div className="flex items-baseline justify-between mb-2">
         <div className="flex items-baseline gap-2">
           <span
@@ -738,7 +743,7 @@ function ProgressHeader({
           <span style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>choices made</span>
           {complete && (
             <span className="pf-badge-green inline-flex items-center gap-1">
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
               </svg>
               All picked
@@ -752,6 +757,11 @@ function ProgressHeader({
       <div
         className="rounded-full overflow-hidden"
         style={{ height: '10px', backgroundColor: 'var(--pf-grey-100)' }}
+        role="progressbar"
+        aria-valuenow={selectedFreeCount}
+        aria-valuemin={0}
+        aria-valuemax={freeRequired}
+        aria-label="Subject choice progress"
       >
         <div
           className="h-full transition-all duration-300"

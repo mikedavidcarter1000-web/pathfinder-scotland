@@ -1,15 +1,27 @@
 'use client'
 
 import { useMemo } from 'react'
+import dynamic from 'next/dynamic'
 import { useComparisonWithCourses } from '@/hooks/use-comparison'
 import { useCurrentStudent, useStudentGrades, useGradeSummary } from '@/hooks/use-student'
-import { ComparisonTable } from '@/components/ui/comparison-table'
 import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { calculateEligibility, type EligibilityDetail } from '@/hooks/use-course-matching'
 import { useQuery } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
 import type { Tables } from '@/types/database'
+
+const ComparisonTable = dynamic(
+  () => import('@/components/ui/comparison-table').then((m) => ({ default: m.ComparisonTable })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="p-6">
+        <Skeleton variant="table" rows={6} columns={3} />
+      </div>
+    ),
+  }
+)
 
 type Student = Tables<'students'>
 type StudentGrade = Tables<'student_grades'>

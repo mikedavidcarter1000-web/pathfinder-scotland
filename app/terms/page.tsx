@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <main style={{ backgroundColor: 'var(--pf-blue-50)' }}>
+    <div style={{ backgroundColor: 'var(--pf-blue-50)' }}>
       {/* Page header */}
       <section
         style={{
@@ -140,6 +140,6 @@ export default function TermsPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   )
 }

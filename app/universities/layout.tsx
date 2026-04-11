@@ -1,5 +1,8 @@
 import type { Metadata } from 'next'
 
+// Universities catalogue is essentially static — refresh the shell hourly.
+export const revalidate = 3600
+
 export const metadata: Metadata = {
   title: 'Scottish Universities',
   description:

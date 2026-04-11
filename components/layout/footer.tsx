@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 
 export function Footer() {
@@ -67,13 +68,13 @@ export function Footer() {
               className="inline-flex items-center justify-center sm:justify-start gap-2 mb-4 no-underline hover:no-underline"
               style={{ color: '#fff' }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src="/logo-white.svg"
                 alt=""
                 role="presentation"
                 width={32}
                 height={32}
+                loading="lazy"
                 style={{ display: 'block', flexShrink: 0 }}
               />
               <span

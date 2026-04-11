@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main>
+    <>
       {/* Hero */}
       <section
         style={{
@@ -310,6 +310,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-    </main>
+    </>
   )
 }

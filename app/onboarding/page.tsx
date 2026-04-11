@@ -266,7 +266,7 @@ function OnboardingContent() {
   if (authLoading || studentLoading) {
     return (
       <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
-        <main className="max-w-3xl mx-auto px-4 pt-8 sm:pt-10 pb-12 sm:pb-16">
+        <div className="max-w-3xl mx-auto px-4 pt-8 sm:pt-10 pb-12 sm:pb-16">
           <div className="pf-card">
             <Skeleton width="60%" height={28} rounded="md" />
             <div style={{ height: '16px' }} />
@@ -276,7 +276,7 @@ function OnboardingContent() {
             <div style={{ height: '12px' }} />
             <Skeleton width="100%" height={40} rounded="md" />
           </div>
-        </main>
+        </div>
       </div>
     )
   }
@@ -291,7 +291,8 @@ function OnboardingContent() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
-      <main className="max-w-3xl mx-auto px-4 pt-6 sm:pt-10 pb-12 sm:pb-16">
+      <div className="max-w-3xl mx-auto px-4 pt-6 sm:pt-10 pb-12 sm:pb-16">
+        <h1 className="sr-only">Set up your Pathfinder profile</h1>
         {!isWelcome && (
           <>
             {/* Desktop Step Indicator */}
@@ -404,7 +405,7 @@ function OnboardingContent() {
             </Link>
           </p>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

@@ -90,7 +90,7 @@ export default function ContactPage() {
   }
 
   return (
-    <main style={{ backgroundColor: 'var(--pf-blue-50)' }}>
+    <div style={{ backgroundColor: 'var(--pf-blue-50)' }}>
       <section
         style={{
           backgroundColor: 'var(--pf-white)',
@@ -286,7 +286,7 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   )
 }
 

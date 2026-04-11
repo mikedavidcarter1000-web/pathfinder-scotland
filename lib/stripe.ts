@@ -1,11 +1,27 @@
 import Stripe from 'stripe'
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not set')
+// Lazy singleton so module evaluation doesn't crash builds when the env var
+// isn't present (e.g. CI / preview deploys without billing wired up). The
+// error only fires if a Stripe-backed route is actually invoked at runtime.
+let stripeClient: Stripe | null = null
+
+function getStripe(): Stripe {
+  if (stripeClient) return stripeClient
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not set')
+  }
+  stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY, {
+    typescript: true,
+  })
+  return stripeClient
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  typescript: true,
+// Proxy keeps the existing `stripe.foo.bar()` call sites working — every
+// access defers to the lazy getter so import-time evaluation is safe.
+export const stripe = new Proxy({} as Stripe, {
+  get(_target, prop: keyof Stripe) {
+    return getStripe()[prop]
+  },
 })
 
 export const getStripeCustomerId = async (

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main style={{ backgroundColor: 'var(--pf-blue-50)' }}>
+    <div style={{ backgroundColor: 'var(--pf-blue-50)' }}>
       {/* Page header */}
       <section
         style={{
@@ -188,6 +188,6 @@ export default function PrivacyPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   )
 }

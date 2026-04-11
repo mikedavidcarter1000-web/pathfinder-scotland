@@ -68,7 +68,7 @@ export default function WideningAccessPage() {
   } = useUniversities()
 
   return (
-    <main>
+    <>
       {/* Hero */}
       <section
         style={{
@@ -573,7 +573,7 @@ export default function WideningAccessPage() {
           </div>
         </div>
       </section>
-    </main>
+    </>
   )
 }
 
