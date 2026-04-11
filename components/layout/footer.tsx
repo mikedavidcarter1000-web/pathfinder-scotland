@@ -14,6 +14,11 @@ export function Footer() {
       { label: 'Widening Access', href: '/widening-access' },
       { label: 'For Parents', href: '/parents' },
     ],
+    schools: [
+      { label: 'Demo', href: '/demo' },
+      { label: 'Pilot programme', href: 'mailto:hello@pathfinderscot.co.uk?subject=Pilot%20school%20interest', external: true },
+      { label: 'Funding enquiries', href: 'mailto:hello@pathfinderscot.co.uk?subject=Funding%20enquiry', external: true },
+    ],
     resources: [
       { label: 'Help Centre', href: '/help' },
       { label: 'UCAS Guide', href: 'https://www.ucas.com', external: true },
@@ -53,7 +58,7 @@ export function Footer() {
       }}
     >
       <div className="pf-container">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10 text-center sm:text-left">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 mb-10 text-center sm:text-left">
           {/* Brand */}
           <div className="sm:col-span-2 md:col-span-1">
             <Link
@@ -121,6 +126,26 @@ export function Footer() {
                   <Link href={link.href} style={bodyLinkStyle} className="hover:text-white">
                     {link.label}
                   </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* For Schools & Funders */}
+          <div>
+            <h3 style={headingStyle}>For Schools &amp; Funders</h3>
+            <ul className="space-y-2">
+              {links.schools.map((link) => (
+                <li key={link.href}>
+                  {'external' in link && link.external ? (
+                    <a href={link.href} style={bodyLinkStyle} className="hover:text-white">
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link href={link.href} style={bodyLinkStyle} className="hover:text-white">
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

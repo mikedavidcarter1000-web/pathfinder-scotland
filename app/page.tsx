@@ -237,6 +237,27 @@ export default async function HomePage() {
                 <TrustItem label={coursesLabel} />
                 <TrustItem label="Widening access built in" />
               </div>
+
+              {/* Schools / funders link */}
+              <p
+                style={{
+                  marginTop: '20px',
+                  fontSize: '0.8125rem',
+                  color: 'var(--pf-grey-600)',
+                }}
+              >
+                Are you a school or funder?{' '}
+                <Link
+                  href="/demo"
+                  style={{
+                    color: 'var(--pf-blue-500)',
+                    fontWeight: 600,
+                    fontFamily: "'Space Grotesk', sans-serif",
+                  }}
+                >
+                  See Pathfinder in action →
+                </Link>
+              </p>
             </div>
 
             {/* Pathway illustration — below text on mobile, right on desktop */}
