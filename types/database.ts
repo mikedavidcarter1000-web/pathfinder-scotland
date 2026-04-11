@@ -1094,6 +1094,8 @@ export type Database = {
       }
       universities: {
         Row: {
+          articulation_info: string | null
+          care_experienced_guarantee: string | null
           city: string | null
           created_at: string | null
           description: string | null
@@ -1103,16 +1105,27 @@ export type Database = {
           name: string
           russell_group: boolean | null
           scholarships_url: string | null
+          shep_programmes: string[] | null
           slug: string
           type: Database["public"]["Enums"]["university_type"] | null
           undergraduate_url: string | null
+          university_type: string | null
           updated_at: string | null
+          wa_bursary_info: string | null
+          wa_grade_reduction: string | null
+          wa_pre_entry_details: string | null
+          wa_pre_entry_required: boolean | null
+          wa_programme_description: string | null
+          wa_programme_name: string | null
+          wa_programme_url: string | null
           website: string | null
           website_url: string | null
           widening_access_info: Json | null
           widening_access_url: string | null
         }
         Insert: {
+          articulation_info?: string | null
+          care_experienced_guarantee?: string | null
           city?: string | null
           created_at?: string | null
           description?: string | null
@@ -1122,16 +1135,27 @@ export type Database = {
           name: string
           russell_group?: boolean | null
           scholarships_url?: string | null
+          shep_programmes?: string[] | null
           slug: string
           type?: Database["public"]["Enums"]["university_type"] | null
           undergraduate_url?: string | null
+          university_type?: string | null
           updated_at?: string | null
+          wa_bursary_info?: string | null
+          wa_grade_reduction?: string | null
+          wa_pre_entry_details?: string | null
+          wa_pre_entry_required?: boolean | null
+          wa_programme_description?: string | null
+          wa_programme_name?: string | null
+          wa_programme_url?: string | null
           website?: string | null
           website_url?: string | null
           widening_access_info?: Json | null
           widening_access_url?: string | null
         }
         Update: {
+          articulation_info?: string | null
+          care_experienced_guarantee?: string | null
           city?: string | null
           created_at?: string | null
           description?: string | null
@@ -1141,10 +1165,19 @@ export type Database = {
           name?: string
           russell_group?: boolean | null
           scholarships_url?: string | null
+          shep_programmes?: string[] | null
           slug?: string
           type?: Database["public"]["Enums"]["university_type"] | null
           undergraduate_url?: string | null
+          university_type?: string | null
           updated_at?: string | null
+          wa_bursary_info?: string | null
+          wa_grade_reduction?: string | null
+          wa_pre_entry_details?: string | null
+          wa_pre_entry_required?: boolean | null
+          wa_programme_description?: string | null
+          wa_programme_name?: string | null
+          wa_programme_url?: string | null
           website?: string | null
           website_url?: string | null
           widening_access_info?: Json | null
