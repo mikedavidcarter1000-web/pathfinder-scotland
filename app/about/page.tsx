@@ -342,6 +342,219 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Policy alignment */}
+      <section className="pf-section pf-section-white">
+        <div className="pf-container" style={{ maxWidth: '960px' }}>
+          <span className="pf-badge-blue">Policy alignment</span>
+          <h2 style={{ marginTop: '16px', marginBottom: '12px' }}>
+            Aligned with Scottish education policy
+          </h2>
+          <p
+            style={{
+              color: 'var(--pf-grey-600)',
+              fontSize: '1.0625rem',
+              marginBottom: '40px',
+              maxWidth: '680px',
+            }}
+          >
+            Pathfinder Scotland supports the direction of travel in Scottish education. Our platform
+            addresses challenges identified by national reviews and aligns with current policy
+            priorities.
+          </p>
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              {
+                title: 'Curriculum for Excellence',
+                body: "CfE's Broad General Education entitles every student to learning across all eight curricular areas through to the end of S3. Pathfinder helps students understand how their BGE experience connects to the Senior Phase and beyond — supporting informed personalisation and choice rather than premature narrowing.",
+                linkLabel: 'Education Scotland — Curriculum for Excellence',
+                url: 'https://education.gov.scot/curriculum-for-excellence/',
+              },
+              {
+                title: 'The Hayward Review',
+                body: "The Independent Review of Qualifications and Assessment (2023) found that early curriculum narrowing is 'incongruent with the aims of CfE.' Pathfinder encourages breadth by showing students how wider subject combinations open more doors — not fewer.",
+                linkLabel: 'Hayward Review — gov.scot',
+                url: 'https://www.gov.scot/publications/independent-review-qualifications-assessment-scotland/',
+              },
+              {
+                title: 'Qualifications Scotland',
+                body: 'With the establishment of Qualifications Scotland (December 2025) to replace the SQA, the qualifications landscape is evolving. Pathfinder maps every current SQA qualification and will update as the new body introduces changes.',
+                linkLabel: 'Qualifications Scotland',
+                url: 'https://www.qualificationsscotland.gov.scot/',
+              },
+              {
+                title: 'Widening Access and the Commission on Widening Access',
+                body: "Scotland's Commission on Widening Access set targets for university participation from disadvantaged backgrounds. Pathfinder automatically identifies students who may qualify for reduced entry offers, ensuring no eligible student misses out because they didn't know the support existed.",
+                linkLabel: 'Scottish Funding Council — widening access',
+                url: 'https://www.sfc.ac.uk/widening-access/',
+              },
+            ].map((card) => (
+              <div key={card.title} className="pf-card">
+                <h3 style={{ marginBottom: '10px' }}>{card.title}</h3>
+                <p
+                  style={{
+                    color: 'var(--pf-grey-600)',
+                    fontSize: '0.9375rem',
+                    lineHeight: 1.6,
+                    marginBottom: '16px',
+                  }}
+                >
+                  {card.body}
+                </p>
+                <a
+                  href={card.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1"
+                  style={{
+                    color: 'var(--pf-blue-700)',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                  }}
+                >
+                  {card.linkLabel}
+                  <svg
+                    width="11"
+                    height="11"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Evidence base */}
+      <section className="pf-section pf-section-grey">
+        <div className="pf-container" style={{ maxWidth: '820px' }}>
+          <span className="pf-badge-blue">Research</span>
+          <h2 style={{ marginTop: '16px', marginBottom: '12px' }}>
+            The evidence behind Pathfinder
+          </h2>
+          <p
+            style={{
+              color: 'var(--pf-grey-600)',
+              fontSize: '1.0625rem',
+              marginBottom: '40px',
+            }}
+          >
+            Pathfinder is built on a growing body of Scottish education research. These are the key
+            findings that shaped what we built.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {[
+              {
+                source: 'University of Stirling / Nuffield Foundation (2023)',
+                quote:
+                  'Broader curricula are associated with better National 5 performance, higher Higher and Advanced Higher enrolment, and better post-school destinations. Narrower curricula disproportionately affect students from disadvantaged areas.',
+                linkLabel: 'Nuffield Foundation — curriculum breadth in Scotland',
+                url: 'https://www.nuffieldfoundation.org/project/curriculum-breadth-scotland',
+              },
+              {
+                source: 'OECD Review of Curriculum for Excellence (2021)',
+                quote:
+                  'Identified the disconnect between Broad General Education and the Senior Phase as a central challenge — one that particularly risks disadvantaging students who lack access to informed guidance.',
+                linkLabel: "OECD — Scotland\u2019s Curriculum for Excellence",
+                url: 'https://www.oecd.org/education/scotland-s-curriculum-for-excellence-9789264506015-en.htm',
+              },
+              {
+                source: 'HM Inspectorate of Education (2023)',
+                quote:
+                  'Staff in schools must ensure that all children and young people receive their full entitlement to a broad general education up to and including S3.',
+                linkLabel: 'Education Scotland — inspection and review',
+                url: 'https://education.gov.scot/inspection-and-review/',
+              },
+              {
+                source: 'Hayward Review (2023)',
+                quote:
+                  'The narrowing of the S3 curriculum is incongruent with the aims of CfE. Students are being asked to specialise before they have had the breadth of experience the curriculum intended.',
+                linkLabel: 'Hayward Review response — gov.scot',
+                url: 'https://www.gov.scot/publications/independent-review-qualifications-assessment-scotland/',
+              },
+              {
+                source: 'Skills Development Scotland — My World of Work',
+                quote:
+                  'My World of Work provides careers guidance but does not offer subject combination analysis or widening access eligibility checking. Pathfinder is designed to complement, not replace, existing services.',
+                linkLabel: 'My World of Work',
+                url: 'https://www.myworldofwork.co.uk',
+              },
+            ].map((item) => (
+              <div
+                key={item.source}
+                className="pf-card"
+                style={{
+                  borderLeft: '4px solid var(--pf-blue-500)',
+                  borderRadius: '0 8px 8px 0',
+                }}
+              >
+                <p
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    color: 'var(--pf-blue-700)',
+                    marginBottom: '8px',
+                  }}
+                >
+                  {item.source}
+                </p>
+                <p
+                  style={{
+                    color: 'var(--pf-grey-600)',
+                    fontSize: '0.9375rem',
+                    lineHeight: 1.6,
+                    fontStyle: 'italic',
+                    marginBottom: '12px',
+                  }}
+                >
+                  &ldquo;{item.quote}&rdquo;
+                </p>
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1"
+                  style={{
+                    color: 'var(--pf-blue-700)',
+                    fontSize: '0.8125rem',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                  }}
+                >
+                  {item.linkLabel}
+                  <svg
+                    width="11"
+                    height="11"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Closing */}
       <section className="pf-section pf-section-dark" style={{ textAlign: 'center' }}>
         <div className="pf-container" style={{ maxWidth: '720px' }}>

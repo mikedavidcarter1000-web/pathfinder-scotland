@@ -137,6 +137,43 @@ export default async function DemoPage() {
         title="The problem we solve"
         background="white"
         body="Scottish students choose subjects at the end of S2 that shape their entire future. Most get a paper form and little guidance. Pathfinder fills the gap between 'what subjects should I pick?' and 'what does that lead to?'"
+        note={
+          <p
+            style={{
+              fontSize: '0.9375rem',
+              color: 'var(--pf-grey-600)',
+              lineHeight: 1.6,
+              marginBottom: '16px',
+              padding: '14px 16px',
+              backgroundColor: 'var(--pf-blue-50)',
+              borderLeft: '3px solid var(--pf-blue-500)',
+              borderRadius: '0 6px 6px 0',
+            }}
+          >
+            National reviews — including the{' '}
+            <a
+              href="https://www.oecd.org/education/scotland-s-curriculum-for-excellence-9789264506015-en.htm"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
+            >
+              OECD (2021)
+            </a>
+            , HM Inspectorate, and the{' '}
+            <a
+              href="https://www.gov.scot/publications/independent-review-qualifications-assessment-scotland/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
+            >
+              Hayward Review (2023)
+            </a>{' '}
+            — have all identified the guidance gap in Scottish subject choices. Research from the
+            University of Stirling found that narrower curricula produce worse outcomes,
+            particularly for students from disadvantaged areas. Pathfinder addresses this evidence
+            base directly.
+          </p>
+        }
       >
         <div className="grid grid-cols-2 gap-4">
           <StatCard value={`${stats.subjects}`} label="SQA subjects mapped" />
@@ -417,6 +454,7 @@ function Step({
   title,
   background,
   body,
+  note,
   ctaLabel,
   ctaHref,
   children,
@@ -426,6 +464,7 @@ function Step({
   title: string
   background: 'white' | 'grey'
   body: string
+  note?: React.ReactNode
   ctaLabel?: string
   ctaHref?: string
   children: React.ReactNode
@@ -456,11 +495,12 @@ function Step({
                 fontSize: '1.0625rem',
                 color: 'var(--pf-grey-600)',
                 lineHeight: 1.6,
-                marginBottom: ctaLabel ? '24px' : 0,
+                marginBottom: (note || ctaLabel) ? '16px' : 0,
               }}
             >
               {body}
             </p>
+            {note}
             {ctaLabel && ctaHref && (
               <a
                 href={ctaHref}
