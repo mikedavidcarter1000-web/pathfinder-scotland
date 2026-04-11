@@ -10,6 +10,7 @@ export function Footer() {
       { label: 'Careers', href: '/careers' },
       { label: 'Subjects', href: '/subjects' },
       { label: 'Plan Choices', href: '/pathways' },
+      { label: 'Alternative Pathways', href: '/pathways/alternatives' },
       { label: 'Simulator', href: '/simulator' },
       { label: 'Courses', href: '/courses' },
       { label: 'Universities', href: '/universities' },

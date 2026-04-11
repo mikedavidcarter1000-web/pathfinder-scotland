@@ -31,6 +31,7 @@ export function Navbar() {
     { name: 'Careers', href: '/careers', auth: false },
     { name: 'Subjects', href: '/subjects', auth: false },
     { name: 'Plan Choices', href: '/pathways', auth: false },
+    { name: 'Alternatives', href: '/pathways/alternatives', auth: false },
     { name: 'Simulator', href: '/simulator', auth: false },
     { name: 'Courses', href: '/courses', auth: false },
     { name: 'Universities', href: '/universities', auth: false },
@@ -50,6 +51,9 @@ export function Navbar() {
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === href
+    // /pathways has the /pathways/alternatives sibling — match exactly so they
+    // don't both highlight at once.
+    if (href === '/pathways') return pathname === href
     return pathname.startsWith(href)
   }
 

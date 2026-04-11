@@ -118,6 +118,31 @@ export default function DiscoverPage() {
           >
             Not sure which to pick? Either option works — you can switch between them any time.
           </p>
+
+          <div
+            className="text-center"
+            style={{ marginTop: '20px' }}
+          >
+            <Link
+              href="/pathways/alternatives"
+              className="inline-flex items-center gap-2 no-underline hover:no-underline"
+              style={{
+                padding: '12px 20px',
+                borderRadius: '8px',
+                backgroundColor: 'var(--pf-white)',
+                border: '1px solid var(--pf-grey-300)',
+                color: 'var(--pf-grey-900)',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.9375rem',
+              }}
+            >
+              <span style={{ color: 'var(--pf-amber-500)' }}>Not heading to university?</span>
+              <span style={{ color: 'var(--pf-blue-700)' }}>
+                Explore alternative pathways →
+              </span>
+            </Link>
+          </div>
         </div>
       </section>
 

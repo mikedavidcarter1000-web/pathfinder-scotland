@@ -541,7 +541,10 @@ export default function CareerSectorDetailPage({
           )}
         </section>
 
-        {/* Section 4b — Explore Further (external links) */}
+        {/* Section 4b — Alternative routes into this career */}
+        <AlternativeRoutes />
+
+        {/* Section 4c — Explore Further (external links) */}
         <ExploreFurther sector={sector} />
 
         {/* Section 5 — CTAs */}
@@ -752,6 +755,110 @@ function isExternalLinkArray(value: unknown): value is ExternalLink[] {
 type ExploreFurtherSector = {
   name: string
   external_links: unknown
+}
+
+function AlternativeRoutes() {
+  const routes: Array<{
+    title: string
+    body: string
+    href: string
+    accent: string
+  }> = [
+    {
+      title: 'Foundation Apprenticeship',
+      body: 'Start in S5/S6 — equivalent to a Higher, with real workplace experience.',
+      href: '/pathways/alternatives#foundation-apprenticeships',
+      accent: 'var(--pf-blue-700)',
+    },
+    {
+      title: 'College HNC / HND',
+      body: 'Study at college, then articulate into year 2 or 3 of a Scottish degree.',
+      href: '/pathways/alternatives#college-routes',
+      accent: 'var(--pf-area-sciences)',
+    },
+    {
+      title: 'Modern Apprenticeship',
+      body: 'Earn a wage from day one while training in your chosen sector.',
+      href: '/pathways/alternatives#modern-apprenticeships',
+      accent: 'var(--pf-amber-500)',
+    },
+    {
+      title: 'Graduate Apprenticeship',
+      body: 'Work full-time and earn a full honours degree, paid for by your employer.',
+      href: '/pathways/alternatives#graduate-apprenticeships',
+      accent: 'var(--pf-area-expressive)',
+    },
+  ]
+
+  return (
+    <section>
+      <h2 style={{ marginBottom: '6px' }}>Alternative routes into this career</h2>
+      <p
+        style={{
+          color: 'var(--pf-grey-600)',
+          fontSize: '0.9375rem',
+          marginBottom: '20px',
+        }}
+      >
+        University isn&apos;t the only path. These four routes can lead into the same careers.
+      </p>
+      <div
+        className="grid gap-3"
+        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}
+      >
+        {routes.map((route) => (
+          <Link
+            key={route.title}
+            href={route.href}
+            className="pf-card-hover no-underline hover:no-underline"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '18px 20px',
+              borderTop: `3px solid ${route.accent}`,
+              color: 'var(--pf-grey-900)',
+            }}
+          >
+            <h3
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.9375rem',
+                color: 'var(--pf-grey-900)',
+                margin: 0,
+                marginBottom: '6px',
+                lineHeight: 1.3,
+              }}
+            >
+              {route.title}
+            </h3>
+            <p
+              style={{
+                fontSize: '0.8125rem',
+                color: 'var(--pf-grey-600)',
+                lineHeight: 1.5,
+                margin: 0,
+                marginBottom: '8px',
+                flex: 1,
+              }}
+            >
+              {route.body}
+            </p>
+            <span
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.75rem',
+                color: 'var(--pf-blue-700)',
+              }}
+            >
+              Learn more →
+            </span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
 }
 
 function ExploreFurther({ sector }: { sector: ExploreFurtherSector }) {

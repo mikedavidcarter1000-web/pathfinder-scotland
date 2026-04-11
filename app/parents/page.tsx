@@ -357,6 +357,43 @@ function GuideSection() {
           </div>
         </div>
 
+        {/* c) It's not just about university */}
+        <div style={{ marginBottom: '40px' }}>
+          <h3 style={{ marginBottom: '12px' }}>It&apos;s not just about university</h3>
+          <div
+            style={{
+              padding: '20px 24px',
+              borderRadius: '8px',
+              backgroundColor: 'rgba(245, 158, 11, 0.08)',
+              borderLeft: '4px solid var(--pf-amber-500)',
+              maxWidth: '760px',
+            }}
+          >
+            <p style={{ color: 'var(--pf-grey-900)', marginBottom: '12px' }}>
+              University is one option \u2014 not the only one. Foundation Apprenticeships are
+              equivalent to a Higher and start in S5. College HNCs and HNDs articulate into
+              second or third year of a degree. Modern and Graduate Apprenticeships let your
+              child earn a wage while they qualify.
+            </p>
+            <p style={{ color: 'var(--pf-grey-600)', marginBottom: '12px', fontSize: '0.9375rem' }}>
+              For many students \u2014 especially widening access students \u2014 these
+              non-university routes are the right fit. Funders and employers value them just as
+              much.
+            </p>
+            <Link
+              href="/pathways/alternatives"
+              style={{
+                color: 'var(--pf-blue-700)',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.9375rem',
+              }}
+            >
+              Explore alternative pathways \u2192
+            </Link>
+          </div>
+        </div>
+
         {/* Trusted external guidance */}
         <div style={{ marginBottom: '40px' }}>
           <h3 style={{ marginBottom: '16px' }}>Trusted external guidance</h3>

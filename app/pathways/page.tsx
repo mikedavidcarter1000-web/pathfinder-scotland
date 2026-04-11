@@ -337,6 +337,51 @@ function PathwaysPageContent() {
               </Link>
             </p>
           </div>
+          <Link
+            href="/pathways/alternatives"
+            className="no-underline hover:no-underline mt-3 flex items-start gap-3"
+            style={{
+              padding: '14px 18px',
+              backgroundColor: 'rgba(245, 158, 11, 0.08)',
+              borderRadius: '8px',
+              borderLeft: '3px solid var(--pf-amber-500)',
+              maxWidth: '560px',
+              color: 'var(--pf-grey-900)',
+            }}
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--pf-amber-500)"
+              strokeWidth="2"
+              aria-hidden="true"
+              style={{ flexShrink: 0, marginTop: '2px' }}
+            >
+              <path
+                d="M3 12h4l3-9 4 18 3-9h4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <div>
+              <p
+                style={{
+                  fontSize: '0.9375rem',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  color: 'var(--pf-grey-900)',
+                  margin: 0,
+                }}
+              >
+                Not sure university is for you?
+              </p>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', margin: '2px 0 0 0' }}>
+                Explore Foundation Apprenticeships, college routes, and Modern Apprenticeships →
+              </p>
+            </div>
+          </Link>
         </div>
       </div>
 
