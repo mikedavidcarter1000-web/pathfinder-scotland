@@ -1,4 +1,56 @@
 import Link from 'next/link'
+import { FaqAccordion, type FaqItem } from '@/components/ui/faq-accordion'
+
+const faqItems: FaqItem[] = [
+  {
+    question: 'Is Pathfinder free?',
+    answer:
+      'Yes — the core features are completely free. You can explore subjects, plan your choices, check university entry requirements, and see if you qualify for widening access support at no cost.',
+  },
+  {
+    question: "How does Pathfinder know which courses I'm eligible for?",
+    answer:
+      "You enter your current or predicted grades, and we compare them against the entry requirements for courses across all 15 Scottish universities. If you're from a widening participation background, we automatically show you any reduced entry offers you might qualify for.",
+  },
+  {
+    question: 'What is widening access?',
+    answer:
+      'Scottish universities offer lower entry grades to students from certain backgrounds — for example, if you live in a disadvantaged area (SIMD20/40), have care experience, are a young carer, or are the first in your family to go to university. Pathfinder checks your eligibility automatically based on your postcode and profile.',
+  },
+  {
+    question: "Can I use Pathfinder if I don't know what I want to study at university?",
+    answer:
+      "Absolutely. Our subject explorer and pathway planner help you see where different subject choices lead — which careers they connect to and which university courses they open up. You don't need to have decided anything yet.",
+  },
+  {
+    question: 'Is my data safe?',
+    answer:
+      'Yes. We store your data securely and never share it with anyone. You can download or delete all your data at any time from your account settings. Read our privacy policy for full details.',
+  },
+  {
+    question: 'Which schools does Pathfinder work with?',
+    answer:
+      'Pathfinder works for students at any Scottish secondary school. Our subject database covers every SQA qualification available across Scotland, from National 4 to Advanced Higher, including college partnership courses and Foundation Apprenticeships.',
+  },
+  {
+    question: "Do I need my school's permission to use Pathfinder?",
+    answer:
+      'No. Pathfinder is designed for individual students and families. You can sign up and use it independently.',
+  },
+]
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+}
 
 export default function HomePage() {
   const features = [
@@ -10,7 +62,7 @@ export default function HomePage() {
       ),
       title: 'Plan Your Subjects',
       description:
-        'Pick SQA courses that keep doors open. See transitions from S2 through S6 and how each choice shapes your options.',
+        'See how your S3 choices connect to Highers, Advanced Highers, and university entry. Our pathway planner shows you the full picture.',
     },
     {
       icon: (
@@ -30,7 +82,7 @@ export default function HomePage() {
       ),
       title: 'Build Your Shortlist',
       description:
-        'Save courses, add notes, and prioritise your choices. Export when you are ready to apply through UCAS.',
+        'Save courses, compare options, and build your UCAS shortlist with confidence.',
     },
   ]
 
@@ -42,7 +94,12 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* Hero Section */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
+      {/* Hero Section -- teal-50 */}
       <section
         style={{
           backgroundColor: 'var(--pf-teal-50)',
@@ -81,11 +138,11 @@ export default function HomePage() {
                   maxWidth: '520px',
                 }}
               >
-                From S3 subject choices to university offers. Pathfinder helps you pick the right SQA
-                qualifications, check entry requirements, and plan your route with confidence.
+                Clear, free guidance for Scottish students and their families — from S3 subject
+                choices through to university offers.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <Link href="/auth/sign-up" className="pf-btn-primary">
+                <Link href="/pathways" className="pf-btn-primary">
                   Start planning free
                 </Link>
                 <Link href="/subjects" className="pf-btn-secondary">
@@ -112,12 +169,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section -- white */}
+      {/* How Pathfinder helps -- white */}
       <section className="pf-section pf-section-white">
         <div className="pf-container">
           <div className="text-center" style={{ marginBottom: '48px' }}>
-            <h2 style={{ marginBottom: '12px' }}>
-              Everything you need to plan your future
+            <h2 style={{ marginBottom: '12px', fontSize: '2rem' }}>
+              How Pathfinder helps
             </h2>
             <p
               style={{
@@ -156,23 +213,46 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Widening Access Section -- grey */}
-      <section className="pf-section pf-section-grey">
+      {/* Widening Access Section -- dark teal-900 */}
+      <section
+        className="pf-section"
+        style={{ backgroundColor: 'var(--pf-teal-900)' }}
+      >
         <div className="pf-container">
           <div className="grid md:grid-cols-2 gap-10 items-center">
             <div>
-              <span className="pf-badge-amber inline-flex mb-4" style={{ marginBottom: '16px' }}>
+              <span
+                className="pf-badge inline-flex mb-4"
+                style={{
+                  marginBottom: '16px',
+                  backgroundColor: 'rgba(245, 158, 11, 0.18)',
+                  color: 'var(--pf-amber-500)',
+                }}
+              >
                 Widening Access
               </span>
-              <h2 style={{ marginBottom: '16px' }}>
+              <h2
+                style={{
+                  marginBottom: '16px',
+                  color: '#fff',
+                  fontSize: '2rem',
+                }}
+              >
                 Lower entry requirements could be available to you.
               </h2>
-              <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem', marginBottom: '20px' }}>
+              <p
+                style={{
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: '1.0625rem',
+                  marginBottom: '24px',
+                  lineHeight: 1.6,
+                }}
+              >
                 If you live in an SIMD20 or SIMD40 area, have care experience, are a young carer, or
-                are first in your family to attend university, you may qualify for reduced entry
+                are the first in your family to attend university, you may qualify for reduced entry
                 requirements at many Scottish universities.
               </p>
-              <ul className="space-y-3" style={{ marginBottom: '24px' }}>
+              <ul className="space-y-3" style={{ marginBottom: '28px' }}>
                 {[
                   'Automatic SIMD lookup from your postcode',
                   'See adjusted offers based on your circumstances',
@@ -185,8 +265,8 @@ export default function HomePage() {
                         width: '20px',
                         height: '20px',
                         borderRadius: '9999px',
-                        backgroundColor: 'var(--pf-teal-100)',
-                        color: 'var(--pf-teal-700)',
+                        backgroundColor: 'rgba(255,255,255,0.15)',
+                        color: '#fff',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -197,29 +277,66 @@ export default function HomePage() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </span>
-                    <span style={{ color: 'var(--pf-grey-900)' }}>{item}</span>
+                    <span style={{ color: 'rgba(255,255,255,0.9)' }}>{item}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 href="/widening-access"
-                style={{ color: 'var(--pf-teal-500)', fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif" }}
-                className="inline-flex items-center gap-2"
+                className="inline-flex items-center gap-2 no-underline hover:no-underline"
+                style={{
+                  backgroundColor: '#fff',
+                  color: 'var(--pf-teal-900)',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.9375rem',
+                }}
               >
-                Learn more about widening access
+                Check your eligibility
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
             </div>
 
-            <div className="pf-card" style={{ padding: '28px' }}>
-              <h3 style={{ marginBottom: '16px' }}>Example: Computer Science at Edinburgh</h3>
+            <div
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: '12px',
+                padding: '28px',
+              }}
+            >
+              <div style={{ marginBottom: '20px' }}>
+                <span
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    fontSize: '0.75rem',
+                    color: 'rgba(255,255,255,0.6)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  Example
+                </span>
+                <h3
+                  style={{
+                    color: '#fff',
+                    marginTop: '6px',
+                    marginBottom: 0,
+                  }}
+                >
+                  Computer Science at Edinburgh
+                </h3>
+              </div>
               <div className="space-y-3">
-                <OfferRow label="Standard offer" value="AAAA" />
-                <OfferRow label="SIMD40 offer" value="AAAB" highlight />
-                <OfferRow label="SIMD20 offer" value="AABB" highlight />
-                <OfferRow label="Care experienced" value="AABB" highlight last />
+                <DarkOfferRow label="Standard offer" value="AAAA" />
+                <DarkOfferRow label="SIMD40 offer" value="AAAB" highlight />
+                <DarkOfferRow label="SIMD20 offer" value="AABB" highlight />
+                <DarkOfferRow label="Care experienced" value="AABB" highlight last />
               </div>
             </div>
           </div>
@@ -230,7 +347,7 @@ export default function HomePage() {
       <section className="pf-section pf-section-white">
         <div className="pf-container">
           <div className="text-center" style={{ marginBottom: '40px' }}>
-            <h2 style={{ marginBottom: '12px' }}>All 15 Scottish universities</h2>
+            <h2 style={{ marginBottom: '12px', fontSize: '2rem' }}>All 15 Scottish universities</h2>
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem' }}>
               From ancient institutions to modern universities, explore them all.
             </p>
@@ -280,7 +397,7 @@ export default function HomePage() {
 
           <div className="text-center" style={{ marginTop: '40px' }}>
             <Link href="/universities" className="pf-btn-secondary">
-              View all universities
+              Explore universities
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -289,7 +406,91 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section -- dark teal */}
+      {/* Credibility Section -- grey */}
+      <section className="pf-section pf-section-grey">
+        <div className="pf-container">
+          <div style={{ maxWidth: '760px', margin: '0 auto', textAlign: 'center' }}>
+            <h2 style={{ marginBottom: '16px', fontSize: '2rem' }}>
+              Built for Scottish students, by people who understand the system
+            </h2>
+            <p
+              style={{
+                color: 'var(--pf-grey-600)',
+                fontSize: '1.0625rem',
+                lineHeight: 1.6,
+                marginBottom: '40px',
+              }}
+            >
+              There&apos;s a gap between the subjects pupils pick in S2 and the university pathways
+              those choices actually open up. Pathfinder closes that gap with clear, honest
+              guidance — grounded in the Scottish curriculum and the real entry requirements
+              universities publish.
+            </p>
+
+            <div
+              className="grid grid-cols-2 md:grid-cols-4 gap-6"
+              style={{ marginTop: '8px' }}
+            >
+              <Stat number="81" label="SQA subjects" />
+              <Stat number="15" label="Scottish universities" />
+              <Stat number="100+" label="Courses" />
+              <Stat number="All" label="Scottish postcodes checked" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section -- white */}
+      <section className="pf-section pf-section-white">
+        <div className="pf-container">
+          <div
+            style={{
+              maxWidth: '760px',
+              margin: '0 auto',
+            }}
+          >
+            <div className="text-center" style={{ marginBottom: '40px' }}>
+              <span
+                className="pf-badge-teal inline-flex"
+                style={{ marginBottom: '16px' }}
+              >
+                FAQ
+              </span>
+              <h2 style={{ marginBottom: '12px', fontSize: '2rem' }}>
+                Frequently asked questions
+              </h2>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem' }}>
+                Everything you need to know before getting started.
+              </p>
+            </div>
+
+            <FaqAccordion items={faqItems} />
+
+            <p
+              style={{
+                textAlign: 'center',
+                marginTop: '32px',
+                color: 'var(--pf-grey-600)',
+                fontSize: '0.9375rem',
+              }}
+            >
+              Still have questions?{' '}
+              <Link
+                href="/help"
+                style={{
+                  color: 'var(--pf-teal-500)',
+                  fontWeight: 600,
+                  fontFamily: "'Space Grotesk', sans-serif",
+                }}
+              >
+                Visit the help centre
+              </Link>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA -- dark teal */}
       <section
         className="pf-section"
         style={{ backgroundColor: 'var(--pf-teal-900)' }}
@@ -347,7 +548,7 @@ function TrustItem({ label }: { label: string }) {
   )
 }
 
-function OfferRow({
+function DarkOfferRow({
   label,
   value,
   highlight,
@@ -363,20 +564,49 @@ function OfferRow({
       className="flex justify-between items-center"
       style={{
         paddingBottom: last ? 0 : '12px',
-        borderBottom: last ? 'none' : '1px solid var(--pf-grey-100)',
+        borderBottom: last ? 'none' : '1px solid rgba(255,255,255,0.1)',
       }}
     >
-      <span style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>{label}</span>
+      <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9375rem' }}>{label}</span>
       <span
         className="pf-data-number"
         style={{
           fontSize: '1rem',
-          color: highlight ? 'var(--pf-green-500)' : 'var(--pf-grey-900)',
+          color: highlight ? 'var(--pf-green-500)' : '#fff',
           fontWeight: 600,
         }}
       >
         {value}
       </span>
+    </div>
+  )
+}
+
+function Stat({ number, label }: { number: string; label: string }) {
+  return (
+    <div>
+      <div
+        className="pf-data-number"
+        style={{
+          fontSize: '2rem',
+          fontWeight: 700,
+          color: 'var(--pf-teal-700)',
+          lineHeight: 1.1,
+          marginBottom: '6px',
+        }}
+      >
+        {number}
+      </div>
+      <div
+        style={{
+          fontSize: '0.875rem',
+          color: 'var(--pf-grey-600)',
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 500,
+        }}
+      >
+        {label}
+      </div>
     </div>
   )
 }
