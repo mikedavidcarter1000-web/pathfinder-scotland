@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { Suspense, useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
 import {
@@ -10,6 +11,7 @@ import {
   useStudentSubjectChoices,
   useStudentAcademyChoices,
   useSaveSubjectChoices,
+  useCareerSectorDetail,
   type Stage,
   type SubjectWithArea,
   type ChoiceTransition,
@@ -66,7 +68,46 @@ function matchesCompulsory(compulsoryName: string, subjectName: string): boolean
 }
 
 export default function PathwaysPage() {
-  const [yearGoingInto, setYearGoingInto] = useState<YearGoingInto | null>(null)
+  return (
+    <Suspense
+      fallback={
+        <div
+          className="min-h-screen flex items-center justify-center"
+          style={{ backgroundColor: 'var(--pf-blue-50)' }}
+        >
+          <div className="animate-pulse" style={{ color: 'var(--pf-grey-600)' }}>
+            Loading...
+          </div>
+        </div>
+      }
+    >
+      <PathwaysPageContent />
+    </Suspense>
+  )
+}
+
+function PathwaysPageContent() {
+  const searchParams = useSearchParams()
+
+  // Optional entry from /discover/career-search → /pathways?suggest=id1,id2&sector=...&stage=s3
+  // When present we highlight these subjects as "suggested for this career".
+  const suggestedIds = useMemo(() => {
+    const param = searchParams.get('suggest')
+    if (!param) return new Set<string>()
+    return new Set(param.split(',').map((s) => s.trim()).filter(Boolean))
+  }, [searchParams])
+  const suggestedSectorId = searchParams.get('sector')
+  const { data: suggestedSectorDetail } = useCareerSectorDetail(suggestedSectorId)
+
+  const initialYear = (() => {
+    const param = searchParams.get('stage')
+    if (param === 's3' || param === 's4' || param === 's5' || param === 's6') {
+      return param as YearGoingInto
+    }
+    return null
+  })()
+
+  const [yearGoingInto, setYearGoingInto] = useState<YearGoingInto | null>(initialYear)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [expandedAreas, setExpandedAreas] = useState<Set<string>>(new Set())
   const [showBreadthTip, setShowBreadthTip] = useState(false)
@@ -301,6 +342,45 @@ export default function PathwaysPage() {
 
       {/* Stage Selector */}
       <div className="pf-container pt-6 sm:pt-8 pb-12 sm:pb-16">
+        {suggestedSectorDetail && suggestedIds.size > 0 && (
+          <div
+            className="mb-6 rounded-lg flex items-start gap-3"
+            style={{
+              padding: '16px 20px',
+              backgroundColor: 'rgba(245, 158, 11, 0.08)',
+              borderLeft: '3px solid var(--pf-amber-500)',
+            }}
+          >
+            <svg
+              className="w-5 h-5 flex-shrink-0 mt-0.5"
+              style={{ color: 'var(--pf-amber-500)' }}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            <div className="flex-1">
+              <p
+                style={{
+                  fontSize: '0.9375rem',
+                  color: 'var(--pf-grey-900)',
+                  fontWeight: 600,
+                  margin: 0,
+                }}
+              >
+                Suggested subjects for {suggestedSectorDetail.sector.name}
+              </p>
+              <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', margin: '4px 0 0 0' }}>
+                We&apos;ve highlighted {suggestedIds.size} subject{suggestedIds.size === 1 ? '' : 's'} that
+                lead to this career area. Pick the ones that interest you — they&apos;re suggestions, not
+                automatic selections.
+              </p>
+            </div>
+          </div>
+        )}
         <div className="pf-card mb-6">
           <h2 style={{ marginBottom: '16px', fontSize: 'clamp(1.125rem, 3vw, 1.5rem)' }}>
             Step 1 — What year are you going into?
@@ -544,12 +624,14 @@ export default function PathwaysPage() {
                           {group.subjects.map((subject) => {
                             const isSelected = selectedIds.has(subject.id)
                             const isCompulsory = compulsoryIds.has(subject.id)
+                            const isSuggested = suggestedIds.has(subject.id)
                             return (
                               <SubjectRow
                                 key={subject.id}
                                 subject={subject}
                                 selected={isSelected}
                                 compulsory={isCompulsory}
+                                suggested={isSuggested}
                                 disabled={!isSelected && !isCompulsory && limitReached}
                                 shaken={shakenId === subject.id}
                                 areaColour={areaColour}
@@ -830,6 +912,7 @@ function SubjectRow({
   subject,
   selected,
   compulsory,
+  suggested,
   disabled,
   shaken,
   areaColour,
@@ -838,6 +921,7 @@ function SubjectRow({
   subject: SubjectWithArea
   selected: boolean
   compulsory: boolean
+  suggested?: boolean
   disabled: boolean
   shaken: boolean
   areaColour: { bg: string; text: string; border: string; bar: string; dot: string }
@@ -911,6 +995,22 @@ function SubjectRow({
             {compulsory && (
               <span className="pf-badge-grey" style={{ fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Compulsory
+              </span>
+            )}
+            {suggested && !compulsory && (
+              <span
+                style={{
+                  fontSize: '0.625rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  padding: '2px 8px',
+                  borderRadius: '9999px',
+                  backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                  color: 'var(--pf-amber-500)',
+                  fontWeight: 600,
+                }}
+              >
+                Suggested
               </span>
             )}
             <Link

@@ -351,7 +351,21 @@ function CareerSearchPageContent() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Link
-                      href="/pathways"
+                      href={(() => {
+                        // Pass essential + recommended subject IDs so the pathways
+                        // planner can highlight them as "suggested for this career".
+                        // Related subjects are excluded — the sector-detail page
+                        // already treats them as nice-to-haves.
+                        const suggested = [
+                          ...detail.subjects_by_relevance.essential,
+                          ...detail.subjects_by_relevance.recommended,
+                        ].map((s) => s.id)
+                        const params = new URLSearchParams()
+                        if (suggested.length > 0) params.set('suggest', suggested.join(','))
+                        params.set('sector', detail.sector.id)
+                        params.set('stage', 's3')
+                        return `/pathways?${params.toString()}`
+                      })()}
                       className="inline-flex items-center justify-center gap-2 no-underline hover:no-underline"
                       style={{
                         backgroundColor: '#fff',

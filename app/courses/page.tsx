@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { Suspense, useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useMatchedCourses } from '@/hooks/use-course-matching'
 import { useSubjectAreas, useSavedCourses, useToggleSaveCourse } from '@/hooks/use-courses'
 import { useUniversities } from '@/hooks/use-universities'
@@ -22,8 +23,37 @@ import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 type EligibilityFilter = 'all' | 'eligible' | 'eligible_via_wa' | 'possible' | 'missing_subjects' | 'ineligible'
 
 export default function CoursesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          className="min-h-screen flex items-center justify-center"
+          style={{ backgroundColor: 'var(--pf-blue-50)' }}
+        >
+          <div className="animate-pulse" style={{ color: 'var(--pf-grey-600)' }}>
+            Loading...
+          </div>
+        </div>
+      }
+    >
+      <CoursesPageContent />
+    </Suspense>
+  )
+}
+
+function CoursesPageContent() {
   const { user } = useAuth()
   const gradeSummary = useGradeSummary()
+  const searchParams = useSearchParams()
+
+  // Pre-filter by a specific set of course IDs passed via ?ids=uuid1,uuid2,...
+  // (e.g. from the simulator's "View all X matches" link). Empty string → no prefilter.
+  const idFilter = useMemo(() => {
+    const param = searchParams.get('ids')
+    if (!param) return null
+    const set = new Set(param.split(',').map((s) => s.trim()).filter(Boolean))
+    return set.size > 0 ? set : null
+  }, [searchParams])
 
   const [search, setSearch] = useState('')
   const [universityId, setUniversityId] = useState<string>('')
@@ -61,6 +91,11 @@ export default function CoursesPage() {
   const filteredCourses = useMemo(() => {
     let courses = coursesWithEligibility || []
 
+    // Pre-filter to a specific course set when arriving from the simulator.
+    if (idFilter) {
+      courses = courses.filter((course) => idFilter.has(course.id))
+    }
+
     // Search filter
     if (search) {
       const searchLower = search.toLowerCase()
@@ -76,7 +111,7 @@ export default function CoursesPage() {
     }
 
     return courses
-  }, [coursesWithEligibility, search, eligibilityFilter])
+  }, [coursesWithEligibility, search, eligibilityFilter, idFilter])
 
   // Reset to first page whenever filters or search change so users don't land on
   // an out-of-range page when the result set shrinks.
@@ -100,6 +135,7 @@ export default function CoursesPage() {
 
   const hasFilters = search || universityId || subjectArea || eligibilityFilter !== 'all'
   const hasGrades = gradeSummary.totalGrades > 0
+  const prefilterCount = idFilter?.size ?? 0
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
@@ -216,6 +252,51 @@ export default function CoursesPage() {
                   Add grades
                 </Link>
               </div>
+            </div>
+          )}
+
+          {/* Pre-filter notice when arriving from the simulator */}
+          {idFilter && (
+            <div
+              className="mb-6 rounded-lg flex items-start gap-3"
+              style={{
+                padding: '16px',
+                backgroundColor: 'var(--pf-blue-100)',
+                borderLeft: '3px solid var(--pf-blue-700)',
+              }}
+            >
+              <svg
+                className="w-5 h-5 flex-shrink-0 mt-0.5"
+                style={{ color: 'var(--pf-blue-700)' }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              <div className="flex-1">
+                <p
+                  style={{
+                    fontSize: '0.875rem',
+                    color: 'var(--pf-grey-900)',
+                    fontWeight: 600,
+                    margin: 0,
+                  }}
+                >
+                  Showing {prefilterCount} course{prefilterCount === 1 ? '' : 's'} matched by your subject combination
+                </p>
+                <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', margin: '4px 0 0 0' }}>
+                  These were matched in the simulator. You can still search and filter within this list.
+                </p>
+              </div>
+              <Link
+                href="/courses"
+                className="pf-btn-ghost pf-btn-sm"
+                style={{ whiteSpace: 'nowrap' }}
+              >
+                Show all courses
+              </Link>
             </div>
           )}
 

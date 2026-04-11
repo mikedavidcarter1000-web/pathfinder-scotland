@@ -95,6 +95,7 @@ export function Navbar() {
               <img
                 src="/logo-white.svg"
                 alt=""
+                role="presentation"
                 width={32}
                 height={32}
                 style={{ display: 'block', flexShrink: 0 }}
@@ -209,6 +210,7 @@ export function Navbar() {
                 autoFocus
                 placeholder="Search courses, universities..."
                 className="max-w-xl mx-auto"
+                onClose={() => setSearchOpen(false)}
               />
             </div>
           )}

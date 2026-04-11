@@ -12,6 +12,9 @@ interface SearchBarProps {
   onSearch?: (query: string) => void
   className?: string
   ariaLabel?: string
+  // Called when the user presses Escape or clicks clear-to-close. Used by the
+  // navbar search overlay to collapse its expandable input on a single press.
+  onClose?: () => void
 }
 
 type NavItem = {
@@ -58,6 +61,7 @@ export function SearchBar({
   onSearch,
   className = '',
   ariaLabel = 'Search',
+  onClose,
 }: SearchBarProps) {
   const router = useRouter()
   const [query, setQuery] = useState('')
@@ -145,13 +149,18 @@ export function SearchBar({
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!isOpen) return
     if (e.key === 'Escape') {
       e.preventDefault()
+      // Single Escape closes everything: clears query, closes the dropdown,
+      // blurs the input, and fires onClose so a parent (e.g. the navbar) can
+      // collapse its expandable search bar in the same keystroke.
+      setQuery('')
       closeDropdown()
       inputRef.current?.blur()
+      onClose?.()
       return
     }
+    if (!isOpen) return
     if (!navItems.length) return
     if (e.key === 'ArrowDown') {
       e.preventDefault()

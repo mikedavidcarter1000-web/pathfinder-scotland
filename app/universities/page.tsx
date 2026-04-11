@@ -41,7 +41,9 @@ export default function UniversitiesPage() {
           <div className="mb-5 sm:mb-6">
             <h1 style={{ marginBottom: '4px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Universities</h1>
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
-              Explore all 15 Scottish universities
+              {universities && universities.length > 0
+                ? `Explore all ${universities.length} Scottish universities`
+                : 'Explore Scottish universities'}
             </p>
           </div>
 

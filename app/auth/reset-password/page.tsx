@@ -93,6 +93,7 @@ export default function ResetPasswordPage() {
             <img
               src="/logo.svg"
               alt=""
+              role="presentation"
               width={40}
               height={40}
               style={{ display: 'block', flexShrink: 0 }}

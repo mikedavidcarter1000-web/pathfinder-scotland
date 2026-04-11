@@ -307,7 +307,7 @@ function SimulatorContent() {
         Try different subject combinations to understand the trade-offs. Share this
         page with your child to discuss together.
       </ParentNotice>
-      <Hero />
+      <Hero impact={impactA} hasSelection={selectedA.size > 0} />
 
       {/* Controls bar */}
       <section className="pf-container" style={{ paddingTop: '24px', paddingBottom: '24px' }}>
@@ -532,7 +532,13 @@ function SimulatorContent() {
   )
 }
 
-function Hero() {
+function Hero({
+  impact,
+  hasSelection,
+}: {
+  impact: ImpactResult | null
+  hasSelection: boolean
+}) {
   return (
     <section
       className="pf-section"
@@ -570,17 +576,31 @@ function Hero() {
               open up — and what you&apos;d miss out on.
             </p>
           </div>
-          <HeroVisual />
+          <HeroVisual impact={impact} hasSelection={hasSelection} />
         </div>
       </div>
     </section>
   )
 }
 
-function HeroVisual() {
+function HeroVisual({
+  impact,
+  hasSelection,
+}: {
+  impact: ImpactResult | null
+  hasSelection: boolean
+}) {
+  const eligibleCount = impact?.eligibleCount ?? 0
+  const totalCourses = impact?.totalCourses ?? 0
+  const percent =
+    totalCourses > 0 ? Math.min(100, (eligibleCount / totalCourses) * 100) : 0
+
+  // Top missed opportunity = subject that would open the most extra courses.
+  const topOpportunity = impact?.missedOpportunities?.[0] ?? null
+
   return (
     <div
-      aria-hidden="true"
+      aria-live="polite"
       style={{
         width: '100%',
         maxWidth: '320px',
@@ -614,7 +634,7 @@ function HeroVisual() {
           marginBottom: '12px',
         }}
       >
-        47 / 117
+        {eligibleCount} / {totalCourses}
       </div>
       <div
         style={{
@@ -627,14 +647,35 @@ function HeroVisual() {
       >
         <div
           style={{
-            width: '40%',
+            width: `${percent}%`,
             height: '100%',
             backgroundColor: 'var(--pf-green-500)',
+            transition: 'width 0.3s ease',
           }}
         />
       </div>
       <div style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}>
-        Adding Chemistry would open <strong>12 more courses</strong> including Medicine.
+        {!hasSelection ? (
+          <>Pick some subjects to see how many courses you could apply for.</>
+        ) : topOpportunity ? (
+          <>
+            Adding{' '}
+            <strong style={{ color: 'var(--pf-grey-900)' }}>
+              {topOpportunity.subject.name}
+            </strong>{' '}
+            would open{' '}
+            <strong>
+              {topOpportunity.additionalCount} more course
+              {topOpportunity.additionalCount === 1 ? '' : 's'}
+            </strong>
+            {topOpportunity.sampleCourses.length > 0 && (
+              <> including {topOpportunity.sampleCourses[0].name}</>
+            )}
+            .
+          </>
+        ) : (
+          <>You&apos;ve covered the main bases — no single subject would dramatically change your options.</>
+        )}
       </div>
     </div>
   )
@@ -1014,7 +1055,9 @@ function ImpactPanel({
             )}
             {impact.eligibleCount > visibleEligible.length && (
               <Link
-                href="/courses"
+                href={`/courses?ids=${encodeURIComponent(
+                  impact.eligibleCourses.map((c) => c.id).join(',')
+                )}`}
                 style={{
                   display: 'inline-block',
                   marginTop: '12px',

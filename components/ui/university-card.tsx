@@ -42,7 +42,7 @@ export function UniversityCard({ university, compact = false }: UniversityCardPr
               className="object-contain p-4"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div aria-hidden="true" className="absolute inset-0 flex items-center justify-center">
               <div
                 className="rounded-lg flex items-center justify-center"
                 style={{

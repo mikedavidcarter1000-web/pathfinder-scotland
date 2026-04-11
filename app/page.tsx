@@ -1,59 +1,121 @@
 import Link from 'next/link'
 import { FaqAccordion, type FaqItem } from '@/components/ui/faq-accordion'
 import { SearchBar } from '@/components/ui/search-bar'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 
-const faqItems: FaqItem[] = [
-  {
-    question: 'Is Pathfinder free?',
-    answer:
-      'Yes — the core features are completely free. You can explore subjects, plan your choices, check university entry requirements, and see if you qualify for widening access support at no cost.',
-  },
-  {
-    question: "How does Pathfinder know which courses I'm eligible for?",
-    answer:
-      "You enter your current or predicted grades, and we compare them against the entry requirements for courses across all 15 Scottish universities. If you're from a widening participation background, we automatically show you any reduced entry offers you might qualify for.",
-  },
-  {
-    question: 'What is widening access?',
-    answer:
-      'Scottish universities offer lower entry grades to students from certain backgrounds — for example, if you live in a disadvantaged area (SIMD20/40), have care experience, are a young carer, or are the first in your family to go to university. Pathfinder checks your eligibility automatically based on your postcode and profile.',
-  },
-  {
-    question: "Can I use Pathfinder if I don't know what I want to study at university?",
-    answer:
-      "Absolutely. Our subject explorer and pathway planner help you see where different subject choices lead — which careers they connect to and which university courses they open up. You don't need to have decided anything yet.",
-  },
-  {
-    question: 'Is my data safe?',
-    answer:
-      'Yes. We store your data securely and never share it with anyone. You can download or delete all your data at any time from your account settings. Read our privacy policy for full details.',
-  },
-  {
-    question: 'Which schools does Pathfinder work with?',
-    answer:
-      'Pathfinder works for students at any Scottish secondary school. Our subject database covers every SQA qualification available across Scotland, from National 4 to Advanced Higher, including college partnership courses and Foundation Apprenticeships.',
-  },
-  {
-    question: "Do I need my school's permission to use Pathfinder?",
-    answer:
-      'No. Pathfinder is designed for individual students and families. You can sign up and use it independently.',
-  },
-]
-
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqItems.map((item) => ({
-    '@type': 'Question',
-    name: item.question,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: item.answer,
+function buildFaqItems(universityCount: number): FaqItem[] {
+  const uniPhrase =
+    universityCount > 0 ? `all ${universityCount} Scottish universities` : 'Scottish universities'
+  return [
+    {
+      question: 'Is Pathfinder free?',
+      answer:
+        'Yes — the core features are completely free. You can explore subjects, plan your choices, check university entry requirements, and see if you qualify for widening access support at no cost.',
     },
-  })),
+    {
+      question: "How does Pathfinder know which courses I'm eligible for?",
+      answer: `You enter your current or predicted grades, and we compare them against the entry requirements for courses across ${uniPhrase}. If you're from a widening participation background, we automatically show you any reduced entry offers you might qualify for.`,
+    },
+    {
+      question: 'What is widening access?',
+      answer:
+        'Scottish universities offer lower entry grades to students from certain backgrounds — for example, if you live in a disadvantaged area (SIMD20/40), have care experience, are a young carer, or are the first in your family to go to university. Pathfinder checks your eligibility automatically based on your postcode and profile.',
+    },
+    {
+      question: "Can I use Pathfinder if I don't know what I want to study at university?",
+      answer:
+        "Absolutely. Our subject explorer and pathway planner help you see where different subject choices lead — which careers they connect to and which university courses they open up. You don't need to have decided anything yet.",
+    },
+    {
+      question: 'Is my data safe?',
+      answer:
+        'Yes. We store your data securely and never share it with anyone. You can download or delete all your data at any time from your account settings. Read our privacy policy for full details.',
+    },
+    {
+      question: 'Which schools does Pathfinder work with?',
+      answer:
+        'Pathfinder works for students at any Scottish secondary school. Our subject database covers every SQA qualification available across Scotland, from National 4 to Advanced Higher, including college partnership courses and Foundation Apprenticeships.',
+    },
+    {
+      question: "Do I need my school's permission to use Pathfinder?",
+      answer:
+        'No. Pathfinder is designed for individual students and families. You can sign up and use it independently.',
+    },
+  ]
 }
 
-export default function HomePage() {
+// Short display name for the homepage university grid so long institution names
+// don't wrap awkwardly in the 5-column tile layout.
+function shortUniversityName(name: string): string {
+  const map: Record<string, string> = {
+    'University of Edinburgh': 'Edinburgh',
+    'University of Glasgow': 'Glasgow',
+    'University of St Andrews': 'St Andrews',
+    'University of Aberdeen': 'Aberdeen',
+    'University of Dundee': 'Dundee',
+    'University of Stirling': 'Stirling',
+    'University of Strathclyde': 'Strathclyde',
+    'Heriot-Watt University': 'Heriot-Watt',
+    'Glasgow Caledonian University': 'GCU',
+    'Edinburgh Napier University': 'Napier',
+    'Robert Gordon University': 'RGU',
+    'University of the West of Scotland': 'UWS',
+    'Queen Margaret University': 'QMU',
+    'University of the Highlands and Islands': 'UHI',
+    'Royal Conservatoire of Scotland': 'RCS',
+    'Abertay University': 'Abertay',
+    'University of Abertay Dundee': 'Abertay',
+  }
+  return map[name] ?? name
+}
+
+async function getHomepageStats() {
+  try {
+    const supabase = await createServerSupabaseClient()
+    const [universitiesRes, coursesRes] = await Promise.all([
+      supabase
+        .from('universities')
+        .select('id, name')
+        .order('name'),
+      supabase
+        .from('courses')
+        .select('id', { count: 'exact', head: true }),
+    ])
+
+    return {
+      universities: universitiesRes.data ?? [],
+      courseCount: coursesRes.count ?? 0,
+    }
+  } catch {
+    // Homepage must always render — fall back to an empty stats object if the
+    // DB is unreachable. The page will show generic copy instead of live counts.
+    return { universities: [], courseCount: 0 }
+  }
+}
+
+export default async function HomePage() {
+  const { universities, courseCount } = await getHomepageStats()
+  const universityCount = universities.length
+  const unisLabel = universityCount > 0 ? `All ${universityCount} Scottish universities` : 'Scottish universities'
+  const unisTrustLabel =
+    universityCount > 0 ? `${universityCount} Scottish universities` : 'Scottish universities'
+  const coursesLabel = courseCount > 0 ? `${courseCount}+ courses` : '100+ courses'
+  const coursesStatNumber = courseCount > 0 ? `${courseCount}+` : '100+'
+
+  const faqItems = buildFaqItems(universityCount)
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  }
+
   const features = [
     {
       icon: (
@@ -85,12 +147,6 @@ export default function HomePage() {
       description:
         'Save courses, compare options, and build your UCAS shortlist with confidence.',
     },
-  ]
-
-  const unis = [
-    'Edinburgh', 'Glasgow', 'St Andrews', 'Aberdeen', 'Dundee',
-    'Strathclyde', 'Heriot-Watt', 'Stirling', 'GCU', 'Napier',
-    'RGU', 'UWS', 'QMU', 'UHI', 'RCS',
   ]
 
   return (
@@ -177,8 +233,8 @@ export default function HomePage() {
                 className="flex flex-wrap items-center gap-x-6 gap-y-2"
                 style={{ marginTop: '32px' }}
               >
-                <TrustItem label="15 Scottish universities" />
-                <TrustItem label="100+ courses" />
+                <TrustItem label={unisTrustLabel} />
+                <TrustItem label={coursesLabel} />
                 <TrustItem label="Widening access built in" />
               </div>
             </div>
@@ -370,57 +426,60 @@ export default function HomePage() {
       <section className="pf-section pf-section-white">
         <div className="pf-container">
           <div className="text-center" style={{ marginBottom: '40px' }}>
-            <h2 style={{ marginBottom: '12px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>All 15 Scottish universities</h2>
+            <h2 style={{ marginBottom: '12px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>{unisLabel}</h2>
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem' }}>
               From ancient institutions to modern universities, explore them all.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-            {unis.map((uni) => (
-              <Link
-                key={uni}
-                href="/universities"
-                className="pf-card-hover flex flex-col items-center justify-center gap-3 text-center no-underline hover:no-underline"
-                style={{ padding: '20px' }}
-              >
-                <div
-                  className="flex items-center justify-center"
-                  style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '10px',
-                    backgroundColor: 'var(--pf-blue-100)',
-                  }}
+          {universities.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+              {universities.map((uni) => (
+                <Link
+                  key={uni.id}
+                  href={`/universities/${uni.id}`}
+                  className="pf-card-hover flex flex-col items-center justify-center gap-3 text-center no-underline hover:no-underline"
+                  style={{ padding: '20px' }}
                 >
-                  <span
+                  <div
+                    aria-hidden="true"
+                    className="flex items-center justify-center"
                     style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontWeight: 700,
-                      fontSize: '1.25rem',
-                      color: 'var(--pf-blue-700)',
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '10px',
+                      backgroundColor: 'var(--pf-blue-100)',
                     }}
                   >
-                    {uni.charAt(0)}
-                  </span>
-                </div>
-                <p
-                  style={{
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontWeight: 600,
-                    fontSize: '0.875rem',
-                    color: 'var(--pf-grey-900)',
-                  }}
-                >
-                  {uni}
-                </p>
-              </Link>
-            ))}
-          </div>
+                    <span
+                      style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontWeight: 700,
+                        fontSize: '1.25rem',
+                        color: 'var(--pf-blue-700)',
+                      }}
+                    >
+                      {uni.name.charAt(0)}
+                    </span>
+                  </div>
+                  <p
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '0.875rem',
+                      color: 'var(--pf-grey-900)',
+                    }}
+                  >
+                    {shortUniversityName(uni.name)}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          )}
 
           <div className="text-center" style={{ marginTop: '40px' }}>
             <Link href="/universities" className="pf-btn-secondary">
-              Explore universities
+              Explore all universities
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -455,8 +514,8 @@ export default function HomePage() {
               style={{ marginTop: '8px' }}
             >
               <Stat number="81" label="SQA subjects" />
-              <Stat number="15" label="Scottish universities" />
-              <Stat number="100+" label="Courses" />
+              <Stat number={universityCount > 0 ? String(universityCount) : '15'} label="Scottish universities" />
+              <Stat number={coursesStatNumber} label="Courses" />
               <Stat number="All" label="Scottish postcodes checked" />
             </div>
           </div>

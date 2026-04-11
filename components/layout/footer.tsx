@@ -5,6 +5,7 @@ export function Footer() {
 
   const links = {
     product: [
+      { label: 'Discover', href: '/discover' },
       { label: 'Subjects', href: '/subjects' },
       { label: 'Plan Choices', href: '/pathways' },
       { label: 'Simulator', href: '/simulator' },
@@ -64,6 +65,7 @@ export function Footer() {
               <img
                 src="/logo-white.svg"
                 alt=""
+                role="presentation"
                 width={32}
                 height={32}
                 style={{ display: 'block', flexShrink: 0 }}
