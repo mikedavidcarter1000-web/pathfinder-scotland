@@ -214,7 +214,7 @@ export function SavedCoursesSection() {
                 fontWeight: 600,
               }}
             >
-              View all {savedCourses.length} saved courses
+              View all {savedCourses.length} saved {savedCourses.length === 1 ? 'course' : 'courses'}
             </Link>
           )}
         </div>

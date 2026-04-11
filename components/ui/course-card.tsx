@@ -6,6 +6,7 @@ import { EligibilityBadge } from './eligibility-badge'
 import type { Tables } from '@/types/database'
 import type { EligibilityDetail } from '@/hooks/use-course-matching'
 import { useWideningAccessEligibility } from '@/hooks/use-student'
+import { formatDegreeType } from '@/lib/utils'
 
 interface WideningAccessRequirements {
   simd20_offer?: string
@@ -193,7 +194,7 @@ export function CourseCard({
                 Widening access
               </span>
             )}
-            {course.degree_type && <span className="pf-badge-grey">{course.degree_type}</span>}
+            {course.degree_type && <span className="pf-badge-grey">{formatDegreeType(course.degree_type)}</span>}
             {course.subject_area && <span className="pf-badge-blue">{course.subject_area}</span>}
           </div>
 
@@ -269,7 +270,7 @@ export function CourseCard({
                     className="pf-data-number"
                     style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}
                   >
-                    {course.duration_years} years
+                    {course.duration_years} {course.duration_years === 1 ? 'year' : 'years'}
                   </span>
                 </div>
               )}

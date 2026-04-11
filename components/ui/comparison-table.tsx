@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { EligibilityBadge } from './eligibility-badge'
 import type { Tables } from '@/types/database'
 import type { EligibilityDetail } from '@/hooks/use-course-matching'
+import { formatDegreeType } from '@/lib/utils'
 
 interface ComparisonTableProps {
   courses: (Tables<'courses'> & {
@@ -56,12 +57,12 @@ export function ComparisonTable({ courses, onRemove }: ComparisonTableProps) {
     },
     {
       label: 'Degree Type',
-      getValue: (course: typeof courses[0]) => course.degree_type || '-',
+      getValue: (course: typeof courses[0]) => (course.degree_type ? formatDegreeType(course.degree_type) : '-'),
     },
     {
       label: 'Duration',
       getValue: (course: typeof courses[0]) =>
-        course.duration_years ? `${course.duration_years} years` : '-',
+        course.duration_years ? `${course.duration_years} ${course.duration_years === 1 ? 'year' : 'years'}` : '-',
     },
     {
       label: 'Highers Required',

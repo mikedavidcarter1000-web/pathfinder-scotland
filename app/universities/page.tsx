@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { useUniversitiesWithStats, useUniversityCities } from '@/hooks/use-universities'
 import { UniversityCard } from '@/components/ui/university-card'
 import { UniversityCardSkeleton } from '@/components/ui/loading-skeletons'
@@ -39,23 +38,11 @@ export default function UniversitiesPage() {
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
-          <div className="flex items-start justify-between gap-3 mb-5 sm:mb-6">
-            <div className="flex-1 min-w-0">
-              <h1 style={{ marginBottom: '4px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Universities</h1>
-              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
-                Explore all 15 Scottish universities
-              </p>
-            </div>
-            <Link
-              href="/"
-              style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
-              className="flex items-center justify-center hover:opacity-80 flex-shrink-0"
-              aria-label="Back to home"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </Link>
+          <div className="mb-5 sm:mb-6">
+            <h1 style={{ marginBottom: '4px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Universities</h1>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
+              Explore all 15 Scottish universities
+            </p>
           </div>
 
           {/* Filters — stack on mobile */}
@@ -63,6 +50,7 @@ export default function UniversitiesPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
+              aria-label="Filter by university type"
               className="pf-input w-full sm:w-auto"
             >
               <option value="">All Types</option>
@@ -76,6 +64,7 @@ export default function UniversitiesPage() {
             <select
               value={cityFilter}
               onChange={(e) => setCityFilter(e.target.value)}
+              aria-label="Filter by city"
               className="pf-input w-full sm:w-auto"
             >
               <option value="">All Cities</option>
@@ -135,7 +124,7 @@ export default function UniversitiesPage() {
             />
           ) : (
             <p style={{ color: 'var(--pf-grey-600)' }}>
-              {filteredUniversities?.length || 0} universities
+              {filteredUniversities?.length || 0} {(filteredUniversities?.length ?? 0) === 1 ? 'university' : 'universities'}
               {hasFilters && ' matching your filters'}
             </p>
           )}

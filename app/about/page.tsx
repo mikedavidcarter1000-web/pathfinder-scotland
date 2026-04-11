@@ -31,7 +31,7 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <span className="pf-badge-blue" style={{ marginBottom: '20px' }}>
-                About Pathfinder
+                About Pathfinder Scotland
               </span>
               <h1 style={{ marginTop: '16px', marginBottom: '16px', lineHeight: 1.15 }}>
                 Guidance for every Scottish student — no matter where you start.

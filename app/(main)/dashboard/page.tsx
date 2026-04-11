@@ -12,6 +12,7 @@ import {
   SavedCoursesSection,
   SubjectChoicesSection,
   WideningAccessCard,
+  ProgressChecklist,
 } from '@/components/dashboard'
 import { StatsCard, StatsGrid } from '@/components/ui/stats-card'
 import { Skeleton } from '@/components/ui/loading-skeleton'
@@ -152,6 +153,11 @@ export default function DashboardPage() {
         </StatsGrid>
       </div>
 
+      {/* Progress checklist */}
+      <div className="mb-6">
+        <ProgressChecklist />
+      </div>
+
       {/* Widening Access Highlight (only renders if eligible) */}
       <div className="mb-6">
         <WideningAccessCard />
@@ -172,7 +178,7 @@ export default function DashboardPage() {
 
           {/* Quick Actions */}
           <div className="pf-card">
-            <h3 style={{ marginBottom: '16px' }}>Quick Actions</h3>
+            <h2 style={{ marginBottom: '16px', fontSize: '1.125rem' }}>Quick Actions</h2>
             <div className="space-y-2">
               <QuickAction
                 href="/courses"
@@ -227,7 +233,7 @@ export default function DashboardPage() {
                 color: '#fff',
               }}
             >
-              <h3 style={{ color: '#fff', marginBottom: '16px' }}>Your Grade Profile</h3>
+              <h2 style={{ color: '#fff', marginBottom: '16px', fontSize: '1.125rem' }}>Your Grade Profile</h2>
               <div className="space-y-3">
                 {gradeSummary.highers && (
                   <GradeSummaryRow label="Highers" value={gradeSummary.highers} />
@@ -276,7 +282,7 @@ export default function DashboardPage() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <h3 style={{ fontSize: '1rem', marginBottom: '4px' }}>Add your grades</h3>
+              <h2 style={{ fontSize: '1rem', marginBottom: '4px' }}>Add your grades</h2>
               <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
                 Enter your grades to see which courses you&apos;re eligible for.
               </p>

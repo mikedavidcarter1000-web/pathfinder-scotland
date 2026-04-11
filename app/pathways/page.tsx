@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
 import {
@@ -66,25 +65,15 @@ function matchesCompulsory(compulsoryName: string, subjectName: string): boolean
 }
 
 export default function PathwaysPage() {
-  const router = useRouter()
   const [yearGoingInto, setYearGoingInto] = useState<YearGoingInto | null>(null)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [expandedAreas, setExpandedAreas] = useState<Set<string>>(new Set())
   const [showBreadthTip, setShowBreadthTip] = useState(false)
   const [subjectSearch, setSubjectSearch] = useState('')
-  const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false)
   const [shakenId, setShakenId] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const goBack = () => {
-    if (typeof window !== 'undefined' && window.history.length > 1) {
-      router.back()
-    } else {
-      router.push('/')
-    }
-  }
 
   useEffect(() => {
     return () => {
@@ -259,20 +248,9 @@ export default function PathwaysPage() {
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
-          <div className="flex items-start justify-between gap-3 mb-2">
-            <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Plan Your Subject Choices</h1>
-            <button
-              type="button"
-              aria-label="Close"
-              onClick={goBack}
-              style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
-              className="flex items-center justify-center hover:opacity-80 flex-shrink-0"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+          <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)', marginBottom: '8px' }}>
+            Plan Your Subject Choices
+          </h1>
           <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
             Explore how different subject combinations shape your qualifications and future career options.
           </p>
@@ -354,66 +332,6 @@ export default function PathwaysPage() {
         {/* Main planning UI */}
         {yearGoingInto && !isLoading && pathway && (
           <div className="grid lg:grid-cols-3 gap-6">
-            {/* Mobile collapsible pathway preview — shows above picker below lg */}
-            <div className="lg:hidden order-first">
-              <button
-                type="button"
-                onClick={() => setMobilePreviewOpen((v) => !v)}
-                className="w-full flex items-center justify-between rounded-lg"
-                style={{
-                  padding: '16px 20px',
-                  minHeight: '56px',
-                  backgroundColor: 'var(--pf-blue-100)',
-                  border: '1px solid var(--pf-blue-100)',
-                  color: 'var(--pf-blue-900)',
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 600,
-                  fontSize: '0.9375rem',
-                }}
-                aria-expanded={mobilePreviewOpen}
-              >
-                <span className="inline-flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 flex-shrink-0"
-                    style={{ color: 'var(--pf-blue-700)' }}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                  View your pathway preview
-                  {selectedSubjects.length > 0 && (
-                    <span
-                      className="pf-badge-blue ml-1"
-                      style={{ backgroundColor: 'var(--pf-white)' }}
-                    >
-                      {selectedSubjects.length}
-                    </span>
-                  )}
-                </span>
-                <svg
-                  className={`w-5 h-5 transition-transform ${mobilePreviewOpen ? 'rotate-180' : ''}`}
-                  style={{ color: 'var(--pf-blue-700)' }}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {mobilePreviewOpen && (
-                <div className="mt-4">
-                  <PathwayPreview
-                    selectedSubjects={selectedSubjects}
-                    totalRequired={totalRequired}
-                    totalSectors={careerSectors?.length ?? 0}
-                  />
-                </div>
-              )}
-            </div>
-
             {/* Left: picker + rules */}
             <div className="lg:col-span-2 space-y-6">
               {/* Sticky progress bar */}
@@ -465,6 +383,7 @@ export default function PathwaysPage() {
                     value={subjectSearch}
                     onChange={(e) => setSubjectSearch(e.target.value)}
                     placeholder="Search for a subject..."
+                    aria-label="Search subjects in pathway planner"
                     className="pf-input w-full"
                     style={{ paddingLeft: '36px', paddingRight: '44px' }}
                   />
@@ -556,7 +475,7 @@ export default function PathwaysPage() {
                             {group.area.name}
                           </span>
                           <span style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
-                            {group.subjects.length} subjects
+                            {group.subjects.length} {group.subjects.length === 1 ? 'subject' : 'subjects'}
                             {areaSelectedCount > 0 && (
                               <span
                                 className="ml-2"
@@ -641,8 +560,8 @@ export default function PathwaysPage() {
               />
             </div>
 
-            {/* Right: pathway preview — desktop only (mobile version is collapsible above) */}
-            <div className="hidden lg:block lg:col-span-1">
+            {/* Right: pathway preview — sticky on desktop, stacks below picker on mobile */}
+            <div className="lg:col-span-1">
               <div className="lg:sticky lg:top-4">
                 <PathwayPreview
                   selectedSubjects={selectedSubjects}

@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useMatchedCourses } from '@/hooks/use-course-matching'
 import { useSubjectAreas, useSavedCourses, useToggleSaveCourse } from '@/hooks/use-courses'
 import { useUniversities } from '@/hooks/use-universities'
@@ -22,17 +21,8 @@ import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 type EligibilityFilter = 'all' | 'eligible' | 'eligible_via_wa' | 'possible' | 'missing_subjects' | 'ineligible'
 
 export default function CoursesPage() {
-  const router = useRouter()
   const { user } = useAuth()
   const gradeSummary = useGradeSummary()
-
-  const goBack = () => {
-    if (typeof window !== 'undefined' && window.history.length > 1) {
-      router.back()
-    } else {
-      router.push('/')
-    }
-  }
 
   const [search, setSearch] = useState('')
   const [universityId, setUniversityId] = useState<string>('')
@@ -115,24 +105,11 @@ export default function CoursesPage() {
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
-          <div className="flex items-start justify-between gap-3 mb-5 sm:mb-6">
-            <div className="flex-1 min-w-0">
-              <h1 style={{ marginBottom: '4px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Courses</h1>
-              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
-                Explore courses across Scottish universities
-              </p>
-            </div>
-            <button
-              type="button"
-              aria-label="Close"
-              onClick={goBack}
-              style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
-              className="flex items-center justify-center hover:opacity-80 flex-shrink-0"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+          <div className="mb-5 sm:mb-6">
+            <h1 style={{ marginBottom: '4px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Courses</h1>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
+              Explore courses across Scottish universities
+            </p>
           </div>
 
           {/* Eligibility Stats Banner */}
@@ -243,6 +220,7 @@ export default function CoursesPage() {
               placeholder="Search courses by name..."
               onSearch={setSearch}
               showSuggestions={false}
+              ariaLabel="Search courses"
             />
           </div>
 
@@ -252,6 +230,7 @@ export default function CoursesPage() {
               <select
                 value={universityId}
                 onChange={(e) => setUniversityId(e.target.value)}
+                aria-label="Filter by university"
                 className="pf-input w-full lg:w-auto"
               >
                 <option value="">All Universities</option>
@@ -265,6 +244,7 @@ export default function CoursesPage() {
               <select
                 value={subjectArea}
                 onChange={(e) => setSubjectArea(e.target.value)}
+                aria-label="Filter by subject area"
                 className="pf-input w-full lg:w-auto"
               >
                 <option value="">All Subjects</option>
@@ -301,6 +281,7 @@ export default function CoursesPage() {
                   <select
                     value={eligibilityFilter}
                     onChange={(e) => setEligibilityFilter(e.target.value as EligibilityFilter)}
+                    aria-label="Filter by eligibility"
                     className="pf-input w-full lg:w-auto"
                     style={{
                       backgroundColor: eligibilityFilter !== 'all' ? 'var(--pf-blue-50)' : 'var(--pf-white)',
@@ -385,7 +366,7 @@ export default function CoursesPage() {
             />
           ) : (
             <p style={{ color: 'var(--pf-grey-600)' }}>
-              {filteredCourses?.length || 0} courses found
+              {filteredCourses?.length || 0} {(filteredCourses?.length ?? 0) === 1 ? 'course' : 'courses'} found
               {hasFilters && ' matching your filters'}
             </p>
           )}
@@ -473,7 +454,7 @@ export default function CoursesPage() {
                   of{' '}
                   <span style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}>{totalPages}</span>
                   <span style={{ color: 'var(--pf-grey-600)' }}>
-                    {' '}· {filteredCourses.length} results
+                    {' '}· {filteredCourses.length} {filteredCourses.length === 1 ? 'result' : 'results'}
                   </span>
                 </p>
                 <div className="flex items-center gap-2 w-full sm:w-auto">

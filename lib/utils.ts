@@ -59,6 +59,29 @@ export function pluralise(count: number, singular: string, plural?: string): str
   return `${count} ${plural || singular + 's'}`
 }
 
+const DEGREE_TYPE_LABELS: Record<string, string> = {
+  ba: 'BA',
+  bsc: 'BSc',
+  beng: 'BEng',
+  bed: 'BEd',
+  bmus: 'BMus',
+  bnurs: 'BNurs',
+  ma: 'MA',
+  meng: 'MEng',
+  msci: 'MSci',
+  mbchb: 'MBChB',
+  llb: 'LLB',
+  bds: 'BDS',
+  bvm: 'BVM&S',
+}
+
+export function formatDegreeType(degreeType: string | null | undefined): string {
+  if (!degreeType) return ''
+  const key = degreeType.trim().toLowerCase().replace(/[\s.&-]+/g, '')
+  if (DEGREE_TYPE_LABELS[key]) return DEGREE_TYPE_LABELS[key]
+  return degreeType.toUpperCase()
+}
+
 export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number

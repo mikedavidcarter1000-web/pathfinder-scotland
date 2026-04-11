@@ -395,7 +395,9 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
                 {course.duration_years && (
                   <div className="flex justify-between">
                     <dt className="text-gray-500">Duration</dt>
-                    <dd className="font-medium text-gray-900">{course.duration_years} years</dd>
+                    <dd className="font-medium text-gray-900">
+                      {course.duration_years} {course.duration_years === 1 ? 'year' : 'years'}
+                    </dd>
                   </div>
                 )}
                 {course.degree_type && degreeInfo && (

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useSubjects, useCurricularAreas, useCareerSectors } from '@/hooks/use-subjects'
 import type { QualificationLevel, SubjectWithArea } from '@/hooks/use-subjects'
 import { getCurricularAreaColour } from '@/lib/constants'
@@ -15,27 +15,18 @@ import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 
 type LevelFilter = 'all' | QualificationLevel
 
-const LEVEL_BUTTONS: Array<{ value: LevelFilter; label: string }> = [
-  { value: 'all', label: 'All' },
-  { value: 'n5', label: 'N4 / N5' },
-  { value: 'higher', label: 'Higher' },
-  { value: 'adv_higher', label: 'Advanced Higher' },
-  { value: 'npa', label: 'NPA' },
-  { value: 'academy', label: 'Academy' },
+const LEVEL_BUTTONS: Array<{ value: LevelFilter; label: string; ariaLabel: string }> = [
+  { value: 'all', label: 'All', ariaLabel: 'Show all subjects' },
+  { value: 'n5', label: 'N4 / N5', ariaLabel: 'Filter by National 4 and 5' },
+  { value: 'higher', label: 'Higher', ariaLabel: 'Filter by Higher' },
+  { value: 'adv_higher', label: 'Advanced Higher', ariaLabel: 'Filter by Advanced Higher' },
+  { value: 'npa', label: 'NPA', ariaLabel: 'Filter by NPA' },
+  { value: 'academy', label: 'Academy', ariaLabel: 'Filter by Academy' },
 ]
 
 function SubjectsPageContent() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const careerSectorParam = searchParams.get('career_sector') || ''
-
-  const goBack = () => {
-    if (typeof window !== 'undefined' && window.history.length > 1) {
-      router.back()
-    } else {
-      router.push('/')
-    }
-  }
 
   const [search, setSearch] = useState('')
   const [areaId, setAreaId] = useState('')
@@ -87,24 +78,11 @@ function SubjectsPageContent() {
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)', borderBottom: '1px solid var(--pf-grey-100)' }}>
         <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
-          <div className="flex items-start justify-between gap-3 mb-5 sm:mb-6">
-            <div className="flex-1 min-w-0">
-              <h1 style={{ marginBottom: '8px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Explore Subjects</h1>
-              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
-                Browse every subject available across Scottish schools — from National 4 to Advanced Higher.
-              </p>
-            </div>
-            <button
-              type="button"
-              aria-label="Close"
-              onClick={goBack}
-              style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
-              className="flex items-center justify-center hover:opacity-80 flex-shrink-0"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+          <div className="mb-5 sm:mb-6">
+            <h1 style={{ marginBottom: '8px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Explore Subjects</h1>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
+              Browse every subject available across Scottish schools — from National 4 to Advanced Higher.
+            </p>
           </div>
 
           {/* Career sector filter banner */}
@@ -157,6 +135,7 @@ function SubjectsPageContent() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search subjects..."
+              aria-label="Search subjects"
               className="pf-input w-full"
               style={{ paddingLeft: '44px' }}
             />
@@ -167,6 +146,7 @@ function SubjectsPageContent() {
             <select
               value={areaId}
               onChange={(e) => setAreaId(e.target.value)}
+              aria-label="Filter by curricular area"
               className="pf-input w-full sm:w-auto"
               style={{ paddingRight: '32px' }}
             >
@@ -193,6 +173,8 @@ function SubjectsPageContent() {
                 <button
                   key={btn.value}
                   onClick={() => setLevel(btn.value)}
+                  aria-label={btn.ariaLabel}
+                  aria-pressed={active}
                   className="transition-colors inline-flex items-center justify-center"
                   style={{
                     padding: '10px 16px',
@@ -216,8 +198,8 @@ function SubjectsPageContent() {
 
       {/* Results */}
       <div className="pf-container" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
-        {/* Result count */}
         <div className="mb-6">
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '4px' }}>Browse Subjects</h2>
           {isLoading ? (
             <div
               className="h-5 w-32 rounded animate-pulse"
@@ -317,84 +299,81 @@ function SubjectCard({
     showRichContent && subject.why_choose ? subject.why_choose : subject.description
 
   return (
-    <Link href={`/subjects/${subject.id}`} className="block group no-underline hover:no-underline">
-      <div
-        className="pf-card-hover h-full flex flex-col"
-        style={{ padding: 0, overflow: 'hidden' }}
-      >
-        <div className={`h-1 bg-gradient-to-r ${areaColour.bar}`} />
-        <div className="p-5 flex-1 flex flex-col">
-          <div className="mb-3">
-            <h3
-              style={{ color: 'var(--pf-grey-900)', fontSize: '1.0625rem', marginBottom: '8px' }}
-              className="line-clamp-2"
-            >
-              {subject.name}
-            </h3>
-            {area && (
-              <span className={`pf-area-badge ${areaColour.bg} ${areaColour.text}`}>
-                {area.name}
+    <Link
+      href={`/subjects/${subject.id}`}
+      className="pf-card-hover no-underline hover:no-underline flex flex-col h-full relative"
+      style={{ padding: 0, overflow: 'hidden' }}
+      aria-label={`View details for ${subject.name}`}
+    >
+      <div className={`h-1 bg-gradient-to-r ${areaColour.bar}`} />
+      <div className="p-5 flex-1 flex flex-col">
+        <div className="mb-3">
+          <h3
+            style={{ color: 'var(--pf-grey-900)', fontSize: '1.0625rem', marginBottom: '8px' }}
+            className="line-clamp-2"
+          >
+            {subject.name}
+          </h3>
+          {area && (
+            <span className={`pf-area-badge ${areaColour.bg} ${areaColour.text}`}>
+              {area.name}
+            </span>
+          )}
+        </div>
+
+        {levels.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {levels.map((lvl) => (
+              <span key={lvl} className="pf-badge-grey">
+                {lvl}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {subject.skills_tags && subject.skills_tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {subject.skills_tags.slice(0, 4).map((tag) => (
+              <span key={tag} className="pf-badge-blue">
+                {tag}
+              </span>
+            ))}
+            {subject.skills_tags.length > 4 && (
+              <span
+                className="self-center"
+                style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
+              >
+                +{subject.skills_tags.length - 4} more
               </span>
             )}
           </div>
+        )}
 
-          {/* Level tags -- grey-100 bg, grey-900 text */}
-          {levels.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-3">
-              {levels.map((lvl) => (
-                <span key={lvl} className="pf-badge-grey">
-                  {lvl}
-                </span>
-              ))}
-            </div>
-          )}
+        {descriptionToShow && (
+          <p
+            className="line-clamp-2 mb-4"
+            style={{ color: 'var(--pf-grey-600)', fontSize: '0.875rem' }}
+          >
+            {descriptionToShow}
+          </p>
+        )}
 
-          {/* Skills tags -- blue-100 bg, blue-700 text */}
-          {subject.skills_tags && subject.skills_tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-3">
-              {subject.skills_tags.slice(0, 4).map((tag) => (
-                <span key={tag} className="pf-badge-blue">
-                  {tag}
-                </span>
-              ))}
-              {subject.skills_tags.length > 4 && (
-                <span
-                  className="self-center"
-                  style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
-                >
-                  +{subject.skills_tags.length - 4} more
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* Description */}
-          {descriptionToShow && (
-            <p
-              className="line-clamp-2 mb-4"
-              style={{ color: 'var(--pf-grey-600)', fontSize: '0.875rem' }}
-            >
-              {descriptionToShow}
-            </p>
-          )}
-
-          <div className="mt-auto">
-            <span
-              className="flex w-full items-center justify-center"
-              style={{
-                minHeight: '44px',
-                padding: '10px',
-                fontSize: '0.875rem',
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 600,
-                color: 'var(--pf-blue-700)',
-                backgroundColor: 'var(--pf-blue-100)',
-                borderRadius: '6px',
-              }}
-            >
-              View details
-            </span>
-          </div>
+        <div className="mt-auto">
+          <span
+            className="flex w-full items-center justify-center"
+            style={{
+              minHeight: '44px',
+              padding: '10px',
+              fontSize: '0.875rem',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              color: 'var(--pf-blue-700)',
+              backgroundColor: 'var(--pf-blue-100)',
+              borderRadius: '6px',
+            }}
+          >
+            View details
+          </span>
         </div>
       </div>
     </Link>

@@ -146,9 +146,9 @@ export function ProfileSummary() {
     <div className="pf-card">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h3 style={{ fontSize: '1.125rem', margin: 0 }}>
+          <h2 style={{ fontSize: '1.125rem', margin: 0 }}>
             {student.first_name} {student.last_name}
-          </h3>
+          </h2>
           <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.875rem' }}>
             {schoolStageInfo?.label || student.school_stage}
             {student.school_name && ` at ${student.school_name}`}

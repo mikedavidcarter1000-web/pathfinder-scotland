@@ -11,6 +11,7 @@ interface SearchBarProps {
   showSuggestions?: boolean
   onSearch?: (query: string) => void
   className?: string
+  ariaLabel?: string
 }
 
 export function SearchBar({
@@ -19,6 +20,7 @@ export function SearchBar({
   showSuggestions = true,
   onSearch,
   className = '',
+  ariaLabel = 'Search',
 }: SearchBarProps) {
   const router = useRouter()
   const [query, setQuery] = useState('')
@@ -88,6 +90,7 @@ export function SearchBar({
             onFocus={handleFocus}
             placeholder={placeholder}
             autoFocus={autoFocus}
+            aria-label={ariaLabel}
             className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
           />
           <svg

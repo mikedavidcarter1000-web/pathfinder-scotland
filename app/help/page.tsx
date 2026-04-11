@@ -131,6 +131,7 @@ export default function HelpPage() {
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 py-12">
         {/* Quick Links */}
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Quick links</h2>
         <div className="grid sm:grid-cols-3 gap-4 mb-12">
           {[
             {
