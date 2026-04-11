@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { getArticles } from '@/lib/blog'
 
 const SITE_URL = 'https://pathfinder-scotland.vercel.app'
 
@@ -80,6 +81,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      url: `${SITE_URL}/blog`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
       url: `${SITE_URL}/demo`,
       lastModified: now,
       changeFrequency: 'monthly',
@@ -122,6 +129,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     },
   ]
+
+  // Blog articles read from the local content/blog directory at build time.
+  const blogRoutes: MetadataRoute.Sitemap = getArticles().map((a) => ({
+    url: `${SITE_URL}/blog/${a.slug}`,
+    lastModified: a.updated ? new Date(a.updated) : now,
+    changeFrequency: 'monthly',
+    priority: 0.7,
+  }))
 
   // Dynamic routes: pull IDs from Supabase. If the database read fails
   // (e.g. at build time without credentials), fall back to static routes
@@ -166,12 +181,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [
       ...staticRoutes,
+      ...blogRoutes,
       ...subjectRoutes,
       ...universityRoutes,
       ...courseRoutes,
       ...careerSectorRoutes,
     ]
   } catch {
-    return staticRoutes
+    return [...staticRoutes, ...blogRoutes]
   }
 }

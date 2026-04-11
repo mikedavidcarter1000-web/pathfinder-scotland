@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { FaqAccordion, type FaqItem } from '@/components/ui/faq-accordion'
 import { SearchBar } from '@/components/ui/search-bar'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { getArticles, categoryColour, formatDisplayDate, type BlogArticle } from '@/lib/blog'
 
 function buildFaqItems(universityCount: number): FaqItem[] {
   const uniPhrase =
@@ -95,6 +96,7 @@ async function getHomepageStats() {
 
 export default async function HomePage() {
   const { universities, courseCount } = await getHomepageStats()
+  const featuredArticles = getArticles().filter((a) => a.featured).slice(0, 3)
   const universityCount = universities.length
   const unisLabel = universityCount > 0 ? `All ${universityCount} Scottish universities` : 'Scottish universities'
   const unisTrustLabel =
@@ -543,6 +545,50 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Latest from the blog -- blue-50 */}
+      {featuredArticles.length > 0 && (
+        <section className="pf-section pf-section-blue">
+          <div className="pf-container">
+            <div
+              className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
+              style={{ marginBottom: '40px' }}
+            >
+              <div>
+                <span className="pf-badge-blue inline-flex" style={{ marginBottom: '12px' }}>
+                  Guides &amp; Articles
+                </span>
+                <h2 style={{ marginBottom: '8px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
+                  Latest from the blog
+                </h2>
+                <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem', maxWidth: '560px', margin: 0 }}>
+                  Expert guidance on subject choices, university pathways, and careers in Scotland.
+                </p>
+              </div>
+              <Link
+                href="/blog"
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  color: 'var(--pf-blue-700)',
+                  fontSize: '0.9375rem',
+                }}
+              >
+                Read more articles →
+              </Link>
+            </div>
+
+            <div
+              className="grid gap-6"
+              style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}
+            >
+              {featuredArticles.map((article) => (
+                <FeaturedBlogCard key={article.slug} article={article} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* FAQ Section -- white */}
       <section className="pf-section pf-section-white">
         <div className="pf-container">
@@ -785,5 +831,69 @@ function PathwayIllustration() {
         <circle cx="310" cy="265" r="6" fill="#F59E0B" />
       </g>
     </svg>
+  )
+}
+
+function FeaturedBlogCard({ article }: { article: BlogArticle }) {
+  const { bg, fg } = categoryColour(article.category)
+  return (
+    <Link
+      href={`/blog/${article.slug}`}
+      className="pf-card-hover no-underline hover:no-underline flex flex-col h-full"
+      style={{ padding: '24px' }}
+      aria-label={`${article.title} — read article`}
+    >
+      <span
+        className="inline-flex items-center"
+        style={{
+          alignSelf: 'flex-start',
+          backgroundColor: bg,
+          color: fg,
+          borderRadius: '9999px',
+          padding: '4px 12px',
+          fontSize: '0.75rem',
+          fontWeight: 600,
+          fontFamily: "'Space Grotesk', sans-serif",
+          marginBottom: '16px',
+        }}
+      >
+        {article.category}
+      </span>
+      <h3
+        style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          fontSize: '1.1875rem',
+          color: 'var(--pf-grey-900)',
+          marginBottom: '12px',
+          lineHeight: 1.3,
+        }}
+      >
+        {article.title}
+      </h3>
+      <p
+        style={{
+          color: 'var(--pf-grey-600)',
+          fontSize: '0.9375rem',
+          lineHeight: 1.6,
+          marginBottom: '20px',
+          flex: 1,
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+        }}
+      >
+        {article.description}
+      </p>
+      <div
+        className="flex items-center gap-3"
+        style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}
+      >
+        <time dateTime={article.date}>{formatDisplayDate(article.date)}</time>
+        <span aria-hidden="true">•</span>
+        <span>{article.readingTime} min read</span>
+      </div>
+    </Link>
   )
 }

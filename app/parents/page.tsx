@@ -357,6 +357,86 @@ function GuideSection() {
           </div>
         </div>
 
+        {/* Recommended reading */}
+        <div style={{ marginBottom: '40px' }}>
+          <h3 style={{ marginBottom: '16px' }}>Recommended reading</h3>
+          <div
+            className="grid gap-4"
+            style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}
+          >
+            <Link
+              href="/blog/parents-guide-subject-choices"
+              className="pf-card-hover no-underline hover:no-underline"
+              style={{ padding: '20px', borderTop: '3px solid var(--pf-blue-700)' }}
+            >
+              <span
+                style={{
+                  display: 'block',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.6875rem',
+                  color: 'var(--pf-blue-700)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  marginBottom: '6px',
+                }}
+              >
+                Guide
+              </span>
+              <h4
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                  color: 'var(--pf-grey-900)',
+                  marginBottom: '6px',
+                  lineHeight: 1.3,
+                }}
+              >
+                A parent\u2019s guide to Scottish subject choices
+              </h4>
+              <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', margin: 0 }}>
+                Timeline, the column system, common worries, and how to support without pressuring.
+              </p>
+            </Link>
+            <Link
+              href="/blog/widening-access-guide"
+              className="pf-card-hover no-underline hover:no-underline"
+              style={{ padding: '20px', borderTop: '3px solid var(--pf-amber-500)' }}
+            >
+              <span
+                style={{
+                  display: 'block',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.6875rem',
+                  color: '#B45309',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  marginBottom: '6px',
+                }}
+              >
+                Guide
+              </span>
+              <h4
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                  color: 'var(--pf-grey-900)',
+                  marginBottom: '6px',
+                  lineHeight: 1.3,
+                }}
+              >
+                What is widening access and do I qualify?
+              </h4>
+              <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', margin: 0 }}>
+                Plain-language explanation of SIMD, care experienced, young carers, and named programmes.
+              </p>
+            </Link>
+          </div>
+        </div>
+
         {/* c) How Pathfinder helps */}
         <div>
           <h3 style={{ marginBottom: '16px' }}>How Pathfinder helps</h3>

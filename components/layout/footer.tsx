@@ -15,6 +15,7 @@ export function Footer() {
       { label: 'Universities', href: '/universities' },
       { label: 'Widening Access', href: '/widening-access' },
       { label: 'For Parents', href: '/parents' },
+      { label: 'Guides & Articles', href: '/blog' },
     ],
     schools: [
       { label: 'Demo', href: '/demo' },

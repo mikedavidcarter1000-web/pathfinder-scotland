@@ -120,7 +120,117 @@ export default function DiscoverPage() {
           </p>
         </div>
       </section>
+
+      {/* Read our guides */}
+      <section
+        style={{
+          backgroundColor: 'var(--pf-white)',
+          paddingTop: '64px',
+          paddingBottom: '64px',
+          borderTop: '1px solid var(--pf-grey-300)',
+        }}
+      >
+        <div className="pf-container">
+          <div
+            className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
+            style={{ marginBottom: '32px' }}
+          >
+            <div>
+              <span className="pf-badge-blue inline-flex" style={{ marginBottom: '12px' }}>
+                Read our guides
+              </span>
+              <h2 style={{ marginBottom: '8px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
+                Not sure where to start?
+              </h2>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '1rem', margin: 0, maxWidth: '560px' }}>
+                Plain-language guides on subject choices, university pathways, and careers.
+              </p>
+            </div>
+            <Link
+              href="/blog"
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                color: 'var(--pf-blue-700)',
+                fontSize: '0.9375rem',
+              }}
+            >
+              All articles →
+            </Link>
+          </div>
+
+          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
+            <DiscoverGuideCard
+              href="/blog/how-to-choose-s3-subjects"
+              eyebrow="Subject Choices"
+              title="How to choose your S3 subjects"
+              description="A complete guide to the S2 to S3 transition, the column system, and common mistakes to avoid."
+            />
+            <DiscoverGuideCard
+              href="/blog/highers-guide"
+              eyebrow="University"
+              title="Highers: how many do you need?"
+              description="Which Highers carry the most weight, grade requirements by university, and crash Higher pros and cons."
+            />
+            <DiscoverGuideCard
+              href="/blog/ai-changing-careers"
+              eyebrow="AI & Future"
+              title="How AI is changing careers"
+              description="An honest, balanced take on what AI means for Scottish students choosing their path."
+            />
+          </div>
+        </div>
+      </section>
     </div>
+  )
+}
+
+function DiscoverGuideCard({
+  href,
+  eyebrow,
+  title,
+  description,
+}: {
+  href: string
+  eyebrow: string
+  title: string
+  description: string
+}) {
+  return (
+    <Link
+      href={href}
+      className="pf-card-hover no-underline hover:no-underline flex flex-col h-full"
+      style={{ padding: '20px' }}
+    >
+      <span
+        style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          fontSize: '0.6875rem',
+          color: 'var(--pf-blue-700)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.06em',
+          marginBottom: '8px',
+        }}
+      >
+        {eyebrow}
+      </span>
+      <h3
+        style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          fontSize: '1rem',
+          color: 'var(--pf-grey-900)',
+          marginBottom: '8px',
+          lineHeight: 1.3,
+        }}
+      >
+        {title}
+      </h3>
+      <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', margin: 0, lineHeight: 1.5 }}>
+        {description}
+      </p>
+    </Link>
   )
 }
 

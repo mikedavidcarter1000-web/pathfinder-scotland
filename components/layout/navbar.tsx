@@ -36,6 +36,7 @@ export function Navbar() {
     { name: 'Universities', href: '/universities', auth: false },
     { name: 'Widening Access', href: '/widening-access', auth: false },
     { name: 'Parents', href: '/parents', auth: false, parentOnly: false, hideForParents: true },
+    { name: 'Blog', href: '/blog', auth: false },
     { name: 'Saved', href: '/saved', auth: true, studentOnly: true },
     { name: 'Compare', href: '/compare', auth: true, studentOnly: true },
   ] as const
