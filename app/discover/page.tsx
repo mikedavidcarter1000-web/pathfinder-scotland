@@ -40,7 +40,7 @@ export default function DiscoverPage() {
       {/* Dual-path cards */}
       <section style={{ paddingBottom: '80px' }}>
         <div className="pf-container">
-          <div className="grid gap-6 md:grid-cols-2 md:gap-8" style={{ maxWidth: '960px', margin: '0 auto' }}>
+          <div className="grid gap-6 md:grid-cols-3 md:gap-6" style={{ maxWidth: '1100px', margin: '0 auto' }}>
             <PathCard
               href="/discover/career-search"
               eyebrow="Path 1"
@@ -79,6 +79,28 @@ export default function DiscoverPage() {
                   aria-hidden="true"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75l-5.25 2.25v11.25l5.25-2.25m0-11.25l6 2.25m-6-2.25v11.25m6-9l5.25-2.25v11.25L15 20.25m0-11.25v11.25m0-11.25l-6-2.25m6 13.5l-6-2.25" />
+                </svg>
+              }
+            />
+
+            <PathCard
+              href="/simulator"
+              eyebrow="Path 3"
+              title="Compare subject combinations"
+              description="See how different subject combinations open or close university courses and career sectors."
+              cta="Try the simulator"
+              icon={
+                <svg
+                  className="w-10 h-10"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.6}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v18h18" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7 14l3-3 4 4 6-6" />
+                  <circle cx="20" cy="9" r="1.2" fill="currentColor" stroke="none" />
                 </svg>
               }
             />

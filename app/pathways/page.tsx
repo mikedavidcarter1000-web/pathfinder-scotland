@@ -254,6 +254,43 @@ export default function PathwaysPage() {
           <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
             Explore how different subject combinations shape your qualifications and future career options.
           </p>
+          <div
+            className="flex items-center gap-2 mt-4"
+            style={{
+              padding: '10px 14px',
+              backgroundColor: 'var(--pf-blue-50)',
+              borderRadius: '8px',
+              borderLeft: '3px solid var(--pf-blue-700)',
+              maxWidth: '560px',
+            }}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--pf-blue-700)"
+              strokeWidth="2"
+              aria-hidden="true"
+              style={{ flexShrink: 0 }}
+            >
+              <path d="M3 3v18h18" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M7 14l3-3 4 4 6-6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)', margin: 0 }}>
+              Want to compare different combinations?{' '}
+              <Link
+                href="/simulator"
+                style={{
+                  color: 'var(--pf-blue-700)',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                }}
+              >
+                Try the simulator →
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
 

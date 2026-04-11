@@ -21,6 +21,7 @@ export function Navbar() {
     { name: 'Dashboard', href: '/dashboard', auth: true },
     { name: 'Subjects', href: '/subjects', auth: false },
     { name: 'Plan Choices', href: '/pathways', auth: false },
+    { name: 'Simulator', href: '/simulator', auth: false },
     { name: 'Courses', href: '/courses', auth: false },
     { name: 'Universities', href: '/universities', auth: false },
     { name: 'Widening Access', href: '/widening-access', auth: false },
