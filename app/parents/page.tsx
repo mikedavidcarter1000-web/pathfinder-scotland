@@ -360,6 +360,19 @@ function GuideSection() {
             >
               Read full widening access details \u2192
             </Link>
+            <div style={{ marginTop: '12px' }}>
+              <Link
+                href="/benefits"
+                style={{
+                  color: 'var(--pf-blue-700)',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.9375rem',
+                }}
+              >
+                Find out what your child is entitled to \u2192
+              </Link>
+            </div>
           </div>
         </div>
 

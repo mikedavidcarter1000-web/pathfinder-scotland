@@ -38,6 +38,7 @@ export function Navbar() {
     { name: 'Universities', href: '/universities', auth: false },
     { name: 'Cost calculator', href: '/tools/roi-calculator', auth: false },
     { name: 'Widening Access', href: '/widening-access', auth: false },
+    { name: 'Benefits', href: '/benefits', auth: false },
     { name: 'Parents', href: '/parents', auth: false, parentOnly: false, hideForParents: true },
     { name: 'Blog', href: '/blog', auth: false },
     { name: 'Saved', href: '/saved', auth: true, studentOnly: true },

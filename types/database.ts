@@ -53,6 +53,177 @@ export type Database = {
         }
         Relationships: []
       }
+      benefit_categories: {
+        Row: {
+          description: string | null
+          display_order: number | null
+          icon: string | null
+          id: string
+          is_government: boolean | null
+          name: string
+          slug: string
+        }
+        Insert: {
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_government?: boolean | null
+          name: string
+          slug: string
+        }
+        Update: {
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_government?: boolean | null
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      benefit_clicks: {
+        Row: {
+          benefit_id: string
+          clicked_at: string | null
+          id: string
+          is_affiliate: boolean | null
+          source_page: string | null
+          student_id: string | null
+        }
+        Insert: {
+          benefit_id: string
+          clicked_at?: string | null
+          id?: string
+          is_affiliate?: boolean | null
+          source_page?: string | null
+          student_id?: string | null
+        }
+        Update: {
+          benefit_id?: string
+          clicked_at?: string | null
+          id?: string
+          is_affiliate?: boolean | null
+          source_page?: string | null
+          student_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "benefit_clicks_benefit_id_fkey"
+            columns: ["benefit_id"]
+            isOneToOne: false
+            referencedRelation: "student_benefits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benefit_clicks_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_benefits: {
+        Row: {
+          access_method: string | null
+          access_platform: string | null
+          affiliate_commission: string | null
+          affiliate_cookie_days: number | null
+          affiliate_network: string | null
+          affiliate_url: string | null
+          category: string
+          created_at: string | null
+          description: string
+          discount_type: string | null
+          discount_value: string
+          eligibility_college: boolean | null
+          eligibility_s1_s4: boolean | null
+          eligibility_s5_s6: boolean | null
+          eligibility_university: boolean | null
+          id: string
+          is_active: boolean | null
+          is_care_experienced_only: boolean | null
+          is_government_scheme: boolean | null
+          is_means_tested: boolean | null
+          is_scotland_only: boolean | null
+          max_age: number | null
+          min_age: number | null
+          name: string
+          priority_score: number | null
+          provider: string
+          seasonal_notes: string | null
+          short_description: string | null
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          access_method?: string | null
+          access_platform?: string | null
+          affiliate_commission?: string | null
+          affiliate_cookie_days?: number | null
+          affiliate_network?: string | null
+          affiliate_url?: string | null
+          category: string
+          created_at?: string | null
+          description: string
+          discount_type?: string | null
+          discount_value: string
+          eligibility_college?: boolean | null
+          eligibility_s1_s4?: boolean | null
+          eligibility_s5_s6?: boolean | null
+          eligibility_university?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          is_care_experienced_only?: boolean | null
+          is_government_scheme?: boolean | null
+          is_means_tested?: boolean | null
+          is_scotland_only?: boolean | null
+          max_age?: number | null
+          min_age?: number | null
+          name: string
+          priority_score?: number | null
+          provider: string
+          seasonal_notes?: string | null
+          short_description?: string | null
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          access_method?: string | null
+          access_platform?: string | null
+          affiliate_commission?: string | null
+          affiliate_cookie_days?: number | null
+          affiliate_network?: string | null
+          affiliate_url?: string | null
+          category?: string
+          created_at?: string | null
+          description?: string
+          discount_type?: string | null
+          discount_value?: string
+          eligibility_college?: boolean | null
+          eligibility_s1_s4?: boolean | null
+          eligibility_s5_s6?: boolean | null
+          eligibility_university?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          is_care_experienced_only?: boolean | null
+          is_government_scheme?: boolean | null
+          is_means_tested?: boolean | null
+          is_scotland_only?: boolean | null
+          max_age?: number | null
+          min_age?: number | null
+          name?: string
+          priority_score?: number | null
+          provider?: string
+          seasonal_notes?: string | null
+          short_description?: string | null
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
       career_role_subjects: {
         Row: {
           career_role_id: string

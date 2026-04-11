@@ -890,18 +890,27 @@ export default function WideningAccessPage() {
               Support, advocacy, and independent advice for care experienced students is available
               from <strong>Who Cares? Scotland</strong>.
             </p>
-            <a
-              href="https://www.whocaresscotland.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="pf-btn-secondary pf-btn-sm"
-              style={{ display: 'inline-flex' }}
-            >
-              Visit Who Cares? Scotland
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </a>
+            <div className="flex items-center justify-center gap-3 flex-wrap">
+              <a
+                href="https://www.whocaresscotland.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pf-btn-secondary pf-btn-sm"
+                style={{ display: 'inline-flex' }}
+              >
+                Visit Who Cares? Scotland
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              <Link
+                href="/benefits?filter=care-experienced"
+                className="pf-btn-secondary pf-btn-sm"
+                style={{ display: 'inline-flex' }}
+              >
+                Care-experienced benefits →
+              </Link>
+            </div>
           </div>
         </div>
       </section>

@@ -14,6 +14,7 @@ import {
   WideningAccessCard,
   ProgressChecklist,
   ParentDashboard,
+  BenefitsCard,
 } from '@/components/dashboard'
 import { ShareWithParentButton } from '@/components/dashboard/share-with-parent-button'
 import { StatsCard, StatsGrid } from '@/components/ui/stats-card'
@@ -236,6 +237,9 @@ export default function DashboardPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           <ProfileSummary />
+
+          {/* Benefits you might be missing */}
+          <BenefitsCard />
 
           {/* Quick Actions */}
           <div className="pf-card">

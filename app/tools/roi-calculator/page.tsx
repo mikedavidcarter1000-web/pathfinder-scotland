@@ -1026,6 +1026,12 @@ function WideningAccessBanner() {
         >
           Scholarships & bursaries →
         </Link>
+        <Link
+          href="/benefits?category=funding"
+          style={{ color: 'var(--pf-blue-700)', fontWeight: 600, fontSize: '0.875rem' }}
+        >
+          See all financial support available →
+        </Link>
       </div>
     </div>
   )
