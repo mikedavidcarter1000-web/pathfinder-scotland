@@ -89,21 +89,104 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
     )
   }
 
-  const typeInfo = university.type
-    ? UNIVERSITY_TYPES[university.type as keyof typeof UNIVERSITY_TYPES]
-    : null
+  // Prefer the newer `university_type` text column ("established" tier) over the
+  // original enum column which still uses "traditional".
+  const typeKey = (university.university_type ?? university.type) as
+    | keyof typeof UNIVERSITY_TYPES
+    | null
+  const typeInfo = typeKey ? UNIVERSITY_TYPES[typeKey] ?? null : null
 
   const typeColors: Record<string, string> = {
     ancient: 'bg-[var(--pf-blue-100)] text-[var(--pf-blue-700)]',
-    traditional: 'bg-blue-100 text-blue-700',
-    modern: 'bg-green-100 text-green-700',
-    specialist: 'bg-orange-100 text-orange-700',
+    traditional: 'bg-[var(--pf-blue-100)] text-[var(--pf-blue-700)]',
+    established: 'bg-[var(--pf-blue-100)] text-[var(--pf-blue-700)]',
+    modern: 'bg-[rgba(16,185,129,0.12)] text-[var(--pf-green-500)]',
+    specialist: 'bg-[rgba(245,158,11,0.12)] text-[#B45309]',
   }
 
   const wideningAccessInfo = university.widening_access_info as {
     programs?: string[]
     eligibility_criteria?: string[]
   } | null
+
+  // Courses at this university that publish adjusted WA offers. Used to build
+  // the side-by-side standard vs WA grade comparison table.
+  const coursesWithWa: Array<{
+    id: string
+    name: string
+    standard: string | null
+    adjusted: string | null
+    category: string | null
+  }> = []
+  if (courses) {
+    for (const c of courses) {
+      const wa = c.widening_access_requirements as
+        | Record<string, { highers?: string } | string | undefined>
+        | null
+      if (!wa || typeof wa !== 'object') continue
+      const entry = c.entry_requirements as { highers?: string } | null
+      const standardOffer = entry?.highers ?? null
+
+      // Pick the most favourable adjusted offer available.
+      const simd20 =
+        typeof wa.simd20 === 'object' && wa.simd20
+          ? (wa.simd20 as { highers?: string }).highers
+          : typeof wa.simd20_offer === 'string'
+          ? wa.simd20_offer
+          : undefined
+      const simd40 =
+        typeof wa.simd40 === 'object' && wa.simd40
+          ? (wa.simd40 as { highers?: string }).highers
+          : typeof wa.simd40_offer === 'string'
+          ? wa.simd40_offer
+          : undefined
+      const care =
+        typeof wa.care_experienced === 'object' && wa.care_experienced
+          ? (wa.care_experienced as { highers?: string }).highers
+          : typeof wa.care_experienced_offer === 'string'
+          ? wa.care_experienced_offer
+          : undefined
+      const general =
+        typeof wa.wa_minimum === 'object' && wa.wa_minimum
+          ? (wa.wa_minimum as { highers?: string }).highers
+          : typeof wa.general_offer === 'string'
+          ? wa.general_offer
+          : undefined
+
+      const adjusted = simd20 ?? care ?? simd40 ?? general ?? null
+      const label = simd20
+        ? 'SIMD20'
+        : care
+        ? 'Care experienced'
+        : simd40
+        ? 'SIMD40'
+        : general
+        ? 'WA minimum'
+        : null
+
+      if (adjusted) {
+        coursesWithWa.push({
+          id: c.id,
+          name: c.name,
+          standard: standardOffer,
+          adjusted,
+          category: label,
+        })
+      }
+    }
+  }
+  const waCourseExamples = coursesWithWa.slice(0, 5)
+
+  const hasAnyWaData = Boolean(
+    university.wa_programme_name ||
+      university.wa_programme_description ||
+      university.care_experienced_guarantee ||
+      university.wa_grade_reduction ||
+      university.wa_bursary_info ||
+      university.articulation_info ||
+      (university.shep_programmes && university.shep_programmes.length > 0) ||
+      waCourseExamples.length > 0
+  )
 
   return (
     <div className="min-h-screen bg-[var(--pf-blue-50)]">
@@ -148,18 +231,21 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mt-4">
-            {typeInfo && (
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${typeColors[university.type!] || 'bg-[var(--pf-grey-100)] text-[var(--pf-grey-900)]'}`}>
+            {typeInfo && typeKey && (
+              <span
+                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${typeColors[typeKey] || 'bg-[var(--pf-grey-100)] text-[var(--pf-grey-900)]'}`}
+                title={typeInfo.description}
+              >
                 {typeInfo.label}
               </span>
             )}
             {university.russell_group && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[rgba(245,158,11,0.12)] text-[var(--pf-amber-500)]">
+              <span className="pf-badge-amber">
                 Russell Group
               </span>
             )}
             {university.founded_year && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--pf-grey-100)] text-[var(--pf-grey-900)]">
+              <span className="pf-badge-grey">
                 Est. {university.founded_year}
               </span>
             )}
@@ -180,40 +266,13 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
               </section>
             )}
 
-            {/* Widening Access */}
-            {wideningAccessInfo && (wideningAccessInfo.programs || wideningAccessInfo.eligibility_criteria) && (
-              <section>
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Widening Access</h2>
-                <div className="bg-[var(--pf-blue-50)] border border-[var(--pf-blue-100)] rounded-xl p-6">
-                  {wideningAccessInfo.programs && wideningAccessInfo.programs.length > 0 && (
-                    <div className="mb-4">
-                      <h3 className="font-medium text-[var(--pf-blue-900)] mb-2">Access Programmes</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {wideningAccessInfo.programs.map((program) => (
-                          <span key={program} className="px-3 py-1 bg-[var(--pf-blue-100)] text-[var(--pf-blue-700)] text-sm rounded-full">
-                            {program}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {wideningAccessInfo.eligibility_criteria && wideningAccessInfo.eligibility_criteria.length > 0 && (
-                    <div>
-                      <h3 className="font-medium text-[var(--pf-blue-900)] mb-2">Eligibility Criteria</h3>
-                      <ul className="space-y-1">
-                        {wideningAccessInfo.eligibility_criteria.map((criteria) => (
-                          <li key={criteria} className="text-[var(--pf-blue-700)] text-sm flex items-center gap-2">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            {criteria}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </section>
+            {/* Widening Access — comprehensive section */}
+            {hasAnyWaData && (
+              <WideningAccessDetailSection
+                university={university}
+                waCourseExamples={waCourseExamples}
+                legacyInfo={wideningAccessInfo}
+              />
             )}
 
             {/* Courses */}
@@ -334,6 +393,507 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
         </div>
       </div>
     </div>
+  )
+}
+
+type WaCourseExample = {
+  id: string
+  name: string
+  standard: string | null
+  adjusted: string | null
+  category: string | null
+}
+
+type LegacyWaInfo = {
+  programs?: string[]
+  eligibility_criteria?: string[]
+} | null
+
+function WideningAccessDetailSection({
+  university,
+  waCourseExamples,
+  legacyInfo,
+}: {
+  university: University
+  waCourseExamples: WaCourseExample[]
+  legacyInfo: LegacyWaInfo
+}) {
+  const shepList = (university.shep_programmes ?? []).filter(Boolean)
+
+  return (
+    <section aria-labelledby="wa-section-title">
+      <div className="flex items-center gap-3 mb-4">
+        <span className="pf-badge-amber">Widening Access</span>
+        {university.wa_pre_entry_required && (
+          <span
+            className="pf-badge"
+            style={{
+              backgroundColor: 'rgba(245, 158, 11, 0.18)',
+              color: '#B45309',
+              fontWeight: 600,
+            }}
+          >
+            Pre-entry programme required
+          </span>
+        )}
+      </div>
+      <h2
+        id="wa-section-title"
+        className="mb-4"
+        style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          fontSize: '1.5rem',
+          color: 'var(--pf-grey-900)',
+        }}
+      >
+        How {university.name} supports widening access
+      </h2>
+
+      {/* Programme card */}
+      {(university.wa_programme_name || university.wa_programme_description) && (
+        <div
+          className="pf-card mb-4"
+          style={{ borderLeft: '4px solid var(--pf-amber-500)' }}
+        >
+          {university.wa_programme_name && (
+            <h3
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '1.125rem',
+                color: 'var(--pf-grey-900)',
+                margin: 0,
+                marginBottom: '8px',
+              }}
+            >
+              {university.wa_programme_name}
+            </h3>
+          )}
+          {university.wa_programme_description && (
+            <p
+              style={{
+                fontSize: '0.9375rem',
+                color: 'var(--pf-grey-600)',
+                lineHeight: 1.6,
+                margin: 0,
+              }}
+            >
+              {university.wa_programme_description}
+            </p>
+          )}
+
+          {university.wa_pre_entry_required && (
+            <div
+              className="mt-4 rounded-lg"
+              style={{
+                padding: '12px 16px',
+                backgroundColor: 'rgba(245, 158, 11, 0.08)',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
+                borderLeft: '3px solid var(--pf-amber-500)',
+              }}
+            >
+              <p
+                style={{
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
+                  color: '#B45309',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  margin: 0,
+                  marginBottom: '4px',
+                }}
+              >
+                Pre-entry programme required
+              </p>
+              <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)', margin: 0, lineHeight: 1.55 }}>
+                This university requires completion of a pre-entry programme for adjusted WA offers.
+                {university.wa_pre_entry_details ? ` ${university.wa_pre_entry_details}` : ''}
+              </p>
+            </div>
+          )}
+
+          {university.wa_programme_url && (
+            <a
+              href={university.wa_programme_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 mt-4"
+              style={{
+                color: 'var(--pf-blue-700)',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.875rem',
+              }}
+            >
+              Learn more on the university website
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          )}
+        </div>
+      )}
+
+      {/* Care experienced guarantee — most prominent callout */}
+      {university.care_experienced_guarantee && (
+        <div
+          className="rounded-lg mb-4"
+          style={{
+            padding: '20px 24px',
+            backgroundColor: 'rgba(16, 185, 129, 0.08)',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            borderLeft: '4px solid var(--pf-green-500)',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+          }}
+        >
+          <div className="flex items-start gap-3">
+            <div
+              className="flex-shrink-0 rounded-full flex items-center justify-center"
+              style={{
+                width: '40px',
+                height: '40px',
+                backgroundColor: 'rgba(16, 185, 129, 0.16)',
+                color: 'var(--pf-green-500)',
+              }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '1.0625rem',
+                  color: '#047857',
+                  margin: 0,
+                  marginBottom: '6px',
+                }}
+              >
+                Care-Experienced Guarantee
+              </h3>
+              <p
+                style={{
+                  fontSize: '0.9375rem',
+                  color: 'var(--pf-grey-900)',
+                  lineHeight: 1.6,
+                  margin: 0,
+                }}
+              >
+                {university.care_experienced_guarantee}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Grade reduction summary + course comparison table */}
+      {(university.wa_grade_reduction || waCourseExamples.length > 0) && (
+        <div className="pf-card mb-4">
+          <h3
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              fontSize: '1.0625rem',
+              color: 'var(--pf-grey-900)',
+              margin: 0,
+              marginBottom: '12px',
+            }}
+          >
+            Grade reductions at a glance
+          </h3>
+
+          {university.wa_grade_reduction && (
+            <p
+              style={{
+                fontSize: '0.9375rem',
+                color: 'var(--pf-grey-600)',
+                lineHeight: 1.6,
+                margin: 0,
+                marginBottom: waCourseExamples.length > 0 ? '16px' : 0,
+              }}
+            >
+              {university.wa_grade_reduction}
+            </p>
+          )}
+
+          {waCourseExamples.length > 0 && (
+            <div
+              className="rounded-lg overflow-hidden"
+              style={{ border: '1px solid var(--pf-grey-300)' }}
+            >
+              <div
+                className="grid"
+                style={{
+                  gridTemplateColumns: '2fr 1fr 1fr',
+                  backgroundColor: 'var(--pf-grey-100)',
+                  padding: '10px 14px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  color: 'var(--pf-grey-600)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                <span>Course</span>
+                <span className="text-center">Standard</span>
+                <span className="text-center">WA offer</span>
+              </div>
+              {waCourseExamples.map((ex, idx) => (
+                <Link
+                  key={ex.id}
+                  href={`/courses/${ex.id}`}
+                  className="no-underline hover:no-underline grid"
+                  style={{
+                    gridTemplateColumns: '2fr 1fr 1fr',
+                    padding: '12px 14px',
+                    borderTop: idx === 0 ? 'none' : '1px solid var(--pf-grey-300)',
+                    alignItems: 'center',
+                    backgroundColor:
+                      idx % 2 === 0 ? 'var(--pf-white)' : 'var(--pf-blue-50)',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.875rem',
+                      color: 'var(--pf-grey-900)',
+                      fontWeight: 500,
+                    }}
+                  >
+                    {ex.name}
+                    {ex.category && (
+                      <span
+                        className="ml-2"
+                        style={{
+                          fontSize: '0.6875rem',
+                          color: 'var(--pf-grey-600)',
+                          fontWeight: 500,
+                        }}
+                      >
+                        · {ex.category}
+                      </span>
+                    )}
+                  </span>
+                  <span
+                    className="pf-data-number text-center"
+                    style={{
+                      fontSize: '0.9375rem',
+                      color: 'var(--pf-grey-900)',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {ex.standard ?? '—'}
+                  </span>
+                  <span
+                    className="pf-data-number text-center"
+                    style={{
+                      fontSize: '0.9375rem',
+                      color: 'var(--pf-green-500)',
+                      fontWeight: 700,
+                    }}
+                  >
+                    {ex.adjusted}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Bursary / additional support */}
+      {university.wa_bursary_info && (
+        <div
+          className="pf-card mb-4"
+          style={{ borderLeft: '4px solid var(--pf-blue-700)' }}
+        >
+          <h3
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              fontSize: '1.0625rem',
+              color: 'var(--pf-grey-900)',
+              margin: 0,
+              marginBottom: '8px',
+            }}
+          >
+            Additional Support
+          </h3>
+          <p
+            style={{
+              fontSize: '0.9375rem',
+              color: 'var(--pf-grey-600)',
+              lineHeight: 1.6,
+              margin: 0,
+            }}
+          >
+            {university.wa_bursary_info}
+          </p>
+        </div>
+      )}
+
+      {/* Articulation routes */}
+      {university.articulation_info && (
+        <div className="pf-card mb-4">
+          <div className="flex items-start gap-3 mb-2">
+            <div
+              className="flex-shrink-0 rounded-lg flex items-center justify-center"
+              style={{
+                width: '36px',
+                height: '36px',
+                backgroundColor: 'var(--pf-blue-100)',
+                color: 'var(--pf-blue-700)',
+              }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '1.0625rem',
+                  color: 'var(--pf-grey-900)',
+                  margin: 0,
+                  marginBottom: '6px',
+                }}
+              >
+                College to University Routes
+              </h3>
+              <p
+                style={{
+                  fontSize: '0.9375rem',
+                  color: 'var(--pf-grey-600)',
+                  lineHeight: 1.6,
+                  margin: 0,
+                }}
+              >
+                {university.articulation_info}
+              </p>
+            </div>
+          </div>
+          <div className="mt-3">
+            <Link
+              href="/pathways/alternatives"
+              className="inline-flex items-center gap-1"
+              style={{
+                color: 'var(--pf-blue-700)',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.875rem',
+              }}
+            >
+              Explore alternative pathways
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* SHEP programme badges */}
+      {shepList.length > 0 && (
+        <div className="pf-card mb-4">
+          <h3
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              fontSize: '1.0625rem',
+              color: 'var(--pf-grey-900)',
+              margin: 0,
+              marginBottom: '8px',
+            }}
+          >
+            Recognised SHEP programmes
+          </h3>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {shepList.map((name) => (
+              <span
+                key={name}
+                className="pf-badge"
+                style={{
+                  backgroundColor: 'var(--pf-blue-100)',
+                  color: 'var(--pf-blue-700)',
+                  fontWeight: 600,
+                }}
+              >
+                {name}
+              </span>
+            ))}
+          </div>
+          <p
+            style={{
+              fontSize: '0.8125rem',
+              color: 'var(--pf-grey-600)',
+              lineHeight: 1.55,
+              margin: 0,
+            }}
+          >
+            Participation in these regional programmes can itself trigger reduced offers at
+            Scottish universities — they are not just an outreach activity.
+          </p>
+          <Link
+            href="/widening-access#shep"
+            className="inline-flex items-center gap-1 mt-3"
+            style={{
+              color: 'var(--pf-blue-700)',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              fontSize: '0.875rem',
+            }}
+          >
+            About SHEP programmes
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+      )}
+
+      {/* Legacy eligibility criteria list (only shown if present in the JSONB) */}
+      {legacyInfo?.eligibility_criteria && legacyInfo.eligibility_criteria.length > 0 && (
+        <div className="pf-card">
+          <h3
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              fontSize: '1.0625rem',
+              color: 'var(--pf-grey-900)',
+              margin: 0,
+              marginBottom: '12px',
+            }}
+          >
+            Eligibility criteria
+          </h3>
+          <ul className="space-y-2" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            {legacyInfo.eligibility_criteria.map((criteria) => (
+              <li
+                key={criteria}
+                className="flex items-start gap-2"
+                style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)' }}
+              >
+                <svg
+                  className="w-4 h-4 flex-shrink-0"
+                  style={{ color: 'var(--pf-green-500)', marginTop: '3px' }}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{criteria}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
   )
 }
 

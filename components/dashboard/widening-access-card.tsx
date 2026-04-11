@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useWideningAccessEligibility, useCurrentStudent } from '@/hooks/use-student'
 import { SIMD_DESCRIPTIONS } from '@/lib/constants'
+import { findShepByPostcode } from '@/lib/shep'
 import type { Tables } from '@/types/database'
 
 type Student = Tables<'students'>
@@ -18,6 +19,8 @@ export function WideningAccessCard() {
   const wideningAccess = useWideningAccessEligibility()
 
   if (!wideningAccess?.isEligible || !student) return null
+
+  const shep = findShepByPostcode(student.postcode ?? null)
 
   const rows: CriterionRow[] = []
 
@@ -145,6 +148,71 @@ export function WideningAccessCard() {
               ))}
             </ul>
           </div>
+
+          {shep && (
+            <div
+              className="rounded-lg mb-4"
+              style={{
+                padding: '14px 16px',
+                backgroundColor: 'var(--pf-blue-50)',
+                border: '1px solid var(--pf-blue-100)',
+                borderLeft: '3px solid var(--pf-blue-700)',
+              }}
+            >
+              <p
+                style={{
+                  fontSize: '0.6875rem',
+                  fontWeight: 700,
+                  color: 'var(--pf-blue-700)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  margin: 0,
+                  marginBottom: '4px',
+                }}
+              >
+                Your SHEP region
+              </p>
+              <p
+                style={{
+                  fontSize: '0.9375rem',
+                  fontWeight: 600,
+                  color: 'var(--pf-grey-900)',
+                  margin: 0,
+                  marginBottom: '4px',
+                }}
+              >
+                {shep.name} — {shep.region}
+              </p>
+              <p
+                style={{
+                  fontSize: '0.8125rem',
+                  color: 'var(--pf-grey-600)',
+                  margin: 0,
+                  marginBottom: '10px',
+                  lineHeight: 1.55,
+                }}
+              >
+                Participation itself can trigger reduced offers at Scottish universities.
+              </p>
+              <a
+                href={shep.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1"
+                style={{
+                  fontSize: '0.8125rem',
+                  color: 'var(--pf-blue-700)',
+                  fontWeight: 600,
+                  fontFamily: "'Space Grotesk', sans-serif",
+                }}
+              >
+                Register with {shep.name} to strengthen your university applications
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </div>
+          )}
 
           <div className="flex flex-wrap items-center gap-3">
             <Link

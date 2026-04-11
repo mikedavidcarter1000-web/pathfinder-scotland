@@ -206,6 +206,11 @@ export const UNIVERSITY_TYPES = {
     description: 'Established research-intensive universities',
     color: 'blue',
   },
+  established: {
+    label: 'Established',
+    description: 'Post-war chartered universities with strong research profiles',
+    color: 'blue',
+  },
   modern: {
     label: 'Modern',
     description: 'Post-1992 universities, often vocational focus',

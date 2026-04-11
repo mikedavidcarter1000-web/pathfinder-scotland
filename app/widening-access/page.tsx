@@ -1,15 +1,20 @@
 'use client'
 
 import Link from 'next/link'
+import { useMemo } from 'react'
 import { useAuth } from '@/hooks/use-auth'
 import { useUniversities } from '@/hooks/use-universities'
+import { useCourses } from '@/hooks/use-courses'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
 import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { classifyError } from '@/lib/errors'
+import { SHEP_PROGRAMMES } from '@/lib/shep'
+import { UNIVERSITY_TYPES } from '@/lib/constants'
 import type { Tables } from '@/types/database'
 
 type University = Tables<'universities'>
+type Course = Tables<'courses'>
 
 interface UniversityWideningInfo {
   programme_name?: string
@@ -17,6 +22,124 @@ interface UniversityWideningInfo {
   url?: string
   description?: string
 }
+
+// University type ordering + copy for the grouped comparison section.
+const TYPE_GROUPS: Array<{
+  key: 'ancient' | 'established' | 'modern' | 'specialist'
+  label: string
+  blurb: string
+}> = [
+  {
+    key: 'ancient',
+    label: 'Ancient Universities',
+    blurb: 'Founded before 1600 — Edinburgh, Glasgow, St Andrews and Aberdeen.',
+  },
+  {
+    key: 'established',
+    label: 'Established Universities',
+    blurb: 'Post-war chartered — Strathclyde, Dundee, Heriot-Watt and Stirling.',
+  },
+  {
+    key: 'modern',
+    label: 'Modern Universities',
+    blurb: 'Post-1992 — GCU, Napier, QMU, RGU, UWS, Abertay and UHI.',
+  },
+  {
+    key: 'specialist',
+    label: 'Specialist Institutions',
+    blurb: 'Focused providers — RCS, Glasgow School of Art and SRUC.',
+  },
+]
+
+// Quote-style care-experienced examples pulled straight from the universities
+// that have the most specific, distinctive guarantees. These are deliberately
+// hand-picked rather than looped from the full list so each highlights a
+// different mechanism (guaranteed unconditional, lowest threshold, 3-Higher
+// minimum). The full per-university detail is on each university page.
+type CareExperiencedExample = {
+  slug: string
+  quote: string
+}
+const CARE_EXPERIENCED_EXAMPLES: CareExperiencedExample[] = [
+  {
+    slug: 'glasgow',
+    quote:
+      'Glasgow — care-experienced Priority 1 applicants receive the lowest published thresholds of any ancient university, with guaranteed offers at BBBB (Arts/Sciences).',
+  },
+  {
+    slug: 'aberdeen',
+    quote:
+      'Aberdeen — care-experienced applicants receive guaranteed unconditional offers at BBC, plus free university accommodation for SIMD20 students.',
+  },
+  {
+    slug: 'abertay',
+    quote:
+      'Abertay — care-experienced applicants need just 3 Highers, the lowest published threshold in Scotland, with the Frank Buttle Trust Quality Mark.',
+  },
+]
+
+// Grade-reduction patterns table data, directly from the research brief.
+const GRADE_REDUCTION_ROWS: Array<{
+  type: string
+  examples: string
+  reduction: string
+  detail: string
+}> = [
+  {
+    type: 'Ancient',
+    examples: 'Edinburgh, Glasgow, St Andrews, Aberdeen',
+    reduction: '1–2 grades',
+    detail: 'Edinburgh AAAB → AABB via Plus Flag',
+  },
+  {
+    type: 'Established',
+    examples: 'Strathclyde, Dundee, Heriot-Watt, Stirling',
+    reduction: '1–3 grades',
+    detail: 'Dundee AABB → BBBB (Engineering / Science)',
+  },
+  {
+    type: 'Modern',
+    examples: 'GCU, Napier, UWS, Abertay, RGU, UHI, QMU',
+    reduction: '2–3 grades or fewer Highers',
+    detail: 'UWS BBBB → CC plus a named WA programme',
+  },
+  {
+    type: 'Specialist',
+    examples: 'RCS, GSA, SRUC',
+    reduction: 'Portfolio / audition + reduced academic',
+    detail: 'GSA ABBB → BBCC across all programmes',
+  },
+]
+
+// Articulation highlights — the universities where the HNC/HND college route
+// is most clearly structured, with a short one-line why. Linked by slug so the
+// card can deep-link into each uni page.
+const ARTICULATION_HIGHLIGHTS: Array<{
+  slug: string
+  title: string
+  body: string
+}> = [
+  {
+    slug: 'uhi',
+    title: 'UHI — seamless integration',
+    body: 'HNC = Year 1, HND = Year 2 across the same institution. The most accessible university in Scotland.',
+  },
+  {
+    slug: 'rgu',
+    title: 'RGU + NESCol',
+    body: 'Over 400 advanced-entry students per year via NESCol — the strongest college articulation partnership in Scotland.',
+  },
+  {
+    slug: 'glasgow',
+    title: 'Glasgow bespoke HNC',
+    body: 'Bespoke HNC programmes with Glasgow colleges in Life Sciences, Social Sciences, and Engineering. Students are UofG-enrolled from day one.',
+  },
+  {
+    slug: 'gcu',
+    title: 'GCU Pathways',
+    body: 'Enrol at GCU from day one, study your HND at a partner college for two years, then enter Year 3.',
+  },
+]
 
 // Fallback widening access programme notes for each Scottish university.
 // Used only when the `universities.widening_access_info` JSONB is empty.
@@ -131,6 +254,45 @@ export default function WideningAccessPage() {
     error: universitiesError,
     refetch: refetchUniversities,
   } = useUniversities()
+
+  // Pull Medicine courses so we can highlight the 4 Gateway Medicine programmes.
+  const { data: medicineCourses } = useCourses({ subjectArea: 'Medicine' }) as {
+    data: (Course & { university: University })[] | undefined
+  }
+
+  const gatewayMedicineCourses = useMemo(() => {
+    if (!medicineCourses) return []
+    return medicineCourses.filter((c) =>
+      /gateway|foundation/i.test(c.name)
+    )
+  }, [medicineCourses])
+
+  // Group universities by university_type for the comparison grid. We fall
+  // back to the legacy `type` enum when the new column is empty, mapping
+  // "traditional" -> "established" so both naming conventions slot in.
+  const universitiesByType = useMemo(() => {
+    const groups: Record<string, University[]> = {
+      ancient: [],
+      established: [],
+      modern: [],
+      specialist: [],
+    }
+    if (!universities) return groups
+    for (const uni of universities) {
+      const raw = uni.university_type ?? uni.type ?? null
+      const key = raw === 'traditional' ? 'established' : raw
+      if (key && key in groups) groups[key].push(uni)
+    }
+    return groups
+  }, [universities])
+
+  const careExperiencedExamples = useMemo(() => {
+    if (!universities) return []
+    return CARE_EXPERIENCED_EXAMPLES.map((ex) => {
+      const uni = universities.find((u) => u.slug === ex.slug)
+      return { ...ex, university: uni ?? null }
+    }).filter((ex) => ex.university)
+  }, [universities])
 
   return (
     <>
@@ -548,17 +710,17 @@ export default function WideningAccessPage() {
         </div>
       </section>
 
-      {/* Participating universities */}
-      <section className="pf-section pf-section-grey">
+      {/* How each university compares */}
+      <section className="pf-section pf-section-grey" id="universities">
         <div className="pf-container">
-          <div className="text-center" style={{ marginBottom: '40px', maxWidth: '680px', marginLeft: 'auto', marginRight: 'auto' }}>
-            <span className="pf-badge-blue">Participating universities</span>
+          <div className="text-center" style={{ marginBottom: '40px', maxWidth: '720px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <span className="pf-badge-blue">By university tier</span>
             <h2 style={{ marginTop: '16px', marginBottom: '16px' }}>
-              All 15 Scottish universities participate
+              How widening access works at each university
             </h2>
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '1rem' }}>
-              Every Scottish university runs some form of widening access scheme. Here&apos;s a summary
-              of what each offers.
+              Scroll through by tier to see where you&apos;ll get the biggest grade reductions.
+              Each card links to the full widening access details for that institution.
             </p>
           </div>
 
@@ -588,78 +750,494 @@ export default function WideningAccessPage() {
           )}
 
           {!universitiesLoading && !universitiesError && universities && (
-            <div className="grid md:grid-cols-2 gap-4">
-              {universities.map((uni) => {
-                const resolved = resolveUniWideningInfo(uni)
+            <div className="space-y-10">
+              {TYPE_GROUPS.map((group) => {
+                const groupUnis = universitiesByType[group.key] ?? []
+                if (groupUnis.length === 0) return null
                 return (
-                  <div key={uni.id} className="pf-card" style={{ padding: '20px' }}>
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                      <Link
-                        href={`/universities/${uni.id}`}
-                        className="no-underline hover:no-underline"
-                        style={{ color: 'var(--pf-grey-900)' }}
+                  <div key={group.key}>
+                    <div className="flex items-baseline gap-3 mb-4 flex-wrap">
+                      <h3
+                        style={{
+                          fontFamily: "'Space Grotesk', sans-serif",
+                          fontWeight: 600,
+                          fontSize: '1.25rem',
+                          color: 'var(--pf-grey-900)',
+                          margin: 0,
+                        }}
                       >
-                        <h3
-                          style={{
-                            fontFamily: "'Space Grotesk', sans-serif",
-                            fontWeight: 600,
-                            fontSize: '1.0625rem',
-                            margin: 0,
-                          }}
-                        >
-                          {uni.name}
-                        </h3>
-                        {uni.city && (
-                          <p
-                            style={{
-                              fontSize: '0.8125rem',
-                              color: 'var(--pf-grey-600)',
-                              margin: 0,
-                              marginTop: '2px',
-                            }}
-                          >
-                            {uni.city}
-                          </p>
-                        )}
-                      </Link>
-                      {resolved.programmeShort && (
-                        <span className="pf-badge-amber">{resolved.programmeShort}</span>
-                      )}
+                        {group.label}
+                      </h3>
+                      <span
+                        className="pf-badge"
+                        style={{
+                          backgroundColor: 'var(--pf-blue-100)',
+                          color: 'var(--pf-blue-700)',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {groupUnis.length} institutions
+                      </span>
                     </div>
                     <p
                       style={{
                         fontSize: '0.875rem',
                         color: 'var(--pf-grey-600)',
-                        lineHeight: 1.55,
                         margin: 0,
-                        marginBottom: '12px',
+                        marginBottom: '16px',
                       }}
                     >
-                      {resolved.description}
+                      {group.blurb}
                     </p>
-                    {resolved.url && (
-                      <a
-                        href={resolved.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1"
-                        style={{
-                          fontSize: '0.8125rem',
-                          color: 'var(--pf-blue-700)',
-                          fontWeight: 600,
-                        }}
-                      >
-                        University widening access page
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                      </a>
-                    )}
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {groupUnis.map((uni) => (
+                        <UniversityWaCard key={uni.id} uni={uni} />
+                      ))}
+                    </div>
                   </div>
                 )
               })}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Care experienced guarantee */}
+      <section className="pf-section pf-section-white" id="care-experienced">
+        <div className="pf-container" style={{ maxWidth: '960px' }}>
+          <div className="text-center" style={{ marginBottom: '40px', maxWidth: '720px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <span
+              className="pf-badge"
+              style={{
+                backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                color: '#047857',
+                fontWeight: 600,
+              }}
+            >
+              The most powerful WA instrument
+            </span>
+            <h2 style={{ marginTop: '16px', marginBottom: '16px' }}>
+              The care-experienced guarantee
+            </h2>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '1rem', lineHeight: 1.65 }}>
+              Every Scottish university guarantees an offer to care-experienced applicants who meet
+              the minimum entry requirements. At most institutions, this is the single biggest
+              grade reduction available — and it applies whether you were in care for a week or
+              many years.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            {careExperiencedExamples.map((ex) =>
+              ex.university ? (
+                <Link
+                  key={ex.slug}
+                  href={`/universities/${ex.university.id}`}
+                  className="pf-card-hover no-underline hover:no-underline"
+                  style={{
+                    padding: '20px',
+                    color: 'var(--pf-grey-900)',
+                    borderLeft: '4px solid var(--pf-green-500)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      color: '#047857',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    {ex.university.name}
+                  </span>
+                  <p
+                    style={{
+                      fontSize: '0.9375rem',
+                      color: 'var(--pf-grey-900)',
+                      lineHeight: 1.55,
+                      margin: 0,
+                    }}
+                  >
+                    {ex.quote.replace(/^[^—]*—\s*/, '')}
+                  </p>
+                </Link>
+              ) : null
+            )}
+          </div>
+
+          <div
+            className="rounded-lg mt-8"
+            style={{
+              padding: '20px 24px',
+              backgroundColor: 'var(--pf-blue-50)',
+              border: '1px solid var(--pf-blue-100)',
+              textAlign: 'center',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '0.9375rem',
+                color: 'var(--pf-grey-900)',
+                margin: 0,
+                marginBottom: '12px',
+                lineHeight: 1.6,
+              }}
+            >
+              Support, advocacy, and independent advice for care experienced students is available
+              from <strong>Who Cares? Scotland</strong>.
+            </p>
+            <a
+              href="https://www.whocaresscotland.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pf-btn-secondary pf-btn-sm"
+              style={{ display: 'inline-flex' }}
+            >
+              Visit Who Cares? Scotland
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* SHEP regional programmes */}
+      <section className="pf-section pf-section-grey" id="shep">
+        <div className="pf-container">
+          <div className="text-center" style={{ marginBottom: '40px', maxWidth: '720px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <span className="pf-badge-blue">SHEP regional programmes</span>
+            <h2 style={{ marginTop: '16px', marginBottom: '16px' }}>
+              Four regional partnerships cover every Scottish school
+            </h2>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '1rem' }}>
+              The Scottish Higher Education Programmes (SHEP) are four regional partnerships that
+              support students from under-represented backgrounds. Register with your local
+              programme — participation itself can trigger reduced offers at all Scottish
+              universities.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            {SHEP_PROGRAMMES.map((p) => (
+              <div
+                key={p.key}
+                className="pf-card"
+                style={{ padding: '24px', borderLeft: '4px solid var(--pf-blue-700)' }}
+              >
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <h3
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '1.125rem',
+                      color: 'var(--pf-grey-900)',
+                      margin: 0,
+                    }}
+                  >
+                    {p.name}
+                  </h3>
+                  <a
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1"
+                    style={{
+                      fontSize: '0.8125rem',
+                      color: 'var(--pf-blue-700)',
+                      fontWeight: 600,
+                      flexShrink: 0,
+                    }}
+                  >
+                    Visit site
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                </div>
+                <p
+                  style={{
+                    fontSize: '0.8125rem',
+                    fontWeight: 600,
+                    color: 'var(--pf-blue-700)',
+                    margin: 0,
+                    marginBottom: '10px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  {p.region}
+                </p>
+                <p
+                  style={{
+                    fontSize: '0.875rem',
+                    color: 'var(--pf-grey-600)',
+                    lineHeight: 1.6,
+                    margin: 0,
+                    marginBottom: '12px',
+                  }}
+                >
+                  {p.description}
+                </p>
+                <div
+                  className="rounded-lg"
+                  style={{
+                    padding: '10px 12px',
+                    backgroundColor: 'var(--pf-blue-50)',
+                    border: '1px solid var(--pf-blue-100)',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      color: 'var(--pf-blue-700)',
+                      margin: 0,
+                      marginBottom: '4px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    What it offers
+                  </p>
+                  <p
+                    style={{
+                      fontSize: '0.8125rem',
+                      color: 'var(--pf-grey-900)',
+                      lineHeight: 1.55,
+                      margin: 0,
+                    }}
+                  >
+                    {p.offers}
+                  </p>
+                </div>
+                <details className="mt-3">
+                  <summary
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--pf-grey-600)',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Councils covered ({p.councilAreas.length})
+                  </summary>
+                  <p
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--pf-grey-600)',
+                      marginTop: '8px',
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    {p.councilAreas.join(', ')}
+                  </p>
+                </details>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Gateway medicine */}
+      {gatewayMedicineCourses.length > 0 && (
+        <section className="pf-section pf-section-white" id="gateway-medicine">
+          <div className="pf-container">
+            <div className="text-center" style={{ marginBottom: '40px', maxWidth: '720px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <span
+                className="pf-badge"
+                style={{
+                  backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                  color: '#047857',
+                  fontWeight: 600,
+                }}
+              >
+                Medicine
+              </span>
+              <h2 style={{ marginTop: '16px', marginBottom: '16px' }}>
+                Gateway programmes for Medicine
+              </h2>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '1rem', lineHeight: 1.65 }}>
+                Four Scottish universities run one-year Gateway foundation programmes that feed
+                directly into their MBChB degrees. These are among the most impactful widening
+                access routes for aspiring doctors from disadvantaged backgrounds.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              {gatewayMedicineCourses.map((course) => (
+                <GatewayMedicineCard key={course.id} course={course} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Grade reductions by tier */}
+      <section className="pf-section pf-section-grey" id="grade-reductions">
+        <div className="pf-container" style={{ maxWidth: '960px' }}>
+          <div className="text-center" style={{ marginBottom: '32px', maxWidth: '720px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <span className="pf-badge-blue">Grade reductions</span>
+            <h2 style={{ marginTop: '16px', marginBottom: '16px' }}>
+              Grade reductions by university tier
+            </h2>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '1rem' }}>
+              Every university offers different levels of reduction. Here&apos;s the pattern at a
+              glance.
+            </p>
+          </div>
+
+          <div
+            className="rounded-lg overflow-hidden"
+            style={{
+              border: '1px solid var(--pf-grey-300)',
+              backgroundColor: 'var(--pf-white)',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+            }}
+          >
+            <div
+              className="hidden md:grid"
+              style={{
+                gridTemplateColumns: '1fr 1.8fr 1.2fr 1.8fr',
+                gap: '16px',
+                padding: '14px 20px',
+                backgroundColor: 'var(--pf-grey-100)',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: 'var(--pf-grey-600)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+              }}
+            >
+              <span>Type</span>
+              <span>Examples</span>
+              <span>Typical reduction</span>
+              <span>Example</span>
+            </div>
+            {GRADE_REDUCTION_ROWS.map((row, idx) => (
+              <div
+                key={row.type}
+                className="grid grid-cols-1 md:grid-cols-[1fr_1.8fr_1.2fr_1.8fr]"
+                style={{
+                  gap: '8px 16px',
+                  padding: '16px 20px',
+                  borderTop: idx === 0 ? 'none' : '1px solid var(--pf-grey-300)',
+                  backgroundColor: idx % 2 === 0 ? 'var(--pf-white)' : 'var(--pf-blue-50)',
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    fontSize: '0.9375rem',
+                    color: 'var(--pf-grey-900)',
+                  }}
+                >
+                  {row.type}
+                </span>
+                <span style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+                  {row.examples}
+                </span>
+                <span
+                  className="pf-data-number"
+                  style={{
+                    fontSize: '0.875rem',
+                    color: 'var(--pf-amber-500)',
+                    fontWeight: 700,
+                  }}
+                >
+                  {row.reduction}
+                </span>
+                <span style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-900)' }}>
+                  {row.detail}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <p
+            style={{
+              fontSize: '0.8125rem',
+              color: 'var(--pf-grey-600)',
+              marginTop: '16px',
+              textAlign: 'center',
+              lineHeight: 1.55,
+            }}
+          >
+            These are indicative — check each university&apos;s page for the exact reductions
+            applied to individual courses.
+          </p>
+        </div>
+      </section>
+
+      {/* College articulation — the hidden path */}
+      <section className="pf-section pf-section-white" id="articulation">
+        <div className="pf-container">
+          <div className="text-center" style={{ marginBottom: '40px', maxWidth: '720px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <span className="pf-badge-blue">The hidden path</span>
+            <h2 style={{ marginTop: '16px', marginBottom: '16px' }}>
+              College articulation — HNC and HND routes
+            </h2>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '1rem', lineHeight: 1.65 }}>
+              Many students enter a Scottish university via a Higher National Certificate (HNC) or
+              Diploma (HND) from a college. An HNC can give direct entry to Year 2 of a degree,
+              and an HND can land you in Year 3 — often with reduced entry requirements.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4 mb-8">
+            {ARTICULATION_HIGHLIGHTS.map((h) => {
+              const uni = universities?.find((u) => u.slug === h.slug)
+              return (
+                <Link
+                  key={h.slug}
+                  href={uni ? `/universities/${uni.id}` : '/pathways/alternatives'}
+                  className="pf-card-hover no-underline hover:no-underline"
+                  style={{
+                    padding: '24px',
+                    color: 'var(--pf-grey-900)',
+                    borderLeft: '4px solid var(--pf-blue-700)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '1.0625rem',
+                      color: 'var(--pf-grey-900)',
+                      margin: 0,
+                      marginBottom: '8px',
+                    }}
+                  >
+                    {h.title}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: '0.875rem',
+                      color: 'var(--pf-grey-600)',
+                      lineHeight: 1.6,
+                      margin: 0,
+                    }}
+                  >
+                    {h.body}
+                  </p>
+                </Link>
+              )
+            })}
+          </div>
+
+          <div className="text-center">
+            <Link href="/pathways/alternatives" className="pf-btn-secondary">
+              Explore alternative pathways
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -849,4 +1427,268 @@ function HelpCard({
       </p>
     </div>
   )
+}
+
+function UniversityWaCard({ uni }: { uni: University }) {
+  const typeKey = (uni.university_type ?? uni.type) as
+    | keyof typeof UNIVERSITY_TYPES
+    | null
+  const typeInfo = typeKey ? UNIVERSITY_TYPES[typeKey] ?? null : null
+
+  // One-liner summaries — prefer the new columns, fall back to legacy info.
+  const legacyInfo = uni.widening_access_info as UniversityWideningInfo | null
+  const programmeName =
+    uni.wa_programme_name ?? legacyInfo?.programme_name ?? legacyInfo?.programme_short ?? null
+
+  const gradeLine = uni.wa_grade_reduction
+    ? truncate(uni.wa_grade_reduction, 140)
+    : null
+
+  const careLine = uni.care_experienced_guarantee
+    ? truncate(uni.care_experienced_guarantee, 140)
+    : null
+
+  return (
+    <Link
+      href={`/universities/${uni.id}`}
+      className="pf-card-hover no-underline hover:no-underline"
+      style={{
+        padding: '20px',
+        color: 'var(--pf-grey-900)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+      }}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <h4
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              fontSize: '1.0625rem',
+              color: 'var(--pf-grey-900)',
+              margin: 0,
+            }}
+          >
+            {uni.name}
+          </h4>
+          {uni.city && (
+            <p
+              style={{
+                fontSize: '0.8125rem',
+                color: 'var(--pf-grey-600)',
+                margin: 0,
+                marginTop: '2px',
+              }}
+            >
+              {uni.city}
+            </p>
+          )}
+        </div>
+        {typeInfo && (
+          <span
+            className="pf-badge pf-badge-grey"
+            style={{ flexShrink: 0, fontWeight: 600 }}
+          >
+            {typeInfo.label}
+          </span>
+        )}
+      </div>
+
+      {programmeName && (
+        <p
+          style={{
+            fontSize: '0.8125rem',
+            fontWeight: 600,
+            color: 'var(--pf-blue-700)',
+            margin: 0,
+          }}
+        >
+          {programmeName}
+        </p>
+      )}
+
+      {gradeLine && (
+        <div
+          style={{
+            fontSize: '0.8125rem',
+            color: 'var(--pf-grey-900)',
+            lineHeight: 1.5,
+          }}
+        >
+          <span
+            style={{
+              fontWeight: 600,
+              color: 'var(--pf-amber-500)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              fontSize: '0.6875rem',
+              display: 'block',
+              marginBottom: '2px',
+            }}
+          >
+            Grade reduction
+          </span>
+          {gradeLine}
+        </div>
+      )}
+
+      {careLine && (
+        <div
+          style={{
+            fontSize: '0.8125rem',
+            color: 'var(--pf-grey-900)',
+            lineHeight: 1.5,
+          }}
+        >
+          <span
+            style={{
+              fontWeight: 600,
+              color: '#047857',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              fontSize: '0.6875rem',
+              display: 'block',
+              marginBottom: '2px',
+            }}
+          >
+            Care experienced
+          </span>
+          {careLine}
+        </div>
+      )}
+
+      <span
+        className="inline-flex items-center gap-1 mt-1"
+        style={{
+          fontSize: '0.8125rem',
+          color: 'var(--pf-blue-700)',
+          fontWeight: 600,
+        }}
+      >
+        View full details
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </span>
+    </Link>
+  )
+}
+
+function GatewayMedicineCard({
+  course,
+}: {
+  course: Course & { university: University }
+}) {
+  const entry = course.entry_requirements as
+    | { highers?: string; notes?: string }
+    | null
+  return (
+    <Link
+      href={`/courses/${course.id}`}
+      className="pf-card-hover no-underline hover:no-underline"
+      style={{
+        padding: '24px',
+        color: 'var(--pf-grey-900)',
+        borderLeft: '4px solid var(--pf-green-500)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+      }}
+    >
+      <div>
+        <p
+          style={{
+            fontSize: '0.75rem',
+            fontWeight: 600,
+            color: '#047857',
+            textTransform: 'uppercase',
+            letterSpacing: '0.04em',
+            margin: 0,
+            marginBottom: '4px',
+          }}
+        >
+          {course.university.name}
+        </p>
+        <h3
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+            fontSize: '1.125rem',
+            color: 'var(--pf-grey-900)',
+            margin: 0,
+            lineHeight: 1.3,
+          }}
+        >
+          {course.name}
+        </h3>
+      </div>
+
+      {entry?.highers && (
+        <div className="flex items-center gap-2">
+          <span
+            style={{
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: 'var(--pf-grey-600)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+            }}
+          >
+            Entry
+          </span>
+          <span
+            className="pf-data-number"
+            style={{
+              fontSize: '0.9375rem',
+              fontWeight: 700,
+              color: 'var(--pf-green-500)',
+            }}
+          >
+            {entry.highers}
+          </span>
+          {entry.notes && /no\s+ucat/i.test(entry.notes) && (
+            <span className="pf-badge-green" style={{ fontWeight: 600 }}>
+              No UCAT required
+            </span>
+          )}
+        </div>
+      )}
+
+      {course.description && (
+        <p
+          style={{
+            fontSize: '0.875rem',
+            color: 'var(--pf-grey-600)',
+            lineHeight: 1.6,
+            margin: 0,
+          }}
+        >
+          {truncate(course.description, 220)}
+        </p>
+      )}
+
+      <span
+        className="inline-flex items-center gap-1 mt-1"
+        style={{
+          fontSize: '0.8125rem',
+          color: 'var(--pf-blue-700)',
+          fontWeight: 600,
+        }}
+      >
+        View course details
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </span>
+    </Link>
+  )
+}
+
+function truncate(text: string, max: number): string {
+  if (text.length <= max) return text
+  const trimmed = text.slice(0, max)
+  const lastSpace = trimmed.lastIndexOf(' ')
+  return `${trimmed.slice(0, lastSpace > 0 ? lastSpace : max)}…`
 }

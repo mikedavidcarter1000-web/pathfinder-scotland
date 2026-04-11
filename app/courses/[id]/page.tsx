@@ -30,6 +30,14 @@ interface UniversityWideningInfo {
   description?: string
 }
 
+interface UniversityWaDetails {
+  name: string | null
+  waProgrammeName: string | null
+  waProgrammeUrl: string | null
+  waPreEntryRequired: boolean
+  waPreEntryDetails: string | null
+}
+
 export default function CoursePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const { data: course, isLoading, error, refetch } = useCourse(id) as {
@@ -111,14 +119,18 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
     )
   }
 
-  const university = course.university as {
-    id: string
-    name: string
-    slug: string
-    city: string | null
-    website: string | null
-    widening_access_info?: UniversityWideningInfo | null
-  } | null
+  const university = course.university as
+    | (Tables<'universities'> & {
+        widening_access_info?: UniversityWideningInfo | null
+      })
+    | null
+  const uniWaDetails: UniversityWaDetails = {
+    name: university?.name ?? null,
+    waProgrammeName: university?.wa_programme_name ?? null,
+    waProgrammeUrl: university?.wa_programme_url ?? null,
+    waPreEntryRequired: Boolean(university?.wa_pre_entry_required),
+    waPreEntryDetails: university?.wa_pre_entry_details ?? null,
+  }
 
   const entryRequirements = course.entry_requirements as {
     highers?: string
@@ -235,7 +247,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
 
             {/* Personalised Eligibility (logged-in students only) */}
             {user && hasGrades && eligibility && (
-              <PersonalisedEligibility detail={eligibility} />
+              <PersonalisedEligibility detail={eligibility} uniWaDetails={uniWaDetails} />
             )}
 
             {user && !hasGrades && (
@@ -328,6 +340,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
               universityName={university?.name ?? null}
               universityWebsite={university?.website ?? null}
               isLoggedIn={!!user}
+              uniWaDetails={uniWaDetails}
             />
           </div>
 
@@ -426,8 +439,10 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
 // from use-course-matching so the /courses list and /courses/[id] stay in sync.
 function PersonalisedEligibility({
   detail,
+  uniWaDetails,
 }: {
   detail: import('@/hooks/use-course-matching').EligibilityDetail
+  uniWaDetails: UniversityWaDetails
 }) {
   const palette = {
     eligible: {
@@ -477,11 +492,16 @@ function PersonalisedEligibility({
     },
   }[detail.status]
 
+  // Include the specific programme name from the university where available,
+  // so students see "SIMD20 offer via Plus Flag" instead of a generic label.
+  const programmeSuffix = uniWaDetails.waProgrammeName
+    ? ` via ${uniWaDetails.waProgrammeName}`
+    : ''
   const wideningOfferLabel: Record<NonNullable<typeof detail.wideningOfferType>, string> = {
-    simd20: 'SIMD 20% widening access offer',
-    simd40: 'SIMD 40% widening access offer',
-    care_experienced: 'Care-experienced offer',
-    general: 'General widening access offer',
+    simd20: `SIMD20 offer${programmeSuffix}`,
+    simd40: `SIMD40 offer${programmeSuffix}`,
+    care_experienced: `Care-experienced offer${programmeSuffix}`,
+    general: `Widening access offer${programmeSuffix}`,
   }
 
   return (
@@ -587,21 +607,39 @@ function PersonalisedEligibility({
 
             {/* Widening access explanation */}
             {detail.isWideningEligible && detail.wideningOfferType && detail.adjustedRequirement && (
-              <p
-                className="mt-3"
-                style={{
-                  fontSize: '0.8125rem',
-                  color: 'var(--pf-grey-900)',
-                  backgroundColor: 'rgba(255,255,255,0.7)',
-                  padding: '8px 12px',
-                  borderRadius: '6px',
-                }}
-              >
-                <strong>{wideningOfferLabel[detail.wideningOfferType]}:</strong> reduced offer of{' '}
-                <span className="pf-data-number" style={{ fontWeight: 600 }}>
-                  {detail.adjustedRequirement}
-                </span>
-              </p>
+              <>
+                <p
+                  className="mt-3"
+                  style={{
+                    fontSize: '0.8125rem',
+                    color: 'var(--pf-grey-900)',
+                    backgroundColor: 'rgba(255,255,255,0.7)',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                  }}
+                >
+                  <strong>{wideningOfferLabel[detail.wideningOfferType]}:</strong> reduced offer of{' '}
+                  <span className="pf-data-number" style={{ fontWeight: 600 }}>
+                    {detail.adjustedRequirement}
+                  </span>
+                </p>
+                {uniWaDetails.waPreEntryRequired && (
+                  <p
+                    className="mt-2"
+                    style={{
+                      fontSize: '0.75rem',
+                      color: '#B45309',
+                      fontWeight: 600,
+                      margin: 0,
+                      marginTop: '8px',
+                    }}
+                  >
+                    Note: completion of
+                    {uniWaDetails.waProgrammeName ? ` ${uniWaDetails.waProgrammeName}` : ' a pre-entry programme'}{' '}
+                    is required to access this offer.
+                  </p>
+                )}
+              </>
             )}
 
             {/* Ineligible / no grades hint */}
@@ -634,6 +672,7 @@ type WaSectionProps = {
   universityName: string | null
   universityWebsite: string | null
   isLoggedIn: boolean
+  uniWaDetails: UniversityWaDetails
 }
 
 const OFFER_ROW_LABELS: Record<keyof WideningAccessRequirements, string> = {
@@ -653,25 +692,44 @@ function WideningAccessSection({
   universityName,
   universityWebsite,
   isLoggedIn,
+  uniWaDetails,
 }: WaSectionProps) {
   // If the course has absolutely no WA data and the student isn't eligible,
   // there's nothing useful to show — skip the section entirely.
   if (!hasAnyWaOffers && !wideningAccess?.isEligible) return null
 
   // Pick the single most favourable offer the student would actually qualify for.
+  // The label includes the university's WA programme name when available, so
+  // students see (for example) "SIMD20 offer via Plus Flag: ABBB" instead of
+  // a generic "SIMD20 adjusted offer".
+  const programmeSuffix = uniWaDetails.waProgrammeName
+    ? ` via ${uniWaDetails.waProgrammeName}`
+    : ''
   const studentOffer: { offer: string; label: string } | null = (() => {
     if (!wideningAccess?.isEligible || !wideningReqs) return null
     if (wideningAccess.isSIMD20 && wideningReqs.simd20_offer) {
-      return { offer: wideningReqs.simd20_offer, label: 'SIMD20 adjusted offer' }
+      return {
+        offer: wideningReqs.simd20_offer,
+        label: `SIMD20 offer${programmeSuffix}`,
+      }
     }
     if (wideningAccess.isSIMD40 && wideningReqs.simd40_offer) {
-      return { offer: wideningReqs.simd40_offer, label: 'SIMD40 adjusted offer' }
+      return {
+        offer: wideningReqs.simd40_offer,
+        label: `SIMD40 offer${programmeSuffix}`,
+      }
     }
     if (wideningAccess.hasCareExperience && wideningReqs.care_experienced_offer) {
-      return { offer: wideningReqs.care_experienced_offer, label: 'Care-experienced adjusted offer' }
+      return {
+        offer: wideningReqs.care_experienced_offer,
+        label: `Care-experienced offer${programmeSuffix}`,
+      }
     }
     if (wideningReqs.general_offer) {
-      return { offer: wideningReqs.general_offer, label: 'General widening access offer' }
+      return {
+        offer: wideningReqs.general_offer,
+        label: `Widening access offer${programmeSuffix}`,
+      }
     }
     return null
   })()
@@ -852,6 +910,81 @@ function WideningAccessSection({
                 }}
               >
                 Applied via: {studentOffer.label}
+              </div>
+            </div>
+          )}
+
+          {/* Pre-entry programme warning — shown when the university requires
+              completion of a dedicated pre-entry pathway for WA offers. */}
+          {studentOffer && uniWaDetails.waPreEntryRequired && (
+            <div
+              className="rounded-lg mb-4"
+              style={{
+                padding: '14px 16px',
+                backgroundColor: 'rgba(245, 158, 11, 0.08)',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                borderLeft: '3px solid var(--pf-amber-500)',
+              }}
+            >
+              <div className="flex items-start gap-2">
+                <svg
+                  className="w-5 h-5 flex-shrink-0"
+                  style={{ color: 'var(--pf-amber-500)', marginTop: '1px' }}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div className="flex-1 min-w-0">
+                  <p
+                    style={{
+                      fontSize: '0.8125rem',
+                      fontWeight: 700,
+                      color: '#B45309',
+                      margin: 0,
+                      marginBottom: '4px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    Pre-entry programme required
+                  </p>
+                  <p
+                    style={{
+                      fontSize: '0.875rem',
+                      color: 'var(--pf-grey-900)',
+                      margin: 0,
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    To receive this adjusted offer you need to complete
+                    {uniWaDetails.waProgrammeName ? ` ${uniWaDetails.waProgrammeName}` : ''}
+                    {uniWaDetails.waPreEntryDetails
+                      ? `. ${uniWaDetails.waPreEntryDetails}`
+                      : '. Contact your school, SDS careers adviser, or check the university website for eligibility steps.'}
+                  </p>
+                  {uniWaDetails.waProgrammeUrl && (
+                    <a
+                      href={uniWaDetails.waProgrammeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 mt-2"
+                      style={{
+                        color: 'var(--pf-blue-700)',
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontWeight: 600,
+                        fontSize: '0.8125rem',
+                      }}
+                    >
+                      Learn more on the university website
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           )}
