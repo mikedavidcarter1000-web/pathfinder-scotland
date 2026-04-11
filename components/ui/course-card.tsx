@@ -103,7 +103,7 @@ export function CourseCard({
         <div
           style={{
             height: '4px',
-            background: 'linear-gradient(90deg, var(--pf-teal-500), var(--pf-teal-700))',
+            background: 'linear-gradient(90deg, var(--pf-blue-500), var(--pf-blue-700))',
           }}
         />
 
@@ -194,7 +194,7 @@ export function CourseCard({
               </span>
             )}
             {course.degree_type && <span className="pf-badge-grey">{course.degree_type}</span>}
-            {course.subject_area && <span className="pf-badge-teal">{course.subject_area}</span>}
+            {course.subject_area && <span className="pf-badge-blue">{course.subject_area}</span>}
           </div>
 
           {/* Requirements */}
@@ -338,8 +338,8 @@ export function CourseCard({
                 fontSize: '0.875rem',
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontWeight: 600,
-                color: 'var(--pf-teal-700)',
-                backgroundColor: 'var(--pf-teal-100)',
+                color: 'var(--pf-blue-700)',
+                backgroundColor: 'var(--pf-blue-100)',
                 borderRadius: '6px',
               }}
             >
@@ -357,8 +357,8 @@ export function CourseCard({
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontWeight: 600,
                   borderRadius: '6px',
-                  backgroundColor: isComparing ? 'var(--pf-teal-100)' : 'var(--pf-grey-100)',
-                  color: isComparing ? 'var(--pf-teal-700)' : 'var(--pf-grey-900)',
+                  backgroundColor: isComparing ? 'var(--pf-blue-100)' : 'var(--pf-grey-100)',
+                  color: isComparing ? 'var(--pf-blue-700)' : 'var(--pf-grey-900)',
                 }}
                 aria-label="Toggle compare"
               >

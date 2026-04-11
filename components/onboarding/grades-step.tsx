@@ -100,7 +100,7 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
                 fontWeight: 600,
                 fontSize: '0.8125rem',
                 backgroundColor: active ? 'var(--pf-white)' : 'transparent',
-                color: active ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
+                color: active ? 'var(--pf-blue-700)' : 'var(--pf-grey-600)',
                 boxShadow: active ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
               }}
             >
@@ -114,8 +114,8 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
                     padding: '0 6px',
                     borderRadius: '9999px',
                     fontSize: '0.6875rem',
-                    backgroundColor: active ? 'var(--pf-teal-100)' : 'var(--pf-grey-300)',
-                    color: active ? 'var(--pf-teal-700)' : 'var(--pf-grey-900)',
+                    backgroundColor: active ? 'var(--pf-blue-100)' : 'var(--pf-grey-300)',
+                    color: active ? 'var(--pf-blue-700)' : 'var(--pf-grey-900)',
                   }}
                 >
                   {count}
@@ -139,7 +139,7 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
           className="rounded-lg"
           style={{
             padding: '16px',
-            backgroundColor: 'var(--pf-teal-100)',
+            backgroundColor: 'var(--pf-blue-100)',
             border: '1px solid rgba(15, 107, 94, 0.15)',
           }}
         >
@@ -148,7 +148,7 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 600,
               fontSize: '0.875rem',
-              color: 'var(--pf-teal-900)',
+              color: 'var(--pf-blue-900)',
               marginBottom: '8px',
             }}
           >
@@ -163,12 +163,12 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
                 .join('')
               return (
                 <div key={type.value}>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--pf-teal-700)' }}>{type.label}</p>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--pf-blue-700)' }}>{type.label}</p>
                   <p
                     style={{
                       fontFamily: "'Space Grotesk', sans-serif",
                       fontWeight: 700,
-                      color: 'var(--pf-teal-900)',
+                      color: 'var(--pf-blue-900)',
                       marginTop: '2px',
                     }}
                   >

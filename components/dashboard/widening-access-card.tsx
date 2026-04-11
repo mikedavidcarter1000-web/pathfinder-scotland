@@ -163,7 +163,7 @@ export function WideningAccessCard() {
             <Link
               href="/courses?eligibility=eligible_via_wa"
               className="pf-btn-ghost pf-btn-sm"
-              style={{ color: 'var(--pf-teal-700)' }}
+              style={{ color: 'var(--pf-blue-700)' }}
             >
               Browse matching courses
             </Link>

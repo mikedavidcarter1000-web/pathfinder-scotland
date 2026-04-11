@@ -72,7 +72,7 @@ export default function WideningAccessPage() {
       {/* Hero */}
       <section
         style={{
-          backgroundColor: 'var(--pf-teal-50)',
+          backgroundColor: 'var(--pf-blue-50)',
           paddingTop: '72px',
           paddingBottom: '72px',
           borderBottom: '1px solid var(--pf-grey-300)',
@@ -120,7 +120,7 @@ export default function WideningAccessPage() {
                 <defs>
                   <linearGradient id="pf-wa-grad" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="rgba(245, 158, 11, 0.18)" />
-                    <stop offset="100%" stopColor="var(--pf-teal-100)" />
+                    <stop offset="100%" stopColor="var(--pf-blue-100)" />
                   </linearGradient>
                 </defs>
 
@@ -132,7 +132,7 @@ export default function WideningAccessPage() {
                   y1="60"
                   x2="180"
                   y2="240"
-                  stroke="var(--pf-teal-700)"
+                  stroke="var(--pf-blue-700)"
                   strokeWidth="5"
                   strokeLinecap="round"
                 />
@@ -142,14 +142,14 @@ export default function WideningAccessPage() {
                   y1="100"
                   x2="280"
                   y2="100"
-                  stroke="var(--pf-teal-700)"
+                  stroke="var(--pf-blue-700)"
                   strokeWidth="5"
                   strokeLinecap="round"
                 />
                 {/* Left pan — standard requirements */}
                 <g>
-                  <line x1="110" y1="100" x2="110" y2="140" stroke="var(--pf-teal-700)" strokeWidth="2" />
-                  <ellipse cx="110" cy="145" rx="38" ry="8" fill="var(--pf-teal-700)" opacity="0.15" />
+                  <line x1="110" y1="100" x2="110" y2="140" stroke="var(--pf-blue-700)" strokeWidth="2" />
+                  <ellipse cx="110" cy="145" rx="38" ry="8" fill="var(--pf-blue-700)" opacity="0.15" />
                   <rect x="80" y="125" width="60" height="24" rx="6" fill="var(--pf-white)" stroke="var(--pf-grey-300)" strokeWidth="1" />
                   <text
                     x="110"
@@ -175,7 +175,7 @@ export default function WideningAccessPage() {
                 </g>
                 {/* Right pan — adjusted offer */}
                 <g>
-                  <line x1="250" y1="100" x2="250" y2="165" stroke="var(--pf-teal-700)" strokeWidth="2" />
+                  <line x1="250" y1="100" x2="250" y2="165" stroke="var(--pf-blue-700)" strokeWidth="2" />
                   <ellipse cx="250" cy="170" rx="38" ry="8" fill="var(--pf-amber-500)" opacity="0.2" />
                   <rect x="220" y="150" width="60" height="24" rx="6" fill="var(--pf-white)" stroke="var(--pf-amber-500)" strokeWidth="2" />
                   <text
@@ -201,8 +201,8 @@ export default function WideningAccessPage() {
                   </text>
                 </g>
                 {/* Base */}
-                <rect x="130" y="236" width="100" height="10" rx="4" fill="var(--pf-teal-700)" />
-                <rect x="150" y="246" width="60" height="6" rx="3" fill="var(--pf-teal-900)" />
+                <rect x="130" y="236" width="100" height="10" rx="4" fill="var(--pf-blue-700)" />
+                <rect x="150" y="246" width="60" height="6" rx="3" fill="var(--pf-blue-900)" />
               </svg>
             </div>
           </div>
@@ -212,7 +212,7 @@ export default function WideningAccessPage() {
       {/* What is widening access */}
       <section className="pf-section pf-section-white">
         <div className="pf-container" style={{ maxWidth: '820px' }}>
-          <span className="pf-badge-teal">In plain language</span>
+          <span className="pf-badge-blue">In plain language</span>
           <h2 style={{ marginTop: '16px', marginBottom: '16px' }}>
             What widening access actually means
           </h2>
@@ -239,7 +239,7 @@ export default function WideningAccessPage() {
       <section className="pf-section pf-section-grey">
         <div className="pf-container">
           <div className="text-center" style={{ marginBottom: '40px', maxWidth: '680px', marginLeft: 'auto', marginRight: 'auto' }}>
-            <span className="pf-badge-teal">Who qualifies</span>
+            <span className="pf-badge-blue">Who qualifies</span>
             <h2 style={{ marginTop: '16px', marginBottom: '16px' }}>
               The main widening access schemes
             </h2>
@@ -271,9 +271,9 @@ export default function WideningAccessPage() {
                     className="rounded-lg"
                     style={{
                       padding: '10px 12px',
-                      backgroundColor: 'var(--pf-teal-50)',
+                      backgroundColor: 'var(--pf-blue-50)',
                       fontSize: '0.8125rem',
-                      color: 'var(--pf-teal-900)',
+                      color: 'var(--pf-blue-900)',
                       marginBottom: '8px',
                     }}
                   >
@@ -282,7 +282,7 @@ export default function WideningAccessPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1"
-                      style={{ color: 'var(--pf-teal-700)', fontWeight: 600 }}
+                      style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
                     >
                       Official SIMD lookup tool
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -393,7 +393,7 @@ export default function WideningAccessPage() {
       <section className="pf-section pf-section-white">
         <div className="pf-container">
           <div className="text-center" style={{ marginBottom: '40px', maxWidth: '680px', marginLeft: 'auto', marginRight: 'auto' }}>
-            <span className="pf-badge-teal">Participating universities</span>
+            <span className="pf-badge-blue">Participating universities</span>
             <h2 style={{ marginTop: '16px', marginBottom: '16px' }}>
               All 15 Scottish universities participate
             </h2>
@@ -486,7 +486,7 @@ export default function WideningAccessPage() {
                         className="inline-flex items-center gap-1"
                         style={{
                           fontSize: '0.8125rem',
-                          color: 'var(--pf-teal-700)',
+                          color: 'var(--pf-blue-700)',
                           fontWeight: 600,
                         }}
                       >
@@ -544,7 +544,7 @@ export default function WideningAccessPage() {
       </section>
 
       {/* CTA */}
-      <section className="pf-section pf-section-teal">
+      <section className="pf-section pf-section-blue">
         <div className="pf-container" style={{ maxWidth: '720px' }}>
           <div className="text-center">
             <h2 style={{ marginBottom: '16px' }}>Ready to check your eligibility?</h2>

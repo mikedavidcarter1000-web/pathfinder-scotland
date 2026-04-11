@@ -20,7 +20,7 @@ export default function Error({
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4"
-      style={{ backgroundColor: 'var(--pf-teal-50)' }}
+      style={{ backgroundColor: 'var(--pf-blue-50)' }}
     >
       <div style={{ maxWidth: '480px', width: '100%' }}>
         <ErrorState

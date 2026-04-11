@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+    <main style={{ backgroundColor: 'var(--pf-blue-50)' }}>
       {/* Page header */}
       <section
         style={{
@@ -89,14 +89,14 @@ export default function PrivacyPage() {
             <h2 style={{ marginTop: '40px', marginBottom: '12px' }}>How we use your postcode</h2>
             <div
               style={{
-                backgroundColor: 'var(--pf-teal-100)',
-                borderLeft: '3px solid var(--pf-teal-700)',
+                backgroundColor: 'var(--pf-blue-100)',
+                borderLeft: '3px solid var(--pf-blue-700)',
                 padding: '16px 20px',
                 borderRadius: '8px',
                 marginBottom: '24px',
               }}
             >
-              <p style={{ color: 'var(--pf-teal-900)' }}>
+              <p style={{ color: 'var(--pf-blue-900)' }}>
                 We use your postcode <strong>only</strong> to look up your SIMD decile (Scottish Index of
                 Multiple Deprivation) so we can tell you whether you qualify for widening access
                 programmes. We do not store location history, do not track your whereabouts, and do not
@@ -150,7 +150,7 @@ export default function PrivacyPage() {
             </ul>
             <p style={{ marginBottom: '24px' }}>
               You can exercise these rights any time from your{' '}
-              <Link href="/dashboard/settings" style={{ color: 'var(--pf-teal-500)' }}>
+              <Link href="/dashboard/settings" style={{ color: 'var(--pf-blue-500)' }}>
                 account settings
               </Link>
               , which includes both a data export tool and an account deletion option.
@@ -176,7 +176,7 @@ export default function PrivacyPage() {
               Questions about privacy or your data? Email us at{' '}
               <a
                 href="mailto:hello@pathfinderscotland.co.uk"
-                style={{ color: 'var(--pf-teal-500)' }}
+                style={{ color: 'var(--pf-blue-500)' }}
               >
                 hello@pathfinderscotland.co.uk
               </a>

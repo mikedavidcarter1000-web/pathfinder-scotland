@@ -244,7 +244,7 @@ export default function OnboardingPage() {
 
   if (authLoading || studentLoading) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
         <main className="max-w-3xl mx-auto px-4 pt-8 sm:pt-10 pb-12 sm:pb-16">
           <div className="pf-card">
             <Skeleton width="60%" height={28} rounded="md" />
@@ -268,7 +268,7 @@ export default function OnboardingPage() {
   const indicatorStep = Math.max(1, currentStep)
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
       <main className="max-w-3xl mx-auto px-4 pt-6 sm:pt-10 pb-12 sm:pb-16">
         {!isWelcome && (
           <>
@@ -296,7 +296,7 @@ export default function OnboardingPage() {
         <div
           className="pf-card-flat p-5 sm:p-7"
           style={{
-            boxShadow: '0 10px 30px rgba(12, 74, 66, 0.08)',
+            boxShadow: '0 10px 30px rgba(0, 45, 114, 0.08)',
           }}
         >
           {isWelcome && <WelcomeStep onStart={() => setCurrentStep(1)} />}
@@ -358,7 +358,7 @@ export default function OnboardingPage() {
         <div className="text-center mt-6">
           <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
             Need help?{' '}
-            <Link href="/help" style={{ color: 'var(--pf-teal-500)' }}>
+            <Link href="/help" style={{ color: 'var(--pf-blue-500)' }}>
               Contact support
             </Link>
           </p>

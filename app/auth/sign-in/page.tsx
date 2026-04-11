@@ -40,7 +40,7 @@ export default function SignInPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4"
-      style={{ backgroundColor: 'var(--pf-teal-50)' }}
+      style={{ backgroundColor: 'var(--pf-blue-50)' }}
     >
       <div className="w-full max-w-md">
         {/* Logo */}
@@ -51,7 +51,7 @@ export default function SignInPage() {
           >
             <div
               className="w-10 h-10 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: 'var(--pf-teal-700)' }}
+              style={{ backgroundColor: 'var(--pf-blue-700)' }}
             >
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -74,7 +74,7 @@ export default function SignInPage() {
         <div
           className="pf-card-flat p-6 sm:p-8"
           style={{
-            boxShadow: '0 10px 30px rgba(12, 74, 66, 0.08)',
+            boxShadow: '0 10px 30px rgba(0, 45, 114, 0.08)',
           }}
         >
           <div className="text-center mb-6">
@@ -133,7 +133,7 @@ export default function SignInPage() {
                 </label>
                 <Link
                   href="/auth/forgot-password"
-                  style={{ fontSize: '0.875rem', color: 'var(--pf-teal-500)' }}
+                  style={{ fontSize: '0.875rem', color: 'var(--pf-blue-500)' }}
                 >
                   Forgot password?
                 </Link>
@@ -186,7 +186,7 @@ export default function SignInPage() {
               <Link
                 href="/auth/sign-up"
                 style={{
-                  color: 'var(--pf-teal-700)',
+                  color: 'var(--pf-blue-700)',
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontWeight: 600,
                 }}
@@ -203,11 +203,11 @@ export default function SignInPage() {
           style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}
         >
           By signing in, you agree to our{' '}
-          <Link href="/terms" style={{ color: 'var(--pf-teal-500)' }}>
+          <Link href="/terms" style={{ color: 'var(--pf-blue-500)' }}>
             Terms of Service
           </Link>{' '}
           and{' '}
-          <Link href="/privacy" style={{ color: 'var(--pf-teal-500)' }}>
+          <Link href="/privacy" style={{ color: 'var(--pf-blue-500)' }}>
             Privacy Policy
           </Link>
         </p>

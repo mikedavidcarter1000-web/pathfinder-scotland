@@ -49,7 +49,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[var(--pf-teal-50)]">
+      <div className="min-h-screen bg-[var(--pf-blue-50)]">
         <div className="bg-[var(--pf-white)]">
           <div className="max-w-4xl mx-auto px-4 py-8">
             <Skeleton width="120px" height={14} rounded="sm" />
@@ -94,7 +94,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
     const classified = error ? classifyError(error) : null
     const isNotFound = !error || classified?.kind === 'not-found'
     return (
-      <div className="min-h-screen bg-[var(--pf-teal-50)]" style={{ padding: '48px 16px' }}>
+      <div className="min-h-screen bg-[var(--pf-blue-50)]" style={{ padding: '48px 16px' }}>
         <div className="max-w-4xl mx-auto px-4">
           <ErrorState
             title={isNotFound ? 'Course not found' : classified?.title ?? 'Something went wrong'}
@@ -143,7 +143,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
     : null
 
   return (
-    <div className="min-h-screen bg-[var(--pf-teal-50)]">
+    <div className="min-h-screen bg-[var(--pf-blue-50)]">
       {/* Header */}
       <div className="bg-[var(--pf-white)]">
         <div className="max-w-4xl mx-auto px-4 pt-6 pb-6 sm:pt-8 sm:pb-8">
@@ -175,7 +175,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
               </h1>
               {university && (
                 <p className="text-base sm:text-lg text-gray-600">
-                  <Link href={`/universities/${university.id}`} className="hover:text-[var(--pf-teal-700)]">
+                  <Link href={`/universities/${university.id}`} className="hover:text-[var(--pf-blue-700)]">
                     {university.name}
                   </Link>
                   {university.city && ` - ${university.city}`}
@@ -197,12 +197,12 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mt-4">
             {degreeInfo && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--pf-teal-100)] text-[var(--pf-teal-700)]">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--pf-blue-100)] text-[var(--pf-blue-700)]">
                 {degreeInfo.label}
               </span>
             )}
             {course.subject_area && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--pf-teal-100)] text-[var(--pf-teal-700)]">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--pf-blue-100)] text-[var(--pf-blue-700)]">
                 {course.subject_area}
               </span>
             )}
@@ -884,7 +884,7 @@ function WideningAccessSection({
             style={{
               padding: '16px 20px',
               borderBottom: '1px solid var(--pf-grey-300)',
-              backgroundColor: 'var(--pf-teal-50)',
+              backgroundColor: 'var(--pf-blue-50)',
             }}
           >
             <h3
@@ -942,7 +942,7 @@ function WideningAccessSection({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1"
-                  style={{ color: 'var(--pf-teal-700)', fontWeight: 600 }}
+                  style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
                 >
                   {uniWideningInfo.programme_name
                     ? `Visit ${uniWideningInfo.programme_name}`
@@ -957,7 +957,7 @@ function WideningAccessSection({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1"
-                  style={{ color: 'var(--pf-teal-700)', fontWeight: 600 }}
+                  style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
                 >
                   Visit {universityName ?? 'university'} website for full details
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -975,7 +975,7 @@ function WideningAccessSection({
         <Link
           href="/widening-access"
           className="pf-btn-ghost pf-btn-sm"
-          style={{ color: 'var(--pf-teal-500)' }}
+          style={{ color: 'var(--pf-blue-500)' }}
         >
           Learn about widening access schemes
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

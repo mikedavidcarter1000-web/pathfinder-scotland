@@ -131,7 +131,7 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
 
   if (isLoading) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
         <div style={{ backgroundColor: 'var(--pf-white)' }}>
           <Skeleton width="100%" height={4} rounded="sm" />
           <div className="pf-container" style={{ paddingTop: '32px', paddingBottom: '32px' }}>
@@ -190,7 +190,7 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
     return (
       <div
         className="min-h-screen"
-        style={{ backgroundColor: 'var(--pf-teal-50)', padding: '48px 16px' }}
+        style={{ backgroundColor: 'var(--pf-blue-50)', padding: '48px 16px' }}
       >
         <div className="pf-container">
           <ErrorState
@@ -230,13 +230,13 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
     !subject.is_available_n4
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className={`h-1 bg-gradient-to-r ${areaColour.bar}`} />
         <div className="pf-container pt-6 pb-6 sm:pt-8 sm:pb-8">
           <nav className="flex items-center gap-2 mb-3 sm:mb-4" style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}>
-            <Link href="/subjects" style={{ color: 'var(--pf-teal-500)' }}>
+            <Link href="/subjects" style={{ color: 'var(--pf-blue-500)' }}>
               Subjects
             </Link>
             <span>/</span>
@@ -343,7 +343,7 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {subject.skills_tags.map((tag) => (
-                        <span key={tag} className="pf-badge-teal">
+                        <span key={tag} className="pf-badge-blue">
                           {tag}
                         </span>
                       ))}
@@ -375,11 +375,11 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
                   <div
                     className="mb-4 p-3 rounded-lg"
                     style={{
-                      backgroundColor: 'var(--pf-teal-100)',
-                      borderLeft: '3px solid var(--pf-teal-700)',
+                      backgroundColor: 'var(--pf-blue-100)',
+                      borderLeft: '3px solid var(--pf-blue-700)',
                     }}
                   >
-                    <p style={{ fontSize: '0.875rem', color: 'var(--pf-teal-900)' }}>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--pf-blue-900)' }}>
                       <span style={{ fontWeight: 600 }}>Academy / elective:</span> An enrichment option in the Broad General Education phase. Does not lead directly to an SQA qualification but builds skills for senior phase choices.
                     </p>
                   </div>
@@ -403,7 +403,7 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
                         <li key={p.id} className="flex items-start gap-2" style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)' }}>
                           <svg
                             className="w-4 h-4 mt-0.5 flex-shrink-0"
-                            style={{ color: 'var(--pf-teal-500)' }}
+                            style={{ color: 'var(--pf-blue-500)' }}
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -414,7 +414,7 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
                             {p.to_subject && (
                               <Link
                                 href={`/subjects/${p.to_subject.id}`}
-                                style={{ fontWeight: 600, color: 'var(--pf-teal-700)' }}
+                                style={{ fontWeight: 600, color: 'var(--pf-blue-700)' }}
                               >
                                 {p.to_subject.name}
                               </Link>
@@ -510,7 +510,7 @@ function ProgressionStepper({ steps }: { steps: PathwayStep[] }) {
     <ol className="relative space-y-5">
       {steps.map((step, idx) => {
         const isLast = idx === steps.length - 1
-        const dotBg = step.achieved ? 'var(--pf-green-500)' : 'var(--pf-teal-500)'
+        const dotBg = step.achieved ? 'var(--pf-green-500)' : 'var(--pf-blue-500)'
 
         return (
           <li key={step.level} className="flex gap-4">
@@ -537,7 +537,7 @@ function ProgressionStepper({ steps }: { steps: PathwayStep[] }) {
                 <span
                   className="w-0.5 flex-1 my-1"
                   style={{
-                    backgroundColor: step.achieved ? 'var(--pf-green-500)' : 'var(--pf-teal-500)',
+                    backgroundColor: step.achieved ? 'var(--pf-green-500)' : 'var(--pf-blue-500)',
                     opacity: step.achieved ? 1 : 0.35,
                   }}
                 />
@@ -628,7 +628,7 @@ function CourseLevelGroup({
               borderTop: i === 0 ? 'none' : '1px solid var(--pf-grey-100)',
               transition: 'background-color 0.15s',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)')}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             <div className="flex items-start justify-between gap-4">
@@ -643,7 +643,7 @@ function CourseLevelGroup({
                 )}
                 <div className="flex flex-wrap items-center gap-2 mt-2">
                   {course.requirement.min_grade && (
-                    <span className="pf-badge-teal">
+                    <span className="pf-badge-blue">
                       Min grade: {course.requirement.min_grade}
                     </span>
                   )}
@@ -659,7 +659,7 @@ function CourseLevelGroup({
               </div>
               <svg
                 className="w-5 h-5 flex-shrink-0 mt-1"
-                style={{ color: 'var(--pf-teal-500)' }}
+                style={{ color: 'var(--pf-blue-500)' }}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -707,8 +707,8 @@ function CareerGroup({
                 color: 'var(--pf-grey-900)',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'var(--pf-teal-500)'
-                e.currentTarget.style.color = 'var(--pf-teal-700)'
+                e.currentTarget.style.borderColor = 'var(--pf-blue-500)'
+                e.currentTarget.style.color = 'var(--pf-blue-700)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = 'var(--pf-grey-300)'

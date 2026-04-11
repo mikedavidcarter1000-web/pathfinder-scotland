@@ -180,7 +180,7 @@ export function SubjectGradeChecklist({
                       checked={entry.predicted}
                       onChange={(e) => updateEntry(idx, { predicted: e.target.checked })}
                       className="w-3.5 h-3.5 rounded"
-                      style={{ accentColor: 'var(--pf-teal-700)' }}
+                      style={{ accentColor: 'var(--pf-blue-700)' }}
                     />
                     Predicted
                   </label>

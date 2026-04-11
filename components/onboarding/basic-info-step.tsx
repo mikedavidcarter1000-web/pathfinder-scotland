@@ -82,9 +82,9 @@ export function BasicInfoStep({ data, onChange, onNext }: BasicInfoStepProps) {
                 style={{
                   padding: '16px',
                   borderRadius: '8px',
-                  backgroundColor: active ? 'var(--pf-teal-50)' : 'var(--pf-white)',
+                  backgroundColor: active ? 'var(--pf-blue-50)' : 'var(--pf-white)',
                   border: active
-                    ? '2px solid var(--pf-teal-700)'
+                    ? '2px solid var(--pf-blue-700)'
                     : '2px solid var(--pf-grey-300)',
                   boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                   cursor: 'pointer',
@@ -96,7 +96,7 @@ export function BasicInfoStep({ data, onChange, onNext }: BasicInfoStepProps) {
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 700,
                     fontSize: '1.5rem',
-                    color: active ? 'var(--pf-teal-700)' : 'var(--pf-grey-900)',
+                    color: active ? 'var(--pf-blue-700)' : 'var(--pf-grey-900)',
                     lineHeight: 1.1,
                   }}
                 >
@@ -115,7 +115,7 @@ export function BasicInfoStep({ data, onChange, onNext }: BasicInfoStepProps) {
                 <div
                   style={{
                     fontSize: '0.75rem',
-                    color: active ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
+                    color: active ? 'var(--pf-blue-700)' : 'var(--pf-grey-600)',
                     marginTop: '8px',
                     lineHeight: 1.4,
                   }}

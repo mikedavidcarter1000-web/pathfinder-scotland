@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <main style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+    <main style={{ backgroundColor: 'var(--pf-blue-50)' }}>
       {/* Page header */}
       <section
         style={{
@@ -134,7 +134,7 @@ export default function TermsPage() {
               Questions about these terms? Email us at{' '}
               <a
                 href="mailto:hello@pathfinderscotland.co.uk"
-                style={{ color: 'var(--pf-teal-500)' }}
+                style={{ color: 'var(--pf-blue-500)' }}
               >
                 hello@pathfinderscotland.co.uk
               </a>

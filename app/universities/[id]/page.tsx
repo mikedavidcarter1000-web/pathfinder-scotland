@@ -31,7 +31,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[var(--pf-teal-50)]">
+      <div className="min-h-screen bg-[var(--pf-blue-50)]">
         <div className="bg-[var(--pf-white)]">
           <div className="max-w-4xl mx-auto px-4 py-8">
             <Skeleton width="140px" height={14} rounded="sm" />
@@ -72,7 +72,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
     const classified = error ? classifyError(error) : null
     const isNotFound = !error || classified?.kind === 'not-found'
     return (
-      <div className="min-h-screen bg-[var(--pf-teal-50)]" style={{ padding: '48px 16px' }}>
+      <div className="min-h-screen bg-[var(--pf-blue-50)]" style={{ padding: '48px 16px' }}>
         <div className="max-w-4xl mx-auto px-4">
           <ErrorState
             title={isNotFound ? 'University not found' : classified?.title ?? 'Something went wrong'}
@@ -94,7 +94,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
     : null
 
   const typeColors: Record<string, string> = {
-    ancient: 'bg-[var(--pf-teal-100)] text-[var(--pf-teal-700)]',
+    ancient: 'bg-[var(--pf-blue-100)] text-[var(--pf-blue-700)]',
     traditional: 'bg-blue-100 text-blue-700',
     modern: 'bg-green-100 text-green-700',
     specialist: 'bg-orange-100 text-orange-700',
@@ -106,7 +106,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
   } | null
 
   return (
-    <div className="min-h-screen bg-[var(--pf-teal-50)]">
+    <div className="min-h-screen bg-[var(--pf-blue-50)]">
       {/* Header */}
       <div className="bg-[var(--pf-white)]">
         <div className="max-w-4xl mx-auto px-4 py-8">
@@ -184,13 +184,13 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
             {wideningAccessInfo && (wideningAccessInfo.programs || wideningAccessInfo.eligibility_criteria) && (
               <section>
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Widening Access</h2>
-                <div className="bg-[var(--pf-teal-50)] border border-[var(--pf-teal-100)] rounded-xl p-6">
+                <div className="bg-[var(--pf-blue-50)] border border-[var(--pf-blue-100)] rounded-xl p-6">
                   {wideningAccessInfo.programs && wideningAccessInfo.programs.length > 0 && (
                     <div className="mb-4">
-                      <h3 className="font-medium text-[var(--pf-teal-900)] mb-2">Access Programmes</h3>
+                      <h3 className="font-medium text-[var(--pf-blue-900)] mb-2">Access Programmes</h3>
                       <div className="flex flex-wrap gap-2">
                         {wideningAccessInfo.programs.map((program) => (
-                          <span key={program} className="px-3 py-1 bg-[var(--pf-teal-100)] text-[var(--pf-teal-700)] text-sm rounded-full">
+                          <span key={program} className="px-3 py-1 bg-[var(--pf-blue-100)] text-[var(--pf-blue-700)] text-sm rounded-full">
                             {program}
                           </span>
                         ))}
@@ -199,10 +199,10 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
                   )}
                   {wideningAccessInfo.eligibility_criteria && wideningAccessInfo.eligibility_criteria.length > 0 && (
                     <div>
-                      <h3 className="font-medium text-[var(--pf-teal-900)] mb-2">Eligibility Criteria</h3>
+                      <h3 className="font-medium text-[var(--pf-blue-900)] mb-2">Eligibility Criteria</h3>
                       <ul className="space-y-1">
                         {wideningAccessInfo.eligibility_criteria.map((criteria) => (
-                          <li key={criteria} className="text-[var(--pf-teal-700)] text-sm flex items-center gap-2">
+                          <li key={criteria} className="text-[var(--pf-blue-700)] text-sm flex items-center gap-2">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>

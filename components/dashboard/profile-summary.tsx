@@ -161,8 +161,8 @@ export function ProfileSummary() {
           className="rounded-lg transition-colors inline-flex items-center justify-center flex-shrink-0"
           style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)'
-            e.currentTarget.style.color = 'var(--pf-teal-700)'
+            e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)'
+            e.currentTarget.style.color = 'var(--pf-blue-700)'
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = 'transparent'

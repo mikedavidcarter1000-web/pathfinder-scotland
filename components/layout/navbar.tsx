@@ -69,7 +69,7 @@ export function Navbar() {
     <>
       <nav
         className="sticky top-0 z-50"
-        style={{ backgroundColor: 'var(--pf-teal-900)' }}
+        style={{ backgroundColor: 'var(--pf-blue-900)' }}
       >
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="flex items-center justify-between" style={{ height: '64px' }}>
@@ -78,19 +78,19 @@ export function Navbar() {
               href={user ? '/dashboard' : '/'}
               className="flex items-center gap-2 text-white no-underline hover:no-underline"
             >
-              <div
-                className="w-9 h-9 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: 'rgba(255,255,255,0.12)' }}
-              >
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo-white.svg"
+                alt=""
+                width={32}
+                height={32}
+                style={{ display: 'block', flexShrink: 0 }}
+              />
               <span
                 className="text-white"
                 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1.125rem' }}
               >
-                Pathfinder
+                Pathfinder Scotland
               </span>
             </Link>
 
@@ -162,7 +162,7 @@ export function Navbar() {
                       alignItems: 'center',
                       padding: '8px 16px',
                       backgroundColor: '#fff',
-                      color: 'var(--pf-teal-900)',
+                      color: 'var(--pf-blue-900)',
                       borderRadius: '8px',
                       fontFamily: "'Space Grotesk', sans-serif",
                       fontWeight: 600,
@@ -209,7 +209,7 @@ export function Navbar() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundColor: 'rgba(12, 74, 66, 0.6)',
+              backgroundColor: 'rgba(0, 45, 114, 0.6)',
               backdropFilter: 'blur(2px)',
               animation: 'fadeIn 0.2s ease-out',
             }}
@@ -222,7 +222,7 @@ export function Navbar() {
             className="absolute right-0 top-0 bottom-0 flex flex-col"
             style={{
               width: 'min(85vw, 340px)',
-              backgroundColor: 'var(--pf-teal-900)',
+              backgroundColor: 'var(--pf-blue-900)',
               boxShadow: '-8px 0 32px rgba(0, 0, 0, 0.2)',
               animation: 'pf-slide-in-right 0.25s ease-out',
             }}
@@ -306,7 +306,7 @@ export function Navbar() {
                       style={{
                         width: '44px',
                         height: '44px',
-                        backgroundColor: 'var(--pf-teal-500)',
+                        backgroundColor: 'var(--pf-blue-500)',
                       }}
                     >
                       <span
@@ -369,7 +369,7 @@ export function Navbar() {
                       minHeight: '48px',
                       padding: '12px 16px',
                       backgroundColor: '#fff',
-                      color: 'var(--pf-teal-900)',
+                      color: 'var(--pf-blue-900)',
                       fontFamily: "'Space Grotesk', sans-serif",
                       fontWeight: 600,
                       fontSize: '0.9375rem',

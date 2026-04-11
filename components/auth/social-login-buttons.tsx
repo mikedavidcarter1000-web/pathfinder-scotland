@@ -75,7 +75,7 @@ export function SocialLoginButtons({ redirectTo }: SocialLoginButtonsProps) {
             fontWeight: 600,
             fontSize: '0.9375rem',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)')}
           onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-white)')}
         >
           {provider.icon}

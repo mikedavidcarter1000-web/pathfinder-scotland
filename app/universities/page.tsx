@@ -35,7 +35,7 @@ export default function UniversitiesPage() {
   const hasFilters = typeFilter || cityFilter
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
@@ -107,12 +107,12 @@ export default function UniversitiesPage() {
                 className="text-left transition-all rounded-lg"
                 style={{
                   padding: '16px',
-                  backgroundColor: active ? 'var(--pf-teal-50)' : 'var(--pf-white)',
-                  border: active ? '2px solid var(--pf-teal-500)' : '1px solid var(--pf-grey-300)',
+                  backgroundColor: active ? 'var(--pf-blue-50)' : 'var(--pf-white)',
+                  border: active ? '2px solid var(--pf-blue-500)' : '1px solid var(--pf-grey-300)',
                   boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                 }}
               >
-                <span className="pf-badge-teal inline-flex" style={{ marginBottom: '8px' }}>
+                <span className="pf-badge-blue inline-flex" style={{ marginBottom: '8px' }}>
                   {value.label}
                 </span>
                 <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>

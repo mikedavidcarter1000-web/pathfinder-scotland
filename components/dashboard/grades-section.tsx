@@ -132,7 +132,7 @@ export function GradesSection() {
       {grades && grades.length > 0 && (
         <div
           className="grid grid-cols-3 gap-4 mb-6 rounded-lg"
-          style={{ padding: '16px', backgroundColor: 'var(--pf-teal-50)' }}
+          style={{ padding: '16px', backgroundColor: 'var(--pf-blue-50)' }}
         >
           <div className="text-center">
             <p
@@ -154,7 +154,7 @@ export function GradesSection() {
           </div>
           <div
             className="text-center"
-            style={{ borderLeft: '1px solid var(--pf-teal-100)', borderRight: '1px solid var(--pf-teal-100)' }}
+            style={{ borderLeft: '1px solid var(--pf-blue-100)', borderRight: '1px solid var(--pf-blue-100)' }}
           >
             <p
               style={{
@@ -186,7 +186,7 @@ export function GradesSection() {
             </p>
             <p
               className="pf-data-number"
-              style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--pf-teal-700)' }}
+              style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--pf-blue-700)' }}
             >
               {gradeSummary.ucasPoints}
             </p>
@@ -226,8 +226,8 @@ export function GradesSection() {
                   style={{
                     padding: '2px 8px',
                     fontSize: '0.75rem',
-                    backgroundColor: active ? 'var(--pf-teal-100)' : 'var(--pf-grey-300)',
-                    color: active ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
+                    backgroundColor: active ? 'var(--pf-blue-100)' : 'var(--pf-grey-300)',
+                    color: active ? 'var(--pf-blue-700)' : 'var(--pf-grey-600)',
                   }}
                 >
                   {count}

@@ -114,7 +114,7 @@ export function SavedCoursesSection() {
           href="/courses"
           style={{
             fontSize: '0.875rem',
-            color: 'var(--pf-teal-700)',
+            color: 'var(--pf-blue-700)',
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 600,
           }}
@@ -145,7 +145,7 @@ export function SavedCoursesSection() {
               <div
                 key={savedCourse.id}
                 className="group flex items-center gap-4 rounded-lg transition-colors"
-                style={{ padding: '12px', backgroundColor: 'var(--pf-teal-50)' }}
+                style={{ padding: '12px', backgroundColor: 'var(--pf-blue-50)' }}
               >
                 <Link href={`/courses/${course.id}`} className="flex-1 min-w-0 no-underline hover:no-underline">
                   <div className="flex items-start justify-between gap-2">
@@ -209,7 +209,7 @@ export function SavedCoursesSection() {
               className="block text-center py-2"
               style={{
                 fontSize: '0.875rem',
-                color: 'var(--pf-teal-700)',
+                color: 'var(--pf-blue-700)',
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontWeight: 600,
               }}
@@ -226,10 +226,10 @@ export function SavedCoursesSection() {
           className="mt-4 rounded-lg"
           style={{
             padding: '12px',
-            backgroundColor: 'var(--pf-teal-100)',
+            backgroundColor: 'var(--pf-blue-100)',
           }}
         >
-          <div className="flex items-center gap-2" style={{ color: 'var(--pf-teal-700)' }}>
+          <div className="flex items-center gap-2" style={{ color: 'var(--pf-blue-700)' }}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -237,7 +237,7 @@ export function SavedCoursesSection() {
               {5 - savedCourses.length} more {savedCourses.length === 4 ? 'spot' : 'spots'} available
             </span>
           </div>
-          <p style={{ fontSize: '0.75rem', color: 'var(--pf-teal-900)', marginTop: '4px' }}>
+          <p style={{ fontSize: '0.75rem', color: 'var(--pf-blue-900)', marginTop: '4px' }}>
             UCAS allows up to 5 course choices on your application.
           </p>
         </div>

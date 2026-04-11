@@ -22,9 +22,9 @@ export function StepIndicator({ steps, currentStep, onStepClick }: StepIndicator
           const isClickable = onStepClick && step.id < currentStep
 
           const dotBg = isCompleted
-            ? 'var(--pf-teal-500)'
+            ? 'var(--pf-blue-500)'
             : isCurrent
-            ? 'var(--pf-teal-700)'
+            ? 'var(--pf-blue-700)'
             : 'var(--pf-grey-100)'
           const dotColor = isCompleted || isCurrent ? '#fff' : 'var(--pf-grey-600)'
 
@@ -44,7 +44,7 @@ export function StepIndicator({ steps, currentStep, onStepClick }: StepIndicator
                     height: '40px',
                     backgroundColor: dotBg,
                     cursor: isClickable ? 'pointer' : 'default',
-                    border: isCurrent ? '3px solid var(--pf-teal-100)' : 'none',
+                    border: isCurrent ? '3px solid var(--pf-blue-100)' : 'none',
                   }}
                 >
                   {isCompleted ? (
@@ -84,7 +84,7 @@ export function StepIndicator({ steps, currentStep, onStepClick }: StepIndicator
                     <div
                       className="h-full transition-colors"
                       style={{
-                        backgroundColor: isCompleted ? 'var(--pf-teal-500)' : 'var(--pf-grey-100)',
+                        backgroundColor: isCompleted ? 'var(--pf-blue-500)' : 'var(--pf-grey-100)',
                       }}
                     />
                   </div>
@@ -99,7 +99,7 @@ export function StepIndicator({ steps, currentStep, onStepClick }: StepIndicator
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 600,
                     color: isCurrent
-                      ? 'var(--pf-teal-700)'
+                      ? 'var(--pf-blue-700)'
                       : isCompleted
                       ? 'var(--pf-grey-900)'
                       : 'var(--pf-grey-600)',
@@ -162,7 +162,7 @@ export function MobileStepIndicator({
           className="h-full transition-all duration-300"
           style={{
             width: `${progress}%`,
-            backgroundColor: 'var(--pf-teal-500)',
+            backgroundColor: 'var(--pf-blue-500)',
           }}
         />
       </div>

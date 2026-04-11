@@ -61,7 +61,7 @@ export function SubjectChoicesSection() {
           style={{
             fontSize: '0.875rem',
             fontWeight: 600,
-            color: 'var(--pf-teal-700)',
+            color: 'var(--pf-blue-700)',
             fontFamily: "'Space Grotesk', sans-serif",
           }}
         >
@@ -144,7 +144,7 @@ function TransitionGroup({
               className="flex items-center gap-3 rounded-lg"
               style={{
                 padding: '10px 12px',
-                backgroundColor: 'var(--pf-teal-50)',
+                backgroundColor: 'var(--pf-blue-50)',
               }}
             >
               <span
@@ -203,7 +203,7 @@ function TransitionGroup({
                   style={{
                     width: '22px',
                     height: '22px',
-                    backgroundColor: 'var(--pf-teal-700)',
+                    backgroundColor: 'var(--pf-blue-700)',
                     color: '#fff',
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 700,

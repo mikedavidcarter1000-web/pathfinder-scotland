@@ -7,7 +7,7 @@
 **Audience:** Scottish secondary school students (13-18), their parents, and guidance teachers. The design must feel trustworthy to parents while remaining engaging for teenagers.
 
 **Reference sites (include in every task prompt):**
-- Wise.com -- information hierarchy, teal palette, trust signals
+- Wise.com -- information hierarchy, Saltire blue palette, trust signals
 - Stripe.com/docs -- data presentation, typography, structured content layout
 
 ---
@@ -18,12 +18,12 @@ Define ALL colours as CSS custom properties in :root. NEVER hardcode hex values 
 
 ```css
 :root {
-  /* Primary -- teal/green */
-  --pf-teal-900: #0C4A42;   /* Nav, footer, dark sections */
-  --pf-teal-700: #0F6B5E;   /* Primary buttons, active states */
-  --pf-teal-500: #14907E;   /* Links, accents */
-  --pf-teal-100: #E6F5F2;   /* Light backgrounds, card highlights */
-  --pf-teal-50:  #F0FAF8;   /* Page backgrounds */
+  /* Primary -- Saltire blue */
+  --pf-blue-900: #002D72;   /* Nav, footer, dark sections (deep Saltire navy) */
+  --pf-blue-700: #005EB8;   /* Primary buttons, active states (Saltire blue) */
+  --pf-blue-500: #0072CE;   /* Links, accents */
+  --pf-blue-100: #E0EDF7;   /* Light backgrounds, card highlights */
+  --pf-blue-50:  #F0F5FA;   /* Page backgrounds */
 
   /* Neutral */
   --pf-white:    #FFFFFF;    /* Card backgrounds, content areas */
@@ -41,7 +41,7 @@ Define ALL colours as CSS custom properties in :root. NEVER hardcode hex values 
 
 ## Curricular Area Colours
 
-Used for subject cards, badges, and category indicators. Apply consistently everywhere.
+Used for subject cards, badges, and category indicators. Apply consistently everywhere. These are independent of the brand palette and should NOT change when the brand colour changes.
 
 | Area | Token | Value |
 |------|-------|-------|
@@ -94,9 +94,9 @@ npm install @fontsource/space-grotesk @fontsource/inter
 - NEVER use rounded-full on cards (only on badges/pills)
 
 ### Buttons
-- Primary: var(--pf-teal-700) background, white text, 8px radius, no uppercase
-- Secondary: white background, 1px var(--pf-teal-700) border, var(--pf-teal-700) text
-- Ghost: transparent background, var(--pf-teal-500) text
+- Primary: var(--pf-blue-700) background, white text, 8px radius, no uppercase
+- Secondary: white background, 1px var(--pf-blue-700) border, var(--pf-blue-700) text
+- Ghost: transparent background, var(--pf-blue-500) text
 - All buttons: 12px 24px padding, Space Grotesk 600
 - Hover: darken background 10%
 
@@ -104,18 +104,18 @@ npm install @fontsource/space-grotesk @fontsource/inter
 - Border radius: rounded-full
 - Font size: 0.75rem
 - Padding: 4px 12px
-- Style: light background with darker text (e.g. var(--pf-teal-100) bg + var(--pf-teal-700) text)
+- Style: light background with darker text (e.g. var(--pf-blue-100) bg + var(--pf-blue-700) text)
 - Curricular area badges use their assigned area colour at 10% opacity bg + full colour text
 
 ### Links
-- Colour: var(--pf-teal-500)
+- Colour: var(--pf-blue-500)
 - Underline on hover only
-- NEVER use blue (#0000FF) or browser default link colour
+- NEVER use the browser default link colour (#0000FF)
 
 ### Form Inputs
 - Border: 1px solid var(--pf-grey-300)
 - Border radius: 8px
-- Focus: 2px solid var(--pf-teal-500) outline
+- Focus: 2px solid var(--pf-blue-500) outline
 - Background: var(--pf-white)
 - Padding: 12px 16px
 
@@ -127,14 +127,14 @@ npm install @fontsource/space-grotesk @fontsource/inter
 - Card grid gap: 24px
 - Section vertical padding: 64px (48px on mobile)
 - Maximum gap between page header and first content: 32px
-- Page background: var(--pf-teal-50) or var(--pf-white)
+- Page background: var(--pf-blue-50) or var(--pf-white)
 
 ### Section Rhythm
 Alternate section backgrounds to create visual flow:
 1. White
 2. var(--pf-grey-100)
 3. White
-4. var(--pf-teal-900) (dark section with white text)
+4. var(--pf-blue-900) (dark section with white text)
 
 ### Responsive Breakpoints
 - Mobile: < 640px (1 column)
@@ -145,26 +145,26 @@ Alternate section backgrounds to create visual flow:
 
 ## Navigation
 
-- Background: var(--pf-teal-900)
+- Background: var(--pf-blue-900)
 - Text: white
 - Active link: white with underline or bottom border
 - Height: 64px
-- Logo: white version on dark background
+- Logo: white Saltire mark (/logo-white.svg) beside the "Pathfinder Scotland" wordmark
 - Sticky on scroll
 
 ## Footer
 
-- Background: var(--pf-teal-900)
+- Background: var(--pf-blue-900)
 - Text: white / rgba(255,255,255,0.7) for secondary
 - Padding: 48px vertical
-- Include: branding, nav links, legal links, "Built for Scottish students" tagline
+- Include: branding (logo + "Pathfinder Scotland"), nav links, legal links, "Built in Scotland, for Scottish students" tagline
 
 ---
 
 ## Hero Sections
 
 - NEVER text-only. Always include a visual element (illustration, geometric art, SVG, or data visualisation)
-- Background: var(--pf-teal-50) or var(--pf-teal-900) for dark variant
+- Background: var(--pf-blue-50) or var(--pf-blue-900) for dark variant
 - Maximum height: 500px
 - CTA buttons prominent with clear hierarchy (primary + secondary)
 
@@ -177,7 +177,7 @@ Alternate section backgrounds to create visual flow:
 | Success | var(--pf-green-500) | Eligibility confirmed, grade achieved, saved |
 | Warning | var(--pf-amber-500) | Widening access eligible, approaching limits |
 | Error | var(--pf-red-500) | Ineligible, missing requirements, form errors |
-| Info | var(--pf-teal-100) bg + var(--pf-teal-700) text | Tips, recommendations, breadth advice |
+| Info | var(--pf-blue-100) bg + var(--pf-blue-700) text | Tips, recommendations, breadth advice |
 
 ---
 

@@ -43,7 +43,7 @@ export function Footer() {
   return (
     <footer
       style={{
-        backgroundColor: 'var(--pf-teal-900)',
+        backgroundColor: 'var(--pf-blue-900)',
         color: '#fff',
         paddingTop: '48px',
         paddingBottom: '48px',
@@ -58,14 +58,14 @@ export function Footer() {
               className="inline-flex items-center justify-center sm:justify-start gap-2 mb-4 no-underline hover:no-underline"
               style={{ color: '#fff' }}
             >
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: 'rgba(255,255,255,0.12)' }}
-              >
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo-white.svg"
+                alt=""
+                width={32}
+                height={32}
+                style={{ display: 'block', flexShrink: 0 }}
+              />
               <span
                 style={{
                   fontFamily: "'Space Grotesk', sans-serif",
@@ -74,7 +74,7 @@ export function Footer() {
                   color: '#fff',
                 }}
               >
-                Pathfinder
+                Pathfinder Scotland
               </span>
             </Link>
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem', marginBottom: '16px', lineHeight: 1.6 }}>
@@ -184,7 +184,7 @@ export function Footer() {
             &copy; {currentYear} Pathfinder Scotland. All rights reserved.
           </p>
           <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem' }}>
-            Built for Scottish students.
+            Built in Scotland, for Scottish students.
           </p>
         </div>
       </div>

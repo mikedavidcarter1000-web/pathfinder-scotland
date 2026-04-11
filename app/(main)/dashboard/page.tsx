@@ -223,7 +223,7 @@ export default function DashboardPage() {
               className="rounded-lg"
               style={{
                 padding: '24px',
-                backgroundColor: 'var(--pf-teal-900)',
+                backgroundColor: 'var(--pf-blue-900)',
                 color: '#fff',
               }}
             >
@@ -263,13 +263,13 @@ export default function DashboardPage() {
               style={{
                 padding: '24px',
                 borderRadius: '8px',
-                backgroundColor: 'var(--pf-teal-50)',
-                border: '1px dashed var(--pf-teal-500)',
+                backgroundColor: 'var(--pf-blue-50)',
+                border: '1px dashed var(--pf-blue-500)',
               }}
             >
               <svg
                 className="w-10 h-10 mx-auto mb-3"
-                style={{ color: 'var(--pf-teal-500)' }}
+                style={{ color: 'var(--pf-blue-500)' }}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -308,7 +308,7 @@ function QuickAction({
         borderRadius: '8px',
         backgroundColor: 'transparent',
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
+      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)')}
       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
     >
       <div
@@ -316,8 +316,8 @@ function QuickAction({
         style={{
           width: '40px',
           height: '40px',
-          backgroundColor: 'var(--pf-teal-100)',
-          color: 'var(--pf-teal-700)',
+          backgroundColor: 'var(--pf-blue-100)',
+          color: 'var(--pf-blue-700)',
         }}
       >
         {icon}

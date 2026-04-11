@@ -78,7 +78,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
                 strokeLinejoin="round"
                 style={{
                   flexShrink: 0,
-                  color: 'var(--pf-teal-700)',
+                  color: 'var(--pf-blue-700)',
                   transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                   transition: 'transform 0.25s ease',
                 }}

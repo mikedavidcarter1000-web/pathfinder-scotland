@@ -6,12 +6,12 @@
   :root {
     /* Pathfinder design tokens -- single source of truth */
 
-    /* Primary -- teal/green */
-    --pf-teal-900: #0C4A42;
-    --pf-teal-700: #0F6B5E;
-    --pf-teal-500: #14907E;
-    --pf-teal-100: #E6F5F2;
-    --pf-teal-50:  #F0FAF8;
+    /* Primary -- Saltire blue */
+    --pf-blue-900: #002D72;
+    --pf-blue-700: #005EB8;
+    --pf-blue-500: #0072CE;
+    --pf-blue-100: #E0EDF7;
+    --pf-blue-50:  #F0F5FA;
 
     /* Neutral */
     --pf-white:    #FFFFFF;
@@ -37,25 +37,25 @@
 
     /* Shadcn-compat tokens (kept so existing components using `border`/`ring` still work).
        Mapped onto the Pathfinder palette. */
-    --background: 168 50% 97%;            /* pf-teal-50 */
+    --background: 210 50% 96%;            /* pf-blue-50 */
     --foreground: 240 27% 14%;            /* pf-grey-900 */
     --card: 0 0% 100%;
     --card-foreground: 240 27% 14%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 27% 14%;
-    --primary: 172 76% 24%;               /* pf-teal-700 */
+    --primary: 209 100% 36%;              /* pf-blue-700 */
     --primary-foreground: 0 0% 100%;
     --secondary: 240 10% 96%;             /* pf-grey-100 */
     --secondary-foreground: 240 27% 14%;
     --muted: 240 10% 96%;
     --muted-foreground: 240 10% 32%;      /* pf-grey-600 */
-    --accent: 170 64% 92%;                /* pf-teal-100 */
-    --accent-foreground: 172 76% 24%;
+    --accent: 208 60% 92%;                /* pf-blue-100 */
+    --accent-foreground: 209 100% 36%;
     --destructive: 0 84% 60%;             /* pf-red-500 */
     --destructive-foreground: 0 0% 100%;
     --border: 240 11% 84%;                /* pf-grey-300 */
     --input: 240 11% 84%;
-    --ring: 172 74% 32%;                  /* pf-teal-500 */
+    --ring: 207 100% 40%;                 /* pf-blue-500 */
     --radius: 0.5rem;
   }
 
@@ -64,7 +64,7 @@
   }
 
   html {
-    background-color: var(--pf-teal-50);
+    background-color: var(--pf-blue-50);
     /* Prevent any rogue child from creating horizontal overflow on mobile. */
     overflow-x: hidden;
   }
@@ -73,7 +73,7 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-weight: 400;
     color: var(--pf-grey-900);
-    background-color: var(--pf-teal-50);
+    background-color: var(--pf-blue-50);
     line-height: 1.6;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
@@ -110,7 +110,7 @@
   }
 
   a {
-    color: var(--pf-teal-500);
+    color: var(--pf-blue-500);
     text-decoration: none;
   }
 
@@ -119,8 +119,8 @@
   }
 
   ::selection {
-    background-color: var(--pf-teal-100);
-    color: var(--pf-teal-900);
+    background-color: var(--pf-blue-100);
+    color: var(--pf-blue-900);
   }
 }
 
@@ -141,32 +141,32 @@
 
   .pf-btn-primary {
     @apply pf-btn;
-    background-color: var(--pf-teal-700);
+    background-color: var(--pf-blue-700);
     color: var(--pf-white);
   }
   .pf-btn-primary:hover {
-    background-color: var(--pf-teal-900);
+    background-color: var(--pf-blue-900);
     text-decoration: none;
   }
 
   .pf-btn-secondary {
     @apply pf-btn;
     background-color: var(--pf-white);
-    color: var(--pf-teal-700);
-    border: 1px solid var(--pf-teal-700);
+    color: var(--pf-blue-700);
+    border: 1px solid var(--pf-blue-700);
   }
   .pf-btn-secondary:hover {
-    background-color: var(--pf-teal-50);
+    background-color: var(--pf-blue-50);
     text-decoration: none;
   }
 
   .pf-btn-ghost {
     @apply pf-btn;
     background-color: transparent;
-    color: var(--pf-teal-500);
+    color: var(--pf-blue-500);
   }
   .pf-btn-ghost:hover {
-    background-color: var(--pf-teal-50);
+    background-color: var(--pf-blue-50);
     text-decoration: none;
   }
 
@@ -237,10 +237,10 @@
     line-height: 1.2;
   }
 
-  .pf-badge-teal {
+  .pf-badge-blue {
     @apply pf-badge;
-    background-color: var(--pf-teal-100);
-    color: var(--pf-teal-700);
+    background-color: var(--pf-blue-100);
+    color: var(--pf-blue-700);
   }
   .pf-badge-grey {
     @apply pf-badge;
@@ -268,7 +268,7 @@
     @apply pf-badge;
   }
   .badge-blue {
-    @apply pf-badge-teal;
+    @apply pf-badge-blue;
   }
   .badge-green {
     @apply pf-badge-green;
@@ -283,7 +283,7 @@
     @apply pf-badge-grey;
   }
   .badge-purple {
-    @apply pf-badge-teal;
+    @apply pf-badge-blue;
   }
 
   /* Curricular area badges -- light background, full-colour text */
@@ -321,9 +321,9 @@
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   .pf-input:focus {
-    outline: 2px solid var(--pf-teal-500);
+    outline: 2px solid var(--pf-blue-500);
     outline-offset: 0;
-    border-color: var(--pf-teal-500);
+    border-color: var(--pf-blue-500);
   }
   .pf-input::placeholder {
     color: var(--pf-grey-600);
@@ -383,11 +383,11 @@
   .pf-section-grey {
     background-color: var(--pf-grey-100);
   }
-  .pf-section-teal {
-    background-color: var(--pf-teal-50);
+  .pf-section-blue {
+    background-color: var(--pf-blue-50);
   }
   .pf-section-dark {
-    background-color: var(--pf-teal-900);
+    background-color: var(--pf-blue-900);
     color: var(--pf-white);
   }
 
@@ -507,7 +507,7 @@
 
   .focus-ring {
     @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
-    --tw-ring-color: var(--pf-teal-500);
+    --tw-ring-color: var(--pf-blue-500);
   }
 }
 

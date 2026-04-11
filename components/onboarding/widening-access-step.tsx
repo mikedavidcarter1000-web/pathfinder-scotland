@@ -72,14 +72,14 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
         className="rounded-lg"
         style={{
           padding: '16px',
-          backgroundColor: 'var(--pf-teal-100)',
-          color: 'var(--pf-teal-900)',
+          backgroundColor: 'var(--pf-blue-100)',
+          color: 'var(--pf-blue-900)',
         }}
       >
         <div className="flex gap-3">
           <svg
             className="w-5 h-5 flex-shrink-0 mt-0.5"
-            style={{ color: 'var(--pf-teal-700)' }}
+            style={{ color: 'var(--pf-blue-700)' }}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -92,10 +92,10 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
             />
           </svg>
           <div style={{ fontSize: '0.875rem' }}>
-            <p style={{ fontWeight: 600, marginBottom: '4px', color: 'var(--pf-teal-900)' }}>
+            <p style={{ fontWeight: 600, marginBottom: '4px', color: 'var(--pf-blue-900)' }}>
               Why we ask this
             </p>
-            <p style={{ color: 'var(--pf-teal-900)' }}>
+            <p style={{ color: 'var(--pf-blue-900)' }}>
               Scottish universities offer reduced entry requirements and extra support for students
               from widening participation backgrounds. This information is kept confidential.
             </p>
@@ -111,9 +111,9 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
             style={{
               padding: '16px',
               borderRadius: '8px',
-              backgroundColor: criterion.checked ? 'var(--pf-teal-50)' : 'var(--pf-white)',
+              backgroundColor: criterion.checked ? 'var(--pf-blue-50)' : 'var(--pf-white)',
               border: criterion.checked
-                ? '2px solid var(--pf-teal-700)'
+                ? '2px solid var(--pf-blue-700)'
                 : '2px solid var(--pf-grey-300)',
             }}
           >
@@ -122,7 +122,7 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
               checked={criterion.checked}
               onChange={(e) => criterion.onChange(e.target.checked)}
               className="mt-1 h-5 w-5 rounded"
-              style={{ accentColor: 'var(--pf-teal-700)' }}
+              style={{ accentColor: 'var(--pf-blue-700)' }}
             />
             <div className="flex-1">
               <p
@@ -130,7 +130,7 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontWeight: 600,
                   fontSize: '0.9375rem',
-                  color: criterion.checked ? 'var(--pf-teal-900)' : 'var(--pf-grey-900)',
+                  color: criterion.checked ? 'var(--pf-blue-900)' : 'var(--pf-grey-900)',
                 }}
               >
                 {criterion.label}

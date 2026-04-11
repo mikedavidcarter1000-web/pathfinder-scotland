@@ -135,7 +135,7 @@ export function ErrorState({
                   style={{
                     fontSize: '0.875rem',
                     fontWeight: 600,
-                    color: 'var(--pf-teal-700)',
+                    color: 'var(--pf-blue-700)',
                   }}
                 >
                   {backLink.label}

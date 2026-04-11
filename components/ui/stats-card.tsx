@@ -14,7 +14,7 @@ interface StatsCardProps {
   size?: 'sm' | 'md' | 'lg'
 }
 
-// All stats cards use the Pathfinder teal accent.
+// All stats cards use the Pathfinder Saltire blue accent.
 // The `color` prop is accepted for backwards-compat but ignored visually.
 export function StatsCard({
   label,
@@ -48,8 +48,8 @@ export function StatsCard({
             style={{
               width: sizes.iconBox,
               height: sizes.iconBox,
-              backgroundColor: 'var(--pf-teal-100)',
-              color: 'var(--pf-teal-700)',
+              backgroundColor: 'var(--pf-blue-100)',
+              color: 'var(--pf-blue-700)',
             }}
           >
             <span style={{ width: sizes.iconInner, height: sizes.iconInner, display: 'inline-block' }}>

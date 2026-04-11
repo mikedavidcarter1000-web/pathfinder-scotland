@@ -38,8 +38,8 @@ export function SlowLoadingNotice({
       className="flex items-center gap-3 rounded-lg"
       style={{
         padding: '12px 16px',
-        backgroundColor: 'var(--pf-teal-100)',
-        color: 'var(--pf-teal-900)',
+        backgroundColor: 'var(--pf-blue-100)',
+        color: 'var(--pf-blue-900)',
         border: '1px solid rgba(20, 144, 126, 0.25)',
         marginTop: '16px',
       }}

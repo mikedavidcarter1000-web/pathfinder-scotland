@@ -100,7 +100,7 @@ export function UserMenu() {
       >
         <div
           className="w-8 h-8 rounded-full flex items-center justify-center"
-          style={{ backgroundColor: 'var(--pf-teal-500)' }}
+          style={{ backgroundColor: 'var(--pf-blue-500)' }}
         >
           <span
             className="text-sm text-white"
@@ -156,10 +156,10 @@ export function UserMenu() {
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-3 px-4 py-2 text-sm transition-colors no-underline hover:no-underline"
                 style={{ color: 'var(--pf-grey-900)' }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)')}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
               >
-                <span style={{ color: 'var(--pf-teal-500)' }}>{item.icon}</span>
+                <span style={{ color: 'var(--pf-blue-500)' }}>{item.icon}</span>
                 {item.label}
               </Link>
             ))}

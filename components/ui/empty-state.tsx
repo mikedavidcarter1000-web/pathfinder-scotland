@@ -45,8 +45,8 @@ export function EmptyState({
             width: '72px',
             height: '72px',
             borderRadius: '9999px',
-            backgroundColor: 'var(--pf-teal-100)',
-            color: 'var(--pf-teal-700)',
+            backgroundColor: 'var(--pf-blue-100)',
+            color: 'var(--pf-blue-700)',
             marginBottom: '20px',
           }}
         >

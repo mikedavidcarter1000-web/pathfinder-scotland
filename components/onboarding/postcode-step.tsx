@@ -73,14 +73,14 @@ export function PostcodeStep({ data, onChange, onNext, onBack }: PostcodeStepPro
         className="rounded-lg"
         style={{
           padding: '16px',
-          backgroundColor: 'var(--pf-teal-100)',
-          color: 'var(--pf-teal-900)',
+          backgroundColor: 'var(--pf-blue-100)',
+          color: 'var(--pf-blue-900)',
         }}
       >
         <div className="flex gap-3">
           <svg
             className="w-5 h-5 flex-shrink-0 mt-0.5"
-            style={{ color: 'var(--pf-teal-700)' }}
+            style={{ color: 'var(--pf-blue-700)' }}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -93,10 +93,10 @@ export function PostcodeStep({ data, onChange, onNext, onBack }: PostcodeStepPro
             />
           </svg>
           <div style={{ fontSize: '0.875rem' }}>
-            <p style={{ fontWeight: 600, marginBottom: '4px', color: 'var(--pf-teal-900)' }}>
+            <p style={{ fontWeight: 600, marginBottom: '4px', color: 'var(--pf-blue-900)' }}>
               What is SIMD?
             </p>
-            <p style={{ color: 'var(--pf-teal-900)' }}>
+            <p style={{ color: 'var(--pf-blue-900)' }}>
               The Scottish Index of Multiple Deprivation (SIMD) identifies areas of deprivation in
               Scotland. Students from SIMD20 areas may qualify for reduced entry requirements at
               many universities.
@@ -162,8 +162,8 @@ export function PostcodeStep({ data, onChange, onNext, onBack }: PostcodeStepPro
                   className="rounded-lg"
                   style={{
                     padding: '16px',
-                    backgroundColor: 'var(--pf-teal-50)',
-                    border: '1px solid var(--pf-teal-100)',
+                    backgroundColor: 'var(--pf-blue-50)',
+                    border: '1px solid var(--pf-blue-100)',
                   }}
                 >
                   <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -172,7 +172,7 @@ export function PostcodeStep({ data, onChange, onNext, onBack }: PostcodeStepPro
                         style={{
                           fontFamily: "'Space Grotesk', sans-serif",
                           fontWeight: 600,
-                          color: 'var(--pf-teal-900)',
+                          color: 'var(--pf-blue-900)',
                         }}
                       >
                         SIMD Decile {data.simdDecile}

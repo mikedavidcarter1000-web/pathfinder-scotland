@@ -124,8 +124,8 @@ const TONE: Record<
     ),
   },
   info: {
-    bg: 'var(--pf-teal-100)',
-    accent: 'var(--pf-teal-700)',
+    bg: 'var(--pf-blue-100)',
+    accent: 'var(--pf-blue-700)',
     border: 'rgba(20, 144, 126, 0.2)',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">

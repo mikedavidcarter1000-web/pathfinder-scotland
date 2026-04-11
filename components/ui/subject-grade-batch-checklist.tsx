@@ -235,7 +235,7 @@ export function SubjectGradeBatchChecklist({
           padding: '12px 16px',
           minHeight: '56px',
           borderTop: idx === 0 ? 'none' : '1px solid var(--pf-grey-100)',
-          backgroundColor: checked ? 'var(--pf-teal-50)' : 'transparent',
+          backgroundColor: checked ? 'var(--pf-blue-50)' : 'transparent',
           transition: 'background-color 0.15s ease',
         }}
       >
@@ -245,7 +245,7 @@ export function SubjectGradeBatchChecklist({
             checked={checked}
             onChange={(e) => toggleSubject(row, e.target.checked)}
             className="h-5 w-5 rounded flex-shrink-0"
-            style={{ accentColor: 'var(--pf-teal-700)' }}
+            style={{ accentColor: 'var(--pf-blue-700)' }}
             aria-label={`Add ${row.name}`}
           />
           <div className="flex items-center gap-2 flex-wrap min-w-0">
@@ -296,7 +296,7 @@ export function SubjectGradeBatchChecklist({
                 checked={entry.predicted}
                 onChange={(e) => updateEntry(row, { predicted: e.target.checked })}
                 className="w-3.5 h-3.5 rounded"
-                style={{ accentColor: 'var(--pf-teal-700)' }}
+                style={{ accentColor: 'var(--pf-blue-700)' }}
               />
               Predicted
             </label>

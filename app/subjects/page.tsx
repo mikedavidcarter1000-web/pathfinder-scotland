@@ -83,7 +83,7 @@ function SubjectsPageContent() {
   const showingAcademies = level === 'academy'
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)', borderBottom: '1px solid var(--pf-grey-100)' }}>
         <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
@@ -111,11 +111,11 @@ function SubjectsPageContent() {
           {activeCareerSector && (
             <div
               className="mb-6 p-4 rounded-lg flex items-center gap-3"
-              style={{ backgroundColor: 'var(--pf-teal-100)' }}
+              style={{ backgroundColor: 'var(--pf-blue-100)' }}
             >
               <svg
                 className="w-5 h-5 flex-shrink-0"
-                style={{ color: 'var(--pf-teal-700)' }}
+                style={{ color: 'var(--pf-blue-700)' }}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -123,18 +123,18 @@ function SubjectsPageContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
               <div className="flex-1">
-                <p style={{ color: 'var(--pf-teal-900)', fontWeight: 600, fontSize: '0.9375rem' }}>
+                <p style={{ color: 'var(--pf-blue-900)', fontWeight: 600, fontSize: '0.9375rem' }}>
                   Showing subjects linked to {activeCareerSector.name}
                 </p>
                 {activeCareerSector.description && (
-                  <p style={{ color: 'var(--pf-teal-700)', fontSize: '0.8125rem', marginTop: '2px' }}>
+                  <p style={{ color: 'var(--pf-blue-700)', fontSize: '0.8125rem', marginTop: '2px' }}>
                     {activeCareerSector.description}
                   </p>
                 )}
               </div>
               <button
                 onClick={() => setCareerSectorId('')}
-                style={{ color: 'var(--pf-teal-700)', fontWeight: 600, fontSize: '0.875rem' }}
+                style={{ color: 'var(--pf-blue-700)', fontWeight: 600, fontSize: '0.875rem' }}
               >
                 Clear
               </button>
@@ -201,9 +201,9 @@ function SubjectsPageContent() {
                     fontSize: '0.875rem',
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 600,
-                    backgroundColor: active ? 'var(--pf-teal-700)' : 'var(--pf-white)',
+                    backgroundColor: active ? 'var(--pf-blue-700)' : 'var(--pf-white)',
                     color: active ? '#fff' : 'var(--pf-grey-900)',
-                    border: active ? '1px solid var(--pf-teal-700)' : '1px solid var(--pf-grey-300)',
+                    border: active ? '1px solid var(--pf-blue-700)' : '1px solid var(--pf-grey-300)',
                   }}
                 >
                   {btn.label}
@@ -349,11 +349,11 @@ function SubjectCard({
             </div>
           )}
 
-          {/* Skills tags -- teal-100 bg, teal-700 text */}
+          {/* Skills tags -- blue-100 bg, blue-700 text */}
           {subject.skills_tags && subject.skills_tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-3">
               {subject.skills_tags.slice(0, 4).map((tag) => (
-                <span key={tag} className="pf-badge-teal">
+                <span key={tag} className="pf-badge-blue">
                   {tag}
                 </span>
               ))}
@@ -387,8 +387,8 @@ function SubjectCard({
                 fontSize: '0.875rem',
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontWeight: 600,
-                color: 'var(--pf-teal-700)',
-                backgroundColor: 'var(--pf-teal-100)',
+                color: 'var(--pf-blue-700)',
+                backgroundColor: 'var(--pf-blue-100)',
                 borderRadius: '6px',
               }}
             >
@@ -407,7 +407,7 @@ export default function SubjectsPage() {
       fallback={
         <div
           className="min-h-screen flex items-center justify-center"
-          style={{ backgroundColor: 'var(--pf-teal-50)' }}
+          style={{ backgroundColor: 'var(--pf-blue-50)' }}
         >
           <div className="animate-pulse" style={{ color: 'var(--pf-grey-600)' }}>
             Loading...

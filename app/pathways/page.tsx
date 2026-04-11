@@ -237,7 +237,7 @@ export default function PathwaysPage() {
   const limitReached = freeRequired > 0 && selectedFreeCount >= freeRequired
 
   return (
-    <div style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+    <div style={{ backgroundColor: 'var(--pf-blue-50)' }}>
       {toast && (
         <div
           role="status"
@@ -246,8 +246,8 @@ export default function PathwaysPage() {
           style={{
             padding: '10px 20px',
             borderRadius: '9999px',
-            boxShadow: '0 8px 24px rgba(12, 74, 66, 0.25)',
-            backgroundColor: 'var(--pf-teal-900)',
+            boxShadow: '0 8px 24px rgba(0, 45, 114, 0.25)',
+            backgroundColor: 'var(--pf-blue-900)',
             color: '#fff',
             fontSize: '0.875rem',
             fontWeight: 500,
@@ -297,8 +297,8 @@ export default function PathwaysPage() {
                     padding: '14px',
                     minHeight: '80px',
                     borderRadius: '8px',
-                    backgroundColor: active ? 'var(--pf-teal-50)' : 'var(--pf-white)',
-                    border: active ? '2px solid var(--pf-teal-700)' : '2px solid var(--pf-grey-300)',
+                    backgroundColor: active ? 'var(--pf-blue-50)' : 'var(--pf-white)',
+                    border: active ? '2px solid var(--pf-blue-700)' : '2px solid var(--pf-grey-300)',
                     boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                   }}
                 >
@@ -307,7 +307,7 @@ export default function PathwaysPage() {
                       fontFamily: "'Space Grotesk', sans-serif",
                       fontWeight: 700,
                       fontSize: '1.375rem',
-                      color: active ? 'var(--pf-teal-700)' : 'var(--pf-grey-900)',
+                      color: active ? 'var(--pf-blue-700)' : 'var(--pf-grey-900)',
                     }}
                   >
                     {btn.label}
@@ -363,9 +363,9 @@ export default function PathwaysPage() {
                 style={{
                   padding: '16px 20px',
                   minHeight: '56px',
-                  backgroundColor: 'var(--pf-teal-100)',
-                  border: '1px solid var(--pf-teal-100)',
-                  color: 'var(--pf-teal-900)',
+                  backgroundColor: 'var(--pf-blue-100)',
+                  border: '1px solid var(--pf-blue-100)',
+                  color: 'var(--pf-blue-900)',
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontWeight: 600,
                   fontSize: '0.9375rem',
@@ -375,7 +375,7 @@ export default function PathwaysPage() {
                 <span className="inline-flex items-center gap-2">
                   <svg
                     className="w-5 h-5 flex-shrink-0"
-                    style={{ color: 'var(--pf-teal-700)' }}
+                    style={{ color: 'var(--pf-blue-700)' }}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -386,7 +386,7 @@ export default function PathwaysPage() {
                   View your pathway preview
                   {selectedSubjects.length > 0 && (
                     <span
-                      className="pf-badge-teal ml-1"
+                      className="pf-badge-blue ml-1"
                       style={{ backgroundColor: 'var(--pf-white)' }}
                     >
                       {selectedSubjects.length}
@@ -395,7 +395,7 @@ export default function PathwaysPage() {
                 </span>
                 <svg
                   className={`w-5 h-5 transition-transform ${mobilePreviewOpen ? 'rotate-180' : ''}`}
-                  style={{ color: 'var(--pf-teal-700)' }}
+                  style={{ color: 'var(--pf-blue-700)' }}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -548,7 +548,7 @@ export default function PathwaysPage() {
                         onClick={() => toggleArea(group.area.id)}
                         className="w-full flex items-center justify-between transition-colors"
                         style={{ padding: '16px 20px' }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)')}
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
                         <div className="flex items-center gap-3">
@@ -560,7 +560,7 @@ export default function PathwaysPage() {
                             {areaSelectedCount > 0 && (
                               <span
                                 className="ml-2"
-                                style={{ color: 'var(--pf-teal-700)', fontWeight: 600 }}
+                                style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
                               >
                                 · {areaSelectedCount} selected
                               </span>
@@ -714,7 +714,7 @@ function ProgressHeader({
           className="h-full transition-all duration-300"
           style={{
             width: `${percent}%`,
-            backgroundColor: complete ? 'var(--pf-green-500)' : 'var(--pf-teal-500)',
+            backgroundColor: complete ? 'var(--pf-green-500)' : 'var(--pf-blue-500)',
           }}
         />
       </div>
@@ -768,8 +768,8 @@ function RulesPanel({
     <div
       className="rounded-lg"
       style={{
-        backgroundColor: 'var(--pf-teal-50)',
-        border: '1px solid var(--pf-teal-100)',
+        backgroundColor: 'var(--pf-blue-50)',
+        border: '1px solid var(--pf-blue-100)',
         padding: '20px',
       }}
     >
@@ -798,7 +798,7 @@ function RulesPanel({
             style={{
               fontSize: '0.875rem',
               fontWeight: 600,
-              color: 'var(--pf-teal-700)',
+              color: 'var(--pf-blue-700)',
               fontFamily: "'Space Grotesk', sans-serif",
             }}
           >
@@ -817,8 +817,8 @@ function RulesPanel({
               className="mt-2 rounded-lg"
               style={{
                 padding: '12px',
-                backgroundColor: 'var(--pf-teal-100)',
-                color: 'var(--pf-teal-900)',
+                backgroundColor: 'var(--pf-blue-100)',
+                color: 'var(--pf-blue-900)',
                 fontSize: '0.875rem',
               }}
             >
@@ -889,7 +889,7 @@ function SubjectRow({
     : null
 
   const rowBg = selected
-    ? 'var(--pf-teal-100)'
+    ? 'var(--pf-blue-100)'
     : disabled
     ? 'var(--pf-grey-100)'
     : 'transparent'
@@ -899,7 +899,7 @@ function SubjectRow({
       className={`transition-colors ${shaken ? 'animate-shake' : ''}`}
       style={{ backgroundColor: rowBg }}
       onMouseEnter={(e) => {
-        if (!selected && !disabled) e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)'
+        if (!selected && !disabled) e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)'
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.backgroundColor = rowBg
@@ -923,8 +923,8 @@ function SubjectRow({
         <span
           className="mt-0.5 w-5 h-5 rounded flex items-center justify-center flex-shrink-0"
           style={{
-            backgroundColor: selected ? 'var(--pf-teal-700)' : 'transparent',
-            border: selected ? '2px solid var(--pf-teal-700)' : '2px solid var(--pf-grey-300)',
+            backgroundColor: selected ? 'var(--pf-blue-700)' : 'transparent',
+            border: selected ? '2px solid var(--pf-blue-700)' : '2px solid var(--pf-grey-300)',
             color: '#fff',
             opacity: compulsory ? 0.8 : 1,
           }}
@@ -956,7 +956,7 @@ function SubjectRow({
               href={`/subjects/${subject.id}`}
               onClick={(e) => e.stopPropagation()}
               className="ml-auto"
-              style={{ fontSize: '0.75rem', color: 'var(--pf-teal-700)', fontWeight: 600 }}
+              style={{ fontSize: '0.75rem', color: 'var(--pf-blue-700)', fontWeight: 600 }}
             >
               Details →
             </Link>
@@ -1024,8 +1024,8 @@ function AcademyPicker({
               className="rounded-lg transition-all"
               style={{
                 padding: '20px',
-                backgroundColor: ranked ? 'var(--pf-teal-50)' : 'var(--pf-white)',
-                border: ranked ? '2px solid var(--pf-teal-500)' : '1px solid var(--pf-grey-300)',
+                backgroundColor: ranked ? 'var(--pf-blue-50)' : 'var(--pf-white)',
+                border: ranked ? '2px solid var(--pf-blue-500)' : '1px solid var(--pf-grey-300)',
                 boxShadow: ranked ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
               }}
             >
@@ -1037,7 +1037,7 @@ function AcademyPicker({
                     style={{
                       width: '28px',
                       height: '28px',
-                      backgroundColor: 'var(--pf-teal-700)',
+                      backgroundColor: 'var(--pf-blue-700)',
                       color: '#fff',
                       fontFamily: "'Space Grotesk', sans-serif",
                       fontSize: '0.875rem',
@@ -1064,7 +1064,7 @@ function AcademyPicker({
                     style={{
                       fontSize: '0.75rem',
                       fontWeight: 600,
-                      color: 'var(--pf-teal-700)',
+                      color: 'var(--pf-blue-700)',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
                       marginBottom: '4px',
@@ -1121,15 +1121,15 @@ function AcademyPicker({
           className="rounded-lg"
           style={{
             padding: '16px',
-            backgroundColor: 'var(--pf-teal-50)',
-            border: '1px solid var(--pf-teal-100)',
+            backgroundColor: 'var(--pf-blue-50)',
+            border: '1px solid var(--pf-blue-100)',
           }}
         >
           <p
             style={{
               fontSize: '0.875rem',
               fontWeight: 600,
-              color: 'var(--pf-teal-900)',
+              color: 'var(--pf-blue-900)',
               marginBottom: '4px',
             }}
           >
@@ -1313,12 +1313,12 @@ function PathwayPreview({
           style={{
             width: '48px',
             height: '48px',
-            backgroundColor: 'var(--pf-teal-100)',
+            backgroundColor: 'var(--pf-blue-100)',
           }}
         >
           <svg
             className="w-6 h-6"
-            style={{ color: 'var(--pf-teal-700)' }}
+            style={{ color: 'var(--pf-blue-700)' }}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -1350,14 +1350,14 @@ function PathwayPreview({
         className="rounded-lg"
         style={{
           padding: '16px',
-          backgroundColor: 'var(--pf-teal-100)',
+          backgroundColor: 'var(--pf-blue-100)',
         }}
       >
         <div className="flex items-baseline justify-between mb-1">
-          <h3 style={{ margin: 0, fontSize: '1rem', color: 'var(--pf-teal-900)' }}>Your selection</h3>
+          <h3 style={{ margin: 0, fontSize: '1rem', color: 'var(--pf-blue-900)' }}>Your selection</h3>
           <span
             className="pf-data-number"
-            style={{ fontSize: '0.875rem', color: 'var(--pf-teal-700)', fontWeight: 600 }}
+            style={{ fontSize: '0.875rem', color: 'var(--pf-blue-700)', fontWeight: 600 }}
           >
             {selectedSubjects.length} / {totalRequired}
           </span>
@@ -1373,7 +1373,7 @@ function PathwayPreview({
                 fontSize: '0.75rem',
                 fontWeight: 500,
                 backgroundColor: 'var(--pf-white)',
-                color: 'var(--pf-teal-700)',
+                color: 'var(--pf-blue-700)',
               }}
             >
               {s.name}
@@ -1398,7 +1398,7 @@ function PathwayPreview({
               <li key={s.id} className="flex items-start gap-2" style={{ fontSize: '0.875rem' }}>
                 <svg
                   className="w-4 h-4 mt-0.5 flex-shrink-0"
-                  style={{ color: 'var(--pf-teal-500)' }}
+                  style={{ color: 'var(--pf-blue-500)' }}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1564,7 +1564,7 @@ function CourseMatchRow({
           transition: 'background-color 0.15s',
           fontSize: '0.875rem',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
+        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)')}
         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
       >
         <div
@@ -1630,7 +1630,7 @@ function SaveChoicesPanel({
         style={{
           padding: '24px',
           backgroundColor: 'var(--pf-white)',
-          border: '1px dashed var(--pf-teal-500)',
+          border: '1px dashed var(--pf-blue-500)',
         }}
       >
         <h3 style={{ margin: 0, fontSize: '1rem', marginBottom: '8px' }}>
@@ -1658,7 +1658,7 @@ function SaveChoicesPanel({
       className="rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
       style={{
         padding: '20px 24px',
-        backgroundColor: 'var(--pf-teal-100)',
+        backgroundColor: 'var(--pf-blue-100)',
       }}
     >
       <div>
@@ -1666,7 +1666,7 @@ function SaveChoicesPanel({
           style={{
             margin: 0,
             fontSize: '1rem',
-            color: 'var(--pf-teal-900)',
+            color: 'var(--pf-blue-900)',
             marginBottom: '2px',
           }}
         >

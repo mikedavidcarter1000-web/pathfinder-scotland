@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/loading-skeleton'
 
 export default function UniversitiesLoading() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className="pf-container" style={{ paddingTop: '40px', paddingBottom: '32px' }}>
           <Skeleton width="180px" height={32} rounded="md" />

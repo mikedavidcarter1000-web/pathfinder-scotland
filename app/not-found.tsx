@@ -4,7 +4,7 @@ export default function NotFound() {
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4"
-      style={{ backgroundColor: 'var(--pf-teal-50)' }}
+      style={{ backgroundColor: 'var(--pf-blue-50)' }}
     >
       <div className="pf-card text-center" style={{ maxWidth: '480px', padding: '48px 32px' }}>
         <div
@@ -12,7 +12,7 @@ export default function NotFound() {
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: '5rem',
             fontWeight: 700,
-            color: 'var(--pf-teal-100)',
+            color: 'var(--pf-blue-100)',
             lineHeight: 1,
             marginBottom: '16px',
           }}

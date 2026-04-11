@@ -21,7 +21,7 @@ export default function AboutPage() {
       {/* Hero */}
       <section
         style={{
-          backgroundColor: 'var(--pf-teal-50)',
+          backgroundColor: 'var(--pf-blue-50)',
           paddingTop: '72px',
           paddingBottom: '72px',
           borderBottom: '1px solid var(--pf-grey-300)',
@@ -30,7 +30,7 @@ export default function AboutPage() {
         <div className="pf-container">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <span className="pf-badge-teal" style={{ marginBottom: '20px' }}>
+              <span className="pf-badge-blue" style={{ marginBottom: '20px' }}>
                 About Pathfinder
               </span>
               <h1 style={{ marginTop: '16px', marginBottom: '16px', lineHeight: 1.15 }}>
@@ -68,8 +68,8 @@ export default function AboutPage() {
               >
                 <defs>
                   <linearGradient id="pf-about-grad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="var(--pf-teal-100)" />
-                    <stop offset="100%" stopColor="var(--pf-teal-50)" />
+                    <stop offset="0%" stopColor="var(--pf-blue-100)" />
+                    <stop offset="100%" stopColor="var(--pf-blue-50)" />
                   </linearGradient>
                 </defs>
 
@@ -90,7 +90,7 @@ export default function AboutPage() {
                     y1="210"
                     x2="300"
                     y2="90"
-                    stroke="var(--pf-teal-700)"
+                    stroke="var(--pf-blue-700)"
                     strokeWidth="3"
                     strokeLinecap="round"
                   />
@@ -106,7 +106,7 @@ export default function AboutPage() {
                         cy={dot.y}
                         r="14"
                         fill="var(--pf-white)"
-                        stroke="var(--pf-teal-700)"
+                        stroke="var(--pf-blue-700)"
                         strokeWidth="3"
                       />
                       <text
@@ -116,7 +116,7 @@ export default function AboutPage() {
                         fontFamily="Space Grotesk, sans-serif"
                         fontWeight="600"
                         fontSize="11"
-                        fill="var(--pf-teal-900)"
+                        fill="var(--pf-blue-900)"
                       >
                         {dot.label}
                       </text>
@@ -144,10 +144,10 @@ export default function AboutPage() {
 
                 {/* Goal flag */}
                 <g>
-                  <circle cx="300" cy="90" r="22" fill="var(--pf-teal-700)" opacity="0.15" />
+                  <circle cx="300" cy="90" r="22" fill="var(--pf-blue-700)" opacity="0.15" />
                   <path
                     d="M294 80 L294 100 M294 80 L308 84 L300 88 L308 92"
-                    stroke="var(--pf-teal-900)"
+                    stroke="var(--pf-blue-900)"
                     strokeWidth="2"
                     fill="none"
                     strokeLinecap="round"
@@ -163,7 +163,7 @@ export default function AboutPage() {
       {/* Mission */}
       <section className="pf-section pf-section-white">
         <div className="pf-container" style={{ maxWidth: '820px' }}>
-          <span className="pf-badge-teal">Our mission</span>
+          <span className="pf-badge-blue">Our mission</span>
           <h2 style={{ marginTop: '16px', marginBottom: '16px' }}>
             Helping every Scottish student make informed subject choices
           </h2>
@@ -234,7 +234,7 @@ export default function AboutPage() {
       <section className="pf-section pf-section-grey">
         <div className="pf-container" style={{ maxWidth: '960px' }}>
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <span className="pf-badge-teal">How it works</span>
+            <span className="pf-badge-blue">How it works</span>
             <h2 style={{ marginTop: '16px' }}>Three steps to a clearer path</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
@@ -261,8 +261,8 @@ export default function AboutPage() {
                     width: '40px',
                     height: '40px',
                     borderRadius: '50%',
-                    backgroundColor: 'var(--pf-teal-100)',
-                    color: 'var(--pf-teal-700)',
+                    backgroundColor: 'var(--pf-blue-100)',
+                    color: 'var(--pf-blue-700)',
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 700,
                     fontSize: '1.125rem',

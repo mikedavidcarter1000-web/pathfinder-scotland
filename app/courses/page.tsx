@@ -111,7 +111,7 @@ export default function CoursesPage() {
   const hasGrades = gradeSummary.totalGrades > 0
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
@@ -139,7 +139,7 @@ export default function CoursesPage() {
           {hasGrades && stats && (
             <div
               className="mb-6 rounded-lg"
-              style={{ padding: '16px', backgroundColor: 'var(--pf-teal-50)' }}
+              style={{ padding: '16px', backgroundColor: 'var(--pf-blue-50)' }}
             >
               <div className="flex flex-wrap items-center gap-4">
                 <StatPill
@@ -177,7 +177,7 @@ export default function CoursesPage() {
                 <StatPill
                   label={`${stats.missingSubjects} Missing subjects`}
                   sub="Need more subjects"
-                  accent="var(--pf-teal-700)"
+                  accent="var(--pf-blue-700)"
                   icon={
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -286,10 +286,10 @@ export default function CoursesPage() {
                     aria-pressed={eligibilityFilter === 'eligible'}
                     style={{
                       backgroundColor:
-                        eligibilityFilter === 'eligible' ? 'var(--pf-teal-700)' : 'var(--pf-white)',
+                        eligibilityFilter === 'eligible' ? 'var(--pf-blue-700)' : 'var(--pf-white)',
                       color:
-                        eligibilityFilter === 'eligible' ? 'var(--pf-white)' : 'var(--pf-teal-700)',
-                      border: '1px solid var(--pf-teal-700)',
+                        eligibilityFilter === 'eligible' ? 'var(--pf-white)' : 'var(--pf-blue-700)',
+                      border: '1px solid var(--pf-blue-700)',
                       minHeight: '44px',
                     }}
                   >
@@ -303,8 +303,8 @@ export default function CoursesPage() {
                     onChange={(e) => setEligibilityFilter(e.target.value as EligibilityFilter)}
                     className="pf-input w-full lg:w-auto"
                     style={{
-                      backgroundColor: eligibilityFilter !== 'all' ? 'var(--pf-teal-50)' : 'var(--pf-white)',
-                      borderColor: eligibilityFilter !== 'all' ? 'var(--pf-teal-500)' : 'var(--pf-grey-300)',
+                      backgroundColor: eligibilityFilter !== 'all' ? 'var(--pf-blue-50)' : 'var(--pf-white)',
+                      borderColor: eligibilityFilter !== 'all' ? 'var(--pf-blue-500)' : 'var(--pf-grey-300)',
                     }}
                   >
                     <option value="all">All eligibility</option>
@@ -342,7 +342,7 @@ export default function CoursesPage() {
                     padding: '8px',
                     backgroundColor: viewMode === 'grid' ? 'var(--pf-white)' : 'transparent',
                     boxShadow: viewMode === 'grid' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                    color: viewMode === 'grid' ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
+                    color: viewMode === 'grid' ? 'var(--pf-blue-700)' : 'var(--pf-grey-600)',
                   }}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -361,7 +361,7 @@ export default function CoursesPage() {
                     padding: '8px',
                     backgroundColor: viewMode === 'list' ? 'var(--pf-white)' : 'transparent',
                     boxShadow: viewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                    color: viewMode === 'list' ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
+                    color: viewMode === 'list' ? 'var(--pf-blue-700)' : 'var(--pf-grey-600)',
                   }}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

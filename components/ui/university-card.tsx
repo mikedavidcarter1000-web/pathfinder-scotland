@@ -31,7 +31,7 @@ export function UniversityCard({ university, compact = false }: UniversityCardPr
           className="relative"
           style={{
             height: '128px',
-            backgroundColor: 'var(--pf-teal-50)',
+            backgroundColor: 'var(--pf-blue-50)',
           }}
         >
           {university.logo_url ? (
@@ -57,7 +57,7 @@ export function UniversityCard({ university, compact = false }: UniversityCardPr
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 700,
                     fontSize: '1.75rem',
-                    color: 'var(--pf-teal-700)',
+                    color: 'var(--pf-blue-700)',
                   }}
                 >
                   {university.name.charAt(0)}
@@ -93,7 +93,7 @@ export function UniversityCard({ university, compact = false }: UniversityCardPr
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-4">
-            {typeInfo && <span className="pf-badge-teal">{typeInfo.label}</span>}
+            {typeInfo && <span className="pf-badge-blue">{typeInfo.label}</span>}
             {university.russell_group && <span className="pf-badge-amber">Russell Group</span>}
           </div>
 
@@ -131,8 +131,8 @@ export function UniversityCard({ university, compact = false }: UniversityCardPr
               fontSize: '0.875rem',
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 600,
-              color: 'var(--pf-teal-700)',
-              backgroundColor: 'var(--pf-teal-100)',
+              color: 'var(--pf-blue-700)',
+              backgroundColor: 'var(--pf-blue-100)',
               borderRadius: '6px',
             }}
           >

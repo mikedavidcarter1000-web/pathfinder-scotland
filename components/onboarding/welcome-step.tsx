@@ -68,12 +68,12 @@ export function WelcomeStep({ onStart }: WelcomeStepProps) {
             width: '72px',
             height: '72px',
             borderRadius: '9999px',
-            backgroundColor: 'var(--pf-teal-100)',
+            backgroundColor: 'var(--pf-blue-100)',
           }}
         >
           <svg
             className="w-9 h-9"
-            style={{ color: 'var(--pf-teal-700)' }}
+            style={{ color: 'var(--pf-blue-700)' }}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -104,8 +104,8 @@ export function WelcomeStep({ onStart }: WelcomeStepProps) {
         className="rounded-lg space-y-3"
         style={{
           padding: '20px 24px',
-          backgroundColor: 'var(--pf-teal-50)',
-          border: '1px solid var(--pf-teal-100)',
+          backgroundColor: 'var(--pf-blue-50)',
+          border: '1px solid var(--pf-blue-100)',
         }}
       >
         <p
@@ -113,7 +113,7 @@ export function WelcomeStep({ onStart }: WelcomeStepProps) {
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 600,
             fontSize: '0.875rem',
-            color: 'var(--pf-teal-900)',
+            color: 'var(--pf-blue-900)',
             textTransform: 'none',
           }}
         >
@@ -129,7 +129,7 @@ export function WelcomeStep({ onStart }: WelcomeStepProps) {
                   height: '32px',
                   borderRadius: '9999px',
                   backgroundColor: 'var(--pf-white)',
-                  color: 'var(--pf-teal-700)',
+                  color: 'var(--pf-blue-700)',
                 }}
               >
                 {bullet.icon}

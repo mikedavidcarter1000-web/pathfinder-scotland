@@ -125,7 +125,7 @@ export function SubjectSelect({
           className="absolute z-30 mt-2 w-full rounded-lg overflow-hidden"
           style={{
             backgroundColor: 'var(--pf-white)',
-            boxShadow: '0 10px 30px rgba(12, 74, 66, 0.15)',
+            boxShadow: '0 10px 30px rgba(0, 45, 114, 0.15)',
             border: '1px solid var(--pf-grey-300)',
             maxHeight: '320px',
           }}
@@ -165,7 +165,7 @@ export function SubjectSelect({
                   onMouseEnter={() => setHighlightedIdx(idx)}
                   className="w-full flex items-center justify-between gap-3 px-4 py-2.5 text-left transition-colors"
                   style={{
-                    backgroundColor: active ? 'var(--pf-teal-50)' : 'transparent',
+                    backgroundColor: active ? 'var(--pf-blue-50)' : 'transparent',
                   }}
                 >
                   <span

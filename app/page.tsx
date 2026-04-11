@@ -99,11 +99,11 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      {/* Hero Section -- teal-50 */}
+      {/* Hero Section -- blue-50 */}
       <section
         className="py-12 sm:py-16"
         style={{
-          backgroundColor: 'var(--pf-teal-50)',
+          backgroundColor: 'var(--pf-blue-50)',
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -113,7 +113,7 @@ export default function HomePage() {
             {/* Copy */}
             <div>
               <span
-                className="pf-badge-teal mb-4 inline-flex"
+                className="pf-badge-blue mb-4 inline-flex"
                 style={{ marginBottom: '20px' }}
               >
                 Built for Scottish students
@@ -202,8 +202,8 @@ export default function HomePage() {
                     width: '48px',
                     height: '48px',
                     borderRadius: '10px',
-                    backgroundColor: 'var(--pf-teal-100)',
-                    color: 'var(--pf-teal-700)',
+                    backgroundColor: 'var(--pf-blue-100)',
+                    color: 'var(--pf-blue-700)',
                   }}
                 >
                   {feature.icon}
@@ -218,10 +218,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Widening Access Section -- dark teal-900 */}
+      {/* Widening Access Section -- dark blue-900 */}
       <section
         className="pf-section"
-        style={{ backgroundColor: 'var(--pf-teal-900)' }}
+        style={{ backgroundColor: 'var(--pf-blue-900)' }}
       >
         <div className="pf-container">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
@@ -291,7 +291,7 @@ export default function HomePage() {
                 className="inline-flex items-center justify-center gap-2 no-underline hover:no-underline w-full sm:w-auto"
                 style={{
                   backgroundColor: '#fff',
-                  color: 'var(--pf-teal-900)',
+                  color: 'var(--pf-blue-900)',
                   padding: '12px 24px',
                   borderRadius: '8px',
                   fontFamily: "'Space Grotesk', sans-serif",
@@ -373,7 +373,7 @@ export default function HomePage() {
                     width: '48px',
                     height: '48px',
                     borderRadius: '10px',
-                    backgroundColor: 'var(--pf-teal-100)',
+                    backgroundColor: 'var(--pf-blue-100)',
                   }}
                 >
                   <span
@@ -381,7 +381,7 @@ export default function HomePage() {
                       fontFamily: "'Space Grotesk', sans-serif",
                       fontWeight: 700,
                       fontSize: '1.25rem',
-                      color: 'var(--pf-teal-700)',
+                      color: 'var(--pf-blue-700)',
                     }}
                   >
                     {uni.charAt(0)}
@@ -457,7 +457,7 @@ export default function HomePage() {
           >
             <div className="text-center" style={{ marginBottom: '40px' }}>
               <span
-                className="pf-badge-teal inline-flex"
+                className="pf-badge-blue inline-flex"
                 style={{ marginBottom: '16px' }}
               >
                 FAQ
@@ -484,7 +484,7 @@ export default function HomePage() {
               <Link
                 href="/help"
                 style={{
-                  color: 'var(--pf-teal-500)',
+                  color: 'var(--pf-blue-500)',
                   fontWeight: 600,
                   fontFamily: "'Space Grotesk', sans-serif",
                 }}
@@ -496,10 +496,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Final CTA -- dark teal */}
+      {/* Final CTA -- dark blue */}
       <section
         className="pf-section"
-        style={{ backgroundColor: 'var(--pf-teal-900)' }}
+        style={{ backgroundColor: 'var(--pf-blue-900)' }}
       >
         <div className="pf-container text-center">
           <h2 style={{ color: '#fff', marginBottom: '16px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
@@ -513,7 +513,7 @@ export default function HomePage() {
             className="inline-flex items-center justify-center gap-2 no-underline hover:no-underline w-full sm:w-auto"
             style={{
               backgroundColor: '#fff',
-              color: 'var(--pf-teal-900)',
+              color: 'var(--pf-blue-900)',
               padding: '14px 28px',
               borderRadius: '8px',
               fontFamily: "'Space Grotesk', sans-serif",
@@ -597,7 +597,7 @@ function Stat({ number, label }: { number: string; label: string }) {
         style={{
           fontSize: '2rem',
           fontWeight: 700,
-          color: 'var(--pf-teal-700)',
+          color: 'var(--pf-blue-700)',
           lineHeight: 1.1,
           marginBottom: '6px',
         }}
@@ -629,48 +629,48 @@ function PathwayIllustration() {
     >
       <defs>
         <linearGradient id="pf-line" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#14907E" />
-          <stop offset="100%" stopColor="#0F6B5E" />
+          <stop offset="0%" stopColor="#0072CE" />
+          <stop offset="100%" stopColor="#005EB8" />
         </linearGradient>
       </defs>
 
       {/* Background shape */}
-      <circle cx="220" cy="200" r="180" fill="#E6F5F2" opacity="0.5" />
-      <circle cx="220" cy="200" r="130" fill="#E6F5F2" opacity="0.6" />
+      <circle cx="220" cy="200" r="180" fill="#E0EDF7" opacity="0.5" />
+      <circle cx="220" cy="200" r="130" fill="#E0EDF7" opacity="0.6" />
 
       {/* Connecting lines (pathways) */}
       <path d="M 60 200 Q 140 80, 220 200 T 380 200" stroke="url(#pf-line)" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.7" />
       <path d="M 60 200 Q 140 320, 220 200 T 380 200" stroke="url(#pf-line)" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.7" />
-      <path d="M 60 200 L 220 200 L 380 200" stroke="#14907E" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.4" strokeDasharray="4 6" />
+      <path d="M 60 200 L 220 200 L 380 200" stroke="#0072CE" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.4" strokeDasharray="4 6" />
 
       {/* Nodes -- S2 -> S6 -> University */}
       <g>
         {/* Start (S2) */}
-        <circle cx="60" cy="200" r="22" fill="#0F6B5E" />
-        <circle cx="60" cy="200" r="26" fill="none" stroke="#0F6B5E" strokeWidth="2" opacity="0.25" />
+        <circle cx="60" cy="200" r="22" fill="#005EB8" />
+        <circle cx="60" cy="200" r="26" fill="none" stroke="#005EB8" strokeWidth="2" opacity="0.25" />
         <text x="60" y="205" textAnchor="middle" fill="#fff" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="13">
           S2
         </text>
 
         {/* Middle (S4) */}
-        <circle cx="220" cy="80" r="18" fill="#14907E" />
+        <circle cx="220" cy="80" r="18" fill="#0072CE" />
         <text x="220" y="85" textAnchor="middle" fill="#fff" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="11">
           S4
         </text>
 
-        <circle cx="220" cy="200" r="22" fill="#14907E" />
+        <circle cx="220" cy="200" r="22" fill="#0072CE" />
         <text x="220" y="205" textAnchor="middle" fill="#fff" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="13">
           S5
         </text>
 
-        <circle cx="220" cy="320" r="18" fill="#14907E" />
+        <circle cx="220" cy="320" r="18" fill="#0072CE" />
         <text x="220" y="325" textAnchor="middle" fill="#fff" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="11">
           S6
         </text>
 
         {/* End (University) */}
-        <circle cx="380" cy="200" r="28" fill="#0C4A42" />
-        <circle cx="380" cy="200" r="34" fill="none" stroke="#0C4A42" strokeWidth="2" opacity="0.25" />
+        <circle cx="380" cy="200" r="28" fill="#002D72" />
+        <circle cx="380" cy="200" r="34" fill="none" stroke="#002D72" strokeWidth="2" opacity="0.25" />
         <g transform="translate(380 200)">
           <path
             d="M -12 4 L 0 -4 L 12 4 L 12 10 L 0 14 L -12 10 Z"
