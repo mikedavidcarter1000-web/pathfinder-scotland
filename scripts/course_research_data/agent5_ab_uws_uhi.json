@@ -1,0 +1,464 @@
+{
+  "universities": {
+    "abertay": [
+      {
+        "name": "Ethical Hacking",
+        "university_id": "ABERTAY_UUID",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Cyber Security",
+        "duration_years": 4,
+        "description": "NCSC-certified cybersecurity degree focusing on penetration testing, forensics and defensive security techniques.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.abertay.ac.uk/course-search/undergraduate/ethical-hacking/"
+      },
+      {
+        "name": "Computer Science with Cybersecurity",
+        "university_id": "ABERTAY_UUID",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Cyber Security",
+        "duration_years": 4,
+        "description": "Applied computer science with specialised cybersecurity modules covering defensive and offensive security practices.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.abertay.ac.uk/course-search/undergraduate/computer-science-with-cybersecurity/"
+      },
+      {
+        "name": "Game Design and Production",
+        "university_id": "ABERTAY_UUID",
+        "ucas_code": null,
+        "degree_type": "ba",
+        "subject_area": "Computing Science",
+        "duration_years": 4,
+        "description": "Creative game design degree covering narrative, mechanics and production at one of the UK's top-ranked game schools.",
+        "entry_requirements": {
+          "highers": "CCC",
+          "ucas_points": 80,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BCC"
+        },
+        "course_url": "https://www.abertay.ac.uk/course-search/undergraduate/game-design-and-production/"
+      },
+      {
+        "name": "Computer Game Applications Development",
+        "university_id": "ABERTAY_UUID",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Computing Science",
+        "duration_years": 4,
+        "description": "Technical game development focusing on programming, engines and interactive systems for commercial game production.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.abertay.ac.uk/course-search/undergraduate/computer-game-applications-development/"
+      },
+      {
+        "name": "Forensic Sciences",
+        "university_id": "ABERTAY_UUID",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "Science-based forensic degree covering scene investigation, evidence analysis and criminal investigation methods.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.abertay.ac.uk/course-search/undergraduate/forensic-sciences/"
+      },
+      {
+        "name": "Psychology",
+        "university_id": "ABERTAY_UUID",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Psychology",
+        "duration_years": 4,
+        "description": "Comprehensive psychology degree covering cognitive, clinical, social and research methodologies in behavioural science.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.abertay.ac.uk/course-search/undergraduate/psychology/"
+      },
+      {
+        "name": "Sport and Exercise",
+        "university_id": "ABERTAY_UUID",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Sport and Fitness",
+        "duration_years": 4,
+        "description": "Sport science degree covering exercise physiology, biomechanics, nutrition and performance optimisation.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.abertay.ac.uk/course-search/undergraduate/sport-and-exercise-science/"
+      },
+      {
+        "name": "Food Science, Nutrition and Wellbeing",
+        "university_id": "ABERTAY_UUID",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Food Science",
+        "duration_years": 4,
+        "description": "Food science degree covering nutrition, food chemistry, food safety and development of health-focused food products.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.abertay.ac.uk/course-search/undergraduate/food-science-nutrition-and-wellbeing/"
+      },
+      {
+        "name": "Biomedical Science",
+        "university_id": "ABERTAY_UUID",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "IBMS-accredited biomedical science degree with pathways to NHS biomedical scientist registration and clinical practice.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.abertay.ac.uk/course-search/undergraduate/biomedical-science/"
+      },
+      {
+        "name": "Accounting and Finance",
+        "university_id": "ABERTAY_UUID",
+        "ucas_code": null,
+        "degree_type": "ba",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Accountancy and finance degree covering financial management and professional accounting practice.",
+        "entry_requirements": {
+          "highers": "BBB",
+          "ucas_points": 112,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBC"
+        },
+        "course_url": "https://www.abertay.ac.uk/course-search/undergraduate/accounting-and-finance/"
+      },
+      {
+        "name": "Computer Arts",
+        "university_id": "ABERTAY_UUID",
+        "ucas_code": null,
+        "degree_type": "ba",
+        "subject_area": "Art and Design",
+        "duration_years": 4,
+        "description": "Creative computing combining digital art, animation and interactive design for games and media industries.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.abertay.ac.uk/course-search/undergraduate/computer-arts/"
+      }
+    ],
+    "uws": [
+      {
+        "name": "Adult Nursing",
+        "university_id": "8f039a85-07be-4b42-b631-130ffe3c038e",
+        "ucas_code": null,
+        "degree_type": "bnurs",
+        "subject_area": "Nursing",
+        "duration_years": 4,
+        "description": "Registered adult nursing degree with clinical placements, leading to NMC professional registration.",
+        "entry_requirements": {
+          "highers": "BBB",
+          "ucas_points": 112,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uws.ac.uk/study/undergraduate/undergraduate-course-search/adult-nursing/"
+      },
+      {
+        "name": "Mental Health Nursing",
+        "university_id": "8f039a85-07be-4b42-b631-130ffe3c038e",
+        "ucas_code": null,
+        "degree_type": "bnurs",
+        "subject_area": "Nursing",
+        "duration_years": 4,
+        "description": "Mental health nursing degree with clinical placements, preparing students for mental healthcare registration.",
+        "entry_requirements": {
+          "highers": "BBB",
+          "ucas_points": 112,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uws.ac.uk/study/undergraduate/undergraduate-course-search/mental-health-nursing/"
+      },
+      {
+        "name": "Midwifery",
+        "university_id": "8f039a85-07be-4b42-b631-130ffe3c038e",
+        "ucas_code": null,
+        "degree_type": "bnurs",
+        "subject_area": "Nursing",
+        "duration_years": 4,
+        "description": "Midwifery degree with clinical placements in maternity settings, leading to NMC registration.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uws.ac.uk/study/undergraduate/undergraduate-course-search/midwifery/"
+      },
+      {
+        "name": "Mechanical Engineering",
+        "university_id": "8f039a85-07be-4b42-b631-130ffe3c038e",
+        "ucas_code": null,
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Mechanical engineering degree covering thermodynamics, fluid mechanics, design and manufacturing processes.",
+        "entry_requirements": {
+          "highers": "BCCC",
+          "ucas_points": 96,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uws.ac.uk/study/undergraduate/undergraduate-course-search/mechanical-engineering/"
+      },
+      {
+        "name": "Aircraft Engineering",
+        "university_id": "8f039a85-07be-4b42-b631-130ffe3c038e",
+        "ucas_code": null,
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Aircraft engineering degree covering aerodynamics, propulsion, structures and avionics for aerospace industry.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uws.ac.uk/study/undergraduate/undergraduate-course-search/aircraft-engineering/"
+      },
+      {
+        "name": "Aerospace Engineering",
+        "university_id": "8f039a85-07be-4b42-b631-130ffe3c038e",
+        "ucas_code": null,
+        "degree_type": "meng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Integrated master's in aerospace engineering covering advanced aerodynamics, flight mechanics and systems integration.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uws.ac.uk/study/undergraduate/undergraduate-course-search/aerospace-engineering/"
+      },
+      {
+        "name": "Social Work",
+        "university_id": "8f039a85-07be-4b42-b631-130ffe3c038e",
+        "ucas_code": null,
+        "degree_type": "ba",
+        "subject_area": "Social Work",
+        "duration_years": 4,
+        "description": "Social work degree covering theory and practice in individual support, community work and care management.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uws.ac.uk/study/undergraduate/undergraduate-course-search/social-work/"
+      },
+      {
+        "name": "Graphic Arts and Moving Image",
+        "university_id": "8f039a85-07be-4b42-b631-130ffe3c038e",
+        "ucas_code": null,
+        "degree_type": "ba",
+        "subject_area": "Art and Design",
+        "duration_years": 4,
+        "description": "Creative design degree combining graphic arts, motion graphics, animation and digital media production.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uws.ac.uk/study/undergraduate/undergraduate-course-search/graphic-arts-moving-image/"
+      },
+      {
+        "name": "Business Management",
+        "university_id": "8f039a85-07be-4b42-b631-130ffe3c038e",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Business management degree covering strategy, finance, marketing, operations and organisational leadership.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uws.ac.uk/study/undergraduate/undergraduate-course-search/business-management/"
+      },
+      {
+        "name": "Accounting and Finance",
+        "university_id": "8f039a85-07be-4b42-b631-130ffe3c038e",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Accountancy degree covering financial accounting, management accounting and professional accounting standards.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uws.ac.uk/study/undergraduate/undergraduate-course-search/accounting-and-finance/"
+      }
+    ],
+    "uhi": [
+      {
+        "name": "Applied Software Development",
+        "university_id": "939894a6-f553-4250-b1d1-4f9cae1cfa21",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Computing Science",
+        "duration_years": 4,
+        "description": "Applied computing degree focusing on practical software engineering, development frameworks and industry-relevant programming skills.",
+        "entry_requirements": {
+          "highers": "BBC",
+          "ucas_points": 96,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uhi.ac.uk/en/courses/bsc-hons-applied-software-development/"
+      },
+      {
+        "name": "Culture and Heritage",
+        "university_id": "939894a6-f553-4250-b1d1-4f9cae1cfa21",
+        "ucas_code": null,
+        "degree_type": "ba",
+        "subject_area": "History",
+        "duration_years": 4,
+        "description": "Heritage and cultural studies degree exploring Scottish Highland and Island traditions, languages and historical contexts.",
+        "entry_requirements": {
+          "highers": "BBC",
+          "ucas_points": 96,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uhi.ac.uk/en/courses/ba-hons-culture-and-heritage/"
+      },
+      {
+        "name": "Environmental Science",
+        "university_id": "939894a6-f553-4250-b1d1-4f9cae1cfa21",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Environmental Science",
+        "duration_years": 4,
+        "description": "Environmental science degree covering ecology, conservation, climate and sustainable resource management in rural contexts.",
+        "entry_requirements": {
+          "highers": "BBC",
+          "ucas_points": 96,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uhi.ac.uk/en/courses/bsc-hons-environmental-science/"
+      },
+      {
+        "name": "Gaelic and Education",
+        "university_id": "939894a6-f553-4250-b1d1-4f9cae1cfa21",
+        "ucas_code": null,
+        "degree_type": "ba",
+        "subject_area": "Education",
+        "duration_years": 4,
+        "description": "Gaelic language and education degree preparing teachers and heritage professionals with fluent Gaelic and pedagogical skills.",
+        "entry_requirements": {
+          "highers": "BBC",
+          "ucas_points": 96,
+          "required_subjects": ["Gàidhlig"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uhi.ac.uk/en/courses/ba-hons-gaelic-and-education/"
+      },
+      {
+        "name": "Gaelic Studies",
+        "university_id": "939894a6-f553-4250-b1d1-4f9cae1cfa21",
+        "ucas_code": null,
+        "degree_type": "ba",
+        "subject_area": "Modern Languages",
+        "duration_years": 4,
+        "description": "Gaelic language degree for both learners and fluent speakers, covering literature, linguistics and cultural heritage.",
+        "entry_requirements": {
+          "highers": "BBC",
+          "ucas_points": 96,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uhi.ac.uk/en/courses/ba-hons-gaelic/"
+      },
+      {
+        "name": "Sustainable Development",
+        "university_id": "939894a6-f553-4250-b1d1-4f9cae1cfa21",
+        "ucas_code": null,
+        "degree_type": "bsc",
+        "subject_area": "Environmental Science",
+        "duration_years": 4,
+        "description": "Sustainable development degree focused on rural, remote and island community resilience and green economics.",
+        "entry_requirements": {
+          "highers": "BBC",
+          "ucas_points": 96,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.uhi.ac.uk/en/courses/bsc-hons-sustainable-development/"
+      }
+    ]
+  }
+}

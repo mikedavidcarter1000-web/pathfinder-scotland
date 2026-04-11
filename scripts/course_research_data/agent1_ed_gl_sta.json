@@ -1,0 +1,494 @@
+{
+  "universities": {
+    "edinburgh": [
+      {
+        "name": "Veterinary Medicine",
+        "university_id": "68365bd6-7529-4de7-bc78-d9a9e5753d62",
+        "ucas_code": null,
+        "degree_type": "bvm",
+        "subject_area": "Veterinary Medicine",
+        "duration_years": 5,
+        "description": "Five-year veterinary degree with clinical placements and practical experience.",
+        "entry_requirements": {
+          "highers": "AAAAB",
+          "ucas_points": 160,
+          "required_subjects": ["Chemistry", "Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://study.ed.ac.uk/programmes/undergraduate/356-veterinary-medicine-5-year-programme"
+      },
+      {
+        "name": "Engineering",
+        "university_id": "68365bd6-7529-4de7-bc78-d9a9e5753d62",
+        "ucas_code": "H100",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Four-year engineering degree with specialism choice in final years.",
+        "entry_requirements": {
+          "highers": "AAAA",
+          "ucas_points": 152,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://study.ed.ac.uk/programmes/undergraduate/75-engineering"
+      },
+      {
+        "name": "Psychology",
+        "university_id": "68365bd6-7529-4de7-bc78-d9a9e5753d62",
+        "ucas_code": "C802",
+        "degree_type": "bsc",
+        "subject_area": "Psychology",
+        "duration_years": 4,
+        "description": "Four-year psychology degree covering cognitive, social and developmental psychology.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://study.ed.ac.uk/programmes/undergraduate/370-psychology"
+      },
+      {
+        "name": "Environmental Science",
+        "university_id": "68365bd6-7529-4de7-bc78-d9a9e5753d62",
+        "ucas_code": "F900",
+        "degree_type": "bsc",
+        "subject_area": "Environmental Science",
+        "duration_years": 4,
+        "description": "Four-year environmental science degree with ecology and sustainability focus.",
+        "entry_requirements": {
+          "highers": "ABBB",
+          "ucas_points": 128,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://study.ed.ac.uk/programmes/undergraduate/16-ecological-and-environmental-sciences"
+      },
+      {
+        "name": "Informatics MInf",
+        "university_id": "68365bd6-7529-4de7-bc78-d9a9e5753d62",
+        "ucas_code": "G500",
+        "degree_type": "meng",
+        "subject_area": "Computing Science",
+        "duration_years": 5,
+        "description": "Five-year integrated masters in informatics combining computing and software engineering.",
+        "entry_requirements": {
+          "highers": "AAAAA",
+          "ucas_points": 176,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "AABB"
+        },
+        "course_url": "https://study.ed.ac.uk/programmes/undergraduate/430-informatics-5-year-undergraduate-masters-programme"
+      },
+      {
+        "name": "Acoustics and Music Technology",
+        "university_id": "68365bd6-7529-4de7-bc78-d9a9e5753d62",
+        "ucas_code": "W380",
+        "degree_type": "bsc",
+        "subject_area": "Music",
+        "duration_years": 4,
+        "description": "Four-year degree combining music technology with acoustics and signal processing.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://study.ed.ac.uk/programmes/undergraduate/208-acoustics-and-music-technology"
+      }
+    ],
+    "glasgow": [
+      {
+        "name": "Veterinary Medicine",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "D100",
+        "degree_type": "bvm",
+        "subject_area": "Veterinary Medicine",
+        "duration_years": 5,
+        "description": "Five-year veterinary degree with animal care and research focus.",
+        "entry_requirements": {
+          "highers": "AAAAB",
+          "ucas_points": 160,
+          "required_subjects": ["Chemistry", "Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/veterinarymedicine/"
+      },
+      {
+        "name": "Business Management",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "N100",
+        "degree_type": "ma",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Four-year business management degree with strategy and operations.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["English"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/businessmanagement/"
+      },
+      {
+        "name": "Economics",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "L100",
+        "degree_type": "ma",
+        "subject_area": "Economics",
+        "duration_years": 4,
+        "description": "Four-year economics degree with microeconomics and econometrics.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/economics/"
+      },
+      {
+        "name": "Accountancy and Finance",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "NN43",
+        "degree_type": "ma",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Four-year accountancy degree leading to professional qualifications.",
+        "entry_requirements": {
+          "highers": "AAAAA",
+          "ucas_points": 176,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/accountancy/"
+      },
+      {
+        "name": "Civil Engineering",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "H200",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Four-year civil engineering degree with structural and construction focus.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/civilengineering/"
+      },
+      {
+        "name": "Mechanical Engineering",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "H300",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Four-year mechanical engineering degree with thermodynamics and design.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/mechanicalengineering/"
+      },
+      {
+        "name": "Biological Sciences",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "C700",
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "Four-year biological sciences degree with cell and molecular biology.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/biology/"
+      },
+      {
+        "name": "Geology",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "F400",
+        "degree_type": "bsc",
+        "subject_area": "Geology",
+        "duration_years": 4,
+        "description": "Four-year geology degree with mineralogy and plate tectonics.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/geology/"
+      },
+      {
+        "name": "Philosophy",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "V500",
+        "degree_type": "ma",
+        "subject_area": "Philosophy",
+        "duration_years": 4,
+        "description": "Four-year philosophy degree with logic, metaphysics and ethics.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/philosophy/"
+      },
+      {
+        "name": "Music",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "W300",
+        "degree_type": "bmus",
+        "subject_area": "Music",
+        "duration_years": 4,
+        "description": "Four-year music degree with composition, performance and analysis.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/music/"
+      },
+      {
+        "name": "Aerospace Engineering",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "H400",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Four-year aerospace engineering degree with aerodynamics and propulsion.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/aeronauticalengineering/"
+      },
+      {
+        "name": "French",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "R120",
+        "degree_type": "ma",
+        "subject_area": "Modern Languages",
+        "duration_years": 4,
+        "description": "Four-year French language degree with literature and culture.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/french/"
+      },
+      {
+        "name": "German",
+        "university_id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+        "ucas_code": "R230",
+        "degree_type": "ma",
+        "subject_area": "Modern Languages",
+        "duration_years": 4,
+        "description": "Four-year German language degree with literature and culture.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gla.ac.uk/undergraduate/degrees/german/"
+      }
+    ],
+    "stAndrews": [
+      {
+        "name": "Medicine",
+        "university_id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+        "ucas_code": "A100",
+        "degree_type": "mbchb",
+        "subject_area": "Medicine",
+        "duration_years": 6,
+        "description": "Six-year medical degree with community-based and hospital placements at partner medical schools.",
+        "entry_requirements": {
+          "highers": "AAAAB",
+          "ucas_points": 160,
+          "required_subjects": ["Chemistry", "Biology"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "AAABB"
+        },
+        "course_url": "https://www.st-andrews.ac.uk/subjects/medicine/medicine-mbchb-scotcom/"
+      },
+      {
+        "name": "Management",
+        "university_id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+        "ucas_code": "N100",
+        "degree_type": "ma",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Four-year management degree with strategy and organizational behaviour.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.st-andrews.ac.uk/subjects/management/management-ma/"
+      },
+      {
+        "name": "Divinity",
+        "university_id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+        "ucas_code": "V610",
+        "degree_type": "ma",
+        "subject_area": "Theology and Divinity",
+        "duration_years": 4,
+        "description": "Four-year divinity degree with theology, biblical studies and church history.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.st-andrews.ac.uk/subjects/divinity/divinity/"
+      },
+      {
+        "name": "Modern Languages",
+        "university_id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+        "ucas_code": "R100",
+        "degree_type": "ma",
+        "subject_area": "Modern Languages",
+        "duration_years": 4,
+        "description": "Four-year modern languages degree with two European languages.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.st-andrews.ac.uk/subjects/modern-languages/modern-languages-ma/"
+      },
+      {
+        "name": "Philosophy",
+        "university_id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+        "ucas_code": "V500",
+        "degree_type": "ma",
+        "subject_area": "Philosophy",
+        "duration_years": 4,
+        "description": "Four-year philosophy degree with logic, metaphysics and epistemology.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.st-andrews.ac.uk/subjects/philosophy/philosophy-ma/"
+      },
+      {
+        "name": "Classical Studies",
+        "university_id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+        "ucas_code": "Q800",
+        "degree_type": "ma",
+        "subject_area": "Classics",
+        "duration_years": 4,
+        "description": "Four-year classics degree with ancient Greek, Latin and history.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.st-andrews.ac.uk/subjects/classical-studies/classical-studies-ma/"
+      },
+      {
+        "name": "Geography",
+        "university_id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+        "ucas_code": "L700",
+        "degree_type": "bsc",
+        "subject_area": "Geography",
+        "duration_years": 4,
+        "description": "Four-year geography degree with human and physical geography.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.st-andrews.ac.uk/subjects/geography/geography-bsc/"
+      },
+      {
+        "name": "Sustainable Development",
+        "university_id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+        "ucas_code": "L910",
+        "degree_type": "ma",
+        "subject_area": "Environmental Science",
+        "duration_years": 4,
+        "description": "Four-year sustainable development degree with environmental and social focus.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.st-andrews.ac.uk/subjects/sustainable-development/sustainable-development-ma/"
+      },
+      {
+        "name": "Art History",
+        "university_id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+        "ucas_code": "V310",
+        "degree_type": "ma",
+        "subject_area": "Art and Design",
+        "duration_years": 4,
+        "description": "Four-year art history degree with medieval to contemporary art.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.st-andrews.ac.uk/subjects/art-history/art-history-ma/"
+      },
+      {
+        "name": "Film Studies",
+        "university_id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+        "ucas_code": "P300",
+        "degree_type": "ma",
+        "subject_area": "Media Studies",
+        "duration_years": 4,
+        "description": "Four-year film studies degree with cinema history and criticism.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.st-andrews.ac.uk/subjects/film-studies/film-studies-ma/"
+      },
+      {
+        "name": "Music",
+        "university_id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+        "ucas_code": "W300",
+        "degree_type": "bmus",
+        "subject_area": "Music",
+        "duration_years": 4,
+        "description": "Four-year music degree with composition, performance and musicology.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.st-andrews.ac.uk/subjects/music/music-ma/"
+      }
+    ]
+  }
+}

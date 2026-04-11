@@ -1,0 +1,560 @@
+{
+  "universities": {
+    "gcu": [
+      {
+        "name": "Optometry",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "B510",
+        "degree_type": "bsc",
+        "subject_area": "Health Sciences",
+        "duration_years": 4,
+        "description": "Four-year degree preparing optometrists to practice independently and provide comprehensive eye care.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Physics", "Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-optometry-glasgow"
+      },
+      {
+        "name": "Human Nutrition and Dietetics",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "B490",
+        "degree_type": "bsc",
+        "subject_area": "Health Sciences",
+        "duration_years": 4,
+        "description": "Accredited degree combining nutrition science and dietetics practice for careers in health promotion.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBBC"
+        },
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-human-nutrition-and-dietetics-glasgow"
+      },
+      {
+        "name": "Diagnostic Imaging",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "B820",
+        "degree_type": "bsc",
+        "subject_area": "Health Sciences",
+        "duration_years": 4,
+        "description": "Clinical radiography degree preparing diagnostic radiographers to produce and interpret medical images.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-diagnostic-imaging-glasgow"
+      },
+      {
+        "name": "Radiotherapy and Oncology",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "B821",
+        "degree_type": "bsc",
+        "subject_area": "Health Sciences",
+        "duration_years": 4,
+        "description": "Prepares therapeutic radiographers to plan and deliver radiotherapy treatment to cancer patients.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-radiotherapy-and-oncology-glasgow"
+      },
+      {
+        "name": "Applied Biomedical Science",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "B940",
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "HCPC-accredited degree introducing biomedical science careers including laboratory diagnostics and disease monitoring.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-applied-biomedical-sciencebiomedical-science-glasgow"
+      },
+      {
+        "name": "Orthoptics",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "B954",
+        "degree_type": "bsc",
+        "subject_area": "Health Sciences",
+        "duration_years": 4,
+        "description": "Scotland's only orthoptics degree preparing graduates to diagnose and treat eye movement disorders.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-orthoptics-glasgow"
+      },
+      {
+        "name": "Games Development",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "G460",
+        "degree_type": "bsc",
+        "subject_area": "Computing Science",
+        "duration_years": 4,
+        "description": "Specialises in games software development and games design for careers in computer games industry.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gcu.ac.uk/study/courses/bsc-hons-games-development-glasgow"
+      },
+      {
+        "name": "Software Development",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "G550",
+        "degree_type": "bsc",
+        "subject_area": "Computing Science",
+        "duration_years": 4,
+        "description": "Industry-led software development degree teaching DevOps, agile methods, and modern software engineering practices.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gcu.ac.uk/study/courses/software-development"
+      },
+      {
+        "name": "Construction Management",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "K220",
+        "degree_type": "bsc",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Studies technical, financial and planning aspects of construction management for infrastructure projects.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-construction-management-glasgow"
+      },
+      {
+        "name": "Electrical Power Engineering",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "H345",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Broad electrical engineering education with specialisation in power systems and power electronics.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-electrical-power-engineering-glasgow"
+      },
+      {
+        "name": "Electrical and Electronic Engineering",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "H621",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Develops expertise in electrical and electronic engineering with specialist options in wireless networks.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-electrical-and-electronic-engineering-glasgow"
+      },
+      {
+        "name": "Applied Psychology",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "C801",
+        "degree_type": "bsc",
+        "subject_area": "Psychology",
+        "duration_years": 4,
+        "description": "BPS-accredited psychology degree with pathways in counselling, forensic, health and sport psychology.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-applied-psychology-glasgow"
+      },
+      {
+        "name": "International Marketing",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "N501",
+        "degree_type": "ba",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Marketing degree combining strategic thinking with international business context for global careers.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BCCC"
+        },
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-international-marketing-glasgow"
+      },
+      {
+        "name": "Accountancy",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "N400",
+        "degree_type": "ba",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Accounting degree covering financial reporting, auditing, taxation and management accounting.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BCCC"
+        },
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-accountancy-glasgow"
+      },
+      {
+        "name": "Social Work",
+        "university_id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+        "ucas_code": "L500",
+        "degree_type": "ba",
+        "subject_area": "Social Work",
+        "duration_years": 4,
+        "description": "Social work degree combining social justice theory with professional practice in health and social care.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["English"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.gcu.ac.uk/study/courses/undergraduate-social-work-glasgow"
+      }
+    ],
+    "rgu": [
+      {
+        "name": "Engineering Design",
+        "university_id": "30b5a864-7750-4fe8-ab17-153b37e70100",
+        "ucas_code": "H313",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Equips engineers with creative problem-solving skills to address sustainability challenges through design.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.rgu.ac.uk/study/courses/3367-beng-hons-engineering-design"
+      },
+      {
+        "name": "Applied Biomedical Science",
+        "university_id": "30b5a864-7750-4fe8-ab17-153b37e70100",
+        "ucas_code": "B902",
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "IBMS and HCPC accredited biomedical degree combining laboratory training across hospital diagnostic disciplines.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.rgu.ac.uk/study/courses/873-bsc-hons-applied-biomedical-science"
+      },
+      {
+        "name": "Biomedical Science",
+        "university_id": "30b5a864-7750-4fe8-ab17-153b37e70100",
+        "ucas_code": "B901",
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "Covers diagnosis, treatment and monitoring of disease through molecular biology, genetics and advanced diagnostics.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.rgu.ac.uk/study/courses/872-bsc-hons-biomedical-science"
+      },
+      {
+        "name": "Cyber Security",
+        "university_id": "30b5a864-7750-4fe8-ab17-153b37e70100",
+        "ucas_code": "I100",
+        "degree_type": "bsc",
+        "subject_area": "Computing Science",
+        "duration_years": 4,
+        "description": "BCS-accredited degree preparing graduates to prevent and manage cyber security threats and incidents.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.rgu.ac.uk/study/courses/430-bsc-hons-cyber-security"
+      },
+      {
+        "name": "Computer Science",
+        "university_id": "30b5a864-7750-4fe8-ab17-153b37e70100",
+        "ucas_code": "G400",
+        "degree_type": "bsc",
+        "subject_area": "Computing Science",
+        "duration_years": 4,
+        "description": "Teaches design and implementation of state-of-the-art software systems with excellent student satisfaction.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.rgu.ac.uk/study/courses/446-bsc-hons-computer-science"
+      },
+      {
+        "name": "Midwifery",
+        "university_id": "30b5a864-7750-4fe8-ab17-153b37e70100",
+        "ucas_code": "B720",
+        "degree_type": "bnurs",
+        "subject_area": "Nursing",
+        "duration_years": 3,
+        "description": "NMC-accredited degree preparing midwives to provide skilled care to women, infants and families.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["English", "Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.rgu.ac.uk/study/courses/900-bsc-midwifery"
+      },
+      {
+        "name": "Occupational Therapy",
+        "university_id": "30b5a864-7750-4fe8-ab17-153b37e70100",
+        "ucas_code": "B920",
+        "degree_type": "bsc",
+        "subject_area": "Health Sciences",
+        "duration_years": 4,
+        "description": "Develops evidence-based occupational therapy practice for careers in NHS and social care.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["English"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.rgu.ac.uk/study/courses/980-moccth-occupational-therapy"
+      },
+      {
+        "name": "Communication Design",
+        "university_id": "30b5a864-7750-4fe8-ab17-153b37e70100",
+        "ucas_code": "WW26",
+        "degree_type": "ba",
+        "subject_area": "Art and Design",
+        "duration_years": 4,
+        "description": "Develops graphics, illustration and photography skills for creative industries careers.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Art and Design"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.rgu.ac.uk/study/courses/453-ba-hons-communication-design-graphic-design-illustration-photography"
+      },
+      {
+        "name": "Diagnostic Radiography",
+        "university_id": "30b5a864-7750-4fe8-ab17-153b37e70100",
+        "ucas_code": "B813",
+        "degree_type": "bsc",
+        "subject_area": "Health Sciences",
+        "duration_years": 4,
+        "description": "Joint interprofessional programme providing radiography knowledge, clinical practice and image interpretation.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["English", "Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.rgu.ac.uk/study/courses/975-mdrad-diagnostic-radiography"
+      },
+      {
+        "name": "Social Work",
+        "university_id": "30b5a864-7750-4fe8-ab17-153b37e70100",
+        "ucas_code": "L500",
+        "degree_type": "ba",
+        "subject_area": "Social Work",
+        "duration_years": 4,
+        "description": "Prepares graduates for SSSC registration as qualified social workers in health and social care settings.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["English"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.rgu.ac.uk/study/courses/917-ba-hons-social-work"
+      }
+    ],
+    "qmu": [
+      {
+        "name": "Speech and Language Therapy",
+        "university_id": "258362ad-ecc9-47c7-97a9-2ba8d4800bb8",
+        "ucas_code": "B631",
+        "degree_type": "bsc",
+        "subject_area": "Health Sciences",
+        "duration_years": 4,
+        "description": "HCPC-accredited degree preparing registered speech and language therapists for NHS and community practice.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["English"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.qmu.ac.uk/study-here/undergraduate-study/2026/bsc-hons-speech-and-language-therapy-2026-entry"
+      },
+      {
+        "name": "Paramedic Science",
+        "university_id": "258362ad-ecc9-47c7-97a9-2ba8d4800bb8",
+        "ucas_code": "B761",
+        "degree_type": "bsc",
+        "subject_area": "Health Sciences",
+        "duration_years": 3,
+        "description": "Royal College of Paramedics endorsed degree preparing paramedics for emergency and non-emergency care.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Biology", "English"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.qmu.ac.uk/study-here/undergraduate-study/2026/bsc-paramedic-science-2026-entry"
+      },
+      {
+        "name": "Psychology",
+        "university_id": "258362ad-ecc9-47c7-97a9-2ba8d4800bb8",
+        "ucas_code": "C800",
+        "degree_type": "bsc",
+        "subject_area": "Psychology",
+        "duration_years": 4,
+        "description": "BPS-accredited degree exploring how people think, feel and behave with clinical and forensic specialisms.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.qmu.ac.uk/study-here/undergraduate-study/2026/bsc-hons-psychology-2026-entry"
+      },
+      {
+        "name": "Drama",
+        "university_id": "258362ad-ecc9-47c7-97a9-2ba8d4800bb8",
+        "ucas_code": "W490",
+        "degree_type": "ba",
+        "subject_area": "Performing Arts",
+        "duration_years": 4,
+        "description": "Combines theory and practical training in theatre production, performance and directing.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["English"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.qmu.ac.uk/study-here/undergraduate-study/2026/ba-hons-drama-2026-entry"
+      },
+      {
+        "name": "Film and Media",
+        "university_id": "258362ad-ecc9-47c7-97a9-2ba8d4800bb8",
+        "ucas_code": "P303",
+        "degree_type": "ba",
+        "subject_area": "Media Studies",
+        "duration_years": 4,
+        "description": "Develops students as critical makers and consumers of film and media through practical and analytical study.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["English"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.qmu.ac.uk/study-here/undergraduate-study/2026/ba-hons-film-and-media-2026-entry"
+      },
+      {
+        "name": "Theatre and Film",
+        "university_id": "258362ad-ecc9-47c7-97a9-2ba8d4800bb8",
+        "ucas_code": "WW46",
+        "degree_type": "ba",
+        "subject_area": "Performing Arts",
+        "duration_years": 4,
+        "description": "Scotland's only degree combining theatre and film study, merging theory and practical creative industries skills.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["English"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.qmu.ac.uk/study-here/undergraduate-study/2026/ba-hons-theatre-and-film-2026-entry"
+      },
+      {
+        "name": "Nutrition",
+        "university_id": "258362ad-ecc9-47c7-97a9-2ba8d4800bb8",
+        "ucas_code": "B404",
+        "degree_type": "bsc",
+        "subject_area": "Health Sciences",
+        "duration_years": 4,
+        "description": "AfN-accredited programme combining nutrition science theory with practical skills for nutritionist careers.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.qmu.ac.uk/study-here/undergraduate-study/2026/master-of-nutrition-mnutrition-bsc-hons-nutrition-2026-entry"
+      },
+      {
+        "name": "Occupational Therapy",
+        "university_id": "258362ad-ecc9-47c7-97a9-2ba8d4800bb8",
+        "ucas_code": "B920",
+        "degree_type": "bsc",
+        "subject_area": "Health Sciences",
+        "duration_years": 4,
+        "description": "HCPC-accredited integrated master's degree developing occupational therapists for health and social care.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["English"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.qmu.ac.uk/study-here/undergraduate-study/2026/bsc-hons-occupational-therapy"
+      },
+      {
+        "name": "Food Science and Innovation",
+        "university_id": "258362ad-ecc9-47c7-97a9-2ba8d4800bb8",
+        "ucas_code": "B560",
+        "degree_type": "bsc",
+        "subject_area": "Food Science",
+        "duration_years": 4,
+        "description": "Combines chemistry, biochemistry, nutrition, microbiology and engineering for food industry careers.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.qmu.ac.uk/study-here/undergraduate-study/food-science"
+      }
+    ]
+  }
+}

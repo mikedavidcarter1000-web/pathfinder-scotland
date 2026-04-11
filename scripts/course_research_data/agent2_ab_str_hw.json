@@ -1,0 +1,474 @@
+{
+  "universities": {
+    "aberdeen": [
+      {
+        "name": "Physics",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "F300",
+        "degree_type": "bsc",
+        "subject_area": "Physics",
+        "duration_years": 4,
+        "description": "Study of matter and energy from subatomic to cosmic scales with emphasis on quantum mechanics and experimentation.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Physics", "Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/821/F300/physics/"
+      },
+      {
+        "name": "Engineering (Mechanical)",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "H300",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Foundational engineering in all disciplines with specialisation in mechanical engineering from year three.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/576/H300/engineering-mechanical/"
+      },
+      {
+        "name": "English and Scottish Literature",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "Q314",
+        "degree_type": "ma",
+        "subject_area": "English",
+        "duration_years": 4,
+        "description": "Evolution of English and Scottish literature from medieval to modernist periods.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/593/Q314/english-and-scottish-literature/"
+      },
+      {
+        "name": "History",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "V100",
+        "degree_type": "ma",
+        "subject_area": "History",
+        "duration_years": 4,
+        "description": "Comprehensive study of human history across medieval, early modern and modern periods.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/735/V100/history/"
+      },
+      {
+        "name": "Accountancy",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "N400",
+        "degree_type": "ma",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Thorough grounding in accounting theory and practice with professional training facilities.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/1137/N400/accountancy/"
+      },
+      {
+        "name": "Petroleum Engineering",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "H851",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Design and development of technologies for oil and gas exploration and extraction.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Mathematics", "Physics", "Chemistry"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/811/H851/petroleum-engineering/"
+      },
+      {
+        "name": "Economics",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "L100",
+        "degree_type": "ma",
+        "subject_area": "Economics",
+        "duration_years": 4,
+        "description": "Understanding global economy and factors influencing income, wealth and wellbeing.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/549/L100/economics/"
+      },
+      {
+        "name": "Finance",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "N300",
+        "degree_type": "ma",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Comprehensive knowledge of finance sector emphasising business theory application.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/1138/N300/finance/"
+      },
+      {
+        "name": "Biochemistry",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "C700",
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "Complex array of molecules and interactions that create living things.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Chemistry", "Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/456/C700/biochemistry/"
+      },
+      {
+        "name": "Geography",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "F800",
+        "degree_type": "bsc",
+        "subject_area": "Geography",
+        "duration_years": 4,
+        "description": "Understanding geography's role in addressing climate change and sustainable development.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/671/F800/geography/"
+      },
+      {
+        "name": "Anthropology",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "L600",
+        "degree_type": "ma",
+        "subject_area": "Sociology",
+        "duration_years": 4,
+        "description": "Study of human cultures and societies across time and geography.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/419/L600/anthropology/"
+      },
+      {
+        "name": "Philosophy",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "V500",
+        "degree_type": "ma",
+        "subject_area": "Philosophy",
+        "duration_years": 4,
+        "description": "Fundamental questions about knowledge, reality, ethics and reasoning.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/797/V500/philosophy/"
+      },
+      {
+        "name": "Environmental Science",
+        "university_id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+        "ucas_code": "F900",
+        "degree_type": "bsc",
+        "subject_area": "Environmental Science",
+        "duration_years": 4,
+        "description": "Understanding environmental systems and addressing sustainability challenges.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Chemistry", "Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.abdn.ac.uk/study/undergraduate/degree-programmes/600/F900/environmental-science/"
+      }
+    ],
+    "strathclyde": [
+      {
+        "name": "Pharmacy MPharm",
+        "university_id": "429f13e5-4500-4b90-9690-c89765632653",
+        "ucas_code": "B230",
+        "degree_type": "bsc",
+        "subject_area": "Pharmacy",
+        "duration_years": 4,
+        "description": "Professional training in pharmaceutical science with emphasis on medicine discovery and application.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Chemistry", "Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.strath.ac.uk/courses/undergraduate/pharmacy/"
+      },
+      {
+        "name": "Chemistry",
+        "university_id": "429f13e5-4500-4b90-9690-c89765632653",
+        "ucas_code": "F100",
+        "degree_type": "bsc",
+        "subject_area": "Chemistry",
+        "duration_years": 4,
+        "description": "Broad chemistry curriculum providing maximum flexibility with optional industrial placement.",
+        "entry_requirements": {
+          "highers": "ABBB",
+          "ucas_points": 128,
+          "required_subjects": ["Chemistry", "Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.strath.ac.uk/courses/undergraduate/chemistry/"
+      },
+      {
+        "name": "Civil Engineering",
+        "university_id": "429f13e5-4500-4b90-9690-c89765632653",
+        "ucas_code": "H200",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Infrastructure engineering across structural, geotechnical, water and transport domains.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.strath.ac.uk/courses/undergraduate/civilengineeringbeng/"
+      },
+      {
+        "name": "Psychology",
+        "university_id": "429f13e5-4500-4b90-9690-c89765632653",
+        "ucas_code": "C800",
+        "degree_type": "ba",
+        "subject_area": "Psychology",
+        "duration_years": 4,
+        "description": "BPS-accredited psychology programme exploring human behaviour and mental processes.",
+        "entry_requirements": {
+          "highers": "AAAA",
+          "ucas_points": 152,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.strath.ac.uk/courses/undergraduate/psychology/"
+      },
+      {
+        "name": "Accounting",
+        "university_id": "429f13e5-4500-4b90-9690-c89765632653",
+        "ucas_code": "N400",
+        "degree_type": "ba",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Preparation in financial accounting and interpretation with professional accreditation.",
+        "entry_requirements": {
+          "highers": "AAAA",
+          "ucas_points": 152,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.strath.ac.uk/courses/undergraduate/accounting/"
+      },
+      {
+        "name": "Aero-Mechanical Engineering",
+        "university_id": "429f13e5-4500-4b90-9690-c89765632653",
+        "ucas_code": "H420",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Four-year engineering programme combining mechanical and aerospace specialisations.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.strath.ac.uk/courses/undergraduate/aero-mechanicalengineeringbeng/"
+      },
+      {
+        "name": "Chemical Engineering",
+        "university_id": "429f13e5-4500-4b90-9690-c89765632653",
+        "ucas_code": "H810",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Application of chemistry and engineering principles to production processes.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": ["Chemistry", "Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.strath.ac.uk/courses/undergraduate/chemicalengineeringbeng/"
+      },
+      {
+        "name": "Electronic and Electrical Engineering",
+        "university_id": "429f13e5-4500-4b90-9690-c89765632653",
+        "ucas_code": "H600",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Broad-based education in electrical engineering from low current to high power systems.",
+        "entry_requirements": {
+          "highers": "AAAB",
+          "ucas_points": 144,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.strath.ac.uk/courses/undergraduate/electronicelectricalengineeringbeng/"
+      }
+    ],
+    "heriotWatt": [
+      {
+        "name": "Mathematics",
+        "university_id": "c303cfbb-d936-40d8-aa10-e8308b9871de",
+        "ucas_code": "G100",
+        "degree_type": "bsc",
+        "subject_area": "Mathematics",
+        "duration_years": 4,
+        "description": "Rigorous foundation in mathematical theory with emphasis on real-world problem solving.",
+        "entry_requirements": {
+          "highers": "ABBB",
+          "ucas_points": 128,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.hw.ac.uk/study/undergraduate/mathematics-bsc"
+      },
+      {
+        "name": "Physics",
+        "university_id": "c303cfbb-d936-40d8-aa10-e8308b9871de",
+        "ucas_code": "F380",
+        "degree_type": "bsc",
+        "subject_area": "Physics",
+        "duration_years": 4,
+        "description": "Broad and rigorous education in physics with computational and mathematical training.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Physics", "Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.hw.ac.uk/study/undergraduate/physics-bsc"
+      },
+      {
+        "name": "Electrical and Electronic Engineering",
+        "university_id": "c303cfbb-d936-40d8-aa10-e8308b9871de",
+        "ucas_code": "H600",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Broad-based education covering low current electronics to high power systems.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.hw.ac.uk/study/undergraduate/electrical-and-electronic-engineering"
+      },
+      {
+        "name": "International Business Management",
+        "university_id": "c303cfbb-d936-40d8-aa10-e8308b9871de",
+        "ucas_code": "N202",
+        "degree_type": "ma",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Explores all aspects of business from practice and academic perspectives.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.hw.ac.uk/study/undergraduate/international-business-management"
+      },
+      {
+        "name": "Architectural Engineering",
+        "university_id": "c303cfbb-d936-40d8-aa10-e8308b9871de",
+        "ucas_code": "K323",
+        "degree_type": "beng",
+        "subject_area": "Architecture",
+        "duration_years": 4,
+        "description": "Knowledge and skills for architectural engineering and building systems design.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.hw.ac.uk/study/undergraduate/architectural-engineering-beng"
+      },
+      {
+        "name": "Chemical Engineering",
+        "university_id": "c303cfbb-d936-40d8-aa10-e8308b9871de",
+        "ucas_code": "H800",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Application of chemistry principles to large-scale production and processing.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Chemistry", "Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.hw.ac.uk/study/undergraduate/chemical-engineering-beng"
+      },
+      {
+        "name": "Aerospace Engineering",
+        "university_id": "c303cfbb-d936-40d8-aa10-e8308b9871de",
+        "ucas_code": "H400",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Aircraft and aerospace vehicle design with emphasis on aerodynamics and systems.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.hw.ac.uk/study/undergraduate/aerospace-engineering"
+      },
+      {
+        "name": "Structural Engineering",
+        "university_id": "c303cfbb-d936-40d8-aa10-e8308b9871de",
+        "ucas_code": "H201",
+        "degree_type": "beng",
+        "subject_area": "Architecture",
+        "duration_years": 4,
+        "description": "Design and analysis of structures with emphasis on safety and sustainability.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.hw.ac.uk/study/undergraduate/structural-engineering"
+      }
+    ]
+  }
+}

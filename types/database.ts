@@ -632,93 +632,6 @@ export type Database = {
         }
         Relationships: []
       }
-      student_academy_choices: {
-        Row: {
-          created_at: string | null
-          id: string
-          rank_order: number
-          student_id: string
-          subject_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          rank_order: number
-          student_id: string
-          subject_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          rank_order?: number
-          student_id?: string
-          subject_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "student_academy_choices_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "students"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "student_academy_choices_subject_id_fkey"
-            columns: ["subject_id"]
-            isOneToOne: false
-            referencedRelation: "subjects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      student_subject_choices: {
-        Row: {
-          created_at: string | null
-          id: string
-          is_reserve: boolean | null
-          rank_order: number | null
-          student_id: string
-          subject_id: string
-          transition: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          is_reserve?: boolean | null
-          rank_order?: number | null
-          student_id: string
-          subject_id: string
-          transition: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          is_reserve?: boolean | null
-          rank_order?: number | null
-          student_id?: string
-          subject_id?: string
-          transition?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "student_subject_choices_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "students"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "student_subject_choices_subject_id_fkey"
-            columns: ["subject_id"]
-            isOneToOne: false
-            referencedRelation: "subjects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       student_grades: {
         Row: {
           created_at: string | null
@@ -788,7 +701,6 @@ export type Database = {
           school_stage: Database["public"]["Enums"]["school_stage"] | null
           simd_decile: number | null
           updated_at: string | null
-          user_type: string
         }
         Insert: {
           care_experienced?: boolean | null
@@ -804,7 +716,6 @@ export type Database = {
           school_stage?: Database["public"]["Enums"]["school_stage"] | null
           simd_decile?: number | null
           updated_at?: string | null
-          user_type?: string
         }
         Update: {
           care_experienced?: boolean | null
@@ -820,7 +731,6 @@ export type Database = {
           school_stage?: Database["public"]["Enums"]["school_stage"] | null
           simd_decile?: number | null
           updated_at?: string | null
-          user_type?: string
         }
         Relationships: []
       }
@@ -1068,7 +978,7 @@ export type Database = {
         | "national_5"
         | "a_level"
         | "btec"
-      school_stage: "s2" | "s3" | "s4" | "s5" | "s6" | "college" | "mature"
+      school_stage: "s3" | "s4" | "s5" | "s6" | "college" | "mature"
       subscription_status:
         | "trialing"
         | "active"
@@ -1169,10 +1079,6 @@ export type TablesUpdate<
       : never
     : never
 
-// Convenience aliases used across hooks — older naming convention.
-export type InsertTables<T extends keyof DefaultSchema["Tables"]> = TablesInsert<T>
-export type UpdateTables<T extends keyof DefaultSchema["Tables"]> = TablesUpdate<T>
-
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
@@ -1232,7 +1138,7 @@ export const Constants = {
         "a_level",
         "btec",
       ],
-      school_stage: ["s2", "s3", "s4", "s5", "s6", "college", "mature"],
+      school_stage: ["s3", "s4", "s5", "s6", "college", "mature"],
       subscription_status: [
         "trialing",
         "active",

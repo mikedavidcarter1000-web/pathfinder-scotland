@@ -1,0 +1,522 @@
+{
+  "universities": {
+    "dundee": [
+      {
+        "name": "Anatomical Sciences",
+        "university_id": "02362909-4ff2-41d5-99a9-9f179f57c8b8",
+        "ucas_code": "B110",
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "Study of human anatomy through hands-on dissection with Thiel-embalmed cadavers and modern imaging.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.dundee.ac.uk/undergraduate/anatomical-sciences"
+      },
+      {
+        "name": "Biological Sciences",
+        "university_id": "02362909-4ff2-41d5-99a9-9f179f57c8b8",
+        "ucas_code": "C100",
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "Comprehensive study of living organisms with emphasis on molecular biology, genetics and cell biology.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BCCC"
+        },
+        "course_url": "https://www.dundee.ac.uk/undergraduate/biological-sciences"
+      },
+      {
+        "name": "Biomedical Sciences",
+        "university_id": "02362909-4ff2-41d5-99a9-9f179f57c8b8",
+        "ucas_code": "B900",
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "Study of human biology with focus on disease mechanisms and therapeutic applications.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BCCC"
+        },
+        "course_url": "https://www.dundee.ac.uk/undergraduate/biomedical-sciences"
+      },
+      {
+        "name": "Forensic Anthropology",
+        "university_id": "02362909-4ff2-41d5-99a9-9f179f57c8b8",
+        "ucas_code": "FL46",
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "Study of skeletal remains for forensic investigation and legal applications.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.dundee.ac.uk/undergraduate/forensic-anthropology"
+      },
+      {
+        "name": "Biochemistry",
+        "university_id": "02362909-4ff2-41d5-99a9-9f179f57c8b8",
+        "ucas_code": "C700",
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "Study of chemical reactions in living organisms and metabolic pathways.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Biology", "Chemistry"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BCCC"
+        },
+        "course_url": "https://www.dundee.ac.uk/undergraduate/biochemistry"
+      },
+      {
+        "name": "Pharmacology",
+        "university_id": "02362909-4ff2-41d5-99a9-9f179f57c8b8",
+        "ucas_code": "B210",
+        "degree_type": "bsc",
+        "subject_area": "Biological Sciences",
+        "duration_years": 4,
+        "description": "Study of drug interactions with biological systems and medicinal chemistry.",
+        "entry_requirements": {
+          "highers": "BBCC",
+          "ucas_points": 104,
+          "required_subjects": ["Chemistry", "Biology"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BCCC"
+        },
+        "course_url": "https://www.dundee.ac.uk/undergraduate/pharmacology"
+      },
+      {
+        "name": "Environmental Science",
+        "university_id": "02362909-4ff2-41d5-99a9-9f179f57c8b8",
+        "ucas_code": "F750",
+        "degree_type": "bsc",
+        "subject_area": "Environmental Science",
+        "duration_years": 4,
+        "description": "Study of Earth systems, ecology and environmental management with field research components.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": ["Chemistry", "Biology"]
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.dundee.ac.uk/undergraduate/environmental-science"
+      },
+      {
+        "name": "Geography",
+        "university_id": "02362909-4ff2-41d5-99a9-9f179f57c8b8",
+        "ucas_code": "F800",
+        "degree_type": "bsc",
+        "subject_area": "Geography",
+        "duration_years": 4,
+        "description": "Study of physical and human geography with international field work opportunities.",
+        "entry_requirements": {
+          "highers": "BBBC",
+          "ucas_points": 112,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {
+          "simd20_offer": "BBCC"
+        },
+        "course_url": "https://www.dundee.ac.uk/undergraduate/geography-bsc"
+      }
+    ],
+    "stirling": [
+      {
+        "name": "Aquaculture",
+        "university_id": "a9c693ec-bc56-44ef-9c52-e26ca447f6ee",
+        "ucas_code": "C163",
+        "degree_type": "bsc",
+        "subject_area": "Marine Science",
+        "duration_years": 4,
+        "description": "Study of fish and shellfish farming with focus on sustainable production systems.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.stir.ac.uk/courses/ug/natural-sciences/aquaculture/"
+      },
+      {
+        "name": "Sport Business Management",
+        "university_id": "a9c693ec-bc56-44ef-9c52-e26ca447f6ee",
+        "ucas_code": "N8U6",
+        "degree_type": "ba",
+        "subject_area": "Sport and Fitness",
+        "duration_years": 4,
+        "description": "Study of business management within sport industry with entrepreneurial focus.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.stir.ac.uk/courses/ug/sport-business-management/"
+      },
+      {
+        "name": "Sport Development and Coaching",
+        "university_id": "a9c693ec-bc56-44ef-9c52-e26ca447f6ee",
+        "ucas_code": "C601",
+        "degree_type": "ba",
+        "subject_area": "Sport and Fitness",
+        "duration_years": 4,
+        "description": "Study of sport development theory and coaching practice with applied experience.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.stir.ac.uk/courses/ug/sport-development-coaching/"
+      },
+      {
+        "name": "English Studies",
+        "university_id": "a9c693ec-bc56-44ef-9c52-e26ca447f6ee",
+        "ucas_code": "Q300",
+        "degree_type": "ba",
+        "subject_area": "English",
+        "duration_years": 4,
+        "description": "Study of literature, creative writing and linguistics from medieval to contemporary periods.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["English"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.stir.ac.uk/courses/ug/english-studies/"
+      },
+      {
+        "name": "International Politics",
+        "university_id": "a9c693ec-bc56-44ef-9c52-e26ca447f6ee",
+        "ucas_code": "L240",
+        "degree_type": "ba",
+        "subject_area": "Politics",
+        "duration_years": 4,
+        "description": "Study of international relations, geopolitics and global governance systems.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.stir.ac.uk/courses/ug/international-politics/"
+      },
+      {
+        "name": "Accountancy",
+        "university_id": "a9c693ec-bc56-44ef-9c52-e26ca447f6ee",
+        "ucas_code": "N400",
+        "degree_type": "ba",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Study of accounting theory, practice and professional accounting standards.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.stir.ac.uk/courses/ug/accountancy/"
+      },
+      {
+        "name": "Economics",
+        "university_id": "a9c693ec-bc56-44ef-9c52-e26ca447f6ee",
+        "ucas_code": "L100",
+        "degree_type": "bsc",
+        "subject_area": "Economics",
+        "duration_years": 4,
+        "description": "Study of economic theory, policy and applied microeconomics and macroeconomics.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.stir.ac.uk/courses/ug/economics/"
+      },
+      {
+        "name": "Primary Education",
+        "university_id": "a9c693ec-bc56-44ef-9c52-e26ca447f6ee",
+        "ucas_code": "XX13",
+        "degree_type": "bed",
+        "subject_area": "Education",
+        "duration_years": 4,
+        "description": "Four-year teacher training for primary education with early years specialisation.",
+        "entry_requirements": {
+          "highers": "ABBB",
+          "ucas_points": 128,
+          "required_subjects": ["English", "Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.stir.ac.uk/courses/ug/education-primary/"
+      },
+      {
+        "name": "Marine and Freshwater Biology",
+        "university_id": "a9c693ec-bc56-44ef-9c52-e26ca447f6ee",
+        "ucas_code": "C160",
+        "degree_type": "bsc",
+        "subject_area": "Marine Science",
+        "duration_years": 4,
+        "description": "Study of freshwater and marine ecosystems with field research in aquatic environments.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": ["Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.stir.ac.uk/courses/ug/marine-biology/"
+      },
+      {
+        "name": "Social Work",
+        "university_id": "a9c693ec-bc56-44ef-9c52-e26ca447f6ee",
+        "ucas_code": "L500",
+        "degree_type": "ba",
+        "subject_area": "Social Work",
+        "duration_years": 4,
+        "description": "Study of social work practice with mandatory experience in social care settings.",
+        "entry_requirements": {
+          "highers": "AABB",
+          "ucas_points": 136,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.stir.ac.uk/courses/ug/social-work/"
+      }
+    ],
+    "napier": [
+      {
+        "name": "Mechanical Engineering",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "H300",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Study of mechanical systems, thermodynamics and industrial engineering design.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/beng-hons-mechanical-engineering-undergraduate-fulltime"
+      },
+      {
+        "name": "Electrical and Electronic Engineering",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "H310",
+        "degree_type": "beng",
+        "subject_area": "Engineering",
+        "duration_years": 4,
+        "description": "Study of electrical circuits, power systems and electronic device design.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Mathematics", "Physics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/beng-hons-electrical-electronic-engineering-undergraduate-fulltime"
+      },
+      {
+        "name": "Cybersecurity and Forensics",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "H607",
+        "degree_type": "beng",
+        "subject_area": "Computing Science",
+        "duration_years": 4,
+        "description": "Study of network security, digital forensics and cybercrime investigation.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/beng-hons-cyber-security-forensics-undergraduate-fulltime"
+      },
+      {
+        "name": "Software Engineering",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "H313",
+        "degree_type": "bsc",
+        "subject_area": "Computing Science",
+        "duration_years": 4,
+        "description": "Study of software development, programming and software project management.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Mathematics"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/bsc-hons-software-engineering-undergraduate-fulltime"
+      },
+      {
+        "name": "Graphic Design",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "W230",
+        "degree_type": "ba",
+        "subject_area": "Art and Design",
+        "duration_years": 4,
+        "description": "Study of visual communication, typography and digital design with industry projects.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Art and Design"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/bdes-hons-graphic-design-undergraduate-fulltime"
+      },
+      {
+        "name": "Product Design",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "W250",
+        "degree_type": "ba",
+        "subject_area": "Art and Design",
+        "duration_years": 4,
+        "description": "Study of 3D design, prototyping and innovation in consumer product development.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Art and Design"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/bdes-hons-product-design-undergraduate-fulltime"
+      },
+      {
+        "name": "Interior and Spatial Design",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "W261",
+        "degree_type": "ba",
+        "subject_area": "Art and Design",
+        "duration_years": 4,
+        "description": "Study of interior spaces, spatial planning and environmental design.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Art and Design"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/bdes-hons-interior--spatial-design-undergraduate-fulltime"
+      },
+      {
+        "name": "International Hospitality Management",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "N680",
+        "degree_type": "ba",
+        "subject_area": "Travel and Tourism",
+        "duration_years": 4,
+        "description": "Study of hospitality operations and management in international contexts.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/ba-hons-international-hospitality-management-undergraduate-fulltime"
+      },
+      {
+        "name": "Midwifery",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "B720",
+        "degree_type": "bnurs",
+        "subject_area": "Nursing",
+        "duration_years": 3,
+        "description": "Three-year midwifery degree with clinical practice in maternity and women's health.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": ["Biology"]
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/bmid-hons-midwifery-undergraduate-fulltime"
+      },
+      {
+        "name": "Digital Media and Interaction Design",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "W265",
+        "degree_type": "bsc",
+        "subject_area": "Media Studies",
+        "duration_years": 4,
+        "description": "Study of interactive media design, user experience and digital applications.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/bsc-hons-digital-media-interaction-design-undergraduate-fulltime"
+      },
+      {
+        "name": "Web Design and Development",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "H368",
+        "degree_type": "bsc",
+        "subject_area": "Computing Science",
+        "duration_years": 4,
+        "description": "Study of web technologies, programming and responsive design for digital platforms.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/bsc-hons-web-design-development-undergraduate-fulltime"
+      },
+      {
+        "name": "Marketing",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "N500",
+        "degree_type": "ba",
+        "subject_area": "Business Management",
+        "duration_years": 4,
+        "description": "Study of marketing strategy, consumer behaviour and digital marketing.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/ba-hons-marketing-undergraduate-fulltime"
+      },
+      {
+        "name": "International Festival and Event Management",
+        "university_id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+        "ucas_code": "N695",
+        "degree_type": "ba",
+        "subject_area": "Travel and Tourism",
+        "duration_years": 4,
+        "description": "Study of event planning, festival management and tourism marketing.",
+        "entry_requirements": {
+          "highers": "BBBB",
+          "ucas_points": 120,
+          "required_subjects": []
+        },
+        "widening_access_requirements": {},
+        "course_url": "https://www.napier.ac.uk/courses/ba-hons-international-festival-event-management-undergraduate-fulltime"
+      }
+    ]
+  }
+}
