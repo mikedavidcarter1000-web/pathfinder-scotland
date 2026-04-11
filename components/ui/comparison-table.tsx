@@ -3,11 +3,12 @@
 import Link from 'next/link'
 import { EligibilityBadge } from './eligibility-badge'
 import type { Tables } from '@/types/database'
+import type { EligibilityDetail } from '@/hooks/use-course-matching'
 
 interface ComparisonTableProps {
   courses: (Tables<'courses'> & {
     university?: Tables<'universities'>
-    eligibility?: 'eligible' | 'possible' | 'below' | null
+    eligibility?: EligibilityDetail | null
   })[]
   onRemove?: (courseId: string) => void
 }
@@ -42,9 +43,16 @@ export function ComparisonTable({ courses, onRemove }: ComparisonTableProps) {
     },
     {
       label: 'Eligibility',
-      getValue: (course: typeof courses[0]) => (
-        course.eligibility ? <EligibilityBadge status={course.eligibility} size="sm" /> : '-'
-      ),
+      getValue: (course: typeof courses[0]) =>
+        course.eligibility ? (
+          <EligibilityBadge
+            status={course.eligibility.status}
+            size="sm"
+            missingSubjects={course.eligibility.missingSubjects}
+          />
+        ) : (
+          '-'
+        ),
     },
     {
       label: 'Degree Type',

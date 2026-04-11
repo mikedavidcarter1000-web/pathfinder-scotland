@@ -4,9 +4,15 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-auth'
-import { useCurrentStudent, useGradeSummary } from '@/hooks/use-student'
+import { useCurrentStudent, useGradeSummary, useBackfillGradeSubjectIds, useStudentGrades } from '@/hooks/use-student'
 import { useDashboardStats } from '@/hooks/use-dashboard'
-import { ProfileSummary, GradesSection, SavedCoursesSection } from '@/components/dashboard'
+import {
+  ProfileSummary,
+  GradesSection,
+  SavedCoursesSection,
+  SubjectChoicesSection,
+  WideningAccessCard,
+} from '@/components/dashboard'
 import { StatsCard, StatsGrid } from '@/components/ui/stats-card'
 import type { Tables } from '@/types/database'
 
@@ -18,12 +24,26 @@ export default function DashboardPage() {
   const { data: student, isLoading: studentLoading } = useCurrentStudent() as { data: Student | null | undefined; isLoading: boolean }
   const stats = useDashboardStats()
   const gradeSummary = useGradeSummary()
+  const { data: grades } = useStudentGrades() as { data: Tables<'student_grades'>[] | undefined }
+  const backfillGrades = useBackfillGradeSubjectIds()
 
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/auth/sign-in')
     }
   }, [authLoading, user, router])
+
+  // If the student has any pre-existing grades with null subject_id (from the
+  // legacy free-text flow), try to resolve them once per mount. Harmless to
+  // re-run — the mutation no-ops when everything is already linked.
+  useEffect(() => {
+    if (!user || !grades || backfillGrades.isPending || backfillGrades.isSuccess) return
+    const needsBackfill = grades.some((g) => !g.subject_id)
+    if (needsBackfill) {
+      backfillGrades.mutate()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, grades])
 
   useEffect(() => {
     if (!authLoading && !studentLoading && user && !student) {
@@ -73,6 +93,11 @@ export default function DashboardPage() {
           <StatsCard
             label="Eligible Courses"
             value={stats.eligibleCount}
+            caption={
+              stats.eligibleViaWaCount > 0
+                ? `${stats.eligibleViaWaCount} via widening access`
+                : undefined
+            }
             icon={
               <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -91,11 +116,17 @@ export default function DashboardPage() {
         </StatsGrid>
       </div>
 
+      {/* Widening Access Highlight (only renders if eligible) */}
+      <div className="mb-6">
+        <WideningAccessCard />
+      </div>
+
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Column */}
         <div className="lg:col-span-2 space-y-6">
           <GradesSection />
+          <SubjectChoicesSection />
           <SavedCoursesSection />
         </div>
 

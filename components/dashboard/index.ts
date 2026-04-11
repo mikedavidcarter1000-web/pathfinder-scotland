@@ -1,3 +1,5 @@
 export { ProfileSummary } from './profile-summary'
 export { GradesSection } from './grades-section'
 export { SavedCoursesSection } from './saved-courses-section'
+export { SubjectChoicesSection } from './subject-choices-section'
+export { WideningAccessCard } from './widening-access-card'

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
-import type { Tables } from '@/types/database'
+import type { Tables, Enums } from '@/types/database'
 
 interface UniversityFilters {
   type?: string
@@ -22,7 +22,7 @@ export function useUniversities(filters: UniversityFilters = {}) {
         .order('name')
 
       if (filters.type) {
-        query = query.eq('type', filters.type)
+        query = query.eq('type', filters.type as Enums<'university_type'>)
       }
       if (filters.city) {
         query = query.eq('city', filters.city)

@@ -3,6 +3,7 @@ import { ReactNode } from 'react'
 interface StatsCardProps {
   label: string
   value: string | number
+  caption?: string
   icon?: ReactNode
   trend?: {
     value: number
@@ -18,6 +19,7 @@ interface StatsCardProps {
 export function StatsCard({
   label,
   value,
+  caption,
   icon,
   trend,
   size = 'md',
@@ -93,6 +95,18 @@ export function StatsCard({
       {trend?.label && (
         <p style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)', marginTop: '4px' }}>
           {trend.label}
+        </p>
+      )}
+      {caption && !trend?.label && (
+        <p
+          style={{
+            fontSize: '0.75rem',
+            color: 'var(--pf-amber-500)',
+            marginTop: '6px',
+            fontWeight: 600,
+          }}
+        >
+          {caption}
         </p>
       )}
     </div>

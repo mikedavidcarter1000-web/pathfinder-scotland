@@ -19,7 +19,7 @@ export function Footer() {
     ],
     company: [
       { label: 'About', href: '/about' },
-      { label: 'Contact', href: '/help#contact' },
+      { label: 'Contact Support', href: 'mailto:hello@pathfinderscotland.co.uk', external: true },
       { label: 'Privacy Policy', href: '/privacy' },
       { label: 'Terms of Service', href: '/terms' },
     ],
@@ -157,9 +157,15 @@ export function Footer() {
             <ul className="space-y-2">
               {links.company.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} style={bodyLinkStyle} className="hover:text-white">
-                    {link.label}
-                  </Link>
+                  {'external' in link && link.external ? (
+                    <a href={link.href} style={bodyLinkStyle} className="hover:text-white">
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link href={link.href} style={bodyLinkStyle} className="hover:text-white">
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

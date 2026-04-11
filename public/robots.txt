@@ -1,3 +1,8 @@
-# Block all search engines while site is in development
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /dashboard
+Disallow: /api
+Disallow: /auth
+Disallow: /onboarding
+
+Sitemap: https://pathfinder-scotland.vercel.app/sitemap.xml

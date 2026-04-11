@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
 import { useAuth } from './use-auth'
-import type { Tables } from '@/types/database'
+import type { Tables, Enums } from '@/types/database'
 
 interface CourseFilters {
   universityId?: string
@@ -36,7 +36,7 @@ export function useCourses(filters: CourseFilters = {}) {
         query = query.eq('subject_area', filters.subjectArea)
       }
       if (filters.degreeType) {
-        query = query.eq('degree_type', filters.degreeType)
+        query = query.eq('degree_type', filters.degreeType as Enums<'degree_type'>)
       }
       if (filters.search) {
         query = query.ilike('name', `%${filters.search}%`)

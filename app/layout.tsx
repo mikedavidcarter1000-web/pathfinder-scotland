@@ -10,23 +10,91 @@ import { Providers } from './providers'
 import { Footer } from '@/components/layout/footer'
 import { Navbar } from '@/components/layout/navbar'
 
+const SITE_URL = 'https://pathfinder-scotland.vercel.app'
+const SITE_NAME = 'Pathfinder Scotland'
+const SITE_DESCRIPTION =
+  'Free guidance for Scottish students. Plan your SQA subject choices from S3 to S6, check university entry requirements, and discover widening access support.'
+
 export const metadata: Metadata = {
-  title: 'Pathfinder Scotland - University Course Guidance',
-  description: 'Discover university courses across Scotland, check your eligibility, and plan your educational journey. Designed for S3-S6 students, college students, and mature learners.',
-  keywords: ['university', 'Scotland', 'courses', 'UCAS', 'higher education', 'university guidance', 'Scottish universities'],
-  authors: [{ name: 'Pathfinder Scotland' }],
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'Pathfinder Scotland | Subject Choices to University Pathways',
+    template: '%s | Pathfinder Scotland',
+  },
+  description: SITE_DESCRIPTION,
+  keywords: [
+    'Scottish subjects',
+    'SQA',
+    'Highers',
+    'Advanced Highers',
+    'university entry requirements',
+    'widening access',
+    'SIMD',
+    'course choices',
+    'Scottish education',
+  ],
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: 'Pathfinder Scotland - University Course Guidance',
-    description: 'Discover university courses across Scotland, check your eligibility, and plan your educational journey.',
-    url: 'https://pathfinderscot.co.uk',
-    siteName: 'Pathfinder Scotland',
+    title: 'Pathfinder Scotland | Subject Choices to University Pathways',
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
     locale: 'en_GB',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pathfinder Scotland',
-    description: 'Your guide to Scottish university courses',
+    title: 'Pathfinder Scotland | Subject Choices to University Pathways',
+    description: SITE_DESCRIPTION,
+    creator: '@pathfinderscot',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+}
+
+const webApplicationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: SITE_NAME,
+  url: SITE_URL,
+  description: SITE_DESCRIPTION,
+  applicationCategory: 'EducationApplication',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'GBP',
+    description: 'Freemium model — free core access with optional Student and Pro subscriptions',
+  },
+  inLanguage: 'en-GB',
+  audience: {
+    '@type': 'EducationalAudience',
+    educationalRole: 'student',
+  },
+}
+
+const organisationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE_NAME,
+  description: 'Guidance platform for Scottish secondary school students',
+  url: SITE_URL,
+  areaServed: {
+    '@type': 'Country',
+    name: 'Scotland',
   },
 }
 
@@ -37,6 +105,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webApplicationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organisationSchema) }}
+        />
+      </head>
       <body>
         <Providers>
           <div className="flex flex-col min-h-screen">

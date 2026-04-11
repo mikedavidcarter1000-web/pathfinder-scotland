@@ -5,7 +5,17 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
-import { usePathways, useCareerSectors, type Stage, type SubjectWithArea } from '@/hooks/use-subjects'
+import {
+  usePathways,
+  useCareerSectors,
+  useStudentSubjectChoices,
+  useStudentAcademyChoices,
+  useSaveSubjectChoices,
+  type Stage,
+  type SubjectWithArea,
+  type ChoiceTransition,
+} from '@/hooks/use-subjects'
+import { useAuth } from '@/hooks/use-auth'
 import {
   getCurricularAreaColour,
   QUALIFICATION_LEVEL_LABELS,
@@ -13,6 +23,13 @@ import {
 import type { Tables } from '@/types/database'
 
 type YearGoingInto = 's3' | 's4' | 's5' | 's6'
+
+const YEAR_TO_TRANSITION: Record<YearGoingInto, ChoiceTransition> = {
+  s3: 's2_to_s3',
+  s4: 's3_to_s4',
+  s5: 's4_to_s5',
+  s6: 's5_to_s6',
+}
 
 const YEAR_BUTTONS: Array<{ value: YearGoingInto; label: string; subtitle: string }> = [
   { value: 's3', label: 'S3', subtitle: 'Third year' },
@@ -82,9 +99,16 @@ export default function PathwaysPage() {
   // Fixed-length array of 3 slots for ranked academy picks (null = empty slot)
   const [academyRankings, setAcademyRankings] = useState<(string | null)[]>([null, null, null])
 
+  const { user } = useAuth()
   const currentStage = yearGoingInto ? YEAR_TO_CURRENT_STAGE[yearGoingInto] : null
+  const currentTransition = yearGoingInto ? YEAR_TO_TRANSITION[yearGoingInto] : null
   const { data: pathway, isLoading } = usePathways(currentStage)
   const { data: careerSectors } = useCareerSectors()
+  const { data: savedChoices, isLoading: savedChoicesLoading } = useStudentSubjectChoices(
+    currentTransition ?? undefined
+  )
+  const { data: savedAcademyChoices } = useStudentAcademyChoices()
+  const saveChoices = useSaveSubjectChoices()
 
   // Track which stage we've applied pre-selection for so we don't overwrite
   // user selections when React Query refetches the same data.
@@ -97,7 +121,9 @@ export default function PathwaysPage() {
     }
   }, [pathway?.stage, pathway?.subjectsByArea])
 
-  // Reset + pre-select compulsory subjects when the user changes stage
+  // Reset + pre-select compulsory subjects when the user changes stage.
+  // When the student is signed in, also merge any previously saved picks for
+  // this transition so the planner resumes where they left off.
   useEffect(() => {
     if (!yearGoingInto) {
       setSelectedIds(new Set())
@@ -108,20 +134,48 @@ export default function PathwaysPage() {
 
     if (!pathway?.rule || !pathway?.subjectsByArea) return
 
+    // Wait for the saved-choices query to resolve before seeding so signed-in
+    // students don't briefly see the unsaved (compulsory-only) state.
+    if (user && savedChoicesLoading) return
+
     // Skip if we've already seeded selections for this stage (prevents
     // user selections being wiped when React Query refetches).
     if (appliedStageRef.current === yearGoingInto) return
 
     const compulsoryNames = pathway.rule.compulsory_subjects || []
     const allSubjects = pathway.subjectsByArea.flatMap((g) => g.subjects)
-    const toPreselect = allSubjects
+    const compulsoryIdList = allSubjects
       .filter((s) => compulsoryNames.some((cn) => matchesCompulsory(cn, s.name)))
       .map((s) => s.id)
 
-    setSelectedIds(new Set(toPreselect))
-    setAcademyRankings([null, null, null])
+    // Merge saved picks (if any) with compulsory — compulsory always applies.
+    const savedIds = (savedChoices || [])
+      .map((c) => c.subject_id)
+      .filter((id) => allSubjects.some((s) => s.id === id))
+
+    setSelectedIds(new Set<string>([...compulsoryIdList, ...savedIds]))
+
+    if (yearGoingInto === 's3' && savedAcademyChoices && savedAcademyChoices.length > 0) {
+      const slots: (string | null)[] = [null, null, null]
+      for (const choice of savedAcademyChoices) {
+        const slot = choice.rank_order - 1
+        if (slot >= 0 && slot < 3) slots[slot] = choice.subject_id
+      }
+      setAcademyRankings(slots)
+    } else {
+      setAcademyRankings([null, null, null])
+    }
+
     appliedStageRef.current = yearGoingInto
-  }, [yearGoingInto, pathway?.rule, pathway?.subjectsByArea])
+  }, [
+    yearGoingInto,
+    pathway?.rule,
+    pathway?.subjectsByArea,
+    user,
+    savedChoicesLoading,
+    savedChoices,
+    savedAcademyChoices,
+  ])
 
   const compulsoryIds = useMemo(() => {
     if (!pathway?.rule || !pathway?.subjectsByArea) return new Set<string>()
@@ -476,6 +530,42 @@ export default function PathwaysPage() {
                   onChange={setAcademyRankings}
                 />
               )}
+
+              {/* Save / sign-in prompt — planner works without saving, but
+                  signed-in students can persist their picks per transition. */}
+              <SaveChoicesPanel
+                isSignedIn={!!user}
+                isSaving={saveChoices.isPending}
+                hasSelection={selectedIds.size > 0}
+                onSave={async () => {
+                  if (!currentTransition) return
+                  // Strip compulsory from the rank order so the student's
+                  // "free" picks are what gets ranked; reserves aren't
+                  // modelled in the UI yet, so everything is a primary pick.
+                  const orderedFreeIds = Array.from(selectedIds).filter(
+                    (id) => !compulsoryIds.has(id)
+                  )
+                  try {
+                    await saveChoices.mutateAsync({
+                      transition: currentTransition,
+                      subjectIds: orderedFreeIds,
+                      academyRankings:
+                        yearGoingInto === 's3' ? academyRankings : undefined,
+                    })
+                    setToast('Your subject choices have been saved')
+                    if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
+                    toastTimerRef.current = setTimeout(() => setToast(null), 2500)
+                  } catch (err) {
+                    setToast(
+                      err instanceof Error
+                        ? `Could not save: ${err.message}`
+                        : 'Could not save your choices'
+                    )
+                    if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
+                    toastTimerRef.current = setTimeout(() => setToast(null), 3500)
+                  }
+                }}
+              />
             </div>
 
             {/* Right: pathway preview */}
@@ -1025,31 +1115,111 @@ function PathwayPreview({
     enabled: selectedIds.length > 0,
   })
 
-  const { data: matchingCourses } = useQuery({
-    queryKey: ['pathway-preview-courses', selectedNames.sort().join(',')],
+  // Use the course_subject_requirements junction table to compute both full
+  // and partial matches for the user's current subject selection. We fetch
+  // every mandatory Higher-level requirement from the DB and bucket courses
+  // by (a) "all mandatory requirements satisfied" → full match,
+  // (b) "some satisfied, some missing" → partial match.
+  type CourseMatch = {
+    course: {
+      id: string
+      name: string
+      university: { id: string; name: string } | null
+    }
+    requiredSubjects: Array<{ id: string; name: string }>
+    satisfiedSubjects: Array<{ id: string; name: string }>
+    missingSubjects: Array<{ id: string; name: string }>
+  }
+
+  const { data: courseMatches } = useQuery<{
+    full: CourseMatch[]
+    partial: CourseMatch[]
+  }>({
+    queryKey: ['pathway-preview-course-matches', selectedIds.sort().join(',')],
     queryFn: async () => {
-      if (selectedNames.length === 0) return []
+      if (selectedIds.length === 0) return { full: [], partial: [] }
+
       const { data, error } = await supabase
-        .from('courses')
-        .select('id, name, entry_requirements, university:universities(id, name)')
-        .not('entry_requirements', 'is', null)
-        .limit(2000)
+        .from('course_subject_requirements')
+        .select(
+          `
+          subject_id,
+          is_mandatory,
+          qualification_level,
+          subject:subjects(id, name),
+          course:courses(
+            id,
+            name,
+            university:universities(id, name)
+          )
+        `
+        )
+        .eq('qualification_level', 'higher')
+        .eq('is_mandatory', true)
       if (error) throw error
 
-      const lowerNames = selectedNames.map((n) => n.toLowerCase())
       type Row = {
-        id: string
-        name: string
-        entry_requirements: { required_subjects?: string[] } | null
-        university: { id: string; name: string } | null
+        subject_id: string
+        is_mandatory: boolean | null
+        qualification_level: string
+        subject: { id: string; name: string } | null
+        course: {
+          id: string
+          name: string
+          university: { id: string; name: string } | null
+        } | null
       }
-      return ((data as unknown as Row[]) || []).filter((c) => {
-        const req = c.entry_requirements?.required_subjects
-        if (!req || req.length === 0) return false
-        return req.some((r) => lowerNames.includes(r.toLowerCase()))
+
+      // Group requirements by course
+      const byCourse = new Map<
+        string,
+        {
+          course: NonNullable<Row['course']>
+          requiredSubjects: Array<{ id: string; name: string }>
+        }
+      >()
+      for (const row of ((data as unknown as Row[]) || [])) {
+        if (!row.course || !row.subject) continue
+        const entry = byCourse.get(row.course.id) ?? {
+          course: row.course,
+          requiredSubjects: [] as Array<{ id: string; name: string }>,
+        }
+        if (!entry.requiredSubjects.some((s) => s.id === row.subject!.id)) {
+          entry.requiredSubjects.push({ id: row.subject.id, name: row.subject.name })
+        }
+        byCourse.set(row.course.id, entry)
+      }
+
+      const selectedSet = new Set(selectedIds)
+      const full: CourseMatch[] = []
+      const partial: CourseMatch[] = []
+
+      for (const entry of byCourse.values()) {
+        const satisfied = entry.requiredSubjects.filter((s) => selectedSet.has(s.id))
+        const missing = entry.requiredSubjects.filter((s) => !selectedSet.has(s.id))
+        if (satisfied.length === 0) continue
+        const match: CourseMatch = {
+          course: entry.course,
+          requiredSubjects: entry.requiredSubjects,
+          satisfiedSubjects: satisfied,
+          missingSubjects: missing,
+        }
+        if (missing.length === 0) full.push(match)
+        else partial.push(match)
+      }
+
+      full.sort((a, b) => a.course.name.localeCompare(b.course.name))
+      partial.sort((a, b) => {
+        // Fewer missing subjects first
+        if (a.missingSubjects.length !== b.missingSubjects.length) {
+          return a.missingSubjects.length - b.missingSubjects.length
+        }
+        return a.course.name.localeCompare(b.course.name)
       })
+
+      return { full, partial }
     },
-    enabled: selectedNames.length > 0,
+    enabled: selectedIds.length > 0,
   })
 
   const uniqueSectors = useMemo(() => {
@@ -1175,57 +1345,93 @@ function PathwayPreview({
         </ul>
       </div>
 
-      {/* Matching university courses */}
+      {/* Matching university courses — full and partial matches */}
       <div className="pf-card">
         <h3 style={sectionTitleStyle}>University courses you could apply for</h3>
-        {matchingCourses === undefined ? (
+        {courseMatches === undefined ? (
           <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>Loading...</p>
-        ) : matchingCourses.length === 0 ? (
+        ) : courseMatches.full.length === 0 && courseMatches.partial.length === 0 ? (
           <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
-            No courses in our database list these subjects as explicit requirements yet.
+            No courses in our database list these subjects as Higher requirements yet.
           </p>
         ) : (
-          <ul className="space-y-2 max-h-56 overflow-y-auto scrollbar-thin">
-            {matchingCourses.slice(0, 10).map((c) => (
-              <li key={c.id}>
-                <Link
-                  href={`/courses/${c.id}`}
-                  className="block rounded-lg no-underline hover:no-underline"
-                  style={{
-                    padding: '8px 8px',
-                    margin: '0 -8px',
-                    transition: 'background-color 0.15s',
-                    fontSize: '0.875rem',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                >
-                  <div
-                    className="line-clamp-1"
-                    style={{ fontWeight: 500, color: 'var(--pf-grey-900)' }}
+          <div className="space-y-4">
+            {courseMatches.full.length > 0 && (
+              <div>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span
+                    className="inline-flex items-center gap-1"
+                    style={{
+                      padding: '2px 10px',
+                      borderRadius: '9999px',
+                      fontSize: '0.6875rem',
+                      fontWeight: 600,
+                      backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                      color: 'var(--pf-green-500)',
+                    }}
                   >
-                    {c.name}
-                  </div>
-                  {c.university && (
-                    <div
-                      className="line-clamp-1"
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Full match
+                  </span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}>
+                    {courseMatches.full.length} course{courseMatches.full.length === 1 ? '' : 's'}
+                  </span>
+                </div>
+                <ul className="space-y-1 max-h-56 overflow-y-auto scrollbar-thin">
+                  {courseMatches.full.slice(0, 8).map((m) => (
+                    <CourseMatchRow key={`full-${m.course.id}`} match={m} variant="full" />
+                  ))}
+                  {courseMatches.full.length > 8 && (
+                    <li
+                      className="text-center pt-1"
                       style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
                     >
-                      {c.university.name}
-                    </div>
+                      and {courseMatches.full.length - 8} more...
+                    </li>
                   )}
-                </Link>
-              </li>
-            ))}
-            {matchingCourses.length > 10 && (
-              <li
-                className="text-center pt-1"
-                style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
-              >
-                and {matchingCourses.length - 10} more...
-              </li>
+                </ul>
+              </div>
             )}
-          </ul>
+
+            {courseMatches.partial.length > 0 && (
+              <div>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span
+                    className="inline-flex items-center gap-1"
+                    style={{
+                      padding: '2px 10px',
+                      borderRadius: '9999px',
+                      fontSize: '0.6875rem',
+                      fontWeight: 600,
+                      backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                      color: 'var(--pf-amber-500)',
+                    }}
+                  >
+                    Partial match
+                  </span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}>
+                    {courseMatches.partial.length} course
+                    {courseMatches.partial.length === 1 ? '' : 's'}
+                  </span>
+                </div>
+                <ul className="space-y-1 max-h-56 overflow-y-auto scrollbar-thin">
+                  {courseMatches.partial.slice(0, 6).map((m) => (
+                    <CourseMatchRow key={`partial-${m.course.id}`} match={m} variant="partial" />
+                  ))}
+                  {courseMatches.partial.length > 6 && (
+                    <li
+                      className="text-center pt-1"
+                      style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
+                    >
+                      and {courseMatches.partial.length - 6} more...
+                    </li>
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
         )}
       </div>
 
@@ -1258,6 +1464,153 @@ function PathwayPreview({
       >
         This tool is for exploration only — your actual subject choices are recorded through the dashboard.
       </p>
+    </div>
+  )
+}
+
+function CourseMatchRow({
+  match,
+  variant,
+}: {
+  match: {
+    course: { id: string; name: string; university: { id: string; name: string } | null }
+    satisfiedSubjects: Array<{ id: string; name: string }>
+    missingSubjects: Array<{ id: string; name: string }>
+  }
+  variant: 'full' | 'partial'
+}) {
+  return (
+    <li>
+      <Link
+        href={`/courses/${match.course.id}`}
+        className="block rounded-lg no-underline hover:no-underline"
+        style={{
+          padding: '8px 8px',
+          margin: '0 -8px',
+          transition: 'background-color 0.15s',
+          fontSize: '0.875rem',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+      >
+        <div
+          className="line-clamp-1"
+          style={{ fontWeight: 500, color: 'var(--pf-grey-900)' }}
+        >
+          {match.course.name}
+        </div>
+        {match.course.university && (
+          <div
+            className="line-clamp-1"
+            style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}
+          >
+            {match.course.university.name}
+          </div>
+        )}
+        {variant === 'partial' && match.missingSubjects.length > 0 && (
+          <div
+            className="flex flex-wrap gap-1 mt-1"
+            style={{ fontSize: '0.6875rem' }}
+          >
+            <span style={{ color: 'var(--pf-grey-600)' }}>Missing:</span>
+            {match.missingSubjects.map((s) => (
+              <span
+                key={s.id}
+                style={{
+                  padding: '1px 8px',
+                  borderRadius: '9999px',
+                  backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                  color: 'var(--pf-amber-500)',
+                  fontWeight: 500,
+                }}
+              >
+                {s.name}
+              </span>
+            ))}
+          </div>
+        )}
+      </Link>
+    </li>
+  )
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Save panel — persist the current picks to the student's profile.
+// ──────────────────────────────────────────────────────────────────────────
+
+function SaveChoicesPanel({
+  isSignedIn,
+  isSaving,
+  hasSelection,
+  onSave,
+}: {
+  isSignedIn: boolean
+  isSaving: boolean
+  hasSelection: boolean
+  onSave: () => void
+}) {
+  if (!isSignedIn) {
+    return (
+      <div
+        className="rounded-lg text-center"
+        style={{
+          padding: '24px',
+          backgroundColor: 'var(--pf-white)',
+          border: '1px dashed var(--pf-teal-500)',
+        }}
+      >
+        <h3 style={{ margin: 0, fontSize: '1rem', marginBottom: '8px' }}>
+          Want to save this for later?
+        </h3>
+        <p
+          style={{
+            fontSize: '0.875rem',
+            color: 'var(--pf-grey-600)',
+            marginBottom: '16px',
+          }}
+        >
+          Sign in to save your choices to your dashboard and personalise
+          your course recommendations.
+        </p>
+        <Link href="/auth/sign-in" className="pf-btn-primary">
+          Sign in to save your choices
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className="rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+      style={{
+        padding: '20px 24px',
+        backgroundColor: 'var(--pf-teal-100)',
+      }}
+    >
+      <div>
+        <h3
+          style={{
+            margin: 0,
+            fontSize: '1rem',
+            color: 'var(--pf-teal-900)',
+            marginBottom: '2px',
+          }}
+        >
+          Happy with your picks?
+        </h3>
+        <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', margin: 0 }}>
+          Saving keeps them on your dashboard and powers your course matches.
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={onSave}
+        disabled={isSaving || !hasSelection}
+        className="pf-btn-primary"
+        style={{ whiteSpace: 'nowrap' }}
+      >
+        {isSaving ? 'Saving…' : 'Save my choices'}
+      </button>
     </div>
   )
 }

@@ -2,41 +2,44 @@ import { useQuery } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
 import { useAuth } from './use-auth'
 import { useSavedCourses } from './use-courses'
-import { useStudentGrades, useGradeSummary, useWideningAccessEligibility } from './use-student'
+import { useStudentGrades, useGradeSummary, useWideningAccessEligibility, useCurrentStudent } from './use-student'
+import { useMatchedCourses } from './use-course-matching'
 import type { Tables } from '@/types/database'
 
 type SavedCourseWithCourse = Tables<'saved_courses'> & {
   course?: Tables<'courses'> & { university?: Tables<'universities'> }
 }
 type StudentGrade = Tables<'student_grades'>
+type Student = Tables<'students'>
 
 // Dashboard statistics
 export function useDashboardStats() {
   const { user } = useAuth()
   const { data: savedCourses } = useSavedCourses() as { data: SavedCourseWithCourse[] | undefined }
   const { data: grades } = useStudentGrades() as { data: StudentGrade[] | undefined }
+  const { data: student } = useCurrentStudent() as { data: Student | null | undefined }
   const gradeSummary = useGradeSummary()
   const wideningAccess = useWideningAccessEligibility()
+
+  // Use the same matched-courses pipeline as /courses so the dashboard stat
+  // always agrees with what the student sees when they browse.
+  const { stats } = useMatchedCourses()
 
   const savedCount = savedCourses?.length || 0
   const gradeCount = grades?.length || 0
 
-  // Count eligible courses from saved
-  const eligibleCount = savedCourses?.filter((sc) => {
-    const course = sc.course
-    if (!course?.entry_requirements) return false
-
-    const reqs = course.entry_requirements as { highers?: string }
-    if (!reqs.highers) return true // No requirement = eligible
-
-    // Simple comparison - student grades >= required
-    return gradeSummary.highers >= reqs.highers
-  }).length || 0
+  // "Eligible" on the dashboard counter = definitive matches only: either
+  // the student meets the standard offer, or they clear the WA adjusted
+  // offer. 'possible' (close-call near-misses) is deliberately excluded so
+  // the headline number is a firm shortlist, not an aspirational one.
+  const eligibleCount = stats.eligible + stats.eligibleViaWa
+  const eligibleViaWaCount = stats.eligibleViaWa
 
   return {
     savedCount,
     gradeCount,
     eligibleCount,
+    eligibleViaWaCount,
     ucasPoints: gradeSummary.ucasPoints,
     gradeString: gradeSummary.highers,
     wideningAccess: wideningAccess?.isEligible || false,
@@ -54,7 +57,10 @@ export function useRecommendedCourses(limit = 6) {
     queryKey: ['recommended-courses', user?.id, gradeSummary.highers],
     queryFn: async () => {
       // Get subject areas from saved courses for recommendations
-      const savedSubjects = savedCourses?.map((sc) => sc.course?.subject_area).filter(Boolean) || []
+      const savedSubjects: string[] =
+        savedCourses
+          ?.map((sc) => sc.course?.subject_area)
+          .filter((s): s is string => typeof s === 'string' && s.length > 0) || []
       const savedIds = savedCourses?.map((sc) => sc.course_id) || []
 
       let query = supabase

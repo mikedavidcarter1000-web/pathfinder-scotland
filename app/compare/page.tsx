@@ -3,55 +3,88 @@
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { useComparisonWithCourses } from '@/hooks/use-comparison'
-import { useGradeSummary, useCurrentStudent } from '@/hooks/use-student'
+import { useCurrentStudent, useStudentGrades, useGradeSummary } from '@/hooks/use-student'
 import { ComparisonTable } from '@/components/ui/comparison-table'
-import { meetsRequirements } from '@/lib/grades'
+import { calculateEligibility, type EligibilityDetail } from '@/hooks/use-course-matching'
+import { useQuery } from '@tanstack/react-query'
+import { getSupabaseClient } from '@/lib/supabase'
 import type { Tables } from '@/types/database'
 
 type Student = Tables<'students'>
+type StudentGrade = Tables<'student_grades'>
 type CourseWithUni = Tables<'courses'> & { university?: Tables<'universities'> }
-type EligibilityStatus = 'eligible' | 'possible' | 'below'
+
+// Fetch course_subject_requirements for the comparison set only, so the same
+// relational eligibility logic used on /courses applies here too.
+function useRequirementsForCourses(courseIds: string[]) {
+  const supabase = getSupabaseClient()
+  const key = courseIds.slice().sort().join(',')
+  return useQuery({
+    queryKey: ['compare-requirements', key],
+    enabled: courseIds.length > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('course_subject_requirements')
+        .select(
+          `course_id, subject_id, qualification_level, min_grade, is_mandatory, subject:subjects(name)`
+        )
+        .in('course_id', courseIds)
+      if (error) throw error
+      type Row = {
+        course_id: string
+        subject_id: string
+        qualification_level: string
+        min_grade: string | null
+        is_mandatory: boolean | null
+        subject: { name: string } | null
+      }
+      return ((data as unknown as Row[]) || []).map((r) => ({
+        course_id: r.course_id,
+        subject_id: r.subject_id,
+        subject_name: r.subject?.name ?? '',
+        qualification_level: r.qualification_level,
+        min_grade: r.min_grade,
+        is_mandatory: r.is_mandatory ?? true,
+      }))
+    },
+    staleTime: 5 * 60 * 1000,
+  })
+}
 
 export default function ComparePage() {
   const { courses, removeCourse, clearAll, isLoading, count, maxCourses } =
     useComparisonWithCourses()
   const gradeSummary = useGradeSummary()
   const { data: student } = useCurrentStudent() as { data: Student | null | undefined }
+  const { data: studentGrades } = useStudentGrades() as { data: StudentGrade[] | undefined }
 
-  const coursesWithEligibility = useMemo(() => {
+  const courseIds = useMemo(() => (courses as CourseWithUni[]).map((c) => c.id), [courses])
+  const { data: requirements } = useRequirementsForCourses(courseIds)
+
+  const coursesWithEligibility = useMemo<
+    (CourseWithUni & { eligibility: EligibilityDetail | null })[]
+  >(() => {
+    const reqsByCourse = new Map<string, typeof requirements>()
+    for (const row of requirements ?? []) {
+      const existing = reqsByCourse.get(row.course_id) ?? []
+      existing!.push(row)
+      reqsByCourse.set(row.course_id, existing)
+    }
+
     return (courses as CourseWithUni[]).map((course) => {
-      const reqs = course.entry_requirements as { highers?: string } | null
-      const wideningReqs = course.widening_access_requirements as {
-        simd20_offer?: string
-        simd40_offer?: string
-        general_offer?: string
-      } | null
-
-      let eligibility: EligibilityStatus | null = null
-      if (reqs?.highers && gradeSummary.highers) {
-        const isWideningEligible =
-          (student?.simd_decile && student.simd_decile <= 4) ||
-          student?.care_experienced ||
-          student?.is_carer ||
-          student?.first_generation
-
-        let adjustedRequirement = reqs.highers
-        if (isWideningEligible && wideningReqs) {
-          if (student?.simd_decile && student.simd_decile <= 2 && wideningReqs.simd20_offer) {
-            adjustedRequirement = wideningReqs.simd20_offer
-          } else if (student?.simd_decile && student.simd_decile <= 4 && wideningReqs.simd40_offer) {
-            adjustedRequirement = wideningReqs.simd40_offer
-          } else if (wideningReqs.general_offer) {
-            adjustedRequirement = wideningReqs.general_offer
-          }
-        }
-
-        eligibility = meetsRequirements(gradeSummary.highers, adjustedRequirement, false)
-      }
-
-      return { ...course, eligibility }
+      const hasAnyGrades = (studentGrades?.length ?? 0) > 0
+      const detail = hasAnyGrades
+        ? calculateEligibility(
+            course,
+            reqsByCourse.get(course.id) ?? [],
+            studentGrades ?? [],
+            student ?? null,
+            gradeSummary.highers || ''
+          )
+        : null
+      return { ...course, eligibility: detail }
     })
-  }, [courses, gradeSummary.highers, student])
+  }, [courses, requirements, studentGrades, student, gradeSummary.highers])
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

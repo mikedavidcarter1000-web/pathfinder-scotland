@@ -12,7 +12,7 @@ import { CourseCard } from '@/components/ui/course-card'
 import { SearchBar } from '@/components/ui/search-bar'
 import { CourseCardSkeleton } from '@/components/ui/loading-skeletons'
 
-type EligibilityFilter = 'all' | 'eligible' | 'possible' | 'below'
+type EligibilityFilter = 'all' | 'eligible' | 'eligible_via_wa' | 'possible' | 'missing_subjects' | 'ineligible'
 
 export default function CoursesPage() {
   const router = useRouter()
@@ -60,7 +60,7 @@ export default function CoursesPage() {
 
     // Eligibility filter
     if (eligibilityFilter !== 'all') {
-      courses = courses.filter((course) => course.eligibility === eligibilityFilter)
+      courses = courses.filter((course) => course.eligibility?.status === eligibilityFilter)
     }
 
     return courses
@@ -131,6 +131,18 @@ export default function CoursesPage() {
                     </svg>
                   }
                 />
+                {stats.eligibleViaWa > 0 && (
+                  <StatPill
+                    label={`${stats.eligibleViaWa} Via widening access`}
+                    sub="Adjusted offer meets your grades"
+                    accent="var(--pf-amber-500)"
+                    icon={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    }
+                  />
+                )}
                 <StatPill
                   label={`${stats.possible} Possible`}
                   sub="Close to requirements"
@@ -142,9 +154,19 @@ export default function CoursesPage() {
                   }
                 />
                 <StatPill
+                  label={`${stats.missingSubjects} Missing subjects`}
+                  sub="Need more subjects"
+                  accent="var(--pf-teal-700)"
+                  icon={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  }
+                />
+                <StatPill
                   label={`${stats.total} Total`}
                   sub="All courses"
-                  accent="var(--pf-teal-700)"
+                  accent="var(--pf-grey-600)"
                   icon={
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -234,21 +256,45 @@ export default function CoursesPage() {
             </select>
 
             {hasGrades && (
-              <select
-                value={eligibilityFilter}
-                onChange={(e) => setEligibilityFilter(e.target.value as EligibilityFilter)}
-                className="pf-input"
-                style={{
-                  width: 'auto',
-                  backgroundColor: eligibilityFilter !== 'all' ? 'var(--pf-teal-50)' : 'var(--pf-white)',
-                  borderColor: eligibilityFilter !== 'all' ? 'var(--pf-teal-500)' : 'var(--pf-grey-300)',
-                }}
-              >
-                <option value="all">All Eligibility</option>
-                <option value="eligible">Eligible Only</option>
-                <option value="possible">Possible Only</option>
-                <option value="below">Below Requirements</option>
-              </select>
+              <>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setEligibilityFilter((prev) => (prev === 'eligible' ? 'all' : 'eligible'))
+                  }
+                  className="pf-btn pf-btn-sm"
+                  aria-pressed={eligibilityFilter === 'eligible'}
+                  style={{
+                    backgroundColor:
+                      eligibilityFilter === 'eligible' ? 'var(--pf-teal-700)' : 'var(--pf-white)',
+                    color:
+                      eligibilityFilter === 'eligible' ? 'var(--pf-white)' : 'var(--pf-teal-700)',
+                    border: '1px solid var(--pf-teal-700)',
+                  }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Eligible for me
+                </button>
+                <select
+                  value={eligibilityFilter}
+                  onChange={(e) => setEligibilityFilter(e.target.value as EligibilityFilter)}
+                  className="pf-input"
+                  style={{
+                    width: 'auto',
+                    backgroundColor: eligibilityFilter !== 'all' ? 'var(--pf-teal-50)' : 'var(--pf-white)',
+                    borderColor: eligibilityFilter !== 'all' ? 'var(--pf-teal-500)' : 'var(--pf-grey-300)',
+                  }}
+                >
+                  <option value="all">All eligibility</option>
+                  <option value="eligible">Eligible</option>
+                  <option value="eligible_via_wa">Eligible via widening access</option>
+                  <option value="possible">Possible match</option>
+                  <option value="missing_subjects">Missing subjects</option>
+                  <option value="ineligible">Not eligible</option>
+                </select>
+              </>
             )}
 
             {hasFilters && (
@@ -361,7 +407,7 @@ export default function CoursesPage() {
             <h3 style={{ marginBottom: '8px' }}>No courses found</h3>
             <p style={{ color: 'var(--pf-grey-600)', marginBottom: '16px' }}>
               {eligibilityFilter !== 'all'
-                ? `No ${eligibilityFilter} courses match your current filters.`
+                ? `No courses match "${eligibilityFilter.replace('_', ' ')}" with your current filters.`
                 : 'Try adjusting your filters or search term.'}
             </p>
             {hasFilters && (

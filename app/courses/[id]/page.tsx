@@ -3,14 +3,37 @@
 import { use } from 'react'
 import Link from 'next/link'
 import { useCourse } from '@/hooks/use-courses'
+import { useAuth } from '@/hooks/use-auth'
+import { useCourseEligibility } from '@/hooks/use-course-matching'
+import { useGradeSummary, useWideningAccessEligibility, useCurrentStudent } from '@/hooks/use-student'
 import { DEGREE_TYPES } from '@/lib/constants'
 import type { Tables } from '@/types/database'
 
 type Course = Tables<'courses'> & { university?: Tables<'universities'> }
+type Student = Tables<'students'>
+
+interface WideningAccessRequirements {
+  simd20_offer?: string
+  simd40_offer?: string
+  care_experienced_offer?: string
+  general_offer?: string
+}
+
+interface UniversityWideningInfo {
+  programme_name?: string
+  url?: string
+  description?: string
+}
 
 export default function CoursePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const { data: course, isLoading, error } = useCourse(id) as { data: Course | null | undefined; isLoading: boolean; error: Error | null }
+  const { user } = useAuth()
+  const { data: student } = useCurrentStudent() as { data: Student | null | undefined }
+  const eligibility = useCourseEligibility(course ?? null)
+  const gradeSummary = useGradeSummary()
+  const wideningAccess = useWideningAccessEligibility()
+  const hasGrades = gradeSummary.totalGrades > 0
 
   if (isLoading) {
     return (
@@ -46,6 +69,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
     slug: string
     city: string | null
     website: string | null
+    widening_access_info?: UniversityWideningInfo | null
   } | null
 
   const entryRequirements = course.entry_requirements as {
@@ -55,11 +79,16 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
     required_subjects?: string[]
   } | null
 
-  const wideningAccess = course.widening_access_requirements as {
-    simd20_offer?: string
-    simd40_offer?: string
-    care_experienced_offer?: string
-  } | null
+  const wideningReqs = course.widening_access_requirements as WideningAccessRequirements | null
+  const uniWideningInfo = university?.widening_access_info ?? null
+
+  const hasAnyWaOffers = Boolean(
+    wideningReqs &&
+      (wideningReqs.simd20_offer ||
+        wideningReqs.simd40_offer ||
+        wideningReqs.care_experienced_offer ||
+        wideningReqs.general_offer)
+  )
 
   const degreeInfo = course.degree_type
     ? DEGREE_TYPES[course.degree_type as keyof typeof DEGREE_TYPES]
@@ -146,6 +175,47 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
               </section>
             )}
 
+            {/* Personalised Eligibility (logged-in students only) */}
+            {user && hasGrades && eligibility && (
+              <PersonalisedEligibility detail={eligibility} />
+            )}
+
+            {user && !hasGrades && (
+              <section>
+                <div
+                  className="rounded-lg"
+                  style={{
+                    padding: '16px',
+                    backgroundColor: 'rgba(245,158,11,0.08)',
+                    border: '1px solid rgba(245,158,11,0.25)',
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <svg
+                      className="w-5 h-5 flex-shrink-0"
+                      style={{ color: 'var(--pf-amber-500)' }}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div className="flex-1">
+                      <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)', fontWeight: 600 }}>
+                        Add your grades to see if you&apos;re eligible
+                      </p>
+                      <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}>
+                        We&apos;ll personalise this page to show exactly how you stack up.
+                      </p>
+                    </div>
+                    <Link href="/dashboard" className="pf-btn-secondary pf-btn-sm">
+                      Add grades
+                    </Link>
+                  </div>
+                </div>
+              </section>
+            )}
+
             {/* Entry Requirements */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Entry Requirements</h2>
@@ -189,37 +259,18 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
               </div>
             </section>
 
-            {/* Widening Access */}
-            {wideningAccess && (wideningAccess.simd20_offer || wideningAccess.simd40_offer || wideningAccess.care_experienced_offer) && (
-              <section>
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Widening Access Offers</h2>
-                <div className="bg-[var(--pf-teal-50)] border border-[var(--pf-teal-100)] rounded-xl p-6">
-                  <p className="text-[var(--pf-teal-700)] text-sm mb-4">
-                    Lower entry requirements may be available if you meet certain criteria.
-                  </p>
-                  <div className="space-y-3">
-                    {wideningAccess.simd20_offer && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">SIMD20 (most deprived 20%)</span>
-                        <span className="font-semibold text-green-600">{wideningAccess.simd20_offer}</span>
-                      </div>
-                    )}
-                    {wideningAccess.simd40_offer && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">SIMD40 (most deprived 40%)</span>
-                        <span className="font-semibold text-green-600">{wideningAccess.simd40_offer}</span>
-                      </div>
-                    )}
-                    {wideningAccess.care_experienced_offer && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Care Experienced</span>
-                        <span className="font-semibold text-green-600">{wideningAccess.care_experienced_offer}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </section>
-            )}
+            {/* Widening Access Section */}
+            <WideningAccessSection
+              student={student ?? null}
+              wideningAccess={wideningAccess}
+              wideningReqs={wideningReqs}
+              standardOffer={entryRequirements?.highers ?? null}
+              hasAnyWaOffers={hasAnyWaOffers}
+              uniWideningInfo={uniWideningInfo}
+              universityName={university?.name ?? null}
+              universityWebsite={university?.website ?? null}
+              isLoggedIn={!!user}
+            />
           </div>
 
           {/* Sidebar */}
@@ -302,5 +353,581 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
         </div>
       </div>
     </div>
+  )
+}
+
+// Personalised eligibility block shown at the top of the main column when a
+// logged-in student has grades entered. Uses the shared EligibilityDetail
+// from use-course-matching so the /courses list and /courses/[id] stay in sync.
+function PersonalisedEligibility({
+  detail,
+}: {
+  detail: import('@/hooks/use-course-matching').EligibilityDetail
+}) {
+  const palette = {
+    eligible: {
+      bg: 'rgba(16, 185, 129, 0.08)',
+      border: 'rgba(16, 185, 129, 0.25)',
+      accent: 'var(--pf-green-500)',
+      title: 'You meet the entry requirements',
+      icon: (
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+      ),
+    },
+    eligible_via_wa: {
+      bg: 'rgba(245, 158, 11, 0.08)',
+      border: 'rgba(245, 158, 11, 0.25)',
+      accent: 'var(--pf-amber-500)',
+      title: 'You meet the widening access entry requirements',
+      icon: (
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      ),
+    },
+    possible: {
+      bg: 'rgba(245, 158, 11, 0.08)',
+      border: 'rgba(245, 158, 11, 0.25)',
+      accent: 'var(--pf-amber-500)',
+      title: 'You may be close to the entry requirements',
+      icon: (
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      ),
+    },
+    missing_subjects: {
+      bg: 'rgba(245, 158, 11, 0.08)',
+      border: 'rgba(245, 158, 11, 0.25)',
+      accent: 'var(--pf-amber-500)',
+      title: "You're missing required subjects",
+      icon: (
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      ),
+    },
+    ineligible: {
+      bg: 'rgba(239, 68, 68, 0.08)',
+      border: 'rgba(239, 68, 68, 0.25)',
+      accent: 'var(--pf-red-500)',
+      title: "You don't currently meet requirements",
+      icon: (
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+      ),
+    },
+  }[detail.status]
+
+  const wideningOfferLabel: Record<NonNullable<typeof detail.wideningOfferType>, string> = {
+    simd20: 'SIMD 20% widening access offer',
+    simd40: 'SIMD 40% widening access offer',
+    care_experienced: 'Care-experienced offer',
+    general: 'General widening access offer',
+  }
+
+  return (
+    <section>
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">How you stack up</h2>
+      <div
+        className="rounded-lg"
+        style={{
+          padding: '20px',
+          backgroundColor: palette.bg,
+          border: `1px solid ${palette.border}`,
+        }}
+      >
+        <div className="flex items-start gap-3">
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+            style={{ backgroundColor: palette.accent, color: '#fff' }}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {palette.icon}
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: 'var(--pf-grey-900)',
+                marginBottom: '6px',
+              }}
+            >
+              {palette.title}
+            </p>
+
+            {detail.standardRequirement && (
+              <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', marginBottom: '12px' }}>
+                Standard offer:{' '}
+                <span className="pf-data-number" style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}>
+                  {detail.standardRequirement}
+                </span>
+                {' · '}
+                Your Highers:{' '}
+                <span className="pf-data-number" style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}>
+                  {detail.studentHigherString || '—'}
+                </span>
+              </p>
+            )}
+
+            {/* Met subjects (green ticks) */}
+            {detail.metSubjects.length > 0 && (
+              <div className="mb-2">
+                <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', marginBottom: '4px' }}>
+                  Subjects you have
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {detail.metSubjects.map((s) => (
+                    <span key={s} className="pf-badge-green inline-flex items-center gap-1">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Missing subjects */}
+            {detail.missingSubjects.length > 0 && (
+              <div className="mb-2">
+                <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', marginBottom: '4px' }}>
+                  Subjects you still need
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {detail.missingSubjects.map((s) => (
+                    <span key={s} className="pf-badge-amber inline-flex items-center gap-1">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Below-grade subjects */}
+            {detail.belowGradeSubjects.length > 0 && (
+              <div className="mb-2">
+                <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', marginBottom: '4px' }}>
+                  Subjects below required grade
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {detail.belowGradeSubjects.map((s) => (
+                    <span key={s} className="pf-badge-red">
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Widening access explanation */}
+            {detail.isWideningEligible && detail.wideningOfferType && detail.adjustedRequirement && (
+              <p
+                className="mt-3"
+                style={{
+                  fontSize: '0.8125rem',
+                  color: 'var(--pf-grey-900)',
+                  backgroundColor: 'rgba(255,255,255,0.7)',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                }}
+              >
+                <strong>{wideningOfferLabel[detail.wideningOfferType]}:</strong> reduced offer of{' '}
+                <span className="pf-data-number" style={{ fontWeight: 600 }}>
+                  {detail.adjustedRequirement}
+                </span>
+              </p>
+            )}
+
+            {/* Ineligible / no grades hint */}
+            {detail.status === 'ineligible' && !detail.isWideningEligible && (
+              <p className="mt-2" style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}>
+                Check the widening access section below — you may qualify for a reduced offer if
+                you meet other criteria.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Widening access block at the bottom of the main column. Renders in three
+// modes depending on who's viewing:
+//   (a) Logged-in WA-eligible student  → personalised table + criteria.
+//   (b) Logged-in non-eligible student → general info about the university's offers.
+//   (c) Logged-out visitor             → same as (b), plus sign-up CTA.
+// Always renders when the course has any WA data; never renders otherwise.
+type WaSectionProps = {
+  student: Student | null
+  wideningAccess: ReturnType<typeof useWideningAccessEligibility>
+  wideningReqs: WideningAccessRequirements | null
+  standardOffer: string | null
+  hasAnyWaOffers: boolean
+  uniWideningInfo: UniversityWideningInfo | null
+  universityName: string | null
+  universityWebsite: string | null
+  isLoggedIn: boolean
+}
+
+const OFFER_ROW_LABELS: Record<keyof WideningAccessRequirements, string> = {
+  simd20_offer: 'SIMD20 (most deprived 20%)',
+  simd40_offer: 'SIMD40 (most deprived 40%)',
+  care_experienced_offer: 'Care experienced',
+  general_offer: 'General widening access',
+}
+
+function WideningAccessSection({
+  student,
+  wideningAccess,
+  wideningReqs,
+  standardOffer,
+  hasAnyWaOffers,
+  uniWideningInfo,
+  universityName,
+  universityWebsite,
+  isLoggedIn,
+}: WaSectionProps) {
+  // If the course has absolutely no WA data and the student isn't eligible,
+  // there's nothing useful to show — skip the section entirely.
+  if (!hasAnyWaOffers && !wideningAccess?.isEligible) return null
+
+  // Pick the single most favourable offer the student would actually qualify for.
+  const studentOffer: { offer: string; label: string } | null = (() => {
+    if (!wideningAccess?.isEligible || !wideningReqs) return null
+    if (wideningAccess.isSIMD20 && wideningReqs.simd20_offer) {
+      return { offer: wideningReqs.simd20_offer, label: 'SIMD20 adjusted offer' }
+    }
+    if (wideningAccess.isSIMD40 && wideningReqs.simd40_offer) {
+      return { offer: wideningReqs.simd40_offer, label: 'SIMD40 adjusted offer' }
+    }
+    if (wideningAccess.hasCareExperience && wideningReqs.care_experienced_offer) {
+      return { offer: wideningReqs.care_experienced_offer, label: 'Care-experienced adjusted offer' }
+    }
+    if (wideningReqs.general_offer) {
+      return { offer: wideningReqs.general_offer, label: 'General widening access offer' }
+    }
+    return null
+  })()
+
+  // Which offers does the course publish? Used to list every adjusted offer.
+  const offerRows: { key: keyof WideningAccessRequirements; value: string }[] = []
+  if (wideningReqs?.simd20_offer) offerRows.push({ key: 'simd20_offer', value: wideningReqs.simd20_offer })
+  if (wideningReqs?.simd40_offer) offerRows.push({ key: 'simd40_offer', value: wideningReqs.simd40_offer })
+  if (wideningReqs?.care_experienced_offer) offerRows.push({ key: 'care_experienced_offer', value: wideningReqs.care_experienced_offer })
+  if (wideningReqs?.general_offer) offerRows.push({ key: 'general_offer', value: wideningReqs.general_offer })
+
+  // Which criteria does the student currently meet?
+  const studentCriteria: string[] = []
+  if (wideningAccess?.isSIMD20 && student?.simd_decile) {
+    studentCriteria.push(`SIMD20 — decile ${student.simd_decile}`)
+  } else if (wideningAccess?.isSIMD40 && student?.simd_decile) {
+    studentCriteria.push(`SIMD40 — decile ${student.simd_decile}`)
+  }
+  if (wideningAccess?.hasCareExperience) studentCriteria.push('Care experienced')
+  if (wideningAccess?.isYoungCarer) studentCriteria.push('Young carer')
+  if (wideningAccess?.isFirstGeneration) studentCriteria.push('First generation')
+
+  return (
+    <section>
+      <h2
+        className="text-xl font-semibold mb-4"
+        style={{ color: 'var(--pf-grey-900)' }}
+      >
+        Widening Access
+      </h2>
+
+      {/* Personalised panel for eligible students */}
+      {wideningAccess?.isEligible && (
+        <div
+          className="rounded-lg mb-4"
+          style={{
+            padding: '20px',
+            backgroundColor: 'var(--pf-white)',
+            border: '1px solid rgba(245, 158, 11, 0.35)',
+            borderLeft: '4px solid var(--pf-amber-500)',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+          }}
+        >
+          <div className="flex items-start gap-3 mb-4">
+            <div
+              className="flex-shrink-0 rounded-full flex items-center justify-center"
+              style={{
+                width: '40px',
+                height: '40px',
+                backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                color: 'var(--pf-amber-500)',
+              }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '1.0625rem',
+                  color: 'var(--pf-grey-900)',
+                  margin: 0,
+                  marginBottom: '4px',
+                }}
+              >
+                Based on your profile, you may qualify for adjusted entry
+              </h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', margin: 0, lineHeight: 1.6 }}>
+                You meet {studentCriteria.length} widening access {studentCriteria.length === 1 ? 'criterion' : 'criteria'}.
+                Universities verify these at application — always check the individual programme for confirmation.
+              </p>
+            </div>
+          </div>
+
+          {/* Criteria pills */}
+          <div className="mb-4">
+            <p
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: 'var(--pf-grey-600)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                marginBottom: '8px',
+              }}
+            >
+              Criteria that apply to you
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {studentCriteria.map((c) => (
+                <span key={c} className="pf-badge-amber">
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Offer comparison table */}
+          {studentOffer && standardOffer && (
+            <div
+              className="rounded-lg overflow-hidden mb-4"
+              style={{ border: '1px solid var(--pf-grey-300)' }}
+            >
+              <div
+                className="grid grid-cols-2"
+                style={{ backgroundColor: 'var(--pf-grey-100)', padding: '10px 16px' }}
+              >
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    color: 'var(--pf-grey-600)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  Offer type
+                </span>
+                <span
+                  className="text-right"
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    color: 'var(--pf-grey-600)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  Grades required
+                </span>
+              </div>
+              <div
+                className="grid grid-cols-2 items-center"
+                style={{ padding: '12px 16px', borderTop: '1px solid var(--pf-grey-300)' }}
+              >
+                <span style={{ fontSize: '0.9375rem', color: 'var(--pf-grey-900)' }}>Standard offer</span>
+                <span
+                  className="pf-data-number text-right"
+                  style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}
+                >
+                  {standardOffer}
+                </span>
+              </div>
+              <div
+                className="grid grid-cols-2 items-center"
+                style={{
+                  padding: '12px 16px',
+                  borderTop: '1px solid var(--pf-grey-300)',
+                  backgroundColor: 'rgba(16, 185, 129, 0.06)',
+                }}
+              >
+                <span
+                  className="inline-flex items-center gap-2"
+                  style={{ fontSize: '0.9375rem', color: 'var(--pf-green-500)', fontWeight: 600 }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  Your potential offer
+                </span>
+                <span
+                  className="pf-data-number text-right"
+                  style={{ fontWeight: 700, color: 'var(--pf-green-500)', fontSize: '1.0625rem' }}
+                >
+                  {studentOffer.offer}
+                </span>
+              </div>
+              <div
+                style={{
+                  padding: '8px 16px',
+                  borderTop: '1px solid var(--pf-grey-300)',
+                  fontSize: '0.75rem',
+                  color: 'var(--pf-grey-600)',
+                  backgroundColor: 'var(--pf-white)',
+                }}
+              >
+                Applied via: {studentOffer.label}
+              </div>
+            </div>
+          )}
+
+          {/* No adjusted offer for this student's category */}
+          {wideningAccess.isEligible && !studentOffer && (
+            <p
+              className="rounded-lg"
+              style={{
+                padding: '12px 16px',
+                backgroundColor: 'var(--pf-grey-100)',
+                fontSize: '0.875rem',
+                color: 'var(--pf-grey-900)',
+                margin: 0,
+              }}
+            >
+              This course hasn&apos;t published a specific adjusted offer for your category.
+              Contact {universityName ?? 'the university'} directly — many programmes consider
+              widening access circumstances on a case-by-case basis.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* General information (always shown when course has WA data) */}
+      {hasAnyWaOffers && (
+        <div
+          className="pf-card-flat overflow-hidden"
+          style={{ backgroundColor: 'var(--pf-white)' }}
+        >
+          <div
+            style={{
+              padding: '16px 20px',
+              borderBottom: '1px solid var(--pf-grey-300)',
+              backgroundColor: 'var(--pf-teal-50)',
+            }}
+          >
+            <h3
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: 'var(--pf-grey-900)',
+                margin: 0,
+                marginBottom: '4px',
+              }}
+            >
+              {wideningAccess?.isEligible
+                ? 'All adjusted offers for this course'
+                : `${universityName ?? 'This university'} offers reduced entry for students from widening participation backgrounds`}
+            </h3>
+            <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', margin: 0 }}>
+              Scottish universities apply contextualised admissions for students from under-represented groups.
+            </p>
+          </div>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            {offerRows.map((row, idx) => (
+              <li
+                key={row.key}
+                className="flex justify-between items-center"
+                style={{
+                  padding: '14px 20px',
+                  borderTop: idx === 0 ? 'none' : '1px solid var(--pf-grey-300)',
+                }}
+              >
+                <span style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
+                  {OFFER_ROW_LABELS[row.key]}
+                </span>
+                <span
+                  className="pf-data-number"
+                  style={{ fontWeight: 600, color: 'var(--pf-grey-900)', fontSize: '0.9375rem' }}
+                >
+                  {row.value}
+                </span>
+              </li>
+            ))}
+          </ul>
+          {(uniWideningInfo?.url || uniWideningInfo?.programme_name || universityWebsite) && (
+            <div
+              style={{
+                padding: '12px 20px',
+                borderTop: '1px solid var(--pf-grey-300)',
+                backgroundColor: 'var(--pf-grey-100)',
+                fontSize: '0.8125rem',
+              }}
+            >
+              {uniWideningInfo?.url ? (
+                <a
+                  href={uniWideningInfo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1"
+                  style={{ color: 'var(--pf-teal-700)', fontWeight: 600 }}
+                >
+                  {uniWideningInfo.programme_name
+                    ? `Visit ${uniWideningInfo.programme_name}`
+                    : 'Visit the widening access page'}
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              ) : universityWebsite ? (
+                <a
+                  href={universityWebsite}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1"
+                  style={{ color: 'var(--pf-teal-700)', fontWeight: 600 }}
+                >
+                  Visit {universityName ?? 'university'} website for full details
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              ) : null}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Learn more link — always present */}
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <Link
+          href="/widening-access"
+          className="pf-btn-ghost pf-btn-sm"
+          style={{ color: 'var(--pf-teal-500)' }}
+        >
+          Learn about widening access schemes
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
+        {!isLoggedIn && (
+          <Link
+            href="/auth/sign-up"
+            className="pf-btn-secondary pf-btn-sm"
+          >
+            Check your eligibility
+          </Link>
+        )}
+      </div>
+    </section>
   )
 }

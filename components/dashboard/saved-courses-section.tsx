@@ -1,13 +1,17 @@
 'use client'
 
+import { useMemo } from 'react'
 import Link from 'next/link'
+import { useQuery } from '@tanstack/react-query'
+import { getSupabaseClient } from '@/lib/supabase'
 import { useSavedCourses, useRemoveSavedCourse } from '@/hooks/use-courses'
-import { useGradeSummary, useCurrentStudent } from '@/hooks/use-student'
+import { useGradeSummary, useCurrentStudent, useStudentGrades } from '@/hooks/use-student'
 import { EligibilityBadge } from '@/components/ui/eligibility-badge'
-import { meetsRequirements } from '@/lib/grades'
+import { calculateEligibility, type EligibilityDetail } from '@/hooks/use-course-matching'
 import type { Tables } from '@/types/database'
 
 type Student = Tables<'students'>
+type StudentGrade = Tables<'student_grades'>
 type Course = Tables<'courses'> & { university?: Tables<'universities'> }
 type SavedCourse = Tables<'saved_courses'> & { course?: Course }
 
@@ -15,7 +19,46 @@ export function SavedCoursesSection() {
   const { data: savedCourses, isLoading } = useSavedCourses() as { data: SavedCourse[] | undefined; isLoading: boolean }
   const gradeSummary = useGradeSummary()
   const { data: student } = useCurrentStudent() as { data: Student | null | undefined }
+  const { data: studentGrades } = useStudentGrades() as { data: StudentGrade[] | undefined }
   const removeCourse = useRemoveSavedCourse()
+
+  // Same relational requirement lookup used on /courses, scoped to the saved set.
+  const supabase = getSupabaseClient()
+  const courseIds = useMemo(
+    () => (savedCourses ?? []).map((sc) => sc.course?.id).filter((id): id is string => !!id),
+    [savedCourses]
+  )
+  const reqKey = courseIds.slice().sort().join(',')
+  const { data: requirements } = useQuery({
+    queryKey: ['saved-section-requirements', reqKey],
+    enabled: courseIds.length > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('course_subject_requirements')
+        .select(
+          `course_id, subject_id, qualification_level, min_grade, is_mandatory, subject:subjects(name)`
+        )
+        .in('course_id', courseIds)
+      if (error) throw error
+      type Row = {
+        course_id: string
+        subject_id: string
+        qualification_level: string
+        min_grade: string | null
+        is_mandatory: boolean | null
+        subject: { name: string } | null
+      }
+      return ((data as unknown as Row[]) || []).map((r) => ({
+        course_id: r.course_id,
+        subject_id: r.subject_id,
+        subject_name: r.subject?.name ?? '',
+        qualification_level: r.qualification_level,
+        min_grade: r.min_grade,
+        is_mandatory: r.is_mandatory ?? true,
+      }))
+    },
+    staleTime: 5 * 60 * 1000,
+  })
 
   if (isLoading) {
     return (
@@ -32,38 +75,22 @@ export function SavedCoursesSection() {
     )
   }
 
-  const getEligibility = (course: { entry_requirements: unknown; widening_access_requirements: unknown }) => {
-    if (!course?.entry_requirements) return null
+  const reqsByCourse = new Map<string, typeof requirements>()
+  for (const row of requirements ?? []) {
+    const existing = reqsByCourse.get(row.course_id) ?? []
+    existing!.push(row)
+    reqsByCourse.set(row.course_id, existing)
+  }
 
-    const reqs = course.entry_requirements as { highers?: string }
-    const wideningReqs = course.widening_access_requirements as {
-      simd20_offer?: string
-      simd40_offer?: string
-      general_offer?: string
-    } | null
-
-    if (!reqs.highers || !gradeSummary.highers) return null
-
-    // Check if student qualifies for widening access
-    const isWideningEligible =
-      (student?.simd_decile && student.simd_decile <= 4) ||
-      student?.care_experienced ||
-      student?.is_carer ||
-      student?.first_generation
-
-    let adjustedRequirement = reqs.highers
-
-    if (isWideningEligible && wideningReqs) {
-      if (student?.simd_decile && student.simd_decile <= 2 && wideningReqs.simd20_offer) {
-        adjustedRequirement = wideningReqs.simd20_offer
-      } else if (student?.simd_decile && student.simd_decile <= 4 && wideningReqs.simd40_offer) {
-        adjustedRequirement = wideningReqs.simd40_offer
-      } else if (wideningReqs.general_offer) {
-        adjustedRequirement = wideningReqs.general_offer
-      }
-    }
-
-    return meetsRequirements(gradeSummary.highers, adjustedRequirement, false)
+  const getEligibility = (course: Course): EligibilityDetail | null => {
+    if (!studentGrades || studentGrades.length === 0) return null
+    return calculateEligibility(
+      course,
+      reqsByCourse.get(course.id) ?? [],
+      studentGrades,
+      student ?? null,
+      gradeSummary.highers || ''
+    )
   }
 
   const handleRemove = async (courseId: string) => {
@@ -152,7 +179,13 @@ export function SavedCoursesSection() {
                         {course.university?.name}
                       </p>
                     </div>
-                    {eligibility && <EligibilityBadge status={eligibility} size="sm" />}
+                    {eligibility && (
+                      <EligibilityBadge
+                        status={eligibility.status}
+                        size="sm"
+                        missingSubjects={eligibility.missingSubjects}
+                      />
+                    )}
                   </div>
                   {entryReqs?.highers && (
                     <p

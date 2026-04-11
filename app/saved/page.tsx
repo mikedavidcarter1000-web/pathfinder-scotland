@@ -1,17 +1,20 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-auth'
 import { useSavedCourses, useToggleSaveCourse } from '@/hooks/use-courses'
-import { useGradeSummary, useCurrentStudent } from '@/hooks/use-student'
+import { useGradeSummary, useCurrentStudent, useStudentGrades } from '@/hooks/use-student'
 import { CourseCard } from '@/components/ui/course-card'
 import { CourseCardSkeleton } from '@/components/ui/loading-skeletons'
-import { meetsRequirements } from '@/lib/grades'
+import { calculateEligibility, type EligibilityDetail } from '@/hooks/use-course-matching'
+import { useQuery } from '@tanstack/react-query'
+import { getSupabaseClient } from '@/lib/supabase'
 import type { Tables } from '@/types/database'
 
 type Student = Tables<'students'>
+type StudentGrade = Tables<'student_grades'>
 type Course = Tables<'courses'> & { university?: Tables<'universities'> }
 type SavedCourse = Tables<'saved_courses'> & { course?: Course }
 
@@ -25,6 +28,45 @@ export default function SavedCoursesPage() {
   const { toggle: toggleSave, isSaved } = useToggleSaveCourse()
   const gradeSummary = useGradeSummary()
   const { data: student } = useCurrentStudent() as { data: Student | null | undefined }
+  const { data: studentGrades } = useStudentGrades() as { data: StudentGrade[] | undefined }
+
+  const items = useMemo(() => (savedCourses || []).filter((sc) => !!sc.course), [savedCourses])
+  const courseIds = useMemo(() => items.map((sc) => sc.course!.id), [items])
+
+  // Share the same relational requirement logic as the /courses page so saved
+  // cards show identical eligibility status (no drift between views).
+  const supabase = getSupabaseClient()
+  const reqKey = courseIds.slice().sort().join(',')
+  const { data: requirements } = useQuery({
+    queryKey: ['saved-requirements', reqKey],
+    enabled: courseIds.length > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('course_subject_requirements')
+        .select(
+          `course_id, subject_id, qualification_level, min_grade, is_mandatory, subject:subjects(name)`
+        )
+        .in('course_id', courseIds)
+      if (error) throw error
+      type Row = {
+        course_id: string
+        subject_id: string
+        qualification_level: string
+        min_grade: string | null
+        is_mandatory: boolean | null
+        subject: { name: string } | null
+      }
+      return ((data as unknown as Row[]) || []).map((r) => ({
+        course_id: r.course_id,
+        subject_id: r.subject_id,
+        subject_name: r.subject?.name ?? '',
+        qualification_level: r.qualification_level,
+        min_grade: r.min_grade,
+        is_mandatory: r.is_mandatory ?? true,
+      }))
+    },
+    staleTime: 5 * 60 * 1000,
+  })
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -34,37 +76,23 @@ export default function SavedCoursesPage() {
 
   if (authLoading || !user) return null
 
-  const getEligibility = (course: Course) => {
-    const reqs = course.entry_requirements as { highers?: string } | null
-    const wideningReqs = course.widening_access_requirements as {
-      simd20_offer?: string
-      simd40_offer?: string
-      general_offer?: string
-    } | null
-
-    if (!reqs?.highers || !gradeSummary.highers) return null
-
-    const isWideningEligible =
-      (student?.simd_decile && student.simd_decile <= 4) ||
-      student?.care_experienced ||
-      student?.is_carer ||
-      student?.first_generation
-
-    let adjustedRequirement = reqs.highers
-    if (isWideningEligible && wideningReqs) {
-      if (student?.simd_decile && student.simd_decile <= 2 && wideningReqs.simd20_offer) {
-        adjustedRequirement = wideningReqs.simd20_offer
-      } else if (student?.simd_decile && student.simd_decile <= 4 && wideningReqs.simd40_offer) {
-        adjustedRequirement = wideningReqs.simd40_offer
-      } else if (wideningReqs.general_offer) {
-        adjustedRequirement = wideningReqs.general_offer
-      }
-    }
-
-    return meetsRequirements(gradeSummary.highers, adjustedRequirement, false)
+  const reqsByCourse = new Map<string, typeof requirements>()
+  for (const row of requirements ?? []) {
+    const existing = reqsByCourse.get(row.course_id) ?? []
+    existing!.push(row)
+    reqsByCourse.set(row.course_id, existing)
   }
 
-  const items = (savedCourses || []).filter((sc) => !!sc.course)
+  const getEligibility = (course: Course): EligibilityDetail | null => {
+    if (!studentGrades || studentGrades.length === 0) return null
+    return calculateEligibility(
+      course,
+      reqsByCourse.get(course.id) ?? [],
+      studentGrades,
+      student ?? null,
+      gradeSummary.highers || ''
+    )
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

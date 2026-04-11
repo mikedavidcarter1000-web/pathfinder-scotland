@@ -2,7 +2,12 @@
 
 import { use, useMemo } from 'react'
 import Link from 'next/link'
-import { useSubjectDetail, type ProgressionLink, type CareerLink } from '@/hooks/use-subjects'
+import {
+  useSubjectDetail,
+  type ProgressionLink,
+  type CareerLink,
+  type RelatedCourse,
+} from '@/hooks/use-subjects'
 import { useStudentGrades } from '@/hooks/use-student'
 import {
   getCurricularAreaColour,
@@ -404,56 +409,25 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
                 <h2 style={{ marginBottom: '16px' }}>
                   University Courses Requiring {subject.name}
                 </h2>
-                <div className="pf-card-flat" style={{ overflow: 'hidden' }}>
-                  {subject.related_courses.map((course, i) => {
-                    const req = course.entry_requirements as {
-                      required_subjects?: string[]
-                      highers?: string
-                    } | null
-                    return (
-                      <Link
-                        key={course.id}
-                        href={`/courses/${course.id}`}
-                        className="block p-4 group no-underline hover:no-underline"
-                        style={{
-                          borderTop: i === 0 ? 'none' : '1px solid var(--pf-grey-100)',
-                          transition: 'background-color 0.15s',
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1 min-w-0">
-                            <h3 style={{ fontSize: '1rem', color: 'var(--pf-grey-900)', marginBottom: '4px' }}>
-                              {course.name}
-                            </h3>
-                            {course.university && (
-                              <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
-                                {course.university.name}
-                              </p>
-                            )}
-                            {req?.highers && (
-                              <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', marginTop: '4px' }}>
-                                Highers:{' '}
-                                <span style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}>
-                                  {req.highers}
-                                </span>
-                              </p>
-                            )}
-                          </div>
-                          <svg
-                            className="w-5 h-5 flex-shrink-0 mt-1"
-                            style={{ color: 'var(--pf-teal-500)' }}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </Link>
-                    )
-                  })}
+                <div className="space-y-4">
+                  {subject.related_courses_by_level.higher.length > 0 && (
+                    <CourseLevelGroup
+                      level="higher"
+                      courses={subject.related_courses_by_level.higher}
+                    />
+                  )}
+                  {subject.related_courses_by_level.adv_higher.length > 0 && (
+                    <CourseLevelGroup
+                      level="adv_higher"
+                      courses={subject.related_courses_by_level.adv_higher}
+                    />
+                  )}
+                  {subject.related_courses_by_level.n5.length > 0 && (
+                    <CourseLevelGroup
+                      level="n5"
+                      courses={subject.related_courses_by_level.n5}
+                    />
+                  )}
                 </div>
               </section>
             )}
@@ -565,6 +539,88 @@ function ProgressionStepper({ steps }: { steps: PathwayStep[] }) {
         )
       })}
     </ol>
+  )
+}
+
+const LEVEL_LABEL: Record<string, string> = {
+  higher: 'Higher',
+  adv_higher: 'Advanced Higher',
+  n5: 'National 5',
+}
+
+function CourseLevelGroup({
+  level,
+  courses,
+}: {
+  level: 'higher' | 'adv_higher' | 'n5'
+  courses: RelatedCourse[]
+}) {
+  return (
+    <div>
+      <h3
+        style={{
+          fontSize: '0.8125rem',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+          color: 'var(--pf-grey-600)',
+          marginBottom: '8px',
+        }}
+      >
+        {LEVEL_LABEL[level]} ({courses.length})
+      </h3>
+      <div className="pf-card-flat" style={{ overflow: 'hidden' }}>
+        {courses.map((course, i) => (
+          <Link
+            key={`${level}-${course.id}`}
+            href={`/courses/${course.id}`}
+            className="block p-4 group no-underline hover:no-underline"
+            style={{
+              borderTop: i === 0 ? 'none' : '1px solid var(--pf-grey-100)',
+              transition: 'background-color 0.15s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <h3 style={{ fontSize: '1rem', color: 'var(--pf-grey-900)', marginBottom: '4px' }}>
+                  {course.name}
+                </h3>
+                {course.university && (
+                  <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+                    {course.university.name}
+                  </p>
+                )}
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  {course.requirement.min_grade && (
+                    <span className="pf-badge-teal">
+                      Min grade: {course.requirement.min_grade}
+                    </span>
+                  )}
+                  {!course.requirement.is_mandatory && (
+                    <span className="pf-badge-grey">Alternative</span>
+                  )}
+                </div>
+                {course.requirement.notes && (
+                  <p style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)', marginTop: '6px' }}>
+                    {course.requirement.notes}
+                  </p>
+                )}
+              </div>
+              <svg
+                className="w-5 h-5 flex-shrink-0 mt-1"
+                style={{ color: 'var(--pf-teal-500)' }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
   )
 }
 

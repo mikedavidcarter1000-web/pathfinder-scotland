@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
 import { getSupabaseClient } from '@/lib/supabase'
-import type { Tables } from '@/types/database'
+import type { Tables, Enums } from '@/types/database'
 
 interface SearchResults {
   courses: (Tables<'courses'> & { university?: Tables<'universities'> })[]
@@ -145,7 +145,7 @@ export function useFilteredSearch(
       }
 
       if (filters.degreeType) {
-        queryBuilder = queryBuilder.eq('degree_type', filters.degreeType)
+        queryBuilder = queryBuilder.eq('degree_type', filters.degreeType as Enums<'degree_type'>)
       }
 
       const { data, error } = await queryBuilder.limit(50)

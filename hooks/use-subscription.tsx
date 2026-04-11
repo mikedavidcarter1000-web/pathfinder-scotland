@@ -40,7 +40,7 @@ export function useSubscription() {
         return { has_subscription: false }
       }
 
-      return data as Subscription
+      return data as unknown as Subscription
     },
     enabled: !!user,
     staleTime: 1000 * 60 * 5, // 5 minutes

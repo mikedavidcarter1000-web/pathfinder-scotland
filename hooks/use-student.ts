@@ -191,6 +191,69 @@ export function useDeleteGrade() {
   })
 }
 
+// One-shot backfill: for any student_grades rows where subject_id is null,
+// try to match the free-text `subject` value (case-insensitive) to a row in
+// the `subjects` table and update the FK. Safe to run multiple times; rows
+// that can't be matched (unusual subject names, A-level, BTEC) are left alone.
+export function useBackfillGradeSubjectIds() {
+  const supabase = getSupabaseClient()
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!user) return { matched: 0, skipped: 0 }
+
+      // Pull orphaned rows for the current student only — RLS already scopes
+      // writes, but scoping the read too keeps the payload small.
+      const { data: orphaned, error: orphanErr } = await supabase
+        .from('student_grades')
+        .select('id, subject')
+        .eq('student_id', user.id)
+        .is('subject_id', null)
+
+      if (orphanErr) throw orphanErr
+      const rows = (orphaned || []) as { id: string; subject: string }[]
+      if (rows.length === 0) return { matched: 0, skipped: 0 }
+
+      // Fetch the full subject list once — small and cached — and build a
+      // case-insensitive lookup map.
+      const { data: subjects, error: subjErr } = await supabase
+        .from('subjects')
+        .select('id, name')
+      if (subjErr) throw subjErr
+      const byName = new Map<string, string>()
+      for (const s of (subjects || []) as { id: string; name: string }[]) {
+        byName.set(s.name.toLowerCase().trim(), s.id)
+      }
+
+      let matched = 0
+      let skipped = 0
+      for (const row of rows) {
+        const hit = byName.get(row.subject.toLowerCase().trim())
+        if (!hit) {
+          skipped++
+          continue
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error: updErr } = await (supabase as any)
+          .from('student_grades')
+          .update({ subject_id: hit })
+          .eq('id', row.id)
+        if (updErr) throw updErr
+        matched++
+      }
+
+      return { matched, skipped }
+    },
+    onSuccess: (result) => {
+      if (result && result.matched > 0) {
+        queryClient.invalidateQueries({ queryKey: ['student-grades'] })
+      }
+    },
+  })
+}
+
 // Bulk upsert grades
 export function useBulkUpsertGrades() {
   const supabase = getSupabaseClient()

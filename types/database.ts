@@ -119,6 +119,54 @@ export type Database = {
         }
         Relationships: []
       }
+      course_subject_requirements: {
+        Row: {
+          course_id: string
+          created_at: string | null
+          id: string
+          is_mandatory: boolean | null
+          min_grade: string | null
+          notes: string | null
+          qualification_level: string
+          subject_id: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string | null
+          id?: string
+          is_mandatory?: boolean | null
+          min_grade?: string | null
+          notes?: string | null
+          qualification_level: string
+          subject_id: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string | null
+          id?: string
+          is_mandatory?: boolean | null
+          min_grade?: string | null
+          notes?: string | null
+          qualification_level?: string
+          subject_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_subject_requirements_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_subject_requirements_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           course_url: string | null
@@ -584,6 +632,93 @@ export type Database = {
         }
         Relationships: []
       }
+      student_academy_choices: {
+        Row: {
+          created_at: string | null
+          id: string
+          rank_order: number
+          student_id: string
+          subject_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          rank_order: number
+          student_id: string
+          subject_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          rank_order?: number
+          student_id?: string
+          subject_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_academy_choices_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_academy_choices_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_subject_choices: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_reserve: boolean | null
+          rank_order: number | null
+          student_id: string
+          subject_id: string
+          transition: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_reserve?: boolean | null
+          rank_order?: number | null
+          student_id: string
+          subject_id: string
+          transition: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_reserve?: boolean | null
+          rank_order?: number | null
+          student_id?: string
+          subject_id?: string
+          transition?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_subject_choices_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_subject_choices_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       student_grades: {
         Row: {
           created_at: string | null
@@ -1030,6 +1165,10 @@ export type TablesUpdate<
       ? U
       : never
     : never
+
+// Convenience aliases used across hooks — older naming convention.
+export type InsertTables<T extends keyof DefaultSchema["Tables"]> = TablesInsert<T>
+export type UpdateTables<T extends keyof DefaultSchema["Tables"]> = TablesUpdate<T>
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends

@@ -4,12 +4,21 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { EligibilityBadge } from './eligibility-badge'
 import type { Tables } from '@/types/database'
+import type { EligibilityDetail } from '@/hooks/use-course-matching'
+import { useWideningAccessEligibility } from '@/hooks/use-student'
+
+interface WideningAccessRequirements {
+  simd20_offer?: string
+  simd40_offer?: string
+  care_experienced_offer?: string
+  general_offer?: string
+}
 
 interface CourseCardProps {
   course: Tables<'courses'> & {
     university?: Tables<'universities'>
   }
-  eligibility?: 'eligible' | 'possible' | 'below' | null
+  eligibility?: EligibilityDetail | null
   showSaveButton?: boolean
   isSaved?: boolean
   onSave?: () => void
@@ -29,6 +38,7 @@ export function CourseCard({
   compact = false,
 }: CourseCardProps) {
   const [saving, setSaving] = useState(false)
+  const wideningAccess = useWideningAccessEligibility()
 
   const handleSave = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -51,6 +61,37 @@ export function CourseCard({
     advanced_highers?: string
     ucas_points?: number
   } | null
+
+  const wideningReqs = course.widening_access_requirements as WideningAccessRequirements | null
+
+  // Pick the most favourable adjusted offer the student actually qualifies for.
+  // Priority order matches selectWideningOffer in use-course-matching.ts so the
+  // card matches the eligibility calculation.
+  const adjustedOffer: string | null = (() => {
+    if (!wideningAccess?.isEligible || !wideningReqs) return null
+    if (wideningAccess.isSIMD20 && wideningReqs.simd20_offer) return wideningReqs.simd20_offer
+    if (wideningAccess.isSIMD40 && wideningReqs.simd40_offer) return wideningReqs.simd40_offer
+    if (wideningAccess.hasCareExperience && wideningReqs.care_experienced_offer) {
+      return wideningReqs.care_experienced_offer
+    }
+    if (wideningReqs.general_offer) return wideningReqs.general_offer
+    return null
+  })()
+
+  const hasDistinctAdjustedOffer = Boolean(
+    adjustedOffer && adjustedOffer !== entryRequirements?.highers
+  )
+
+  // Does the course have no WA adjustment data AT ALL? Used to show the
+  // "Check with university" note to WA-eligible students.
+  const wideningEligibleButNoData = Boolean(
+    wideningAccess?.isEligible &&
+      (!wideningReqs ||
+        (!wideningReqs.simd20_offer &&
+          !wideningReqs.simd40_offer &&
+          !wideningReqs.care_experienced_offer &&
+          !wideningReqs.general_offer))
+  )
 
   return (
     <Link href={`/courses/${course.id}`} className="block group no-underline hover:no-underline">
@@ -129,7 +170,27 @@ export function CourseCard({
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-3">
-            {eligibility && <EligibilityBadge status={eligibility} size="sm" />}
+            {eligibility && (
+              <EligibilityBadge
+                status={eligibility.status}
+                size="sm"
+                missingSubjects={eligibility.missingSubjects}
+              />
+            )}
+            {/* Standalone WA badge for logged-in WA-eligible students on
+                courses that have adjusted data — independent of eligibility
+                calculation (shows even when grades aren't entered yet). */}
+            {!eligibility && hasDistinctAdjustedOffer && (
+              <span
+                className="pf-badge-amber inline-flex items-center gap-1"
+                title="You may qualify for an adjusted offer"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                Widening access
+              </span>
+            )}
             {course.degree_type && <span className="pf-badge-grey">{course.degree_type}</span>}
             {course.subject_area && <span className="pf-badge-teal">{course.subject_area}</span>}
           </div>
@@ -141,8 +202,10 @@ export function CourseCard({
               style={{ fontSize: '0.875rem' }}
             >
               {entryRequirements.highers && (
-                <div className="flex justify-between">
-                  <span style={{ color: 'var(--pf-grey-600)' }}>Highers</span>
+                <div className="flex justify-between items-center">
+                  <span style={{ color: 'var(--pf-grey-600)' }}>
+                    {hasDistinctAdjustedOffer ? 'Standard offer' : 'Highers'}
+                  </span>
                   <span
                     className="pf-data-number"
                     style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}
@@ -150,6 +213,41 @@ export function CourseCard({
                     {entryRequirements.highers}
                   </span>
                 </div>
+              )}
+              {hasDistinctAdjustedOffer && adjustedOffer && (
+                <div
+                  className="flex justify-between items-center rounded"
+                  style={{
+                    padding: '6px 8px',
+                    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                  }}
+                >
+                  <span className="inline-flex items-center gap-1.5" style={{ color: 'var(--pf-green-500)' }}>
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Your offer</span>
+                  </span>
+                  <span
+                    className="pf-data-number"
+                    style={{ fontWeight: 700, color: 'var(--pf-green-500)' }}
+                  >
+                    {adjustedOffer}
+                  </span>
+                </div>
+              )}
+              {wideningEligibleButNoData && entryRequirements.highers && (
+                <p
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--pf-grey-600)',
+                    fontStyle: 'italic',
+                    margin: 0,
+                  }}
+                >
+                  Check with the university for adjusted entry
+                </p>
               )}
               {entryRequirements.ucas_points && (
                 <div className="flex justify-between">
@@ -183,12 +281,23 @@ export function CourseCard({
             >
               {entryRequirements?.highers && (
                 <span style={{ color: 'var(--pf-grey-600)' }}>
-                  Highers{' '}
+                  {hasDistinctAdjustedOffer ? 'Standard' : 'Highers'}{' '}
                   <span
                     className="pf-data-number"
                     style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}
                   >
                     {entryRequirements.highers}
+                  </span>
+                </span>
+              )}
+              {hasDistinctAdjustedOffer && adjustedOffer && (
+                <span
+                  className="inline-flex items-center gap-1"
+                  style={{ color: 'var(--pf-green-500)', fontWeight: 600 }}
+                >
+                  Your offer{' '}
+                  <span className="pf-data-number" style={{ fontWeight: 700 }}>
+                    {adjustedOffer}
                   </span>
                 </span>
               )}

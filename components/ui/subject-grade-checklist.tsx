@@ -1,9 +1,10 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useSubjects, type QualificationLevel } from '@/hooks/use-subjects'
-import { SUBJECTS } from '@/lib/constants'
 import type { QualificationType } from '@/lib/grades'
+import { getCurricularAreaColour } from '@/lib/constants'
+import { SubjectSelect } from './subject-select'
 
 export interface GradeEntry {
   subject: string
@@ -40,172 +41,126 @@ export function SubjectGradeChecklist({
   entries,
   onChange,
 }: SubjectGradeChecklistProps) {
-  const [showAll, setShowAll] = useState(false)
-  const [search, setSearch] = useState('')
-
   const level = QUAL_TO_LEVEL[qualificationType]
-  const { data: allSubjects, isLoading } = useSubjects({
+
+  // Used to resolve curricular_area for entries that were loaded from the DB
+  // and only carry subject_id + subject (no joined area). Keeps badges in sync
+  // with whatever the picker shows.
+  const { data: allSubjects } = useSubjects({
     level: level ?? undefined,
   })
 
-  // The "common" set comes from the static SUBJECTS list in constants.ts,
-  // matched against DB subjects by name. This keeps onboarding focused on
-  // mainstream picks without burying students in 100+ options.
-  const commonNames = useMemo(() => {
-    const list = SUBJECTS[qualificationType as keyof typeof SUBJECTS] || []
-    return new Set(list.map((n) => n.toLowerCase()))
-  }, [qualificationType])
-
-  const filteredSubjects = useMemo(() => {
-    if (!allSubjects) return []
-    let list = allSubjects
-    // Exclude academy subjects — they don't have grades
-    list = list.filter((s) => !s.is_academy)
-
-    if (!showAll) {
-      list = list.filter((s) => commonNames.has(s.name.toLowerCase()))
-    }
-    if (search.trim()) {
-      const needle = search.toLowerCase()
-      list = list.filter((s) => s.name.toLowerCase().includes(needle))
-    }
-    return list
-  }, [allSubjects, showAll, search, commonNames])
-
-  const totalCount = allSubjects?.filter((s) => !s.is_academy).length ?? 0
-  const commonVisible = filteredSubjects.length
-
-  const entryBySubjectId = useMemo(() => {
-    const map = new Map<string, GradeEntry>()
-    for (const e of entries) {
-      if (e.subject_id) map.set(e.subject_id, e)
+  const areaBySubjectId = useMemo(() => {
+    const map = new Map<string, string | null>()
+    for (const s of allSubjects ?? []) {
+      map.set(s.id, s.curricular_area?.name ?? null)
     }
     return map
-  }, [entries])
+  }, [allSubjects])
 
-  const entryBySubjectName = useMemo(() => {
-    const map = new Map<string, GradeEntry>()
-    for (const e of entries) {
-      map.set(e.subject.toLowerCase(), e)
-    }
-    return map
-  }, [entries])
-
-  const findEntry = (subjectId: string, subjectName: string) =>
-    entryBySubjectId.get(subjectId) ?? entryBySubjectName.get(subjectName.toLowerCase())
-
-  const setEntry = (
-    subjectId: string,
-    subjectName: string,
-    update: Partial<Omit<GradeEntry, 'subject' | 'subject_id'>>
-  ) => {
-    const existingIdx = entries.findIndex(
-      (e) =>
-        (e.subject_id && e.subject_id === subjectId) ||
-        e.subject.toLowerCase() === subjectName.toLowerCase()
-    )
-    if (existingIdx >= 0) {
-      const next = [...entries]
-      next[existingIdx] = { ...next[existingIdx], ...update, subject: subjectName, subject_id: subjectId }
-      onChange(next)
-    } else {
-      onChange([
-        ...entries,
-        {
-          subject: subjectName,
-          subject_id: subjectId,
-          grade: update.grade ?? '',
-          predicted: update.predicted ?? false,
-        },
-      ])
-    }
-  }
-
-  const removeEntry = (subjectId: string, subjectName: string) => {
-    onChange(
-      entries.filter(
-        (e) =>
-          e.subject_id !== subjectId &&
-          e.subject.toLowerCase() !== subjectName.toLowerCase()
-      )
-    )
-  }
+  const excludeIds = useMemo(
+    () => entries.map((e) => e.subject_id).filter((id): id is string => !!id),
+    [entries]
+  )
 
   const grades = GRADES_BY_TYPE[qualificationType]
 
-  if (isLoading) {
-    return (
-      <div className="space-y-2">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-12 bg-gray-100 animate-pulse rounded-lg" />
-        ))}
-      </div>
+  const updateEntry = (index: number, update: Partial<GradeEntry>) => {
+    const next = [...entries]
+    next[index] = { ...next[index], ...update }
+    onChange(next)
+  }
+
+  const removeEntry = (index: number) => {
+    onChange(entries.filter((_, i) => i !== index))
+  }
+
+  const addSubject = (subject: { id: string; name: string }) => {
+    // Guard against duplicates even if the picker misses it (e.g. entry came
+    // from legacy free-text with no subject_id).
+    const already = entries.some(
+      (e) => e.subject_id === subject.id || e.subject.toLowerCase() === subject.name.toLowerCase()
     )
+    if (already) return
+    onChange([
+      ...entries,
+      {
+        subject: subject.name,
+        subject_id: subject.id,
+        grade: '',
+        predicted: true,
+      },
+    ])
   }
 
   return (
-    <div className="space-y-3">
-      {/* Search */}
-      <div className="relative">
-        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search subjects..."
-          className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        />
-      </div>
+    <div className="space-y-4">
+      {/* Selected subjects */}
+      {entries.length === 0 ? (
+        <div
+          className="text-center rounded-lg"
+          style={{
+            padding: '24px',
+            backgroundColor: 'var(--pf-grey-100)',
+            color: 'var(--pf-grey-600)',
+            fontSize: '0.875rem',
+          }}
+        >
+          No subjects added yet. Use the search below to add your first subject.
+        </div>
+      ) : (
+        <div
+          className="rounded-lg overflow-hidden"
+          style={{
+            backgroundColor: 'var(--pf-white)',
+            border: '1px solid var(--pf-grey-300)',
+          }}
+        >
+          {entries.map((entry, idx) => {
+            const areaName = entry.subject_id ? areaBySubjectId.get(entry.subject_id) ?? null : null
+            const palette = getCurricularAreaColour(areaName)
+            return (
+              <div
+                key={entry.subject_id ?? `${entry.subject}-${idx}`}
+                className="flex items-center gap-3 flex-wrap"
+                style={{
+                  padding: '14px 16px',
+                  borderTop: idx === 0 ? 'none' : '1px solid var(--pf-grey-100)',
+                }}
+              >
+                <div className="flex-1 min-w-0 flex items-center gap-2 flex-wrap">
+                  <span
+                    className="truncate"
+                    style={{
+                      fontSize: '0.9375rem',
+                      fontWeight: 500,
+                      color: 'var(--pf-grey-900)',
+                    }}
+                  >
+                    {entry.subject}
+                  </span>
+                  {areaName && (
+                    <span className={`pf-area-badge ${palette.bg} ${palette.text}`}>
+                      {areaName}
+                    </span>
+                  )}
+                </div>
 
-      {/* Subject list */}
-      <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-100 max-h-[480px] overflow-y-auto">
-        {filteredSubjects.length === 0 && (
-          <div className="p-6 text-center text-sm text-gray-500">
-            No subjects match your search.
-          </div>
-        )}
-        {filteredSubjects.map((subject) => {
-          const entry = findEntry(subject.id, subject.name)
-          const checked = !!entry
-          return (
-            <div
-              key={subject.id}
-              className={`px-3 py-2.5 flex items-center gap-3 transition-colors ${
-                checked ? 'bg-blue-50/60' : 'hover:bg-gray-50'
-              }`}
-            >
-              <label className="flex items-center gap-3 flex-1 cursor-pointer min-w-0">
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setEntry(subject.id, subject.name, {
-                        grade: entry?.grade ?? '',
-                        predicted: entry?.predicted ?? true,
-                      })
-                    } else {
-                      removeEntry(subject.id, subject.name)
-                    }
-                  }}
-                  className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
-                />
-                <span className="text-sm font-medium text-gray-900 truncate">
-                  {subject.name}
-                </span>
-              </label>
-
-              {checked && (
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  <label className="sr-only" htmlFor={`grade-${idx}`}>
+                    Grade for {entry.subject}
+                  </label>
                   <select
-                    aria-label={`Grade for ${subject.name}`}
-                    value={entry?.grade ?? ''}
-                    onChange={(e) =>
-                      setEntry(subject.id, subject.name, { grade: e.target.value })
-                    }
-                    className="px-3 py-1.5 text-sm font-medium border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[80px]"
+                    id={`grade-${idx}`}
+                    value={entry.grade}
+                    onChange={(e) => updateEntry(idx, { grade: e.target.value })}
+                    className="pf-input"
+                    style={{
+                      padding: '8px 12px',
+                      fontSize: '0.875rem',
+                      width: 'auto',
+                      minWidth: '90px',
+                    }}
                   >
                     <option value="">Grade…</option>
                     {grades.map((g) => (
@@ -214,40 +169,71 @@ export function SubjectGradeChecklist({
                       </option>
                     ))}
                   </select>
-                  <label className="flex items-center gap-1 text-xs text-gray-600 cursor-pointer" title="Tick if this is a predicted grade (not yet awarded)">
+
+                  <label
+                    className="flex items-center gap-1.5 cursor-pointer"
+                    style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}
+                    title="Tick if this grade is predicted, not yet awarded"
+                  >
                     <input
                       type="checkbox"
-                      checked={entry?.predicted ?? false}
-                      onChange={(e) =>
-                        setEntry(subject.id, subject.name, { predicted: e.target.checked })
-                      }
-                      className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      checked={entry.predicted}
+                      onChange={(e) => updateEntry(idx, { predicted: e.target.checked })}
+                      className="w-3.5 h-3.5 rounded"
+                      style={{ accentColor: 'var(--pf-teal-700)' }}
                     />
                     Predicted
                   </label>
-                </div>
-              )}
-            </div>
-          )
-        })}
-      </div>
 
-      {/* Show all toggle */}
-      {!search && totalCount > commonNames.size && (
-        <button
-          type="button"
-          onClick={() => setShowAll((v) => !v)}
-          className="w-full py-2 text-sm text-blue-600 hover:text-blue-700 font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-        >
-          {showAll
-            ? `Show fewer subjects`
-            : `Show all ${totalCount} subjects`}
-        </button>
+                  <button
+                    type="button"
+                    onClick={() => removeEntry(idx)}
+                    className="p-1.5 rounded-lg transition-colors"
+                    style={{ color: 'var(--pf-grey-600)' }}
+                    aria-label={`Remove ${entry.subject}`}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = 'var(--pf-red-500)'
+                      e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.08)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = 'var(--pf-grey-600)'
+                      e.currentTarget.style.backgroundColor = 'transparent'
+                    }}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            )
+          })}
+        </div>
       )}
 
-      <p className="text-xs text-gray-500">
-        {commonVisible} of {totalCount} subjects shown. Grades can be updated any time.
-      </p>
+      {/* Add another subject */}
+      {level && (
+        <SubjectSelect
+          level={level}
+          excludeIds={excludeIds}
+          onSelect={addSubject}
+          placeholder={entries.length === 0 ? 'Add your first subject…' : 'Add another subject…'}
+        />
+      )}
+
+      {!level && (
+        <p
+          className="text-center"
+          style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}
+        >
+          {qualificationType} subjects aren&apos;t mapped to the Scottish subjects list yet.
+        </p>
+      )}
     </div>
   )
 }

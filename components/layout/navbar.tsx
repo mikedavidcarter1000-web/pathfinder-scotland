@@ -19,6 +19,7 @@ export function Navbar() {
     { name: 'Plan Choices', href: '/pathways', auth: false },
     { name: 'Courses', href: '/courses', auth: false },
     { name: 'Universities', href: '/universities', auth: false },
+    { name: 'Widening Access', href: '/widening-access', auth: false },
     { name: 'Saved', href: '/saved', auth: true },
     { name: 'Compare', href: '/compare', auth: true },
   ]
