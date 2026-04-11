@@ -88,18 +88,23 @@ export default function ComparePage() {
   }, [courses, requirements, studentGrades, student, gradeSummary.highers])
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Compare Courses</h1>
-          <p className="text-gray-600 mt-1">
+    <div className="pf-container pt-8 sm:pt-10 pb-12 sm:pb-16">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <h1
+            className="font-bold"
+            style={{ color: 'var(--pf-grey-900)', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}
+          >
+            Compare Courses
+          </h1>
+          <p style={{ color: 'var(--pf-grey-600)', marginTop: '4px', fontSize: '0.9375rem' }}>
             {count > 0
               ? `Comparing ${count} of ${maxCourses} courses side by side.`
               : `Add up to ${maxCourses} courses to compare them side by side.`}
           </p>
         </div>
         {count > 0 && (
-          <button onClick={clearAll} className="pf-btn-secondary pf-btn-sm shrink-0">
+          <button onClick={clearAll} className="pf-btn-secondary pf-btn-sm self-start sm:shrink-0 justify-center">
             Clear all
           </button>
         )}

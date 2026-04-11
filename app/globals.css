@@ -65,6 +65,8 @@
 
   html {
     background-color: var(--pf-teal-50);
+    /* Prevent any rogue child from creating horizontal overflow on mobile. */
+    overflow-x: hidden;
   }
 
   body {
@@ -75,6 +77,14 @@
     line-height: 1.6;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
+    /* Prevent horizontal overflow from any element leaking out. */
+    overflow-x: hidden;
+    min-width: 320px;
+  }
+
+  /* Ensure images and media never overflow their container. */
+  img, svg, video, canvas, iframe {
+    max-width: 100%;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -124,6 +134,8 @@
     font-weight: 600;
     font-size: 0.9375rem;
     padding: 12px 24px;
+    /* WCAG 2.5.5 minimum touch target. */
+    min-height: 44px;
     text-decoration: none;
   }
 
@@ -301,7 +313,9 @@
     border: 1px solid var(--pf-grey-300);
     border-radius: 8px;
     padding: 12px 16px;
+    min-height: 48px;
     font-family: 'Inter', sans-serif;
+    /* 16px minimum to prevent iOS zooming the viewport on focus. */
     font-size: 1rem;
     color: var(--pf-grey-900);
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -342,6 +356,13 @@
     margin-right: auto;
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .pf-container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
   }
 
   .pf-section {
@@ -451,6 +472,10 @@
   @keyframes slideDown {
     from { opacity: 0; transform: translateY(-10px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pf-slide-in-right {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
   }
 
   .scrollbar-thin {

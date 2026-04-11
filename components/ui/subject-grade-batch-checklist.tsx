@@ -233,6 +233,7 @@ export function SubjectGradeBatchChecklist({
         className="flex items-center gap-3 flex-wrap"
         style={{
           padding: '12px 16px',
+          minHeight: '56px',
           borderTop: idx === 0 ? 'none' : '1px solid var(--pf-grey-100)',
           backgroundColor: checked ? 'var(--pf-teal-50)' : 'transparent',
           transition: 'background-color 0.15s ease',
@@ -249,7 +250,6 @@ export function SubjectGradeBatchChecklist({
           />
           <div className="flex items-center gap-2 flex-wrap min-w-0">
             <span
-              className="truncate"
               style={{
                 fontSize: '0.9375rem',
                 fontWeight: 500,
@@ -271,10 +271,10 @@ export function SubjectGradeBatchChecklist({
               onChange={(e) => updateEntry(row, { grade: e.target.value })}
               className="pf-input"
               style={{
-                padding: '8px 12px',
-                fontSize: '0.875rem',
+                padding: '8px 10px',
+                minHeight: '44px',
                 width: 'auto',
-                minWidth: '90px',
+                minWidth: '84px',
               }}
               aria-label={`Grade for ${row.name}`}
             >

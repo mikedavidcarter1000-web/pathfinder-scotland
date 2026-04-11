@@ -125,12 +125,12 @@ export function SubjectGradeChecklist({
                 className="flex items-center gap-3 flex-wrap"
                 style={{
                   padding: '14px 16px',
+                  minHeight: '56px',
                   borderTop: idx === 0 ? 'none' : '1px solid var(--pf-grey-100)',
                 }}
               >
                 <div className="flex-1 min-w-0 flex items-center gap-2 flex-wrap">
                   <span
-                    className="truncate"
                     style={{
                       fontSize: '0.9375rem',
                       fontWeight: 500,
@@ -146,7 +146,7 @@ export function SubjectGradeChecklist({
                   )}
                 </div>
 
-                <div className="flex items-center gap-3 flex-shrink-0">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <label className="sr-only" htmlFor={`grade-${idx}`}>
                     Grade for {entry.subject}
                   </label>
@@ -156,10 +156,10 @@ export function SubjectGradeChecklist({
                     onChange={(e) => updateEntry(idx, { grade: e.target.value })}
                     className="pf-input"
                     style={{
-                      padding: '8px 12px',
-                      fontSize: '0.875rem',
+                      padding: '8px 10px',
+                      minHeight: '44px',
                       width: 'auto',
-                      minWidth: '90px',
+                      minWidth: '84px',
                     }}
                   >
                     <option value="">Grade…</option>
@@ -188,8 +188,8 @@ export function SubjectGradeChecklist({
                   <button
                     type="button"
                     onClick={() => removeEntry(idx)}
-                    className="p-1.5 rounded-lg transition-colors"
-                    style={{ color: 'var(--pf-grey-600)' }}
+                    className="rounded-lg transition-colors inline-flex items-center justify-center"
+                    style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
                     aria-label={`Remove ${entry.subject}`}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.color = 'var(--pf-red-500)'

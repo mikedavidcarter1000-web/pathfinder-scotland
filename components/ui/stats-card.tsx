@@ -25,8 +25,8 @@ export function StatsCard({
   size = 'md',
 }: StatsCardProps) {
   const sizes = {
-    sm: { padding: '16px', iconBox: 32, iconInner: 16, valueText: '1.25rem', labelText: '0.75rem' },
-    md: { padding: '20px', iconBox: 40, iconInner: 20, valueText: '1.75rem', labelText: '0.875rem' },
+    sm: { padding: '14px', iconBox: 32, iconInner: 16, valueText: '1.25rem', labelText: '0.75rem' },
+    md: { padding: '16px', iconBox: 36, iconInner: 18, valueText: '1.5rem', labelText: '0.8125rem' },
     lg: { padding: '24px', iconBox: 48, iconInner: 24, valueText: '2rem', labelText: '1rem' },
   }[size]
 
@@ -125,5 +125,5 @@ export function StatsGrid({ children, columns = 4 }: StatsGridProps) {
     4: 'grid-cols-2 lg:grid-cols-4',
   }
 
-  return <div className={`grid ${columnClasses[columns]} gap-4`}>{children}</div>
+  return <div className={`grid ${columnClasses[columns]} gap-3 sm:gap-4`}>{children}</div>
 }

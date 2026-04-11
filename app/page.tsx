@@ -101,16 +101,15 @@ export default function HomePage() {
 
       {/* Hero Section -- teal-50 */}
       <section
+        className="py-12 sm:py-16"
         style={{
           backgroundColor: 'var(--pf-teal-50)',
-          paddingTop: '64px',
-          paddingBottom: '64px',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
         <div className="pf-container relative" style={{ zIndex: 1 }}>
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Copy */}
             <div>
               <span
@@ -121,7 +120,7 @@ export default function HomePage() {
               </span>
               <h1
                 style={{
-                  fontSize: 'clamp(2rem, 5vw, 3rem)',
+                  fontSize: 'clamp(1.875rem, 5vw, 3rem)',
                   lineHeight: 1.1,
                   marginBottom: '20px',
                   color: 'var(--pf-grey-900)',
@@ -131,7 +130,7 @@ export default function HomePage() {
               </h1>
               <p
                 style={{
-                  fontSize: '1.125rem',
+                  fontSize: '1.0625rem',
                   color: 'var(--pf-grey-600)',
                   lineHeight: 1.6,
                   marginBottom: '32px',
@@ -142,10 +141,16 @@ export default function HomePage() {
                 choices through to university offers.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <Link href="/pathways" className="pf-btn-primary">
+                <Link
+                  href="/pathways"
+                  className="pf-btn-primary w-full sm:w-auto justify-center"
+                >
                   Start planning free
                 </Link>
-                <Link href="/subjects" className="pf-btn-secondary">
+                <Link
+                  href="/subjects"
+                  className="pf-btn-secondary w-full sm:w-auto justify-center"
+                >
                   Explore subjects
                 </Link>
               </div>
@@ -161,8 +166,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Pathway illustration */}
-            <div className="hidden lg:flex items-center justify-center">
+            {/* Pathway illustration — below text on mobile, right on desktop */}
+            <div className="flex items-center justify-center">
               <PathwayIllustration />
             </div>
           </div>
@@ -173,7 +178,7 @@ export default function HomePage() {
       <section className="pf-section pf-section-white">
         <div className="pf-container">
           <div className="text-center" style={{ marginBottom: '48px' }}>
-            <h2 style={{ marginBottom: '12px', fontSize: '2rem' }}>
+            <h2 style={{ marginBottom: '12px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
               How Pathfinder helps
             </h2>
             <p
@@ -188,7 +193,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => (
               <div key={i} className="pf-card">
                 <div
@@ -219,7 +224,7 @@ export default function HomePage() {
         style={{ backgroundColor: 'var(--pf-teal-900)' }}
       >
         <div className="pf-container">
-          <div className="grid md:grid-cols-2 gap-10 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
             <div>
               <span
                 className="pf-badge inline-flex mb-4"
@@ -235,7 +240,7 @@ export default function HomePage() {
                 style={{
                   marginBottom: '16px',
                   color: '#fff',
-                  fontSize: '2rem',
+                  fontSize: 'clamp(1.5rem, 4vw, 2rem)',
                 }}
               >
                 Lower entry requirements could be available to you.
@@ -283,7 +288,7 @@ export default function HomePage() {
               </ul>
               <Link
                 href="/widening-access"
-                className="inline-flex items-center gap-2 no-underline hover:no-underline"
+                className="inline-flex items-center justify-center gap-2 no-underline hover:no-underline w-full sm:w-auto"
                 style={{
                   backgroundColor: '#fff',
                   color: 'var(--pf-teal-900)',
@@ -292,6 +297,7 @@ export default function HomePage() {
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontWeight: 600,
                   fontSize: '0.9375rem',
+                  minHeight: '48px',
                 }}
               >
                 Check your eligibility
@@ -302,11 +308,11 @@ export default function HomePage() {
             </div>
 
             <div
+              className="p-6 sm:p-7"
               style={{
                 backgroundColor: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.12)',
                 borderRadius: '12px',
-                padding: '28px',
               }}
             >
               <div style={{ marginBottom: '20px' }}>
@@ -347,13 +353,13 @@ export default function HomePage() {
       <section className="pf-section pf-section-white">
         <div className="pf-container">
           <div className="text-center" style={{ marginBottom: '40px' }}>
-            <h2 style={{ marginBottom: '12px', fontSize: '2rem' }}>All 15 Scottish universities</h2>
+            <h2 style={{ marginBottom: '12px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>All 15 Scottish universities</h2>
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem' }}>
               From ancient institutions to modern universities, explore them all.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             {unis.map((uni) => (
               <Link
                 key={uni}
@@ -456,7 +462,7 @@ export default function HomePage() {
               >
                 FAQ
               </span>
-              <h2 style={{ marginBottom: '12px', fontSize: '2rem' }}>
+              <h2 style={{ marginBottom: '12px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
                 Frequently asked questions
               </h2>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem' }}>
@@ -496,15 +502,15 @@ export default function HomePage() {
         style={{ backgroundColor: 'var(--pf-teal-900)' }}
       >
         <div className="pf-container text-center">
-          <h2 style={{ color: '#fff', marginBottom: '16px', fontSize: '2rem' }}>
+          <h2 style={{ color: '#fff', marginBottom: '16px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
             Ready to find your path?
           </h2>
-          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.125rem', marginBottom: '32px' }}>
+          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.0625rem', marginBottom: '32px' }}>
             Create your free account and start planning in minutes.
           </p>
           <Link
             href="/auth/sign-up"
-            className="inline-flex items-center gap-2 no-underline hover:no-underline"
+            className="inline-flex items-center justify-center gap-2 no-underline hover:no-underline w-full sm:w-auto"
             style={{
               backgroundColor: '#fff',
               color: 'var(--pf-teal-900)',
@@ -513,6 +519,7 @@ export default function HomePage() {
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 600,
               fontSize: '1rem',
+              minHeight: '48px',
             }}
           >
             Get started for free

@@ -114,11 +114,11 @@ export default function CoursesPage() {
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
-        <div className="pf-container" style={{ paddingTop: '40px', paddingBottom: '32px' }}>
-          <div className="flex items-start justify-between gap-4 mb-6">
-            <div>
-              <h1 style={{ marginBottom: '4px' }}>Courses</h1>
-              <p style={{ color: 'var(--pf-grey-600)' }}>
+        <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
+          <div className="flex items-start justify-between gap-3 mb-5 sm:mb-6">
+            <div className="flex-1 min-w-0">
+              <h1 style={{ marginBottom: '4px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Courses</h1>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
                 Explore courses across Scottish universities
               </p>
             </div>
@@ -126,8 +126,8 @@ export default function CoursesPage() {
               type="button"
               aria-label="Close"
               onClick={goBack}
-              style={{ color: 'var(--pf-grey-600)' }}
-              className="p-2 hover:opacity-80"
+              style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
+              className="flex items-center justify-center hover:opacity-80 flex-shrink-0"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -246,123 +246,129 @@ export default function CoursesPage() {
             />
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3">
-            <select
-              value={universityId}
-              onChange={(e) => setUniversityId(e.target.value)}
-              className="pf-input"
-              style={{ width: 'auto' }}
-            >
-              <option value="">All Universities</option>
-              {universities?.map((uni) => (
-                <option key={uni.id} value={uni.id}>
-                  {uni.name}
-                </option>
-              ))}
-            </select>
+          {/* Filters — stack on mobile, row on sm+ */}
+          <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap gap-3">
+              <select
+                value={universityId}
+                onChange={(e) => setUniversityId(e.target.value)}
+                className="pf-input w-full lg:w-auto"
+              >
+                <option value="">All Universities</option>
+                {universities?.map((uni) => (
+                  <option key={uni.id} value={uni.id}>
+                    {uni.name}
+                  </option>
+                ))}
+              </select>
 
-            <select
-              value={subjectArea}
-              onChange={(e) => setSubjectArea(e.target.value)}
-              className="pf-input"
-              style={{ width: 'auto' }}
-            >
-              <option value="">All Subjects</option>
-              {subjectAreas?.map((subject) => (
-                <option key={subject} value={subject}>
-                  {subject}
-                </option>
-              ))}
-            </select>
+              <select
+                value={subjectArea}
+                onChange={(e) => setSubjectArea(e.target.value)}
+                className="pf-input w-full lg:w-auto"
+              >
+                <option value="">All Subjects</option>
+                {subjectAreas?.map((subject) => (
+                  <option key={subject} value={subject}>
+                    {subject}
+                  </option>
+                ))}
+              </select>
 
-            {hasGrades && (
-              <>
+              {hasGrades && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setEligibilityFilter((prev) => (prev === 'eligible' ? 'all' : 'eligible'))
+                    }
+                    className="pf-btn pf-btn-sm w-full lg:w-auto justify-center"
+                    aria-pressed={eligibilityFilter === 'eligible'}
+                    style={{
+                      backgroundColor:
+                        eligibilityFilter === 'eligible' ? 'var(--pf-teal-700)' : 'var(--pf-white)',
+                      color:
+                        eligibilityFilter === 'eligible' ? 'var(--pf-white)' : 'var(--pf-teal-700)',
+                      border: '1px solid var(--pf-teal-700)',
+                      minHeight: '44px',
+                    }}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Eligible for me
+                  </button>
+                  <select
+                    value={eligibilityFilter}
+                    onChange={(e) => setEligibilityFilter(e.target.value as EligibilityFilter)}
+                    className="pf-input w-full lg:w-auto"
+                    style={{
+                      backgroundColor: eligibilityFilter !== 'all' ? 'var(--pf-teal-50)' : 'var(--pf-white)',
+                      borderColor: eligibilityFilter !== 'all' ? 'var(--pf-teal-500)' : 'var(--pf-grey-300)',
+                    }}
+                  >
+                    <option value="all">All eligibility</option>
+                    <option value="eligible">Eligible</option>
+                    <option value="eligible_via_wa">Eligible via widening access</option>
+                    <option value="possible">Possible match</option>
+                    <option value="missing_subjects">Missing subjects</option>
+                    <option value="ineligible">Not eligible</option>
+                  </select>
+                </>
+              )}
+
+              {hasFilters && (
+                <button onClick={clearFilters} className="pf-btn-ghost pf-btn-sm w-full lg:w-auto justify-center">
+                  Clear filters
+                </button>
+              )}
+            </div>
+
+            {/* View Toggle — own row on mobile, right-aligned */}
+            <div className="flex justify-end">
+              <div
+                className="flex items-center gap-1 rounded-lg"
+                style={{ padding: '4px', backgroundColor: 'var(--pf-grey-100)' }}
+              >
                 <button
                   type="button"
-                  onClick={() =>
-                    setEligibilityFilter((prev) => (prev === 'eligible' ? 'all' : 'eligible'))
-                  }
-                  className="pf-btn pf-btn-sm"
-                  aria-pressed={eligibilityFilter === 'eligible'}
+                  aria-label="Grid view"
+                  aria-pressed={viewMode === 'grid'}
+                  onClick={() => setViewMode('grid')}
+                  className="rounded inline-flex items-center justify-center"
                   style={{
-                    backgroundColor:
-                      eligibilityFilter === 'eligible' ? 'var(--pf-teal-700)' : 'var(--pf-white)',
-                    color:
-                      eligibilityFilter === 'eligible' ? 'var(--pf-white)' : 'var(--pf-teal-700)',
-                    border: '1px solid var(--pf-teal-700)',
+                    minWidth: '44px',
+                    minHeight: '36px',
+                    padding: '8px',
+                    backgroundColor: viewMode === 'grid' ? 'var(--pf-white)' : 'transparent',
+                    boxShadow: viewMode === 'grid' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    color: viewMode === 'grid' ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
                   }}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                   </svg>
-                  Eligible for me
                 </button>
-                <select
-                  value={eligibilityFilter}
-                  onChange={(e) => setEligibilityFilter(e.target.value as EligibilityFilter)}
-                  className="pf-input"
+                <button
+                  type="button"
+                  aria-label="List view"
+                  aria-pressed={viewMode === 'list'}
+                  onClick={() => setViewMode('list')}
+                  className="rounded inline-flex items-center justify-center"
                   style={{
-                    width: 'auto',
-                    backgroundColor: eligibilityFilter !== 'all' ? 'var(--pf-teal-50)' : 'var(--pf-white)',
-                    borderColor: eligibilityFilter !== 'all' ? 'var(--pf-teal-500)' : 'var(--pf-grey-300)',
+                    minWidth: '44px',
+                    minHeight: '36px',
+                    padding: '8px',
+                    backgroundColor: viewMode === 'list' ? 'var(--pf-white)' : 'transparent',
+                    boxShadow: viewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    color: viewMode === 'list' ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
                   }}
                 >
-                  <option value="all">All eligibility</option>
-                  <option value="eligible">Eligible</option>
-                  <option value="eligible_via_wa">Eligible via widening access</option>
-                  <option value="possible">Possible match</option>
-                  <option value="missing_subjects">Missing subjects</option>
-                  <option value="ineligible">Not eligible</option>
-                </select>
-              </>
-            )}
-
-            {hasFilters && (
-              <button onClick={clearFilters} className="pf-btn-ghost pf-btn-sm">
-                Clear filters
-              </button>
-            )}
-
-            <div className="flex-1" />
-
-            {/* View Toggle */}
-            <div
-              className="flex items-center gap-1 rounded-lg"
-              style={{ padding: '4px', backgroundColor: 'var(--pf-grey-100)' }}
-            >
-              <button
-                type="button"
-                aria-label="Grid view"
-                aria-pressed={viewMode === 'grid'}
-                onClick={() => setViewMode('grid')}
-                className="p-2 rounded"
-                style={{
-                  backgroundColor: viewMode === 'grid' ? 'var(--pf-white)' : 'transparent',
-                  boxShadow: viewMode === 'grid' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                  color: viewMode === 'grid' ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
-                }}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                aria-label="List view"
-                aria-pressed={viewMode === 'list'}
-                onClick={() => setViewMode('list')}
-                className="p-2 rounded"
-                style={{
-                  backgroundColor: viewMode === 'list' ? 'var(--pf-white)' : 'transparent',
-                  boxShadow: viewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                  color: viewMode === 'list' ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
-                }}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -397,7 +403,7 @@ export default function CoursesPage() {
         {/* Loading State */}
         {isLoading && (
           <>
-            <div className={`grid gap-6 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+            <div className={`grid gap-5 sm:gap-6 ${viewMode === 'grid' ? 'sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
               {[...Array(9)].map((_, i) => (
                 <CourseCardSkeleton key={i} />
               ))}
@@ -438,7 +444,7 @@ export default function CoursesPage() {
         {/* Course Grid/List */}
         {!isLoading && !error && filteredCourses && filteredCourses.length > 0 && (
           <>
-            <div className={`grid gap-6 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+            <div className={`grid gap-5 sm:gap-6 ${viewMode === 'grid' ? 'sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
               {pagedCourses.map((course) => (
                 <CourseCard
                   key={course.id}
@@ -456,9 +462,12 @@ export default function CoursesPage() {
             {totalPages > 1 && (
               <nav
                 aria-label="Courses pagination"
-                className="mt-8 flex items-center justify-between gap-4 flex-wrap"
+                className="mt-8 flex flex-col sm:flex-row items-center sm:justify-between gap-4"
               >
-                <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+                <p
+                  className="text-center sm:text-left"
+                  style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}
+                >
                   Page{' '}
                   <span style={{ fontWeight: 600, color: 'var(--pf-grey-900)' }}>{currentPage}</span>{' '}
                   of{' '}
@@ -467,12 +476,13 @@ export default function CoursesPage() {
                     {' '}· {filteredCourses.length} results
                   </span>
                 </p>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
                   <button
                     type="button"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={currentPage <= 1}
-                    className="pf-btn-secondary pf-btn-sm"
+                    className="pf-btn-secondary pf-btn-sm flex-1 sm:flex-none justify-center"
+                    style={{ minHeight: '44px' }}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -483,7 +493,8 @@ export default function CoursesPage() {
                     type="button"
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={currentPage >= totalPages}
-                    className="pf-btn-primary pf-btn-sm"
+                    className="pf-btn-primary pf-btn-sm flex-1 sm:flex-none justify-center"
+                    style={{ minHeight: '44px' }}
                   >
                     Next
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

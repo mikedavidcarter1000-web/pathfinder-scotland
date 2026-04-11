@@ -136,8 +136,10 @@ export function CourseCard({
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-shrink-0 p-1.5 rounded-lg transition-colors"
+                className="flex-shrink-0 rounded-lg transition-colors inline-flex items-center justify-center"
                 style={{
+                  minWidth: '44px',
+                  minHeight: '44px',
                   color: isSaved ? 'var(--pf-red-500)' : 'var(--pf-grey-600)',
                   backgroundColor: isSaved ? 'rgba(239,68,68,0.08)' : 'transparent',
                 }}
@@ -329,8 +331,9 @@ export function CourseCard({
           {/* Actions */}
           <div className="flex gap-2">
             <span
-              className="flex-1 text-center"
+              className="flex-1 flex items-center justify-center"
               style={{
+                minHeight: '44px',
                 padding: '10px',
                 fontSize: '0.875rem',
                 fontFamily: "'Space Grotesk', sans-serif",
@@ -345,8 +348,10 @@ export function CourseCard({
             {onCompare && (
               <button
                 onClick={handleCompare}
-                className="transition-colors"
+                className="transition-colors inline-flex items-center justify-center"
                 style={{
+                  minWidth: '44px',
+                  minHeight: '44px',
                   padding: '10px 14px',
                   fontSize: '0.875rem',
                   fontFamily: "'Space Grotesk', sans-serif",

@@ -91,13 +91,14 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
               key={type.value}
               type="button"
               onClick={() => setActiveTab(type.value)}
-              className="flex-1 transition-colors"
+              className="flex-1 transition-colors inline-flex items-center justify-center gap-1.5"
               style={{
-                padding: '10px 12px',
+                minHeight: '44px',
+                padding: '10px 8px',
                 borderRadius: '6px',
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontWeight: 600,
-                fontSize: '0.875rem',
+                fontSize: '0.8125rem',
                 backgroundColor: active ? 'var(--pf-white)' : 'transparent',
                 color: active ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
                 boxShadow: active ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
@@ -180,15 +181,15 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
         </div>
       )}
 
-      {/* Action buttons */}
+      {/* Action buttons — primary on top on mobile */}
       <div className="space-y-3 pt-2">
-        <div className="flex gap-3">
+        <div className="flex flex-col-reverse sm:flex-row gap-3">
           <button
             type="button"
             onClick={onBack}
             disabled={isSubmitting}
-            className="pf-btn pf-btn-secondary"
-            style={{ flex: 1 }}
+            className="pf-btn pf-btn-secondary justify-center"
+            style={{ flex: 1, minHeight: '48px' }}
           >
             ← Back
           </button>
@@ -196,8 +197,8 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
             type="button"
             onClick={onComplete}
             disabled={isSubmitting}
-            className="pf-btn pf-btn-primary"
-            style={{ flex: 1 }}
+            className="pf-btn pf-btn-primary justify-center"
+            style={{ flex: 1, minHeight: '48px' }}
           >
             {isSubmitting ? (
               <>
@@ -229,7 +230,8 @@ export function GradesStep({ grades, onChange, onComplete, onBack, isSubmitting 
           type="button"
           onClick={handleSkip}
           disabled={isSubmitting}
-          className="pf-btn pf-btn-ghost w-full"
+          className="pf-btn pf-btn-ghost w-full justify-center"
+          style={{ minHeight: '48px' }}
         >
           Skip for now — I&apos;ll add grades later
         </button>

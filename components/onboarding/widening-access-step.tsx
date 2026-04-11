@@ -185,14 +185,14 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
       )}
 
       <div className="pt-2 space-y-3">
-        {/* Two equal-weight buttons: skip / clear vs continue */}
-        <div className="flex gap-3">
+        {/* Two equal-weight buttons: skip / clear vs continue — primary on top on mobile */}
+        <div className="flex flex-col-reverse sm:flex-row gap-3">
           {hasAnySelected ? (
             <button
               type="button"
               onClick={clearSelections}
-              className="pf-btn pf-btn-secondary"
-              style={{ flex: 1 }}
+              className="pf-btn pf-btn-secondary justify-center"
+              style={{ flex: 1, minHeight: '48px' }}
             >
               Clear selections
             </button>
@@ -200,16 +200,16 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
             <button
               type="button"
               onClick={skipStep}
-              className="pf-btn pf-btn-secondary"
-              style={{ flex: 1 }}
+              className="pf-btn pf-btn-secondary justify-center"
+              style={{ flex: 1, minHeight: '48px' }}
             >
               None of these apply to me
             </button>
           )}
           <button
             type="submit"
-            className="pf-btn pf-btn-primary"
-            style={{ flex: 1 }}
+            className="pf-btn pf-btn-primary justify-center"
+            style={{ flex: 1, minHeight: '48px' }}
           >
             Continue{hasAnySelected ? ` (${selectedCount})` : ''}
           </button>
@@ -217,8 +217,8 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
         <button
           type="button"
           onClick={onBack}
-          className="w-full pf-btn pf-btn-ghost"
-          style={{ padding: '8px 16px' }}
+          className="w-full pf-btn pf-btn-ghost justify-center"
+          style={{ minHeight: '44px', padding: '8px 16px' }}
         >
           ← Back
         </button>

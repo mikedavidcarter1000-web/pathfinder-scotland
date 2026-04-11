@@ -245,10 +245,7 @@ export default function OnboardingPage() {
   if (authLoading || studentLoading) {
     return (
       <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
-        <main
-          className="max-w-3xl mx-auto px-4"
-          style={{ paddingTop: '40px', paddingBottom: '64px' }}
-        >
+        <main className="max-w-3xl mx-auto px-4 pt-8 sm:pt-10 pb-12 sm:pb-16">
           <div className="pf-card">
             <Skeleton width="60%" height={28} rounded="md" />
             <div style={{ height: '16px' }} />
@@ -272,10 +269,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
-      <main
-        className="max-w-3xl mx-auto px-4"
-        style={{ paddingTop: '40px', paddingBottom: '64px' }}
-      >
+      <main className="max-w-3xl mx-auto px-4 pt-6 sm:pt-10 pb-12 sm:pb-16">
         {!isWelcome && (
           <>
             {/* Desktop Step Indicator */}
@@ -288,7 +282,7 @@ export default function OnboardingPage() {
             </div>
 
             {/* Mobile Step Indicator */}
-            <div className="mb-6">
+            <div className="sm:hidden mb-5">
               <MobileStepIndicator
                 currentStep={indicatorStep}
                 totalSteps={STEPS.length}
@@ -300,9 +294,8 @@ export default function OnboardingPage() {
 
         {/* Form Card */}
         <div
-          className="pf-card-flat"
+          className="pf-card-flat p-5 sm:p-7"
           style={{
-            padding: '28px',
             boxShadow: '0 10px 30px rgba(12, 74, 66, 0.08)',
           }}
         >

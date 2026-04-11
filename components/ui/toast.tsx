@@ -87,12 +87,9 @@ function ToastViewport({
     <div
       aria-live="polite"
       aria-atomic="true"
-      className="fixed z-50 flex flex-col gap-2 pointer-events-none"
+      className="fixed z-50 flex flex-col gap-2 pointer-events-none sm:right-5 sm:bottom-5 sm:w-[360px] left-4 right-4 bottom-4"
       style={{
-        right: '20px',
-        bottom: '20px',
-        maxWidth: 'calc(100vw - 40px)',
-        width: '360px',
+        maxWidth: 'calc(100vw - 32px)',
       }}
     >
       {toasts.map((t) => (

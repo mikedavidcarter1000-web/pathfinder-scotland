@@ -146,28 +146,36 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
     <div className="min-h-screen bg-[var(--pf-teal-50)]">
       {/* Header */}
       <div className="bg-[var(--pf-white)]">
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto px-4 pt-6 pb-6 sm:pt-8 sm:pb-8">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-            <Link href="/courses" className="hover:text-gray-700">Courses</Link>
-            <span>/</span>
+          <nav className="flex items-center gap-2 text-sm text-gray-500 mb-3 sm:mb-4 overflow-hidden">
+            <Link href="/courses" className="hover:text-gray-700 flex-shrink-0">Courses</Link>
+            <span className="flex-shrink-0">/</span>
             {university && (
               <>
-                <Link href={`/universities/${university.id}`} className="hover:text-gray-700">
+                <Link
+                  href={`/universities/${university.id}`}
+                  className="hover:text-gray-700 truncate"
+                >
                   {university.name}
                 </Link>
-                <span>/</span>
+                <span className="flex-shrink-0">/</span>
               </>
             )}
-            <span className="text-gray-900">{course.name}</span>
+            <span className="text-gray-900 truncate">{course.name}</span>
           </nav>
 
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{course.name}</h1>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <h1
+                className="font-bold text-gray-900 mb-2"
+                style={{ fontSize: 'clamp(1.5rem, 5vw, 1.875rem)' }}
+              >
+                {course.name}
+              </h1>
               {university && (
-                <p className="text-lg text-gray-600">
-                  <Link href={`/universities/${university.id}`} className="hover:text-blue-600">
+                <p className="text-base sm:text-lg text-gray-600">
+                  <Link href={`/universities/${university.id}`} className="hover:text-[var(--pf-teal-700)]">
                     {university.name}
                   </Link>
                   {university.city && ` - ${university.city}`}
@@ -176,7 +184,9 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
             </div>
             <Link
               href="/courses"
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700 flex items-center justify-center flex-shrink-0"
+              style={{ minWidth: '44px', minHeight: '44px' }}
+              aria-label="Back to courses"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -211,10 +221,10 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-3 gap-8">
+      <div className="max-w-4xl mx-auto px-4 py-8 sm:py-10">
+        <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Main Content */}
-          <div className="md:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
             {/* Description */}
             {course.description && (
               <section>
@@ -271,21 +281,21 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
                 {entryRequirements ? (
                   <div className="divide-y divide-gray-100">
                     {entryRequirements.highers && (
-                      <div className="flex justify-between items-center p-4">
-                        <span className="text-gray-600">Highers</span>
-                        <span className="font-semibold text-gray-900">{entryRequirements.highers}</span>
+                      <div className="flex justify-between items-center gap-3 p-4">
+                        <span className="text-gray-600 flex-shrink-0">Highers</span>
+                        <span className="font-semibold text-gray-900 text-right">{entryRequirements.highers}</span>
                       </div>
                     )}
                     {entryRequirements.advanced_highers && (
-                      <div className="flex justify-between items-center p-4">
-                        <span className="text-gray-600">Advanced Highers</span>
-                        <span className="font-semibold text-gray-900">{entryRequirements.advanced_highers}</span>
+                      <div className="flex justify-between items-center gap-3 p-4">
+                        <span className="text-gray-600 flex-shrink-0">Advanced Highers</span>
+                        <span className="font-semibold text-gray-900 text-right">{entryRequirements.advanced_highers}</span>
                       </div>
                     )}
                     {entryRequirements.ucas_points && (
-                      <div className="flex justify-between items-center p-4">
-                        <span className="text-gray-600">UCAS Points</span>
-                        <span className="font-semibold text-gray-900">{entryRequirements.ucas_points}</span>
+                      <div className="flex justify-between items-center gap-3 p-4">
+                        <span className="text-gray-600 flex-shrink-0">UCAS Points</span>
+                        <span className="font-semibold text-gray-900 text-right">{entryRequirements.ucas_points}</span>
                       </div>
                     )}
                     {entryRequirements.required_subjects && entryRequirements.required_subjects.length > 0 && (
@@ -327,7 +337,10 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
             <div className="pf-card">
               <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full py-2 px-4 pf-btn-primary">
+                <button
+                  className="w-full pf-btn-primary justify-center"
+                  style={{ minHeight: '44px' }}
+                >
                   Save to Shortlist
                 </button>
                 {course.course_url && (
@@ -335,7 +348,8 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
                     href={course.course_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full py-2 px-4 bg-[var(--pf-grey-100)] text-[var(--pf-grey-900)] font-medium rounded-lg hover:bg-gray-200 transition-colors text-center"
+                    className="flex items-center justify-center w-full bg-[var(--pf-grey-100)] text-[var(--pf-grey-900)] font-medium rounded-lg hover:bg-gray-200 transition-colors text-center"
+                    style={{ minHeight: '44px', padding: '12px 16px' }}
                   >
                     View on University Site
                   </a>
@@ -345,7 +359,8 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
                     href={university.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full py-2 px-4 border border-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-center"
+                    className="flex items-center justify-center w-full border border-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-center"
+                    style={{ minHeight: '44px', padding: '12px 16px' }}
                   >
                     Visit University Website
                   </a>

@@ -38,18 +38,18 @@ export default function UniversitiesPage() {
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
-        <div className="pf-container" style={{ paddingTop: '40px', paddingBottom: '32px' }}>
-          <div className="flex items-start justify-between gap-4 mb-6">
-            <div>
-              <h1 style={{ marginBottom: '4px' }}>Universities</h1>
-              <p style={{ color: 'var(--pf-grey-600)' }}>
+        <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
+          <div className="flex items-start justify-between gap-3 mb-5 sm:mb-6">
+            <div className="flex-1 min-w-0">
+              <h1 style={{ marginBottom: '4px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Universities</h1>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
                 Explore all 15 Scottish universities
               </p>
             </div>
             <Link
               href="/"
-              style={{ color: 'var(--pf-grey-600)' }}
-              className="p-2 hover:opacity-80"
+              style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
+              className="flex items-center justify-center hover:opacity-80 flex-shrink-0"
               aria-label="Back to home"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,13 +58,12 @@ export default function UniversitiesPage() {
             </Link>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3">
+          {/* Filters — stack on mobile */}
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="pf-input"
-              style={{ width: 'auto' }}
+              className="pf-input w-full sm:w-auto"
             >
               <option value="">All Types</option>
               {Object.entries(UNIVERSITY_TYPES).map(([key, value]) => (
@@ -77,8 +76,7 @@ export default function UniversitiesPage() {
             <select
               value={cityFilter}
               onChange={(e) => setCityFilter(e.target.value)}
-              className="pf-input"
-              style={{ width: 'auto' }}
+              className="pf-input w-full sm:w-auto"
             >
               <option value="">All Cities</option>
               {cities.map((city) => (
@@ -89,7 +87,7 @@ export default function UniversitiesPage() {
             </select>
 
             {hasFilters && (
-              <button onClick={clearFilters} className="pf-btn-ghost pf-btn-sm">
+              <button onClick={clearFilters} className="pf-btn-ghost pf-btn-sm w-full sm:w-auto justify-center">
                 Clear filters
               </button>
             )}
@@ -153,7 +151,7 @@ export default function UniversitiesPage() {
 
         {isLoading && (
           <>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[...Array(6)].map((_, i) => (
                 <UniversityCardSkeleton key={i} />
               ))}
@@ -173,7 +171,7 @@ export default function UniversitiesPage() {
         )}
 
         {!isLoading && !error && filteredUniversities && filteredUniversities.length > 0 && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredUniversities.map((university) => (
               <UniversityCard key={university.id} university={university} />
             ))}
@@ -183,9 +181,9 @@ export default function UniversitiesPage() {
 
       {/* Info Section */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
-        <div className="pf-container" style={{ paddingTop: '48px', paddingBottom: '48px' }}>
-          <h2 style={{ marginBottom: '24px' }}>About Scottish Universities</h2>
-          <div className="grid md:grid-cols-2 gap-8">
+        <div className="pf-container py-12">
+          <h2 style={{ marginBottom: '24px', fontSize: 'clamp(1.25rem, 4vw, 1.5rem)' }}>About Scottish Universities</h2>
+          <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
             <InfoBlock title="Ancient Universities">
               Scotland is home to four of the UK&apos;s six ancient universities, founded before 1600.
               St Andrews (1413), Glasgow (1451), Aberdeen (1495), and Edinburgh (1582) are steeped

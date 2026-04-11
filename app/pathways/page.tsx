@@ -72,6 +72,7 @@ export default function PathwaysPage() {
   const [expandedAreas, setExpandedAreas] = useState<Set<string>>(new Set())
   const [showBreadthTip, setShowBreadthTip] = useState(false)
   const [subjectSearch, setSubjectSearch] = useState('')
+  const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false)
   const [shakenId, setShakenId] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -257,31 +258,31 @@ export default function PathwaysPage() {
       )}
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
-        <div className="pf-container" style={{ paddingTop: '40px', paddingBottom: '32px' }}>
-          <div className="flex items-start justify-between gap-4 mb-2">
-            <h1>Plan Your Subject Choices</h1>
+        <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
+          <div className="flex items-start justify-between gap-3 mb-2">
+            <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Plan Your Subject Choices</h1>
             <button
               type="button"
               aria-label="Close"
               onClick={goBack}
-              style={{ color: 'var(--pf-grey-600)' }}
-              className="p-2 hover:opacity-80"
+              style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
+              className="flex items-center justify-center hover:opacity-80 flex-shrink-0"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
-          <p style={{ color: 'var(--pf-grey-600)' }}>
+          <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
             Explore how different subject combinations shape your qualifications and future career options.
           </p>
         </div>
       </div>
 
       {/* Stage Selector */}
-      <div className="pf-container" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
+      <div className="pf-container pt-6 sm:pt-8 pb-12 sm:pb-16">
         <div className="pf-card mb-6">
-          <h2 style={{ marginBottom: '16px' }}>
+          <h2 style={{ marginBottom: '16px', fontSize: 'clamp(1.125rem, 3vw, 1.5rem)' }}>
             Step 1 — What year are you going into?
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -293,7 +294,8 @@ export default function PathwaysPage() {
                   onClick={() => setYearGoingInto(btn.value)}
                   className="text-left transition-all"
                   style={{
-                    padding: '16px',
+                    padding: '14px',
+                    minHeight: '80px',
                     borderRadius: '8px',
                     backgroundColor: active ? 'var(--pf-teal-50)' : 'var(--pf-white)',
                     border: active ? '2px solid var(--pf-teal-700)' : '2px solid var(--pf-grey-300)',
@@ -304,7 +306,7 @@ export default function PathwaysPage() {
                     style={{
                       fontFamily: "'Space Grotesk', sans-serif",
                       fontWeight: 700,
-                      fontSize: '1.5rem',
+                      fontSize: '1.375rem',
                       color: active ? 'var(--pf-teal-700)' : 'var(--pf-grey-900)',
                     }}
                   >
@@ -352,6 +354,66 @@ export default function PathwaysPage() {
         {/* Main planning UI */}
         {yearGoingInto && !isLoading && pathway && (
           <div className="grid lg:grid-cols-3 gap-6">
+            {/* Mobile collapsible pathway preview — shows above picker below lg */}
+            <div className="lg:hidden order-first">
+              <button
+                type="button"
+                onClick={() => setMobilePreviewOpen((v) => !v)}
+                className="w-full flex items-center justify-between rounded-lg"
+                style={{
+                  padding: '16px 20px',
+                  minHeight: '56px',
+                  backgroundColor: 'var(--pf-teal-100)',
+                  border: '1px solid var(--pf-teal-100)',
+                  color: 'var(--pf-teal-900)',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.9375rem',
+                }}
+                aria-expanded={mobilePreviewOpen}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <svg
+                    className="w-5 h-5 flex-shrink-0"
+                    style={{ color: 'var(--pf-teal-700)' }}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  View your pathway preview
+                  {selectedSubjects.length > 0 && (
+                    <span
+                      className="pf-badge-teal ml-1"
+                      style={{ backgroundColor: 'var(--pf-white)' }}
+                    >
+                      {selectedSubjects.length}
+                    </span>
+                  )}
+                </span>
+                <svg
+                  className={`w-5 h-5 transition-transform ${mobilePreviewOpen ? 'rotate-180' : ''}`}
+                  style={{ color: 'var(--pf-teal-700)' }}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {mobilePreviewOpen && (
+                <div className="mt-4">
+                  <PathwayPreview
+                    selectedSubjects={selectedSubjects}
+                    totalRequired={totalRequired}
+                    totalSectors={careerSectors?.length ?? 0}
+                  />
+                </div>
+              )}
+            </div>
+
             {/* Left: picker + rules */}
             <div className="lg:col-span-2 space-y-6">
               {/* Sticky progress bar */}
@@ -390,7 +452,7 @@ export default function PathwaysPage() {
 
                 <div className="relative">
                   <svg
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
                     style={{ color: 'var(--pf-grey-600)' }}
                     fill="none"
                     stroke="currentColor"
@@ -403,16 +465,16 @@ export default function PathwaysPage() {
                     value={subjectSearch}
                     onChange={(e) => setSubjectSearch(e.target.value)}
                     placeholder="Search for a subject..."
-                    className="pf-input"
-                    style={{ paddingLeft: '36px', paddingRight: '36px', fontSize: '0.875rem' }}
+                    className="pf-input w-full"
+                    style={{ paddingLeft: '36px', paddingRight: '44px' }}
                   />
                   {subjectSearch && (
                     <button
                       type="button"
                       aria-label="Clear search"
                       onClick={() => setSubjectSearch('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2"
-                      style={{ color: 'var(--pf-grey-600)' }}
+                      className="absolute right-1 top-1/2 -translate-y-1/2 inline-flex items-center justify-center"
+                      style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -579,8 +641,8 @@ export default function PathwaysPage() {
               />
             </div>
 
-            {/* Right: pathway preview */}
-            <div className="lg:col-span-1">
+            {/* Right: pathway preview — desktop only (mobile version is collapsible above) */}
+            <div className="hidden lg:block lg:col-span-1">
               <div className="lg:sticky lg:top-4">
                 <PathwayPreview
                   selectedSubjects={selectedSubjects}
@@ -849,11 +911,12 @@ function SubjectRow({
         disabled={disabled}
         aria-pressed={selected}
         title={compulsory ? `${subject.name} is compulsory and included automatically.` : undefined}
-        className={`w-full text-left flex items-start gap-3 ${
+        className={`w-full text-left flex items-center gap-3 ${
           disabled ? 'cursor-not-allowed' : compulsory ? 'cursor-help' : 'cursor-pointer'
         }`}
         style={{
-          padding: '12px 20px',
+          padding: '14px 20px',
+          minHeight: '56px',
           opacity: disabled ? 0.5 : 1,
         }}
       >
@@ -951,7 +1014,7 @@ function AcademyPicker({
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid sm:grid-cols-2 gap-4">
         {academies.map((academy) => {
           const rank = rankOf(academy.id)
           const ranked = isRanked(academy.id)

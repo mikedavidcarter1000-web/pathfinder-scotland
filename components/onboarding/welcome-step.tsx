@@ -86,7 +86,7 @@ export function WelcomeStep({ onStart }: WelcomeStepProps) {
             />
           </svg>
         </div>
-        <h1 style={{ fontSize: '1.75rem' }}>Let&apos;s set up your Pathfinder profile</h1>
+        <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 1.75rem)' }}>Let&apos;s set up your Pathfinder profile</h1>
         <p
           style={{
             color: 'var(--pf-grey-600)',
@@ -178,7 +178,8 @@ export function WelcomeStep({ onStart }: WelcomeStepProps) {
       <button
         type="button"
         onClick={onStart}
-        className="w-full pf-btn pf-btn-primary"
+        className="w-full pf-btn pf-btn-primary justify-center"
+        style={{ minHeight: '48px' }}
       >
         Let&apos;s go
       </button>

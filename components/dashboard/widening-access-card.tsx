@@ -61,9 +61,8 @@ export function WideningAccessCard() {
 
   return (
     <section
-      className="rounded-lg"
+      className="rounded-lg p-5 sm:p-6"
       style={{
-        padding: '24px',
         backgroundColor: 'var(--pf-white)',
         border: '1px solid rgba(245, 158, 11, 0.35)',
         borderLeft: '4px solid var(--pf-amber-500)',
@@ -71,12 +70,12 @@ export function WideningAccessCard() {
       }}
       aria-labelledby="wa-card-title"
     >
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3 sm:gap-4">
         <div
           className="flex-shrink-0 rounded-full flex items-center justify-center"
           style={{
-            width: '48px',
-            height: '48px',
+            width: '44px',
+            height: '44px',
             backgroundColor: 'rgba(245, 158, 11, 0.12)',
             color: 'var(--pf-amber-500)',
           }}
@@ -92,7 +91,7 @@ export function WideningAccessCard() {
             style={{
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 600,
-              fontSize: '1.25rem',
+              fontSize: 'clamp(1.0625rem, 3vw, 1.25rem)',
               color: 'var(--pf-grey-900)',
               margin: 0,
               marginBottom: '6px',

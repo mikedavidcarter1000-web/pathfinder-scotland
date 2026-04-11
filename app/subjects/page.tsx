@@ -86,11 +86,11 @@ function SubjectsPageContent() {
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)', borderBottom: '1px solid var(--pf-grey-100)' }}>
-        <div className="pf-container" style={{ paddingTop: '40px', paddingBottom: '32px' }}>
-          <div className="flex items-start justify-between gap-4 mb-6">
-            <div>
-              <h1 style={{ marginBottom: '8px' }}>Explore Subjects</h1>
-              <p style={{ color: 'var(--pf-grey-600)', fontSize: '1rem' }}>
+        <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
+          <div className="flex items-start justify-between gap-3 mb-5 sm:mb-6">
+            <div className="flex-1 min-w-0">
+              <h1 style={{ marginBottom: '8px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Explore Subjects</h1>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
                 Browse every subject available across Scottish schools — from National 4 to Advanced Higher.
               </p>
             </div>
@@ -98,8 +98,8 @@ function SubjectsPageContent() {
               type="button"
               aria-label="Close"
               onClick={goBack}
-              style={{ color: 'var(--pf-grey-600)' }}
-              className="p-2 hover:opacity-80"
+              style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
+              className="flex items-center justify-center hover:opacity-80 flex-shrink-0"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -142,9 +142,9 @@ function SubjectsPageContent() {
           )}
 
           {/* Search */}
-          <div className="mb-4 relative">
+          <div className="mb-3 relative">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 pointer-events-none"
               style={{ color: 'var(--pf-grey-600)' }}
               fill="none"
               stroke="currentColor"
@@ -156,19 +156,19 @@ function SubjectsPageContent() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search subjects by name, description or skill..."
-              className="pf-input"
+              placeholder="Search subjects..."
+              className="pf-input w-full"
               style={{ paddingLeft: '44px' }}
             />
           </div>
 
-          {/* Filters row */}
-          <div className="flex flex-wrap items-center gap-3 mb-4">
+          {/* Filters row — stacked on mobile, inline on sm+ */}
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 mb-3">
             <select
               value={areaId}
               onChange={(e) => setAreaId(e.target.value)}
-              className="pf-input"
-              style={{ width: 'auto', paddingRight: '32px' }}
+              className="pf-input w-full sm:w-auto"
+              style={{ paddingRight: '32px' }}
             >
               <option value="">All Curricular Areas</option>
               {areas?.map((area) => (
@@ -179,13 +179,13 @@ function SubjectsPageContent() {
             </select>
 
             {hasFilters && (
-              <button onClick={clearFilters} className="pf-btn-ghost pf-btn-sm">
+              <button onClick={clearFilters} className="pf-btn-ghost pf-btn-sm w-full sm:w-auto justify-center">
                 Clear filters
               </button>
             )}
           </div>
 
-          {/* Level toggle buttons */}
+          {/* Level toggle buttons — wraps to multiple rows on mobile */}
           <div className="flex flex-wrap gap-2">
             {LEVEL_BUTTONS.map((btn) => {
               const active = level === btn.value
@@ -193,9 +193,10 @@ function SubjectsPageContent() {
                 <button
                   key={btn.value}
                   onClick={() => setLevel(btn.value)}
-                  className="transition-colors"
+                  className="transition-colors inline-flex items-center justify-center"
                   style={{
-                    padding: '6px 16px',
+                    padding: '10px 16px',
+                    minHeight: '44px',
                     borderRadius: '9999px',
                     fontSize: '0.875rem',
                     fontFamily: "'Space Grotesk', sans-serif",
@@ -242,7 +243,7 @@ function SubjectsPageContent() {
         {/* Loading */}
         {isLoading && (
           <>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[...Array(9)].map((_, i) => (
                 <div key={i} className="pf-card" style={{ padding: 0, overflow: 'hidden' }}>
                   <Skeleton width="100%" height={4} rounded="sm" />
@@ -277,7 +278,7 @@ function SubjectsPageContent() {
 
         {/* Subject grid */}
         {!isLoading && !error && filteredSubjects.length > 0 && (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredSubjects.map((subject) => (
               <SubjectCard
                 key={subject.id}
@@ -379,8 +380,9 @@ function SubjectCard({
 
           <div className="mt-auto">
             <span
-              className="block w-full text-center"
+              className="flex w-full items-center justify-center"
               style={{
+                minHeight: '44px',
                 padding: '10px',
                 fontSize: '0.875rem',
                 fontFamily: "'Space Grotesk', sans-serif",

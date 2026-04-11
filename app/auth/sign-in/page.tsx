@@ -72,9 +72,8 @@ export default function SignInPage() {
 
         {/* Card */}
         <div
-          className="pf-card-flat"
+          className="pf-card-flat p-6 sm:p-8"
           style={{
-            padding: '32px',
             boxShadow: '0 10px 30px rgba(12, 74, 66, 0.08)',
           }}
         >
@@ -153,8 +152,8 @@ export default function SignInPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                  style={{ color: 'var(--pf-grey-600)' }}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 inline-flex items-center justify-center"
+                  style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (

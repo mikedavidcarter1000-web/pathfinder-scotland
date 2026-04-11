@@ -65,7 +65,8 @@ export function SocialLoginButtons({ redirectTo }: SocialLoginButtonsProps) {
           disabled={oauthSignIn.isPending}
           className="w-full flex items-center justify-center gap-3 transition-colors disabled:opacity-50"
           style={{
-            padding: '10px 16px',
+            minHeight: '48px',
+            padding: '12px 16px',
             borderRadius: '8px',
             border: '1px solid var(--pf-grey-300)',
             backgroundColor: 'var(--pf-white)',

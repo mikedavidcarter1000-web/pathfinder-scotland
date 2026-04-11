@@ -234,18 +234,18 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className={`h-1 bg-gradient-to-r ${areaColour.bar}`} />
-        <div className="pf-container" style={{ paddingTop: '32px', paddingBottom: '32px' }}>
-          <nav className="flex items-center gap-2 mb-4" style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+        <div className="pf-container pt-6 pb-6 sm:pt-8 sm:pb-8">
+          <nav className="flex items-center gap-2 mb-3 sm:mb-4" style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}>
             <Link href="/subjects" style={{ color: 'var(--pf-teal-500)' }}>
               Subjects
             </Link>
             <span>/</span>
-            <span style={{ color: 'var(--pf-grey-900)' }}>{subject.name}</span>
+            <span className="truncate" style={{ color: 'var(--pf-grey-900)' }}>{subject.name}</span>
           </nav>
 
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 style={{ marginBottom: '12px' }}>{subject.name}</h1>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <h1 style={{ marginBottom: '12px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>{subject.name}</h1>
               {area && (
                 <span className={`pf-area-badge ${areaColour.bg} ${areaColour.text}`}>
                   {area.name}
@@ -254,8 +254,8 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
             </div>
             <Link
               href="/subjects"
-              style={{ color: 'var(--pf-grey-600)' }}
-              className="p-2 hover:opacity-80"
+              style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
+              className="flex items-center justify-center hover:opacity-80 flex-shrink-0"
               aria-label="Back to subjects"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -277,7 +277,7 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* Content -- two-column on desktop */}
-      <div className="pf-container" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
+      <div className="pf-container pt-6 sm:pt-8 pb-12 sm:pb-16">
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Left column: Overview + Progression */}
           <div className="space-y-6">

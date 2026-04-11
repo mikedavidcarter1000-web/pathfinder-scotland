@@ -147,7 +147,8 @@ export function BasicInfoStep({ data, onChange, onNext }: BasicInfoStepProps) {
         <button
           type="submit"
           disabled={!isValid}
-          className="w-full pf-btn pf-btn-primary"
+          className="w-full pf-btn pf-btn-primary justify-center"
+          style={{ minHeight: '48px' }}
         >
           Continue
         </button>

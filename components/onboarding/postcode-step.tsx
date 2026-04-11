@@ -109,7 +109,7 @@ export function PostcodeStep({ data, onChange, onNext, onBack }: PostcodeStepPro
         <label htmlFor="postcode" className="pf-label">
           Home postcode
         </label>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <input
             id="postcode"
             type="text"
@@ -125,7 +125,8 @@ export function PostcodeStep({ data, onChange, onNext, onBack }: PostcodeStepPro
             type="button"
             onClick={handleLookup}
             disabled={!data.postcode.trim() || simdLookup.isPending}
-            className="pf-btn pf-btn-secondary"
+            className="pf-btn pf-btn-secondary justify-center"
+            style={{ minHeight: '48px' }}
           >
             {simdLookup.isPending ? (
               <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
@@ -233,16 +234,20 @@ export function PostcodeStep({ data, onChange, onNext, onBack }: PostcodeStepPro
         </div>
       )}
 
-      <div className="flex gap-3 pt-2">
+      <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
         <button
           type="button"
           onClick={onBack}
-          className="pf-btn pf-btn-secondary"
-          style={{ flex: 1 }}
+          className="pf-btn pf-btn-secondary justify-center"
+          style={{ flex: 1, minHeight: '48px' }}
         >
           ← Back
         </button>
-        <button type="submit" className="pf-btn pf-btn-primary" style={{ flex: 1 }}>
+        <button
+          type="submit"
+          className="pf-btn pf-btn-primary justify-center"
+          style={{ flex: 1, minHeight: '48px' }}
+        >
           Continue
         </button>
       </div>

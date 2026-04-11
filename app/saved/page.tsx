@@ -109,11 +109,16 @@ export default function SavedCoursesPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-6 flex items-start justify-between gap-4">
+    <div className="pf-container pt-8 sm:pt-10 pb-12 sm:pb-16">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Saved Courses</h1>
-          <p className="text-gray-600 mt-1">
+          <h1
+            className="font-bold"
+            style={{ color: 'var(--pf-grey-900)', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}
+          >
+            Saved Courses
+          </h1>
+          <p style={{ color: 'var(--pf-grey-600)', marginTop: '4px', fontSize: '0.9375rem' }}>
             {items.length > 0
               ? `You have ${items.length} course${items.length === 1 ? '' : 's'} saved (UCAS allows up to 5 choices).`
               : 'Save courses as you browse to build your shortlist.'}
@@ -121,7 +126,7 @@ export default function SavedCoursesPage() {
         </div>
         <Link
           href="/courses"
-          className="shrink-0 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+          className="pf-btn-secondary pf-btn-sm self-start sm:shrink-0 justify-center"
         >
           Browse courses
         </Link>
@@ -129,7 +134,7 @@ export default function SavedCoursesPage() {
 
       {isLoading && (
         <>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
               <CourseCardSkeleton key={i} />
             ))}
@@ -158,7 +163,7 @@ export default function SavedCoursesPage() {
       )}
 
       {!isLoading && !error && items.length > 0 && (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((sc) => {
             const course = sc.course!
             return (

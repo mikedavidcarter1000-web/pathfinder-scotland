@@ -96,7 +96,7 @@ export default function ResetPasswordPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
           {success ? (
             <div className="text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -110,7 +110,8 @@ export default function ResetPasswordPage() {
               </p>
               <button
                 onClick={() => router.push('/auth/sign-in')}
-                className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+                className="w-full px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+                style={{ minHeight: '48px' }}
               >
                 Sign in
               </button>
@@ -143,13 +144,16 @@ export default function ResetPasswordPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pr-10"
+                      className="w-full px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pr-12"
+                      style={{ minHeight: '48px', fontSize: '16px' }}
                       placeholder="Create a strong password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 inline-flex items-center justify-center"
+                      style={{ minWidth: '44px', minHeight: '44px' }}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
                       {showPassword ? (
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,11 +198,12 @@ export default function ResetPasswordPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+                    className={`w-full px-4 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                       confirmPassword && confirmPassword !== password
                         ? 'border-red-300 bg-red-50'
                         : 'border-gray-300'
                     }`}
+                    style={{ minHeight: '48px', fontSize: '16px' }}
                     placeholder="Confirm your password"
                   />
                   {confirmPassword && confirmPassword !== password && (

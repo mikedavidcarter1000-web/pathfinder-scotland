@@ -183,8 +183,9 @@ export function SavedCoursesSection() {
                 <button
                   onClick={() => handleRemove(course.id)}
                   disabled={removeCourse.isPending}
-                  className="flex-shrink-0 p-1.5 rounded transition-all opacity-0 group-hover:opacity-100"
-                  style={{ color: 'var(--pf-grey-600)' }}
+                  className="flex-shrink-0 rounded transition-colors inline-flex items-center justify-center lg:opacity-0 lg:group-hover:opacity-100"
+                  style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
+                  aria-label={`Remove ${course.name}`}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = 'var(--pf-red-500)'
                     e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.08)'

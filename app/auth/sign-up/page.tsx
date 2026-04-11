@@ -118,9 +118,8 @@ export default function SignUpPage() {
 
         {/* Card */}
         <div
-          className="pf-card-flat"
+          className="pf-card-flat p-6 sm:p-8"
           style={{
-            padding: '32px',
             boxShadow: '0 10px 30px rgba(12, 74, 66, 0.08)',
           }}
         >
@@ -183,8 +182,8 @@ export default function SignUpPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                  style={{ color: 'var(--pf-grey-600)' }}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 inline-flex items-center justify-center"
+                  style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
@@ -255,16 +254,16 @@ export default function SignUpPage() {
               )}
             </div>
 
-            <div className="flex items-start gap-2">
+            <div className="flex items-start gap-3">
               <input
                 id="terms"
                 type="checkbox"
                 checked={acceptTerms}
                 onChange={(e) => setAcceptTerms(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded"
+                className="mt-0.5 h-5 w-5 rounded flex-shrink-0"
                 style={{ accentColor: 'var(--pf-teal-700)' }}
               />
-              <label htmlFor="terms" style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+              <label htmlFor="terms" style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', lineHeight: 1.5 }}>
                 I agree to the{' '}
                 <Link href="/terms" style={{ color: 'var(--pf-teal-500)' }}>
                   Terms of Service

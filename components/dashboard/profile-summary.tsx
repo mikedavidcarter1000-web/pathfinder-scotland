@@ -118,10 +118,11 @@ export function ProfileSummary() {
             />
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
             <button
               onClick={() => setIsEditing(false)}
-              className="pf-btn-secondary flex-1"
+              className="pf-btn-secondary flex-1 justify-center"
+              style={{ minHeight: '48px' }}
               disabled={updateStudent.isPending}
             >
               Cancel
@@ -157,8 +158,8 @@ export function ProfileSummary() {
           type="button"
           aria-label="Edit profile"
           onClick={startEditing}
-          className="p-2 rounded-lg transition-colors"
-          style={{ color: 'var(--pf-grey-600)' }}
+          className="rounded-lg transition-colors inline-flex items-center justify-center flex-shrink-0"
+          style={{ color: 'var(--pf-grey-600)', minWidth: '44px', minHeight: '44px' }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = 'var(--pf-teal-50)'
             e.currentTarget.style.color = 'var(--pf-teal-700)'

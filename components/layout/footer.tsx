@@ -50,12 +50,12 @@ export function Footer() {
       }}
     >
       <div className="pf-container">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10 text-center sm:text-left">
           {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
+          <div className="sm:col-span-2 md:col-span-1">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 mb-4 no-underline hover:no-underline"
+              className="inline-flex items-center justify-center sm:justify-start gap-2 mb-4 no-underline hover:no-underline"
               style={{ color: '#fff' }}
             >
               <div
@@ -80,7 +80,7 @@ export function Footer() {
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem', marginBottom: '16px', lineHeight: 1.6 }}>
               Your trusted guide through Scottish secondary and higher education.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 justify-center sm:justify-start">
               <a
                 href="https://twitter.com/pathfinderscot"
                 target="_blank"
@@ -174,7 +174,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div
-          className="flex flex-col sm:flex-row justify-between items-center gap-4"
+          className="flex flex-col sm:flex-row justify-between items-center gap-3 text-center sm:text-left"
           style={{
             paddingTop: '24px',
             borderTop: '1px solid rgba(255,255,255,0.12)',

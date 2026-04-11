@@ -55,13 +55,13 @@ export default function DashboardPage() {
 
   if (authLoading || studentLoading) {
     return (
-      <div className="pf-container" style={{ paddingTop: '40px', paddingBottom: '64px' }}>
+      <div className="pf-container pt-8 sm:pt-10 pb-12 sm:pb-16">
         <div className="mb-8">
           <Skeleton width="260px" height={32} rounded="md" />
           <div style={{ height: '8px' }} />
           <Skeleton width="360px" height={18} rounded="sm" />
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[0, 1, 2, 3].map((i) => (
             <div key={i} className="pf-card">
               <Skeleton width="50%" height={14} rounded="sm" />
@@ -91,11 +91,16 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="pf-container" style={{ paddingTop: '40px', paddingBottom: '64px' }}>
+    <div className="pf-container pt-8 sm:pt-10 pb-12 sm:pb-16">
       {/* Header */}
-      <div className="mb-8">
-        <h1 style={{ marginBottom: '4px' }}>Welcome back, {student.first_name}</h1>
-        <p style={{ color: 'var(--pf-grey-600)' }}>
+      <div className="mb-6 sm:mb-8">
+        <h1
+          style={{ marginBottom: '4px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}
+          className="break-words"
+        >
+          Welcome back, {student.first_name}
+        </h1>
+        <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
           Track your progress and manage your university applications
         </p>
       </div>

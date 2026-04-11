@@ -206,10 +206,11 @@ export function GradesSection() {
             <button
               key={type.value}
               onClick={() => setActiveTab(type.value)}
-              className="flex-1 transition-colors"
+              className="flex-1 transition-colors inline-flex items-center justify-center gap-1.5"
               style={{
-                padding: '8px 12px',
-                fontSize: '0.875rem',
+                minHeight: '44px',
+                padding: '8px 10px',
+                fontSize: '0.8125rem',
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontWeight: 600,
                 borderRadius: '6px',
