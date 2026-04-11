@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useCareerSectors, type CareerSectorWithCount } from '@/hooks/use-subjects'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
+import { AiImpactBadge } from '@/components/ui/ai-impact-badge'
+import { AI_IMPACT_META, isAiImpactRating, type AiImpactRating } from '@/lib/constants'
 import { classifyError } from '@/lib/errors'
 
 type GrowthTone = 'growing' | 'stable' | 'variable'
@@ -25,22 +27,51 @@ const GROWTH_BADGE: Record<GrowthTone, { label: string; bg: string; text: string
   variable: { label: 'Variable', bg: 'var(--pf-grey-100)', text: 'var(--pf-grey-600)' },
 }
 
+type AiFilter = 'all' | AiImpactRating
+
+const AI_FILTER_ORDER: AiFilter[] = ['all', 'human-centric', 'ai-augmented', 'ai-exposed']
+
+const AI_RATING_SORT: Record<AiImpactRating, number> = {
+  'human-centric': 1,
+  'ai-augmented': 2,
+  'ai-exposed': 3,
+}
+
 export default function CareersIndexPage() {
   const { data: sectors, isLoading, error, refetch } = useCareerSectors()
   const [search, setSearch] = useState('')
+  const [aiFilter, setAiFilter] = useState<AiFilter>('all')
+  const [sortByAi, setSortByAi] = useState(false)
 
   const filtered = useMemo(() => {
     if (!sectors) return []
     const needle = search.trim().toLowerCase()
-    if (!needle) return sectors
-    return sectors.filter((s) => {
-      if (s.name.toLowerCase().includes(needle)) return true
-      if (s.description?.toLowerCase().includes(needle)) return true
-      const jobs = (s.example_jobs || []) as string[]
-      if (jobs.some((job) => job.toLowerCase().includes(needle))) return true
-      return false
-    })
-  }, [sectors, search])
+    const bySearch = !needle
+      ? sectors.slice()
+      : sectors.filter((s) => {
+          if (s.name.toLowerCase().includes(needle)) return true
+          if (s.description?.toLowerCase().includes(needle)) return true
+          const jobs = (s.example_jobs || []) as string[]
+          if (jobs.some((job) => job.toLowerCase().includes(needle))) return true
+          return false
+        })
+
+    const byAi =
+      aiFilter === 'all'
+        ? bySearch
+        : bySearch.filter((s) => s.ai_impact_rating === aiFilter)
+
+    if (sortByAi) {
+      return byAi.slice().sort((a, b) => {
+        const ra = isAiImpactRating(a.ai_impact_rating) ? AI_RATING_SORT[a.ai_impact_rating] : 99
+        const rb = isAiImpactRating(b.ai_impact_rating) ? AI_RATING_SORT[b.ai_impact_rating] : 99
+        if (ra !== rb) return ra - rb
+        return a.name.localeCompare(b.name)
+      })
+    }
+
+    return byAi
+  }, [sectors, search, aiFilter, sortByAi])
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
@@ -81,6 +112,84 @@ export default function CareersIndexPage() {
               className="pf-input w-full"
               style={{ paddingLeft: '44px' }}
             />
+          </div>
+
+          {/* AI impact filter + sort */}
+          <div
+            className="flex flex-wrap items-center"
+            style={{ marginTop: '16px', gap: '8px' }}
+            role="group"
+            aria-label="Filter by AI impact rating"
+          >
+            <span
+              style={{
+                fontSize: '0.8125rem',
+                color: 'var(--pf-grey-600)',
+                marginRight: '4px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+              }}
+            >
+              AI impact:
+            </span>
+            {AI_FILTER_ORDER.map((key) => {
+              const active = aiFilter === key
+              const isAll = key === 'all'
+              const meta = isAll ? null : AI_IMPACT_META[key]
+              const label = isAll ? 'All' : meta!.label
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setAiFilter(key)}
+                  aria-pressed={active}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '9999px',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    fontSize: '0.75rem',
+                    border: active
+                      ? '1px solid var(--pf-blue-700)'
+                      : '1px solid var(--pf-grey-300)',
+                    backgroundColor: active
+                      ? isAll
+                        ? 'var(--pf-blue-700)'
+                        : meta!.bg
+                      : 'var(--pf-white)',
+                    color: active
+                      ? isAll
+                        ? 'var(--pf-white)'
+                        : meta!.text
+                      : 'var(--pf-grey-600)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {label}
+                </button>
+              )
+            })}
+            <button
+              type="button"
+              onClick={() => setSortByAi((v) => !v)}
+              aria-pressed={sortByAi}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '9999px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.75rem',
+                border: sortByAi
+                  ? '1px solid var(--pf-blue-700)'
+                  : '1px solid var(--pf-grey-300)',
+                backgroundColor: sortByAi ? 'var(--pf-blue-100)' : 'var(--pf-white)',
+                color: sortByAi ? 'var(--pf-blue-700)' : 'var(--pf-grey-600)',
+                cursor: 'pointer',
+                marginLeft: '8px',
+              }}
+            >
+              {sortByAi ? 'Sorted by AI impact' : 'Sort by AI impact'}
+            </button>
           </div>
         </div>
       </div>
@@ -201,6 +310,14 @@ function SectorCard({ sector }: { sector: CareerSectorWithCount }) {
         >
           {growth.label}
         </span>
+        {isAiImpactRating(sector.ai_impact_rating) && (
+          <AiImpactBadge
+            rating={sector.ai_impact_rating}
+            size="sm"
+            showIcon={false}
+            labelOverride={AI_IMPACT_META[sector.ai_impact_rating].label}
+          />
+        )}
       </div>
 
       {sector.salary_range_entry && (

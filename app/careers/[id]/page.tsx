@@ -7,11 +7,20 @@ import {
   type CareerSubjectRow,
   type CareerSectorPageCourse,
 } from '@/hooks/use-subjects'
-import { getCurricularAreaColour, RELEVANCE_STYLES, DEGREE_TYPES } from '@/lib/constants'
+import {
+  getCurricularAreaColour,
+  RELEVANCE_STYLES,
+  DEGREE_TYPES,
+  AI_IMPACT_META,
+  AI_IMPACT_DEFAULT_SOURCE,
+  isAiImpactRating,
+} from '@/lib/constants'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
+import { AiImpactBadge } from '@/components/ui/ai-impact-badge'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
+import type { CareerSector } from '@/hooks/use-subjects'
 
 type GrowthTone = 'growing' | 'stable' | 'variable'
 
@@ -544,7 +553,10 @@ export default function CareerSectorDetailPage({
         {/* Section 4b — Alternative routes into this career */}
         <AlternativeRoutes />
 
-        {/* Section 4c — Explore Further (external links) */}
+        {/* Section 4c — AI & the Future */}
+        <AiFutureSection sector={sector} />
+
+        {/* Section 4d — Explore Further (external links) */}
         <ExploreFurther sector={sector} />
 
         {/* Section 5 — CTAs */}
@@ -856,6 +868,128 @@ function AlternativeRoutes() {
             </span>
           </Link>
         ))}
+      </div>
+    </section>
+  )
+}
+
+function AiFutureSection({ sector }: { sector: CareerSector }) {
+  const rating = isAiImpactRating(sector.ai_impact_rating) ? sector.ai_impact_rating : null
+  if (!rating) return null
+
+  const meta = AI_IMPACT_META[rating]
+  const source = sector.ai_impact_source ?? AI_IMPACT_DEFAULT_SOURCE
+
+  return (
+    <section aria-labelledby="ai-future-heading">
+      <h2 id="ai-future-heading" style={{ marginBottom: '6px' }}>
+        AI &amp; the future of this career
+      </h2>
+      <p
+        style={{
+          color: 'var(--pf-grey-600)',
+          fontSize: '0.9375rem',
+          marginBottom: '20px',
+          maxWidth: '760px',
+        }}
+      >
+        How artificial intelligence is likely to reshape this sector over the next decade, based
+        on published research.
+      </p>
+
+      <div className="pf-card" style={{ padding: '24px' }}>
+        <div style={{ marginBottom: '16px' }}>
+          <AiImpactBadge rating={rating} size="lg" />
+        </div>
+
+        {sector.ai_impact_description && (
+          <p
+            style={{
+              color: 'var(--pf-grey-900)',
+              fontSize: '0.9375rem',
+              lineHeight: 1.6,
+              marginBottom: '20px',
+              maxWidth: '720px',
+            }}
+          >
+            {sector.ai_impact_description}
+          </p>
+        )}
+
+        <div
+          style={{
+            padding: '16px 18px',
+            borderRadius: '8px',
+            backgroundColor: 'var(--pf-blue-100)',
+            color: 'var(--pf-blue-900)',
+            marginBottom: '20px',
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              fontSize: '0.875rem',
+              marginBottom: '4px',
+              color: 'var(--pf-blue-900)',
+            }}
+          >
+            Our advice
+          </p>
+          <p
+            style={{
+              fontSize: '0.875rem',
+              lineHeight: 1.6,
+              color: 'var(--pf-blue-900)',
+            }}
+          >
+            The best strategy is to develop adaptable skills alongside specialist knowledge.
+            Learning to work with AI tools is an advantage in every career.
+          </p>
+        </div>
+
+        <Link
+          href="/blog/ai-changing-careers"
+          style={{
+            color: 'var(--pf-blue-700)',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+            fontSize: '0.875rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+          }}
+        >
+          Read more: How AI is changing careers
+          <svg
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
+
+        <p
+          style={{
+            fontSize: '0.75rem',
+            color: 'var(--pf-grey-600)',
+            marginTop: '20px',
+            lineHeight: 1.5,
+          }}
+        >
+          {source}
+        </p>
+        <p
+          className="sr-only"
+          aria-live="polite"
+        >
+          AI impact rating for {sector.name}: {meta.label}. {meta.summary}.
+        </p>
       </div>
     </section>
   )

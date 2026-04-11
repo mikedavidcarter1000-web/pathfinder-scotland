@@ -461,6 +461,54 @@ export const RELEVANCE_STYLES: Record<string, { bg: string; text: string; border
   related:     { bg: 'bg-blue-50',    text: 'text-blue-700',   border: 'border-blue-200',   label: 'Related' },
 }
 
+// AI impact ratings — sourced from Anthropic (2024), OpenAI/UPenn (2023), McKinsey (2023).
+// The three levels describe exposure to AI-driven change, not desirability.
+export type AiImpactRating = 'human-centric' | 'ai-augmented' | 'ai-exposed'
+
+export const AI_IMPACT_META: Record<
+  AiImpactRating,
+  {
+    label: string
+    shortLabel: string
+    summary: string
+    bg: string
+    text: string
+    dot: string
+  }
+> = {
+  'human-centric': {
+    label: 'Human-centric',
+    shortLabel: 'Human-centric',
+    summary: 'Low AI disruption risk',
+    bg: 'rgba(16, 185, 129, 0.12)',
+    text: 'var(--pf-green-500)',
+    dot: 'var(--pf-green-500)',
+  },
+  'ai-augmented': {
+    label: 'AI-augmented',
+    shortLabel: 'AI-augmented',
+    summary: 'AI will change how this work is done',
+    bg: 'rgba(245, 158, 11, 0.14)',
+    text: 'var(--pf-amber-500)',
+    dot: 'var(--pf-amber-500)',
+  },
+  'ai-exposed': {
+    label: 'AI-exposed',
+    shortLabel: 'AI-exposed',
+    summary: 'Significant AI-driven change expected',
+    bg: 'rgba(239, 68, 68, 0.12)',
+    text: 'var(--pf-red-500)',
+    dot: 'var(--pf-red-500)',
+  },
+}
+
+export const AI_IMPACT_DEFAULT_SOURCE =
+  'Based on research by Anthropic (2024), OpenAI/University of Pennsylvania (2023), and McKinsey Global Institute (2023). Last updated April 2026.'
+
+export function isAiImpactRating(value: string | null | undefined): value is AiImpactRating {
+  return value === 'human-centric' || value === 'ai-augmented' || value === 'ai-exposed'
+}
+
 // URLs
 export const EXTERNAL_URLS = {
   ucas: 'https://www.ucas.com',

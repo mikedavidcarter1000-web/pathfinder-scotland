@@ -55,6 +55,9 @@ export type Database = {
       }
       career_sectors: {
         Row: {
+          ai_impact_description: string | null
+          ai_impact_rating: string | null
+          ai_impact_source: string | null
           course_subject_areas: string[] | null
           description: string | null
           display_order: number | null
@@ -67,6 +70,9 @@ export type Database = {
           salary_range_experienced: string | null
         }
         Insert: {
+          ai_impact_description?: string | null
+          ai_impact_rating?: string | null
+          ai_impact_source?: string | null
           course_subject_areas?: string[] | null
           description?: string | null
           display_order?: number | null
@@ -79,6 +85,9 @@ export type Database = {
           salary_range_experienced?: string | null
         }
         Update: {
+          ai_impact_description?: string | null
+          ai_impact_rating?: string | null
+          ai_impact_source?: string | null
           course_subject_areas?: string[] | null
           description?: string | null
           display_order?: number | null

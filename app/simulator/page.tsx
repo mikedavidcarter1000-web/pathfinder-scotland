@@ -26,6 +26,8 @@ import { useSaveSubjectChoices, type ChoiceTransition } from '@/hooks/use-subjec
 import { useToast } from '@/components/ui/toast'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ParentNotice } from '@/components/ui/parent-notice'
+import { AiImpactDot } from '@/components/ui/ai-impact-badge'
+import { AI_IMPACT_META, isAiImpactRating } from '@/lib/constants'
 import type { SubjectWithArea } from '@/hooks/use-subjects'
 
 const STAGES: SimulatorStage[] = ['s3', 's4', 's5', 's6']
@@ -1177,11 +1179,43 @@ function ImpactPanel({
               />
             </div>
             <div
+              className="flex flex-wrap items-center"
+              style={{
+                gap: '12px',
+                marginBottom: '10px',
+                fontSize: '0.6875rem',
+                color: 'var(--pf-grey-600)',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 500,
+              }}
+              aria-label="AI impact legend"
+            >
+              <span style={{ color: 'var(--pf-grey-900)' }}>AI impact:</span>
+              <span className="inline-flex items-center" style={{ gap: '4px' }}>
+                <AiImpactDot rating="human-centric" size={8} title="" />
+                Human-centric
+              </span>
+              <span className="inline-flex items-center" style={{ gap: '4px' }}>
+                <AiImpactDot rating="ai-augmented" size={8} title="" />
+                AI-augmented
+              </span>
+              <span className="inline-flex items-center" style={{ gap: '4px' }}>
+                <AiImpactDot rating="ai-exposed" size={8} title="" />
+                AI-exposed
+              </span>
+            </div>
+            <div
               className="grid gap-2"
               style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))' }}
             >
               {data.careerSectors.map((sector) => {
                 const covered = impact.coveredSectorIds.has(sector.id)
+                const aiRating = isAiImpactRating(sector.ai_impact_rating)
+                  ? sector.ai_impact_rating
+                  : null
+                const aiTitle = aiRating
+                  ? `AI impact: ${AI_IMPACT_META[aiRating].label} — ${AI_IMPACT_META[aiRating].summary}`
+                  : undefined
                 return (
                   <Link
                     key={sector.id}
@@ -1217,6 +1251,7 @@ function ImpactPanel({
                       <span style={{ width: '12px' }} />
                     )}
                     <span style={{ flex: 1 }}>{sector.name}</span>
+                    {aiRating && <AiImpactDot rating={aiRating} size={8} title={aiTitle} />}
                   </Link>
                 )
               })}
