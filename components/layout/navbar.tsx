@@ -24,6 +24,7 @@ export function Navbar() {
   const navigation = [
     { name: 'Discover', href: '/discover', auth: false },
     { name: 'Dashboard', href: '/dashboard', auth: true },
+    { name: 'Careers', href: '/careers', auth: false },
     { name: 'Subjects', href: '/subjects', auth: false },
     { name: 'Plan Choices', href: '/pathways', auth: false },
     { name: 'Simulator', href: '/simulator', auth: false },

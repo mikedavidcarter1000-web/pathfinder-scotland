@@ -695,7 +695,7 @@ function CareerGroup({
           return (
             <Link
               key={link.career_sector.id}
-              href={`/subjects?career_sector=${link.career_sector.id}`}
+              href={`/careers/${link.career_sector.id}`}
               className="inline-flex items-center transition-colors no-underline hover:no-underline"
               style={{
                 padding: '6px 14px',

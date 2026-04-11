@@ -1,0 +1,261 @@
+'use client'
+
+import { useMemo, useState } from 'react'
+import Link from 'next/link'
+import { useCareerSectors, type CareerSectorWithCount } from '@/hooks/use-subjects'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { ErrorState } from '@/components/ui/error-state'
+import { classifyError } from '@/lib/errors'
+
+type GrowthTone = 'growing' | 'stable' | 'variable'
+
+function classifyGrowth(outlook: string | null | undefined): GrowthTone {
+  if (!outlook) return 'stable'
+  const lower = outlook.toLowerCase()
+  if (lower.startsWith('strong growth') || lower.startsWith('growing') || lower.startsWith('fastest') || lower.startsWith('strong —') || lower.startsWith('recovering and growing')) {
+    return 'growing'
+  }
+  if (lower.startsWith('changing')) return 'variable'
+  return 'stable'
+}
+
+const GROWTH_BADGE: Record<GrowthTone, { label: string; bg: string; text: string }> = {
+  growing: { label: 'Growing', bg: 'rgba(16, 185, 129, 0.12)', text: 'var(--pf-green-500)' },
+  stable: { label: 'Stable', bg: 'rgba(245, 158, 11, 0.14)', text: 'var(--pf-amber-500)' },
+  variable: { label: 'Variable', bg: 'var(--pf-grey-100)', text: 'var(--pf-grey-600)' },
+}
+
+export default function CareersIndexPage() {
+  const { data: sectors, isLoading, error, refetch } = useCareerSectors()
+  const [search, setSearch] = useState('')
+
+  const filtered = useMemo(() => {
+    if (!sectors) return []
+    const needle = search.trim().toLowerCase()
+    if (!needle) return sectors
+    return sectors.filter((s) => {
+      if (s.name.toLowerCase().includes(needle)) return true
+      if (s.description?.toLowerCase().includes(needle)) return true
+      const jobs = (s.example_jobs || []) as string[]
+      if (jobs.some((job) => job.toLowerCase().includes(needle))) return true
+      return false
+    })
+  }, [sectors, search])
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
+      {/* Header */}
+      <div style={{ backgroundColor: 'var(--pf-white)' }}>
+        <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
+          <div className="mb-5 sm:mb-6">
+            <h1 style={{ marginBottom: '4px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>
+              Explore Career Sectors
+            </h1>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', maxWidth: '760px' }}>
+              Discover 16 career areas and see which subjects, qualifications, and university
+              courses lead there.
+            </p>
+          </div>
+
+          {/* Search */}
+          <label htmlFor="careers-search" className="sr-only">
+            Search career sectors
+          </label>
+          <div className="relative" style={{ maxWidth: '520px' }}>
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 pointer-events-none"
+              style={{ color: 'var(--pf-grey-600)' }}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              id="careers-search"
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by sector or job title (e.g. nurse, architect, engineer)"
+              className="pf-input w-full"
+              style={{ paddingLeft: '44px' }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="pf-container" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
+        {isLoading && <SectorGridSkeleton />}
+
+        {!isLoading && error && (
+          <ErrorState
+            title={classifyError(error).title}
+            message="Couldn't load career sectors. Please try again."
+            retryAction={() => refetch()}
+          />
+        )}
+
+        {!isLoading && !error && filtered.length === 0 && (
+          <div className="pf-card text-center" style={{ padding: '40px 24px' }}>
+            <p style={{ color: 'var(--pf-grey-600)', marginBottom: '12px' }}>
+              No career sectors match &quot;{search}&quot;.
+            </p>
+            <button onClick={() => setSearch('')} className="pf-btn-ghost pf-btn-sm">
+              Clear search
+            </button>
+          </div>
+        )}
+
+        {!isLoading && !error && filtered.length > 0 && (
+          <>
+            <div
+              className="flex items-baseline justify-between"
+              style={{ marginBottom: '16px' }}
+            >
+              <h2 style={{ fontSize: '1.125rem' }}>
+                {search.trim() ? 'Matching sectors' : 'All sectors'}
+              </h2>
+              <span style={{ color: 'var(--pf-grey-600)', fontSize: '0.875rem' }}>
+                {filtered.length} {filtered.length === 1 ? 'area' : 'areas'}
+              </span>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((sector) => (
+                <SectorCard key={sector.id} sector={sector} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function SectorCard({ sector }: { sector: CareerSectorWithCount }) {
+  const tone = classifyGrowth(sector.growth_outlook)
+  const growth = GROWTH_BADGE[tone]
+
+  return (
+    <Link
+      href={`/careers/${sector.id}`}
+      className="pf-card-hover no-underline hover:no-underline flex flex-col h-full"
+      style={{ padding: '24px' }}
+      aria-label={`View ${sector.name}`}
+    >
+      <div
+        className="flex items-center justify-center"
+        style={{
+          width: '48px',
+          height: '48px',
+          borderRadius: '10px',
+          backgroundColor: 'var(--pf-blue-100)',
+          color: 'var(--pf-blue-700)',
+          marginBottom: '16px',
+        }}
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+      </div>
+
+      <h3
+        style={{
+          fontSize: '1.0625rem',
+          marginBottom: '8px',
+          color: 'var(--pf-grey-900)',
+        }}
+      >
+        {sector.name}
+      </h3>
+
+      {sector.description && (
+        <p
+          className="line-clamp-2"
+          style={{
+            color: 'var(--pf-grey-600)',
+            fontSize: '0.875rem',
+            lineHeight: 1.5,
+            marginBottom: '16px',
+          }}
+        >
+          {sector.description}
+        </p>
+      )}
+
+      <div className="flex flex-wrap items-center gap-2" style={{ marginBottom: '12px' }}>
+        <span className="pf-badge-blue">
+          {sector.subject_count} {sector.subject_count === 1 ? 'subject' : 'subjects'}
+        </span>
+        <span
+          className="inline-flex items-center"
+          style={{
+            padding: '4px 12px',
+            borderRadius: '9999px',
+            fontSize: '0.75rem',
+            fontWeight: 600,
+            backgroundColor: growth.bg,
+            color: growth.text,
+          }}
+        >
+          {growth.label}
+        </span>
+      </div>
+
+      {sector.salary_range_entry && (
+        <p
+          style={{
+            fontSize: '0.8125rem',
+            color: 'var(--pf-grey-600)',
+            marginBottom: '12px',
+          }}
+        >
+          Entry level{' '}
+          <span style={{ color: 'var(--pf-grey-900)', fontWeight: 500 }}>
+            {sector.salary_range_entry}
+          </span>
+        </p>
+      )}
+
+      <div className="mt-auto">
+        <span
+          style={{
+            color: 'var(--pf-blue-700)',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+            fontSize: '0.875rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+          }}
+        >
+          Explore
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </span>
+      </div>
+    </Link>
+  )
+}
+
+function SectorGridSkeleton() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {[...Array(6)].map((_, i) => (
+        <div key={i} className="pf-card">
+          <Skeleton width="48px" height={48} rounded="md" />
+          <div style={{ height: '16px' }} />
+          <Skeleton width="70%" height={18} rounded="sm" />
+          <div style={{ height: '12px' }} />
+          <Skeleton width="100%" height={12} rounded="sm" />
+          <div style={{ height: '4px' }} />
+          <Skeleton width="85%" height={12} rounded="sm" />
+          <div style={{ height: '16px' }} />
+          <Skeleton width="40%" height={22} rounded="full" />
+        </div>
+      ))}
+    </div>
+  )
+}

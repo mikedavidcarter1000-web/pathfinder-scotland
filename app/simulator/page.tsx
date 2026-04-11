@@ -1169,8 +1169,10 @@ function ImpactPanel({
               {data.careerSectors.map((sector) => {
                 const covered = impact.coveredSectorIds.has(sector.id)
                 return (
-                  <div
+                  <Link
                     key={sector.id}
+                    href={`/careers/${sector.id}`}
+                    className="no-underline hover:no-underline"
                     style={{
                       padding: '8px 12px',
                       borderRadius: '6px',
@@ -1201,7 +1203,7 @@ function ImpactPanel({
                       <span style={{ width: '12px' }} />
                     )}
                     <span style={{ flex: 1 }}>{sector.name}</span>
-                  </div>
+                  </Link>
                 )
               })}
             </div>

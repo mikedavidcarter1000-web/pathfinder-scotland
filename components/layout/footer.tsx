@@ -6,6 +6,7 @@ export function Footer() {
   const links = {
     product: [
       { label: 'Discover', href: '/discover' },
+      { label: 'Careers', href: '/careers' },
       { label: 'Subjects', href: '/subjects' },
       { label: 'Plan Choices', href: '/pathways' },
       { label: 'Simulator', href: '/simulator' },

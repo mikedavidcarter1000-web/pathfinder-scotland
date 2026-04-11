@@ -289,10 +289,25 @@ function CareerSearchPageContent() {
                 <div className="pf-card" style={{ padding: '24px' }}>
                   <h2 style={{ fontSize: '1.5rem', marginBottom: '8px' }}>{detail.sector.name}</h2>
                   {detail.sector.description && (
-                    <p style={{ color: 'var(--pf-grey-600)', lineHeight: 1.6 }}>
+                    <p style={{ color: 'var(--pf-grey-600)', lineHeight: 1.6, marginBottom: '12px' }}>
                       {detail.sector.description}
                     </p>
                   )}
+                  <Link
+                    href={`/careers/${detail.sector.id}`}
+                    className="inline-flex items-center gap-1 no-underline hover:no-underline"
+                    style={{
+                      color: 'var(--pf-blue-500)',
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '0.875rem',
+                    }}
+                  >
+                    See full sector page with jobs and salaries
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
                 </div>
 
                 {/* Essential */}
@@ -438,71 +453,88 @@ function SectorCard({
   onSelect: () => void
 }) {
   return (
-    <button
-      onClick={onSelect}
-      className="pf-card-hover text-left w-full flex flex-col h-full"
-      style={{ padding: '24px' }}
-      aria-label={`Show subjects for ${sector.name}`}
-    >
-      <div
-        className="flex items-center justify-center mb-4"
-        style={{
-          width: '48px',
-          height: '48px',
-          borderRadius: '10px',
-          backgroundColor: 'var(--pf-blue-100)',
-          color: 'var(--pf-blue-700)',
-        }}
+    <div className="pf-card-hover flex flex-col h-full" style={{ padding: '24px' }}>
+      <button
+        onClick={onSelect}
+        className="text-left flex flex-col flex-1"
+        style={{ background: 'transparent', border: 0, padding: 0, cursor: 'pointer' }}
+        aria-label={`Show subjects for ${sector.name}`}
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      </div>
-      <h3
-        style={{
-          fontSize: '1.0625rem',
-          marginBottom: '6px',
-          color: 'var(--pf-grey-900)',
-        }}
-      >
-        {sector.name}
-      </h3>
-      {sector.description && (
-        <p
-          className="line-clamp-3"
+        <div
+          className="flex items-center justify-center mb-4"
           style={{
-            color: 'var(--pf-grey-600)',
-            fontSize: '0.875rem',
-            lineHeight: 1.5,
-            marginBottom: '16px',
-            flex: 1,
-          }}
-        >
-          {sector.description}
-        </p>
-      )}
-      <div className="flex items-center justify-between" style={{ marginTop: 'auto' }}>
-        <span className="pf-badge-blue">
-          {sector.subject_count} {sector.subject_count === 1 ? 'subject' : 'subjects'}
-        </span>
-        <span
-          style={{
+            width: '48px',
+            height: '48px',
+            borderRadius: '10px',
+            backgroundColor: 'var(--pf-blue-100)',
             color: 'var(--pf-blue-700)',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 600,
-            fontSize: '0.875rem',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
           }}
         >
-          View
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
-        </span>
-      </div>
-    </button>
+        </div>
+        <h3
+          style={{
+            fontSize: '1.0625rem',
+            marginBottom: '6px',
+            color: 'var(--pf-grey-900)',
+          }}
+        >
+          {sector.name}
+        </h3>
+        {sector.description && (
+          <p
+            className="line-clamp-3"
+            style={{
+              color: 'var(--pf-grey-600)',
+              fontSize: '0.875rem',
+              lineHeight: 1.5,
+              marginBottom: '16px',
+              flex: 1,
+            }}
+          >
+            {sector.description}
+          </p>
+        )}
+        <div className="flex items-center justify-between" style={{ marginTop: 'auto' }}>
+          <span className="pf-badge-blue">
+            {sector.subject_count} {sector.subject_count === 1 ? 'subject' : 'subjects'}
+          </span>
+          <span
+            style={{
+              color: 'var(--pf-blue-700)',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              fontSize: '0.875rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+          >
+            Quick view
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </span>
+        </div>
+      </button>
+      <Link
+        href={`/careers/${sector.id}`}
+        className="no-underline hover:no-underline inline-flex items-center justify-center"
+        style={{
+          marginTop: '12px',
+          padding: '8px',
+          fontSize: '0.8125rem',
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          color: 'var(--pf-blue-700)',
+          borderTop: '1px solid var(--pf-grey-100)',
+        }}
+      >
+        See full sector page →
+      </Link>
+    </div>
   )
 }
 

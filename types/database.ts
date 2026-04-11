@@ -55,22 +55,37 @@ export type Database = {
       }
       career_sectors: {
         Row: {
+          course_subject_areas: string[] | null
           description: string | null
           display_order: number | null
+          example_jobs: string[] | null
+          growth_outlook: string | null
           id: string
           name: string
+          salary_range_entry: string | null
+          salary_range_experienced: string | null
         }
         Insert: {
+          course_subject_areas?: string[] | null
           description?: string | null
           display_order?: number | null
+          example_jobs?: string[] | null
+          growth_outlook?: string | null
           id?: string
           name: string
+          salary_range_entry?: string | null
+          salary_range_experienced?: string | null
         }
         Update: {
+          course_subject_areas?: string[] | null
           description?: string | null
           display_order?: number | null
+          example_jobs?: string[] | null
+          growth_outlook?: string | null
           id?: string
           name?: string
+          salary_range_entry?: string | null
+          salary_range_experienced?: string | null
         }
         Relationships: []
       }
