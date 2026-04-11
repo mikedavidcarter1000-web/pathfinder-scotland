@@ -59,6 +59,7 @@ export type Database = {
           description: string | null
           display_order: number | null
           example_jobs: string[] | null
+          external_links: Json | null
           growth_outlook: string | null
           id: string
           name: string
@@ -70,6 +71,7 @@ export type Database = {
           description?: string | null
           display_order?: number | null
           example_jobs?: string[] | null
+          external_links?: Json | null
           growth_outlook?: string | null
           id?: string
           name: string
@@ -81,6 +83,7 @@ export type Database = {
           description?: string | null
           display_order?: number | null
           example_jobs?: string[] | null
+          external_links?: Json | null
           growth_outlook?: string | null
           id?: string
           name?: string
@@ -998,11 +1001,15 @@ export type Database = {
           logo_url: string | null
           name: string
           russell_group: boolean | null
+          scholarships_url: string | null
           slug: string
           type: Database["public"]["Enums"]["university_type"] | null
+          undergraduate_url: string | null
           updated_at: string | null
           website: string | null
+          website_url: string | null
           widening_access_info: Json | null
+          widening_access_url: string | null
         }
         Insert: {
           city?: string | null
@@ -1013,11 +1020,15 @@ export type Database = {
           logo_url?: string | null
           name: string
           russell_group?: boolean | null
+          scholarships_url?: string | null
           slug: string
           type?: Database["public"]["Enums"]["university_type"] | null
+          undergraduate_url?: string | null
           updated_at?: string | null
           website?: string | null
+          website_url?: string | null
           widening_access_info?: Json | null
+          widening_access_url?: string | null
         }
         Update: {
           city?: string | null
@@ -1028,11 +1039,15 @@ export type Database = {
           logo_url?: string | null
           name?: string
           russell_group?: boolean | null
+          scholarships_url?: string | null
           slug?: string
           type?: Database["public"]["Enums"]["university_type"] | null
+          undergraduate_url?: string | null
           updated_at?: string | null
           website?: string | null
+          website_url?: string | null
           widening_access_info?: Json | null
+          widening_access_url?: string | null
         }
         Relationships: []
       }

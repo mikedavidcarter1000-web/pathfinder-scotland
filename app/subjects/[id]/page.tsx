@@ -498,10 +498,101 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
                 </p>
               </div>
             )}
+
+            <OfficialResources subjectName={subject.name} />
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+function OfficialResources({ subjectName }: { subjectName: string }) {
+  const links: Array<{ label: string; url: string; description: string }> = [
+    {
+      label: `Find ${subjectName} on SQA`,
+      url: 'https://www.sqa.org.uk/sqa/45625.html',
+      description: "Official SQA subject pages — arrangements, specifications, and updates.",
+    },
+    {
+      label: 'Past papers and marking instructions',
+      url: 'https://www.sqa.org.uk/pastpapers/findpastpaper.htm',
+      description: 'Download past exam papers from SQA to help with revision.',
+    },
+    {
+      label: 'My World of Work subject search',
+      url: 'https://www.myworldofwork.co.uk/subjects',
+      description: "Scotland's national careers service — how this subject links to jobs.",
+    },
+  ]
+  return (
+    <section>
+      <h2 style={{ marginBottom: '16px' }}>Official Resources</h2>
+      <div className="pf-card" style={{ padding: '8px 0' }}>
+        {links.map((link, idx) => (
+          <a
+            key={link.url}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="no-underline hover:no-underline"
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              gap: '12px',
+              padding: '14px 20px',
+              color: 'var(--pf-grey-900)',
+              borderTop: idx === 0 ? 'none' : '1px solid var(--pf-grey-100)',
+              transition: 'background-color 0.15s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+          >
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.9375rem',
+                  color: 'var(--pf-grey-900)',
+                  margin: 0,
+                  marginBottom: '2px',
+                }}
+              >
+                {link.label}
+              </p>
+              <p
+                style={{
+                  fontSize: '0.8125rem',
+                  color: 'var(--pf-grey-600)',
+                  margin: 0,
+                  lineHeight: 1.5,
+                }}
+              >
+                {link.description}
+              </p>
+            </div>
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              style={{ color: 'var(--pf-blue-500)', flexShrink: 0, marginTop: '4px' }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              />
+            </svg>
+          </a>
+        ))}
+      </div>
+    </section>
   )
 }
 

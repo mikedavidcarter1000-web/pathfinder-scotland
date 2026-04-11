@@ -44,19 +44,84 @@ function resolveUniWideningInfo(uni: University): {
   description: string
 } {
   const info = uni.widening_access_info as UniversityWideningInfo | null
+  const preferredUrl = uni.widening_access_url ?? info?.url ?? uni.website_url ?? uni.website ?? null
   if (info?.description) {
     return {
       programmeShort: info.programme_short ?? info.programme_name ?? '',
-      url: info.url ?? uni.website ?? null,
+      url: preferredUrl,
       description: info.description,
     }
   }
   return {
     programmeShort: '',
-    url: uni.website ?? null,
+    url: preferredUrl,
     description: DEFAULT_WA_NOTES[uni.slug] ?? 'Offers contextual admissions and adjusted entry for students from widening participation backgrounds.',
   }
 }
+
+const NATIONAL_PROGRAMMES: Array<{
+  name: string
+  region: string
+  url: string
+  description: string
+}> = [
+  {
+    name: 'LEAPS',
+    region: 'Edinburgh & South-East Scotland',
+    url: 'https://www.leapsonline.org',
+    description:
+      'Lothian Equal Access Programme for Schools — S4 to S6 students in Edinburgh, the Borders, Lothians and Fife.',
+  },
+  {
+    name: 'FOCUS West',
+    region: 'West of Scotland',
+    url: 'https://www.focuswest.org.uk',
+    description:
+      'Runs with Glasgow, Strathclyde, GCU, UWS and RCS — supports pupils from S4 onwards with mentoring, visits, and events.',
+  },
+  {
+    name: 'REACH Scotland',
+    region: 'Aberdeen and North-East',
+    url: 'https://www.abdn.ac.uk/reach',
+    description:
+      "University of Aberdeen's schools engagement programme — aims at careers in law, medicine, dentistry, and veterinary medicine.",
+  },
+  {
+    name: 'LIFT OFF',
+    region: 'Tayside',
+    url: 'https://www.dundee.ac.uk/widening-access',
+    description:
+      "University of Dundee's widening access programme — summer schools, mentoring and subject tasters.",
+  },
+  {
+    name: 'Who Cares? Scotland',
+    region: 'National — care experienced',
+    url: 'https://www.whocaresscotland.org',
+    description:
+      'Advocacy, independent advice and peer support for care experienced children, young people and adults.',
+  },
+  {
+    name: 'Carers Trust Scotland',
+    region: 'National — young carers',
+    url: 'https://carers.org/about-us/about-carers-trust-scotland',
+    description:
+      'Support for young carers including Young Carer Statements, respite funding, and transition support.',
+  },
+  {
+    name: 'SAAS',
+    region: 'Funding',
+    url: 'https://www.saas.gov.uk',
+    description:
+      'Student Awards Agency for Scotland — applies your tuition funding and checks bursary eligibility.',
+  },
+  {
+    name: 'Care Experienced students — UCAS',
+    region: 'UK-wide application guidance',
+    url: 'https://www.ucas.com/undergraduate/applying-university/individual-needs/care-experienced-students',
+    description:
+      "UCAS's guidance on declaring care experience on your application and the support universities must offer.",
+  },
+]
 
 export default function WideningAccessPage() {
   const { user } = useAuth()
@@ -235,8 +300,102 @@ export default function WideningAccessPage() {
         </div>
       </section>
 
-      {/* The schemes */}
+      {/* National programmes */}
       <section className="pf-section pf-section-grey">
+        <div className="pf-container">
+          <div className="text-center" style={{ marginBottom: '40px', maxWidth: '680px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <span className="pf-badge-blue">National programmes</span>
+            <h2 style={{ marginTop: '16px', marginBottom: '16px' }}>
+              Direct links to the main widening access organisations
+            </h2>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '1rem' }}>
+              These are the programmes that support students into Scottish universities. All run
+              independently of Pathfinder &mdash; we just help you find the right door to knock on.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            {NATIONAL_PROGRAMMES.map((p) => (
+              <a
+                key={p.url}
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pf-card-hover no-underline hover:no-underline"
+                style={{
+                  padding: '20px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  color: 'var(--pf-grey-900)',
+                  borderLeft: '3px solid var(--pf-amber-500)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                    marginBottom: '4px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '1.0625rem',
+                      color: 'var(--pf-grey-900)',
+                      margin: 0,
+                    }}
+                  >
+                    {p.name}
+                  </h3>
+                  <svg
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    style={{ color: 'var(--pf-blue-500)', flexShrink: 0, marginTop: '4px' }}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                </div>
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--pf-blue-700)',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    marginBottom: '8px',
+                  }}
+                >
+                  {p.region}
+                </span>
+                <p
+                  style={{
+                    fontSize: '0.875rem',
+                    color: 'var(--pf-grey-600)',
+                    lineHeight: 1.55,
+                    margin: 0,
+                  }}
+                >
+                  {p.description}
+                </p>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* The schemes */}
+      <section className="pf-section pf-section-white">
         <div className="pf-container">
           <div className="text-center" style={{ marginBottom: '40px', maxWidth: '680px', marginLeft: 'auto', marginRight: 'auto' }}>
             <span className="pf-badge-blue">Who qualifies</span>
@@ -390,7 +549,7 @@ export default function WideningAccessPage() {
       </section>
 
       {/* Participating universities */}
-      <section className="pf-section pf-section-white">
+      <section className="pf-section pf-section-grey">
         <div className="pf-container">
           <div className="text-center" style={{ marginBottom: '40px', maxWidth: '680px', marginLeft: 'auto', marginRight: 'auto' }}>
             <span className="pf-badge-blue">Participating universities</span>

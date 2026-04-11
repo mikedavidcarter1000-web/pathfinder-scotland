@@ -259,9 +259,9 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
             <div className="pf-card">
               <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                {university.website && (
+                {(university.website_url || university.website) && (
                   <a
-                    href={university.website}
+                    href={university.website_url || university.website || undefined}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="pf-btn-primary w-full"
@@ -278,8 +278,24 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
               </div>
             </div>
 
+            {/* Official Links */}
+            {(university.website_url ||
+              university.widening_access_url ||
+              university.scholarships_url ||
+              university.undergraduate_url) && (
+              <UniversityLinksCard
+                university={{
+                  name: university.name,
+                  website_url: university.website_url,
+                  widening_access_url: university.widening_access_url,
+                  scholarships_url: university.scholarships_url,
+                  undergraduate_url: university.undergraduate_url,
+                }}
+              />
+            )}
+
             {/* Key Facts */}
-            <div className="pf-card">
+            <div className="pf-card" id="key-facts">
               <h3 className="font-semibold text-gray-900 mb-4">Key Facts</h3>
               <dl className="space-y-3">
                 {university.founded_year && (
@@ -317,6 +333,69 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+function UniversityLinksCard({
+  university,
+}: {
+  university: {
+    name: string
+    website_url: string | null
+    widening_access_url: string | null
+    scholarships_url: string | null
+    undergraduate_url: string | null
+  }
+}) {
+  const items: Array<{ label: string; url: string | null }> = [
+    { label: `Visit ${university.name}`, url: university.website_url },
+    { label: `Widening access at ${university.name}`, url: university.widening_access_url },
+    { label: 'Scholarships and funding', url: university.scholarships_url },
+    { label: 'Browse all undergraduate courses', url: university.undergraduate_url },
+  ].filter((i) => i.url)
+
+  if (items.length === 0) return null
+
+  return (
+    <div className="pf-card">
+      <h3 className="font-semibold text-gray-900 mb-4">Links</h3>
+      <ul className="space-y-2" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        {items.map((item) => (
+          <li key={item.url!}>
+            <a
+              href={item.url!}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 no-underline hover:no-underline"
+              style={{
+                color: 'var(--pf-blue-700)',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.9375rem',
+                padding: '6px 0',
+              }}
+            >
+              <span>{item.label} &rarr;</span>
+              <svg
+                width="13"
+                height="13"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

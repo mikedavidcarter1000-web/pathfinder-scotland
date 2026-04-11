@@ -167,10 +167,70 @@ export default function AboutPage() {
           <h2 style={{ marginTop: '16px', marginBottom: '16px' }}>
             Helping every Scottish student make informed subject choices
           </h2>
-          <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem' }}>
+          <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem', marginBottom: '16px' }}>
             Your background should not decide your options. Pathfinder exists to make the same level
             of guidance available to every student in Scotland — whether you have a parent who went to
             university, a school careers team with capacity, or neither.
+          </p>
+          <p style={{ color: 'var(--pf-grey-600)', fontSize: '1rem', marginBottom: '12px' }}>
+            We work alongside Scotland&rsquo;s official guidance services:
+          </p>
+          <ul
+            style={{
+              listStyle: 'none',
+              padding: 0,
+              margin: 0,
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '8px',
+            }}
+          >
+            {[
+              { label: 'SQA', url: 'https://www.sqa.org.uk' },
+              { label: 'Education Scotland', url: 'https://education.gov.scot' },
+              { label: 'Skills Development Scotland', url: 'https://www.skillsdevelopmentscotland.co.uk' },
+              { label: 'My World of Work', url: 'https://www.myworldofwork.co.uk' },
+            ].map((item) => (
+              <li key={item.url}>
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pf-badge-blue inline-flex items-center gap-1 no-underline hover:no-underline"
+                  style={{ fontWeight: 500 }}
+                >
+                  {item.label}
+                  <svg
+                    width="11"
+                    height="11"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p
+            style={{
+              color: 'var(--pf-grey-600)',
+              fontSize: '0.875rem',
+              marginTop: '16px',
+            }}
+          >
+            See our full{' '}
+            <Link href="/resources" style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}>
+              resources directory
+            </Link>{' '}
+            for the organisations behind Scottish education.
           </p>
         </div>
       </section>

@@ -541,6 +541,9 @@ export default function CareerSectorDetailPage({
           )}
         </section>
 
+        {/* Section 4b — Explore Further (external links) */}
+        <ExploreFurther sector={sector} />
+
         {/* Section 5 — CTAs */}
         <section
           className="pf-card"
@@ -728,6 +731,170 @@ function SubjectChip({ subject }: { subject: CareerSubjectRow }) {
         )}
       </div>
     </Link>
+  )
+}
+
+type ExternalLink = { name: string; url: string; description?: string }
+
+function isExternalLinkArray(value: unknown): value is ExternalLink[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (v) =>
+        v !== null &&
+        typeof v === 'object' &&
+        typeof (v as Record<string, unknown>).name === 'string' &&
+        typeof (v as Record<string, unknown>).url === 'string'
+    )
+  )
+}
+
+type ExploreFurtherSector = {
+  name: string
+  external_links: unknown
+}
+
+function ExploreFurther({ sector }: { sector: ExploreFurtherSector }) {
+  const professional = isExternalLinkArray(sector.external_links)
+    ? (sector.external_links as ExternalLink[])
+    : []
+
+  const mwowHref = `https://www.myworldofwork.co.uk/explore-careers/job-profiles?search=${encodeURIComponent(
+    sector.name
+  )}`
+  const apprenticesHref = 'https://www.apprenticeships.scot'
+
+  return (
+    <section>
+      <h2 style={{ marginBottom: '6px' }}>Explore Further</h2>
+      <p
+        style={{
+          color: 'var(--pf-grey-600)',
+          fontSize: '0.9375rem',
+          marginBottom: '20px',
+        }}
+      >
+        Trusted Scottish and UK bodies for deeper research on this sector.
+      </p>
+      <div
+        className="grid gap-3"
+        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}
+      >
+        <ExploreCard
+          name="My World of Work"
+          description="Scotland's official careers service — job profiles, pay, and day-to-day tasks."
+          url={mwowHref}
+        />
+        <ExploreCard
+          name="apprenticeships.scot"
+          description="Foundation, Modern, and Graduate Apprenticeships across Scotland."
+          url={apprenticesHref}
+        />
+        {professional.map((link) => (
+          <ExploreCard
+            key={link.url}
+            name={link.name}
+            description={link.description ?? ''}
+            url={link.url}
+          />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function ExploreCard({
+  name,
+  description,
+  url,
+}: {
+  name: string
+  description: string
+  url: string
+}) {
+  let host = ''
+  try {
+    host = new URL(url).host.replace(/^www\./, '')
+  } catch {
+    host = ''
+  }
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="pf-card-hover no-underline hover:no-underline"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '18px 20px',
+        color: 'var(--pf-grey-900)',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: '10px',
+          marginBottom: '4px',
+        }}
+      >
+        <h3
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+            fontSize: '0.9375rem',
+            color: 'var(--pf-grey-900)',
+            margin: 0,
+            lineHeight: 1.3,
+          }}
+        >
+          {name}
+        </h3>
+        <svg
+          width="14"
+          height="14"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          style={{ color: 'var(--pf-blue-500)', flexShrink: 0, marginTop: '3px' }}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+          />
+        </svg>
+      </div>
+      {description && (
+        <p
+          style={{
+            fontSize: '0.8125rem',
+            color: 'var(--pf-grey-600)',
+            lineHeight: 1.5,
+            margin: 0,
+            marginBottom: '8px',
+          }}
+        >
+          {description}
+        </p>
+      )}
+      {host && (
+        <span
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '0.75rem',
+            color: 'var(--pf-blue-700)',
+            fontWeight: 500,
+          }}
+        >
+          {host}
+        </span>
+      )}
+    </a>
   )
 }
 

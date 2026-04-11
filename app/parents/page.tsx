@@ -357,6 +357,36 @@ function GuideSection() {
           </div>
         </div>
 
+        {/* Trusted external guidance */}
+        <div style={{ marginBottom: '40px' }}>
+          <h3 style={{ marginBottom: '16px' }}>Trusted external guidance</h3>
+          <p style={{ color: 'var(--pf-grey-600)', marginBottom: '20px', maxWidth: '720px' }}>
+            Pathfinder brings everything together, but your child&apos;s school, the Scottish
+            Government, and national guidance services also offer dedicated parent resources. Start
+            with these:
+          </p>
+          <div
+            className="grid gap-4"
+            style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}
+          >
+            <ExternalGuidanceCard
+              title="Parentzone Scotland"
+              body="Education Scotland's official site for parents — curriculum, choices, and learning at home."
+              url="https://education.gov.scot/parentzone/"
+            />
+            <ExternalGuidanceCard
+              title="My World of Work — parents & carers"
+              body="Scotland's national careers service has a dedicated section on supporting your child through subject choices."
+              url="https://www.myworldofwork.co.uk/parents-and-carers"
+            />
+            <ExternalGuidanceCard
+              title="SAAS — parent information"
+              body="How student funding works in Scotland, including what you need to share about household income."
+              url="https://www.saas.gov.uk"
+            />
+          </div>
+        </div>
+
         {/* Recommended reading */}
         <div style={{ marginBottom: '40px' }}>
           <h3 style={{ marginBottom: '16px' }}>Recommended reading</h3>
@@ -489,6 +519,93 @@ function GuideSection() {
         </div>
       </div>
     </section>
+  )
+}
+
+function ExternalGuidanceCard({
+  title,
+  body,
+  url,
+}: {
+  title: string
+  body: string
+  url: string
+}) {
+  let host = ''
+  try {
+    host = new URL(url).host.replace(/^www\./, '')
+  } catch {
+    host = ''
+  }
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="pf-card-hover no-underline hover:no-underline"
+      style={{
+        padding: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        color: 'var(--pf-grey-900)',
+        borderTop: '3px solid var(--pf-blue-700)',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: '10px',
+        }}
+      >
+        <h4
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+            fontSize: '1rem',
+            color: 'var(--pf-grey-900)',
+            margin: 0,
+            marginBottom: '6px',
+            lineHeight: 1.3,
+          }}
+        >
+          {title}
+        </h4>
+        <svg
+          width="14"
+          height="14"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          style={{ color: 'var(--pf-blue-500)', flexShrink: 0, marginTop: '3px' }}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+          />
+        </svg>
+      </div>
+      <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', margin: 0, flex: 1 }}>
+        {body}
+      </p>
+      {host && (
+        <span
+          style={{
+            fontSize: '0.75rem',
+            color: 'var(--pf-blue-700)',
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 500,
+            marginTop: '10px',
+          }}
+        >
+          {host}
+        </span>
+      )}
+    </a>
   )
 }
 

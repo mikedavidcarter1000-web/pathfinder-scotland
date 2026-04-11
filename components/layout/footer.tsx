@@ -22,15 +22,19 @@ export function Footer() {
       { label: 'Pilot programme', href: 'mailto:hello@pathfinderscot.co.uk?subject=Pilot%20school%20interest', external: true },
       { label: 'Funding enquiries', href: 'mailto:hello@pathfinderscot.co.uk?subject=Funding%20enquiry', external: true },
     ],
-    resources: [
-      { label: 'Help Centre', href: '/help' },
-      { label: 'UCAS Guide', href: 'https://www.ucas.com', external: true },
-      { label: 'SAAS', href: 'https://www.saas.gov.uk', external: true },
+    useful: [
       { label: 'SQA', href: 'https://www.sqa.org.uk', external: true },
+      { label: 'Education Scotland', href: 'https://education.gov.scot', external: true },
+      { label: 'UCAS', href: 'https://www.ucas.com', external: true },
+      { label: 'My World of Work', href: 'https://www.myworldofwork.co.uk', external: true },
+      { label: 'apprenticeships.scot', href: 'https://www.apprenticeships.scot', external: true },
+      { label: 'SAAS', href: 'https://www.saas.gov.uk', external: true },
     ],
     company: [
       { label: 'About', href: '/about' },
       { label: 'Contact', href: '/contact' },
+      { label: 'Resources', href: '/resources' },
+      { label: 'Help Centre', href: '/help' },
       { label: 'Privacy Policy', href: '/privacy' },
       { label: 'Terms of Service', href: '/terms' },
     ],
@@ -154,30 +158,24 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Resources Links */}
+          {/* Useful external links */}
           <div>
-            <h3 style={headingStyle}>Resources</h3>
+            <h3 style={headingStyle}>Useful Links</h3>
             <ul className="space-y-2">
-              {links.resources.map((link) => (
+              {links.useful.map((link) => (
                 <li key={link.href}>
-                  {link.external ? (
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={bodyLinkStyle}
-                      className="inline-flex items-center gap-1 hover:text-white"
-                    >
-                      {link.label}
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
-                  ) : (
-                    <Link href={link.href} style={bodyLinkStyle} className="hover:text-white">
-                      {link.label}
-                    </Link>
-                  )}
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={bodyLinkStyle}
+                    className="inline-flex items-center gap-1 hover:text-white"
+                  >
+                    {link.label}
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
                 </li>
               ))}
             </ul>

@@ -696,7 +696,103 @@ function PathwaysPageContent() {
             </div>
           </div>
         )}
+
+        <UsefulLinksPanel />
       </div>
+    </div>
+  )
+}
+
+function UsefulLinksPanel() {
+  const links: Array<{ label: string; description: string; url: string }> = [
+    {
+      label: 'SQA subject choice guidance',
+      description: "Scotland's qualifications authority — subject arrangements and guidance.",
+      url: 'https://www.sqa.org.uk/sqa/45625.html',
+    },
+    {
+      label: 'My World of Work — option choices',
+      description: "Scotland's careers service tool for exploring subject-to-career links.",
+      url: 'https://www.myworldofwork.co.uk/learn-and-train/option-choices',
+    },
+    {
+      label: 'Parentzone Scotland',
+      description: "Education Scotland's resource for parents and carers.",
+      url: 'https://education.gov.scot/parentzone/',
+    },
+  ]
+  return (
+    <div
+      className="mt-10"
+      style={{
+        padding: '24px',
+        backgroundColor: 'var(--pf-blue-50)',
+        borderRadius: '8px',
+        borderLeft: '3px solid var(--pf-blue-700)',
+      }}
+    >
+      <h2 style={{ fontSize: '1.125rem', marginBottom: '6px' }}>Useful links</h2>
+      <p
+        style={{
+          fontSize: '0.875rem',
+          color: 'var(--pf-grey-600)',
+          marginBottom: '16px',
+        }}
+      >
+        Official guidance from outside Pathfinder. Your school may also use TOOLS for recording
+        your final choices &mdash; ask your pastoral teacher.
+      </p>
+      <ul
+        className="grid gap-2"
+        style={{ listStyle: 'none', padding: 0, margin: 0, gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}
+      >
+        {links.map((link) => (
+          <li key={link.url}>
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="no-underline hover:no-underline"
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '8px',
+                color: 'var(--pf-grey-900)',
+                padding: '10px 12px',
+                borderRadius: '6px',
+                transition: 'background-color 0.15s',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.55)')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+            >
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    color: 'var(--pf-blue-700)',
+                    margin: 0,
+                    marginBottom: '2px',
+                  }}
+                >
+                  {link.label} &rarr;
+                </p>
+                <p
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--pf-grey-600)',
+                    margin: 0,
+                    lineHeight: 1.45,
+                  }}
+                >
+                  {link.description}
+                </p>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
