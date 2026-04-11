@@ -23,6 +23,7 @@ import { Skeleton } from '@/components/ui/loading-skeleton'
 import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { useToast } from '@/components/ui/toast'
 import { SubmitButton } from '@/components/ui/submit-button'
+import { ParentNotice } from '@/components/ui/parent-notice'
 import type { Tables } from '@/types/database'
 
 type YearGoingInto = 's3' | 's4' | 's5' | 's6'
@@ -245,6 +246,10 @@ export default function PathwaysPage() {
           {toast}
         </div>
       )}
+      <ParentNotice>
+        Use this tool to explore what subjects are available at each stage. Your child
+        can save their actual choices from their own account.
+      </ParentNotice>
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">

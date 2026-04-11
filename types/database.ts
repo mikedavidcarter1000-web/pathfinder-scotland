@@ -788,6 +788,7 @@ export type Database = {
           school_stage: Database["public"]["Enums"]["school_stage"] | null
           simd_decile: number | null
           updated_at: string | null
+          user_type: string
         }
         Insert: {
           care_experienced?: boolean | null
@@ -803,6 +804,7 @@ export type Database = {
           school_stage?: Database["public"]["Enums"]["school_stage"] | null
           simd_decile?: number | null
           updated_at?: string | null
+          user_type?: string
         }
         Update: {
           care_experienced?: boolean | null
@@ -818,6 +820,7 @@ export type Database = {
           school_stage?: Database["public"]["Enums"]["school_stage"] | null
           simd_decile?: number | null
           updated_at?: string | null
+          user_type?: string
         }
         Relationships: []
       }

@@ -16,6 +16,11 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
 
+  const isParent = student?.user_type === 'parent'
+
+  // Nav items are tagged with `auth` (signed-in only) and `studentOnly`
+  // (hidden for parent accounts). The `parentOnly` flag is the inverse for
+  // surfacing the Parents landing page to non-parents.
   const navigation = [
     { name: 'Discover', href: '/discover', auth: false },
     { name: 'Dashboard', href: '/dashboard', auth: true },
@@ -25,11 +30,17 @@ export function Navbar() {
     { name: 'Courses', href: '/courses', auth: false },
     { name: 'Universities', href: '/universities', auth: false },
     { name: 'Widening Access', href: '/widening-access', auth: false },
-    { name: 'Saved', href: '/saved', auth: true },
-    { name: 'Compare', href: '/compare', auth: true },
-  ]
+    { name: 'Parents', href: '/parents', auth: false, parentOnly: false, hideForParents: true },
+    { name: 'Saved', href: '/saved', auth: true, studentOnly: true },
+    { name: 'Compare', href: '/compare', auth: true, studentOnly: true },
+  ] as const
 
-  const filteredNav = navigation.filter((item) => !item.auth || user)
+  const filteredNav = navigation.filter((item) => {
+    if (item.auth && !user) return false
+    if ('studentOnly' in item && item.studentOnly && isParent) return false
+    if ('hideForParents' in item && item.hideForParents && isParent) return false
+    return true
+  })
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === href

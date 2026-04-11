@@ -17,9 +17,18 @@ interface PostcodeStepProps {
   onChange: (data: PostcodeData) => void
   onNext: () => void
   onBack: () => void
+  nextLabel?: string
+  isSubmitting?: boolean
 }
 
-export function PostcodeStep({ data, onChange, onNext, onBack }: PostcodeStepProps) {
+export function PostcodeStep({
+  data,
+  onChange,
+  onNext,
+  onBack,
+  nextLabel,
+  isSubmitting = false,
+}: PostcodeStepProps) {
   const [lookupAttempted, setLookupAttempted] = useState(false)
   const simdLookup = useSIMDLookup()
 
@@ -238,6 +247,7 @@ export function PostcodeStep({ data, onChange, onNext, onBack }: PostcodeStepPro
         <button
           type="button"
           onClick={onBack}
+          disabled={isSubmitting}
           className="pf-btn pf-btn-secondary justify-center"
           style={{ flex: 1, minHeight: '48px' }}
         >
@@ -245,10 +255,11 @@ export function PostcodeStep({ data, onChange, onNext, onBack }: PostcodeStepPro
         </button>
         <button
           type="submit"
+          disabled={isSubmitting}
           className="pf-btn pf-btn-primary justify-center"
           style={{ flex: 1, minHeight: '48px' }}
         >
-          Continue
+          {isSubmitting ? 'Saving…' : nextLabel ?? 'Continue'}
         </button>
       </div>
     </form>

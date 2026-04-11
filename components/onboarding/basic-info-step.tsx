@@ -13,9 +13,10 @@ interface BasicInfoStepProps {
   data: BasicInfoData
   onChange: (data: BasicInfoData) => void
   onNext: () => void
+  isParent?: boolean
 }
 
-export function BasicInfoStep({ data, onChange, onNext }: BasicInfoStepProps) {
+export function BasicInfoStep({ data, onChange, onNext, isParent = false }: BasicInfoStepProps) {
   const isValid = !!(data.firstName.trim() && data.lastName.trim() && data.schoolStage)
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -27,9 +28,13 @@ export function BasicInfoStep({ data, onChange, onNext }: BasicInfoStepProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <h2 style={{ marginBottom: '6px' }}>Tell us about yourself</h2>
+        <h2 style={{ marginBottom: '6px' }}>
+          {isParent ? 'Tell us about you and your child' : 'Tell us about yourself'}
+        </h2>
         <p style={{ color: 'var(--pf-grey-600)' }}>
-          This helps us personalise your experience.
+          {isParent
+            ? 'Just the basics. We\u2019ll tailor the dashboard around your child\u2019s stage.'
+            : 'This helps us personalise your experience.'}
         </p>
       </div>
 
@@ -67,7 +72,7 @@ export function BasicInfoStep({ data, onChange, onNext }: BasicInfoStepProps) {
 
       <div>
         <span className="pf-label" style={{ marginBottom: '12px' }}>
-          What year are you currently in?
+          {isParent ? "What year is your child currently in?" : 'What year are you currently in?'}
         </span>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {ONBOARDING_STAGE_CARDS.map((key) => {

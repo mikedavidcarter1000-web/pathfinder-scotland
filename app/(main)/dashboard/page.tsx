@@ -13,7 +13,9 @@ import {
   SubjectChoicesSection,
   WideningAccessCard,
   ProgressChecklist,
+  ParentDashboard,
 } from '@/components/dashboard'
+import { ShareWithParentButton } from '@/components/dashboard/share-with-parent-button'
 import { StatsCard, StatsGrid } from '@/components/ui/stats-card'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
@@ -89,6 +91,10 @@ export default function DashboardPage() {
 
   if (!user || !student) {
     return null
+  }
+
+  if (student.user_type === 'parent') {
+    return <ParentDashboard student={student} />
   }
 
   return (
@@ -275,6 +281,9 @@ export default function DashboardPage() {
                   </svg>
                 }
               />
+            </div>
+            <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--pf-grey-100)' }}>
+              <ShareWithParentButton student={student} />
             </div>
           </div>
 

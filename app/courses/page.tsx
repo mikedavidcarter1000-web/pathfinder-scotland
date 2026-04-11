@@ -15,6 +15,7 @@ import { ErrorState } from '@/components/ui/error-state'
 import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
 import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { useToast } from '@/components/ui/toast'
+import { ParentNotice } from '@/components/ui/parent-notice'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 
@@ -102,6 +103,10 @@ export default function CoursesPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
+      <ParentNotice>
+        Browse university courses and check entry requirements. Your child can check
+        their personal eligibility from their own account.
+      </ParentNotice>
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">

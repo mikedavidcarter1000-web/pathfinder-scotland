@@ -7,9 +7,11 @@ export function Footer() {
     product: [
       { label: 'Subjects', href: '/subjects' },
       { label: 'Plan Choices', href: '/pathways' },
+      { label: 'Simulator', href: '/simulator' },
       { label: 'Courses', href: '/courses' },
       { label: 'Universities', href: '/universities' },
       { label: 'Widening Access', href: '/widening-access' },
+      { label: 'For Parents', href: '/parents' },
     ],
     resources: [
       { label: 'Help Centre', href: '/help' },

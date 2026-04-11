@@ -25,6 +25,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { useSaveSubjectChoices, type ChoiceTransition } from '@/hooks/use-subjects'
 import { useToast } from '@/components/ui/toast'
 import { Skeleton } from '@/components/ui/loading-skeleton'
+import { ParentNotice } from '@/components/ui/parent-notice'
 import type { SubjectWithArea } from '@/hooks/use-subjects'
 
 const STAGES: SimulatorStage[] = ['s3', 's4', 's5', 's6']
@@ -302,6 +303,10 @@ function SimulatorContent() {
 
   return (
     <div style={{ backgroundColor: 'var(--pf-blue-50)', minHeight: '100vh' }}>
+      <ParentNotice>
+        Try different subject combinations to understand the trade-offs. Share this
+        page with your child to discuss together.
+      </ParentNotice>
       <Hero />
 
       {/* Controls bar */}

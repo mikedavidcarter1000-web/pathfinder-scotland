@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { Suspense, useState, useEffect, useRef } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-auth'
 import { useCurrentStudent, useCreateStudent, useBulkUpsertGrades } from '@/hooks/use-student'
@@ -57,6 +57,13 @@ const STEPS = [
   { id: 2, title: 'Location', description: 'Postcode' },
   { id: 3, title: 'Widening Access', description: 'Eligibility' },
   { id: 4, title: 'Grades', description: 'Your qualifications' },
+]
+
+// Parents skip widening-access self-assessment and grade entry — postcode is
+// enough to surface widening-access info for their child on the dashboard.
+const PARENT_STEPS = [
+  { id: 1, title: 'Basic Info', description: 'About you and your child' },
+  { id: 2, title: 'Postcode', description: 'For widening access check' },
 ]
 
 const STORAGE_KEY_PREFIX = 'pf_onboarding_state_'
@@ -116,7 +123,17 @@ function clearPersisted(userId: string) {
 }
 
 export default function OnboardingPage() {
+  return (
+    <Suspense fallback={null}>
+      <OnboardingContent />
+    </Suspense>
+  )
+}
+
+function OnboardingContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const isParent = searchParams.get('type') === 'parent'
   const { user, isLoading: authLoading } = useAuth()
   const { data: student, isLoading: studentLoading } = useCurrentStudent()
   const createStudent = useCreateStudent()
@@ -212,22 +229,26 @@ export default function OnboardingPage() {
         school_name: basicInfo.schoolName || null,
         postcode: postcodeData.postcode || null,
         simd_decile: postcodeData.simdDecile,
-        care_experienced: wideningAccess.careExperienced,
-        is_carer: wideningAccess.isCarer,
-        first_generation: wideningAccess.firstGeneration,
+        care_experienced: isParent ? false : wideningAccess.careExperienced,
+        is_carer: isParent ? false : wideningAccess.isCarer,
+        first_generation: isParent ? false : wideningAccess.firstGeneration,
+        user_type: isParent ? 'parent' : 'student',
       })
 
-      const gradesToSave = grades.filter((g) => g.grade)
-      if (gradesToSave.length > 0) {
-        await bulkUpsertGrades.mutateAsync(
-          gradesToSave.map((g) => ({
-            subject: g.subject,
-            subject_id: g.subject_id ?? null,
-            grade: g.grade,
-            predicted: g.predicted,
-            qualification_type: g.qualificationType,
-          }))
-        )
+      // Parents never enter grades — the bulk upsert is skipped entirely.
+      if (!isParent) {
+        const gradesToSave = grades.filter((g) => g.grade)
+        if (gradesToSave.length > 0) {
+          await bulkUpsertGrades.mutateAsync(
+            gradesToSave.map((g) => ({
+              subject: g.subject,
+              subject_id: g.subject_id ?? null,
+              grade: g.grade,
+              predicted: g.predicted,
+              qualification_type: g.qualificationType,
+            }))
+          )
+        }
       }
 
       clearPersisted(user.id)
@@ -266,6 +287,7 @@ export default function OnboardingPage() {
   const isWelcome = currentStep === 0
   // Effective step for the indicator: clamp to 1 when on the welcome screen
   const indicatorStep = Math.max(1, currentStep)
+  const stepConfig = isParent ? PARENT_STEPS : STEPS
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
@@ -275,8 +297,8 @@ export default function OnboardingPage() {
             {/* Desktop Step Indicator */}
             <div className="hidden sm:block mb-8">
               <StepIndicator
-                steps={STEPS}
-                currentStep={indicatorStep}
+                steps={stepConfig}
+                currentStep={Math.min(indicatorStep, stepConfig.length)}
                 onStepClick={(step) => step < currentStep && setCurrentStep(step)}
               />
             </div>
@@ -284,9 +306,9 @@ export default function OnboardingPage() {
             {/* Mobile Step Indicator */}
             <div className="sm:hidden mb-5">
               <MobileStepIndicator
-                currentStep={indicatorStep}
-                totalSteps={STEPS.length}
-                stepTitle={STEPS[indicatorStep - 1].title}
+                currentStep={Math.min(indicatorStep, stepConfig.length)}
+                totalSteps={stepConfig.length}
+                stepTitle={stepConfig[Math.min(indicatorStep, stepConfig.length) - 1].title}
               />
             </div>
           </>
@@ -306,19 +328,38 @@ export default function OnboardingPage() {
               data={basicInfo}
               onChange={setBasicInfo}
               onNext={() => setCurrentStep(2)}
+              isParent={isParent}
             />
           )}
 
           {currentStep === 2 && (
-            <PostcodeStep
-              data={postcodeData}
-              onChange={setPostcodeData}
-              onNext={() => setCurrentStep(3)}
-              onBack={() => setCurrentStep(1)}
-            />
+            <>
+              {isParent && error && (
+                <div
+                  className="mb-4 rounded-lg"
+                  style={{
+                    padding: '16px',
+                    backgroundColor: 'rgba(239,68,68,0.08)',
+                    border: '1px solid rgba(239,68,68,0.25)',
+                    color: 'var(--pf-red-500)',
+                  }}
+                >
+                  <p style={{ fontWeight: 600 }}>Error</p>
+                  <p style={{ fontSize: '0.875rem' }}>{error}</p>
+                </div>
+              )}
+              <PostcodeStep
+                data={postcodeData}
+                onChange={setPostcodeData}
+                onNext={isParent ? handleComplete : () => setCurrentStep(3)}
+                onBack={() => setCurrentStep(1)}
+                nextLabel={isParent ? 'Finish' : undefined}
+                isSubmitting={isParent ? isSubmitting : false}
+              />
+            </>
           )}
 
-          {currentStep === 3 && (
+          {!isParent && currentStep === 3 && (
             <WideningAccessStep
               data={wideningAccess}
               onChange={setWideningAccess}
@@ -327,7 +368,7 @@ export default function OnboardingPage() {
             />
           )}
 
-          {currentStep === 4 && (
+          {!isParent && currentStep === 4 && (
             <>
               {error && (
                 <div
