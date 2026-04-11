@@ -218,8 +218,8 @@ export default function HelpPage() {
             Can&apos;t find what you&apos;re looking for? Get in touch with our support team and we&apos;ll help you out.
           </p>
           <div className="grid sm:grid-cols-2 gap-4">
-            <a
-              href="mailto:support@pathfinder-scotland.com"
+            <Link
+              href="/contact"
               className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
@@ -228,10 +228,10 @@ export default function HelpPage() {
                 </svg>
               </div>
               <div>
-                <p className="font-medium text-gray-900">Email us</p>
-                <p className="text-sm text-gray-600">support@pathfinder-scotland.com</p>
+                <p className="font-medium text-gray-900">Send us a message</p>
+                <p className="text-sm text-gray-600">We reply within 2 working days</p>
               </div>
-            </a>
+            </Link>
             <a
               href="https://twitter.com/pathfinderscot"
               target="_blank"

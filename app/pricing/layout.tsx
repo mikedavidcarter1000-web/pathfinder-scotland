@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'Do you offer discounts for schools or groups?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'We are exploring school and local authority partnerships. Get in touch via hello@pathfinderscotland.co.uk if you would like to discuss access for a cohort of students.',
+        text: 'We are exploring school and local authority partnerships. Get in touch via our contact form if you would like to discuss access for a cohort of students.',
       },
     },
   ],

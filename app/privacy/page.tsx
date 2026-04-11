@@ -117,7 +117,7 @@ export default function PrivacyPage() {
               handled directly by Stripe — we never see or store card numbers.
             </p>
 
-            <h2 style={{ marginTop: '40px', marginBottom: '12px' }}>Cookies</h2>
+            <h2 id="cookies" style={{ marginTop: '40px', marginBottom: '12px', scrollMarginTop: '96px' }}>Cookies</h2>
             <p style={{ marginBottom: '24px' }}>
               We use a small number of cookies solely to keep you signed in. We do not use tracking
               cookies, advertising cookies, or cross-site analytics cookies.
@@ -173,13 +173,10 @@ export default function PrivacyPage() {
 
             <h2 style={{ marginTop: '40px', marginBottom: '12px' }}>Contact</h2>
             <p style={{ marginBottom: '24px' }}>
-              Questions about privacy or your data? Email us at{' '}
-              <a
-                href="mailto:hello@pathfinderscotland.co.uk"
-                style={{ color: 'var(--pf-blue-500)' }}
-              >
-                hello@pathfinderscotland.co.uk
-              </a>
+              Questions about privacy or your data? Send us a message via our{' '}
+              <Link href="/contact" style={{ color: 'var(--pf-blue-500)' }}>
+                contact form
+              </Link>
               .
             </p>
 

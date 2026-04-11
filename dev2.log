@@ -12,3 +12,34 @@
 ✓ Starting...
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
 ✓ Ready in 2.4s
+
+thread 'tokio-runtime-worker' (10264) panicked at turbopack\crates\turbo-persistence\src\static_sorted_file.rs:411:46:
+range start index 100692406 out of range for slice of length 801
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'tokio-runtime-worker' (17428) panicked at turbopack\crates\turbo-persistence\src\static_sorted_file.rs:411:46:
+range start index 100692406 out of range for slice of length 801
+
+thread 'tokio-runtime-worker' (10264) panicked at turbopack\crates\turbo-persistence\src\static_sorted_file.rs:411:46:
+range start index 100692406 out of range for slice of length 801
+
+thread 'tokio-runtime-worker' (10264) panicked at turbopack\crates\turbo-persistence\src\static_sorted_file.rs:411:46:
+range start index 100692406 out of range for slice of length 801
+
+-----
+[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to D:\Dev\pathfinder-scotland\.tmp\next-panic-5d90c272aaaba5f7827163b750a5b812.log.
+
+To help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20range%20start%20index%20100692406%20out%20of%20range%20for%20slice%20of%20length%20801&body=Turbopack%20version%3A%20%6023c46498%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20range%20start%20index%20100692406%20out%20of%20range%20for%20slice%20of%20length%20801%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+-----
+
+Error [TurbopackInternalError]: range start index 100692406 out of range for slice of length 801
+
+Debug info:
+- Execution of get_entrypoints_with_issues_operation failed
+- Execution of EntrypointsOperation::new failed
+- Execution of Project::entrypoints failed
+- range start index 100692406 out of range for slice of length 801
+    at <unknown> (TurbopackInternalError: range start index 100692406 out of range for slice of length 801) {
+  location: 'turbopack\\crates\\turbo-persistence\\src\\static_sorted_file.rs:411:46'
+}
+[?25h

@@ -131,13 +131,10 @@ export default function TermsPage() {
 
             <h2 style={{ marginTop: '40px', marginBottom: '12px' }}>Contact</h2>
             <p style={{ marginBottom: '0' }}>
-              Questions about these terms? Email us at{' '}
-              <a
-                href="mailto:hello@pathfinderscotland.co.uk"
-                style={{ color: 'var(--pf-blue-500)' }}
-              >
-                hello@pathfinderscotland.co.uk
-              </a>
+              Questions about these terms? Send us a message via our{' '}
+              <Link href="/contact" style={{ color: 'var(--pf-blue-500)' }}>
+                contact form
+              </Link>
               .
             </p>
           </div>

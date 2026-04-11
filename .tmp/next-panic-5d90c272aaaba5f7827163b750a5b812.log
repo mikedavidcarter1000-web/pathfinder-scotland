@@ -1,0 +1,8 @@
+---------------------------
+range start index 100692406 out of range for slice of length 801
+
+Debug info:
+- Execution of get_entrypoints_with_issues_operation failed
+- Execution of EntrypointsOperation::new failed
+- Execution of Project::entrypoints failed
+- range start index 100692406 out of range for slice of length 801

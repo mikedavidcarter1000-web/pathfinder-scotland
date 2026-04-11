@@ -9,6 +9,7 @@ import './globals.css'
 import { Providers } from './providers'
 import { Footer } from '@/components/layout/footer'
 import { Navbar } from '@/components/layout/navbar'
+import { CookieConsent } from '@/components/ui/cookie-consent'
 
 const SITE_URL = 'https://pathfinder-scotland.vercel.app'
 const SITE_NAME = 'Pathfinder Scotland'
@@ -125,6 +126,7 @@ export default function RootLayout({
             <div className="flex-1">{children}</div>
             <Footer />
           </div>
+          <CookieConsent />
         </Providers>
       </body>
     </html>

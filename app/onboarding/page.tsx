@@ -399,7 +399,7 @@ function OnboardingContent() {
         <div className="text-center mt-6">
           <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
             Need help?{' '}
-            <Link href="/help" style={{ color: 'var(--pf-blue-500)' }}>
+            <Link href="/contact" style={{ color: 'var(--pf-blue-500)' }}>
               Contact support
             </Link>
           </p>

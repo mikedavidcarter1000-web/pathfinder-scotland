@@ -27,7 +27,7 @@ export function Footer() {
     ],
     company: [
       { label: 'About', href: '/about' },
-      { label: 'Contact Support', href: 'mailto:hello@pathfinderscotland.co.uk', external: true },
+      { label: 'Contact', href: '/contact' },
       { label: 'Privacy Policy', href: '/privacy' },
       { label: 'Terms of Service', href: '/terms' },
     ],
