@@ -20,6 +20,10 @@ import {
   getCurricularAreaColour,
   QUALIFICATION_LEVEL_LABELS,
 } from '@/lib/constants'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
+import { useToast } from '@/components/ui/toast'
+import { SubmitButton } from '@/components/ui/submit-button'
 import type { Tables } from '@/types/database'
 
 type YearGoingInto = 's3' | 's4' | 's5' | 's6'
@@ -100,6 +104,7 @@ export default function PathwaysPage() {
   const [academyRankings, setAcademyRankings] = useState<(string | null)[]>([null, null, null])
 
   const { user } = useAuth()
+  const pfToast = useToast()
   const currentStage = yearGoingInto ? YEAR_TO_CURRENT_STAGE[yearGoingInto] : null
   const currentTransition = yearGoingInto ? YEAR_TO_TRANSITION[yearGoingInto] : null
   const { data: pathway, isLoading } = usePathways(currentStage)
@@ -322,11 +327,26 @@ export default function PathwaysPage() {
 
         {/* Loading state for pathway data */}
         {yearGoingInto && isLoading && (
-          <div className="pf-card p-12 text-center">
-            <div className="animate-pulse" style={{ color: 'var(--pf-grey-600)' }}>
-              Loading your pathway options...
+          <>
+            <div className="pf-card mb-6">
+              <Skeleton width="50%" height={22} rounded="md" />
+              <div style={{ height: '12px' }} />
+              <Skeleton variant="text" lines={3} />
             </div>
-          </div>
+            <div className="pf-card">
+              <Skeleton width="40%" height={22} rounded="md" />
+              <div style={{ height: '16px' }} />
+              <div className="space-y-3">
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <Skeleton width={20} height={20} rounded="sm" />
+                    <Skeleton width="60%" height={18} rounded="sm" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <SlowLoadingNotice isLoading={isLoading} />
+          </>
         )}
 
         {/* Main planning UI */}
@@ -539,9 +559,6 @@ export default function PathwaysPage() {
                 hasSelection={selectedIds.size > 0}
                 onSave={async () => {
                   if (!currentTransition) return
-                  // Strip compulsory from the rank order so the student's
-                  // "free" picks are what gets ranked; reserves aren't
-                  // modelled in the UI yet, so everything is a primary pick.
                   const orderedFreeIds = Array.from(selectedIds).filter(
                     (id) => !compulsoryIds.has(id)
                   )
@@ -552,17 +569,11 @@ export default function PathwaysPage() {
                       academyRankings:
                         yearGoingInto === 's3' ? academyRankings : undefined,
                     })
-                    setToast('Your subject choices have been saved')
-                    if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
-                    toastTimerRef.current = setTimeout(() => setToast(null), 2500)
+                    pfToast.success('Choices saved', 'Your subject plan is up to date.')
                   } catch (err) {
-                    setToast(
-                      err instanceof Error
-                        ? `Could not save: ${err.message}`
-                        : 'Could not save your choices'
-                    )
-                    if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
-                    toastTimerRef.current = setTimeout(() => setToast(null), 3500)
+                    const message =
+                      err instanceof Error ? err.message : 'Please try again.'
+                    pfToast.error("Couldn't save choices", message)
                   }
                 }}
               />
@@ -1602,15 +1613,16 @@ function SaveChoicesPanel({
           Saving keeps them on your dashboard and powers your course matches.
         </p>
       </div>
-      <button
+      <SubmitButton
         type="button"
         onClick={onSave}
-        disabled={isSaving || !hasSelection}
-        className="pf-btn-primary"
+        disabled={!hasSelection}
+        isLoading={isSaving}
+        loadingText="Saving..."
         style={{ whiteSpace: 'nowrap' }}
       >
-        {isSaving ? 'Saving…' : 'Save my choices'}
-      </button>
+        Save my choices
+      </SubmitButton>
     </div>
   )
 }

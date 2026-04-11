@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { useCurrentStudent, useUpdateStudent, useWideningAccessEligibility } from '@/hooks/use-student'
 import { SCHOOL_STAGES, SIMD_DESCRIPTIONS } from '@/lib/constants'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { SubmitButton } from '@/components/ui/submit-button'
+import { useToast } from '@/components/ui/toast'
 import type { Tables } from '@/types/database'
 
 type Student = Tables<'students'>
@@ -12,6 +15,7 @@ export function ProfileSummary() {
   const { data: student, isLoading } = useCurrentStudent() as { data: Student | null | undefined; isLoading: boolean }
   const wideningAccess = useWideningAccessEligibility()
   const updateStudent = useUpdateStudent()
+  const toast = useToast()
   const [isEditing, setIsEditing] = useState(false)
   const [editData, setEditData] = useState({
     firstName: '',
@@ -23,22 +27,11 @@ export function ProfileSummary() {
   if (isLoading) {
     return (
       <div className="pf-card">
-        <div className="animate-pulse">
-          <div
-            className="h-6 w-32 rounded mb-4"
-            style={{ backgroundColor: 'var(--pf-grey-100)' }}
-          />
-          <div className="space-y-3">
-            <div
-              className="h-4 w-48 rounded"
-              style={{ backgroundColor: 'var(--pf-grey-100)' }}
-            />
-            <div
-              className="h-4 w-36 rounded"
-              style={{ backgroundColor: 'var(--pf-grey-100)' }}
-            />
-          </div>
-        </div>
+        <Skeleton width="140px" height={22} rounded="md" />
+        <div style={{ height: '16px' }} />
+        <Skeleton width="200px" height={14} rounded="sm" />
+        <div style={{ height: '8px' }} />
+        <Skeleton width="150px" height={14} rounded="sm" />
       </div>
     )
   }
@@ -58,13 +51,19 @@ export function ProfileSummary() {
   }
 
   const handleSave = async () => {
-    await updateStudent.mutateAsync({
-      first_name: editData.firstName,
-      last_name: editData.lastName,
-      school_stage: editData.schoolStage as SchoolStage,
-      school_name: editData.schoolName || null,
-    })
-    setIsEditing(false)
+    try {
+      await updateStudent.mutateAsync({
+        first_name: editData.firstName,
+        last_name: editData.lastName,
+        school_stage: editData.schoolStage as SchoolStage,
+        school_name: editData.schoolName || null,
+      })
+      toast.success('Profile updated')
+      setIsEditing(false)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Please try again.'
+      toast.error("Couldn't save profile", message)
+    }
   }
 
   if (isEditing) {
@@ -123,16 +122,19 @@ export function ProfileSummary() {
             <button
               onClick={() => setIsEditing(false)}
               className="pf-btn-secondary flex-1"
+              disabled={updateStudent.isPending}
             >
               Cancel
             </button>
-            <button
+            <SubmitButton
               onClick={handleSave}
-              disabled={updateStudent.isPending}
-              className="pf-btn-primary flex-1"
+              isLoading={updateStudent.isPending}
+              loadingText="Saving..."
+              fullWidth
+              className="flex-1"
             >
-              {updateStudent.isPending ? 'Saving...' : 'Save'}
-            </button>
+              Save
+            </SubmitButton>
           </div>
         </div>
       </div>

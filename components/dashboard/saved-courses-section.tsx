@@ -7,6 +7,9 @@ import { getSupabaseClient } from '@/lib/supabase'
 import { useSavedCourses, useRemoveSavedCourse } from '@/hooks/use-courses'
 import { useGradeSummary, useCurrentStudent, useStudentGrades } from '@/hooks/use-student'
 import { EligibilityBadge } from '@/components/ui/eligibility-badge'
+import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { useToast } from '@/components/ui/toast'
 import { calculateEligibility, type EligibilityDetail } from '@/hooks/use-course-matching'
 import type { Tables } from '@/types/database'
 
@@ -21,6 +24,7 @@ export function SavedCoursesSection() {
   const { data: student } = useCurrentStudent() as { data: Student | null | undefined }
   const { data: studentGrades } = useStudentGrades() as { data: StudentGrade[] | undefined }
   const removeCourse = useRemoveSavedCourse()
+  const toast = useToast()
 
   // Same relational requirement lookup used on /courses, scoped to the saved set.
   const supabase = getSupabaseClient()
@@ -63,13 +67,12 @@ export function SavedCoursesSection() {
   if (isLoading) {
     return (
       <div className="pf-card">
-        <div className="animate-pulse">
-          <div className="h-6 w-32 rounded mb-4" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
-          <div className="space-y-3">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-20 rounded-lg" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
-            ))}
-          </div>
+        <Skeleton width="140px" height={20} rounded="md" />
+        <div style={{ height: '16px' }} />
+        <div className="space-y-3">
+          {[0, 1, 2].map((i) => (
+            <Skeleton key={i} width="100%" height={72} rounded="md" />
+          ))}
         </div>
       </div>
     )
@@ -94,7 +97,13 @@ export function SavedCoursesSection() {
   }
 
   const handleRemove = async (courseId: string) => {
-    await removeCourse.mutateAsync(courseId)
+    try {
+      await removeCourse.mutateAsync(courseId)
+      toast.success('Course removed from your shortlist')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Please try again.'
+      toast.error("Couldn't remove course", message)
+    }
   }
 
   return (
@@ -115,39 +124,14 @@ export function SavedCoursesSection() {
       </div>
 
       {!savedCourses || savedCourses.length === 0 ? (
-        <div
-          className="text-center rounded-lg"
-          style={{
-            padding: '32px 16px',
-            backgroundColor: 'var(--pf-teal-50)',
-            border: '1px dashed var(--pf-teal-500)',
-          }}
-        >
-          <svg
-            className="w-8 h-8 mx-auto mb-2"
-            style={{ color: 'var(--pf-teal-500)' }}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
-          <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
-            No courses saved yet
-          </p>
-          <Link
-            href="/courses"
-            className="mt-2 inline-block"
-            style={{
-              fontSize: '0.875rem',
-              color: 'var(--pf-teal-700)',
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 600,
-            }}
-          >
-            Start exploring courses
-          </Link>
-        </div>
+        <EmptyState
+          icon={EmptyStateIcons.bookmark}
+          title="No saved courses yet"
+          message="Browse courses and save the ones you're interested in to build your shortlist."
+          actionLabel="Browse courses"
+          actionHref="/courses"
+          tone="subtle"
+        />
       ) : (
         <div className="space-y-3">
           {savedCourses.slice(0, 5).map((savedCourse) => {

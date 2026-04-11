@@ -10,6 +10,8 @@ import {
   type StudentAcademyChoiceWithSubject,
 } from '@/hooks/use-subjects'
 import { getCurricularAreaColour } from '@/lib/constants'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
 
 // The transitions, ordered the way a student progresses through school.
 const TRANSITION_LABELS: Array<{ value: ChoiceTransition; label: string }> = [
@@ -37,20 +39,12 @@ export function SubjectChoicesSection() {
   if (isLoading) {
     return (
       <div className="pf-card">
-        <div className="animate-pulse">
-          <div
-            className="h-6 w-40 rounded mb-4"
-            style={{ backgroundColor: 'var(--pf-grey-100)' }}
-          />
-          <div className="space-y-2">
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="h-10 rounded"
-                style={{ backgroundColor: 'var(--pf-grey-100)' }}
-              />
-            ))}
-          </div>
+        <Skeleton width="180px" height={20} rounded="md" />
+        <div style={{ height: '16px' }} />
+        <div className="space-y-2">
+          {[0, 1, 2].map((i) => (
+            <Skeleton key={i} width="100%" height={36} rounded="md" />
+          ))}
         </div>
       </div>
     )
@@ -76,7 +70,7 @@ export function SubjectChoicesSection() {
       </div>
 
       {!hasAny ? (
-        <EmptyState />
+        <ChoicesEmpty />
       ) : (
         <div className="space-y-5">
           {TRANSITION_LABELS.map((t) => {
@@ -97,45 +91,16 @@ export function SubjectChoicesSection() {
   )
 }
 
-function EmptyState() {
+function ChoicesEmpty() {
   return (
-    <div
-      className="text-center"
-      style={{
-        padding: '24px',
-        borderRadius: '8px',
-        backgroundColor: 'var(--pf-teal-50)',
-        border: '1px dashed var(--pf-teal-500)',
-      }}
-    >
-      <svg
-        className="w-10 h-10 mx-auto mb-3"
-        style={{ color: 'var(--pf-teal-500)' }}
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-        />
-      </svg>
-      <h3 style={{ fontSize: '1rem', marginBottom: '4px' }}>No subject choices yet</h3>
-      <p
-        style={{
-          fontSize: '0.875rem',
-          color: 'var(--pf-grey-600)',
-          marginBottom: '16px',
-        }}
-      >
-        Use the pathway planner to map out your senior phase subjects.
-      </p>
-      <Link href="/pathways" className="pf-btn-primary pf-btn-sm">
-        Plan my subjects
-      </Link>
-    </div>
+    <EmptyState
+      icon={EmptyStateIcons.compass}
+      title="No subject choices planned yet"
+      message="Use the pathway planner to explore your options and save your choices."
+      actionLabel="Start planning"
+      actionHref="/pathways"
+      tone="subtle"
+    />
   )
 }
 

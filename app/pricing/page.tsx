@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import { redirectToCheckout } from '@/lib/stripe-client'
+import { useToast } from '@/components/ui/toast'
 
 const plans = [
   {
@@ -86,6 +87,7 @@ export default function PricingPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useAuth()
+  const toast = useToast()
 
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -117,9 +119,11 @@ export default function PricingPage() {
       const data = await response.json()
 
       if (!data.valid) {
-        setPromoError(data.error || 'Invalid promo code')
+        const msg = data.error || 'Invalid promo code'
+        setPromoError(msg)
         setAppliedCode(null)
         setPromoDiscount(null)
+        toast.error('Invalid promo code', msg)
         return
       }
 
@@ -130,8 +134,11 @@ export default function PricingPage() {
         description: data.description,
       })
       setPromoError(null)
+      toast.success('Promo code applied', data.description ?? 'Discount will be shown on checkout.')
     } catch {
-      setPromoError('Failed to validate code. Please try again.')
+      const msg = 'Failed to validate code. Please try again.'
+      setPromoError(msg)
+      toast.error("Couldn't check promo code", msg)
     } finally {
       setPromoLoading(false)
     }
@@ -184,7 +191,9 @@ export default function PricingPage() {
         await redirectToCheckout(data.sessionId)
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong')
+      const msg = err instanceof Error ? err.message : 'Something went wrong'
+      setError(msg)
+      toast.error('Checkout failed', msg)
       setLoading(null)
     }
   }

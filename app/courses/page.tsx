@@ -11,6 +11,13 @@ import { useGradeSummary } from '@/hooks/use-student'
 import { CourseCard } from '@/components/ui/course-card'
 import { SearchBar } from '@/components/ui/search-bar'
 import { CourseCardSkeleton } from '@/components/ui/loading-skeletons'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { ErrorState } from '@/components/ui/error-state'
+import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
+import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
+import { useToast } from '@/components/ui/toast'
+import { classifyError } from '@/lib/errors'
+import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 
 type EligibilityFilter = 'all' | 'eligible' | 'eligible_via_wa' | 'possible' | 'missing_subjects' | 'ineligible'
 
@@ -35,15 +42,29 @@ export default function CoursesPage() {
   const [page, setPage] = useState(1)
   const PAGE_SIZE = 12
 
-  const { data: coursesWithEligibility, isLoading, error, stats } = useMatchedCourses({
+  const { data: coursesWithEligibility, isLoading, error, stats, refetch } = useMatchedCourses({
     universityId: universityId || undefined,
     subjectArea: subjectArea || undefined,
   })
+
+  useAuthErrorRedirect([error])
 
   const { data: universities } = useUniversities()
   const { data: subjectAreas } = useSubjectAreas()
   const { data: savedCourses } = useSavedCourses()
   const { toggle: toggleSave, isSaved, isPending: savePending } = useToggleSaveCourse()
+  const toast = useToast()
+
+  const handleToggleSave = async (courseId: string) => {
+    const wasSaved = isSaved(courseId)
+    try {
+      await toggleSave(courseId)
+      toast.success(wasSaved ? 'Removed from saved' : 'Added to saved')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Please try again.'
+      toast.error("Couldn't update saved courses", message)
+    }
+  }
 
   // Filter courses by search and eligibility
   const filteredCourses = useMemo(() => {
@@ -365,61 +386,57 @@ export default function CoursesPage() {
         </div>
 
         {/* Error State */}
-        {error && (
-          <div
-            className="rounded-lg mb-6"
-            style={{
-              padding: '16px',
-              backgroundColor: 'rgba(239,68,68,0.08)',
-              color: 'var(--pf-red-500)',
-            }}
-          >
-            Failed to load courses. Please try again.
-          </div>
+        {!isLoading && error && (
+          <ErrorState
+            title={classifyError(error).title}
+            message="Something went wrong loading courses. Please try again."
+            retryAction={() => refetch()}
+          />
         )}
 
         {/* Loading State */}
         {isLoading && (
-          <div className={`grid gap-6 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-            {[...Array(9)].map((_, i) => (
-              <CourseCardSkeleton key={i} />
-            ))}
-          </div>
+          <>
+            <div className={`grid gap-6 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+              {[...Array(9)].map((_, i) => (
+                <CourseCardSkeleton key={i} />
+              ))}
+            </div>
+            <SlowLoadingNotice isLoading={isLoading} />
+          </>
         )}
 
         {/* Empty State */}
-        {!isLoading && filteredCourses?.length === 0 && (
-          <div className="text-center py-16">
-            <div
-              className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-              style={{ backgroundColor: 'var(--pf-teal-100)' }}
-            >
-              <svg
-                className="w-8 h-8"
-                style={{ color: 'var(--pf-teal-700)' }}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
-              </svg>
-            </div>
-            <h3 style={{ marginBottom: '8px' }}>No courses found</h3>
-            <p style={{ color: 'var(--pf-grey-600)', marginBottom: '16px' }}>
-              {eligibilityFilter !== 'all'
-                ? `No courses match "${eligibilityFilter.replace('_', ' ')}" with your current filters.`
-                : 'Try adjusting your filters or search term.'}
-            </p>
-            {hasFilters && (
-              <button onClick={clearFilters} className="pf-btn-primary">
-                Clear all filters
-              </button>
-            )}
-          </div>
-        )}
+        {!isLoading && !error && filteredCourses?.length === 0 &&
+          (() => {
+            // Specific message for the "eligible" filter case vs the generic
+            // "no results" case so the CTA matches what the student should do.
+            if (eligibilityFilter === 'eligible' || eligibilityFilter === 'eligible_via_wa') {
+              return (
+                <EmptyState
+                  icon={EmptyStateIcons.graduationCap}
+                  title="No eligible courses yet"
+                  message="Add more grades or explore different subjects to find courses you qualify for."
+                  actionLabel="Add grades"
+                  actionHref="/dashboard"
+                  secondaryLabel="Clear filters"
+                  onSecondary={hasFilters ? clearFilters : undefined}
+                />
+              )
+            }
+            return (
+              <EmptyState
+                icon={EmptyStateIcons.book}
+                title="No courses match your search"
+                message="Try different search terms or adjust your filters."
+                actionLabel={hasFilters ? 'Clear all filters' : undefined}
+                onAction={hasFilters ? clearFilters : undefined}
+              />
+            )
+          })()}
 
         {/* Course Grid/List */}
-        {!isLoading && filteredCourses && filteredCourses.length > 0 && (
+        {!isLoading && !error && filteredCourses && filteredCourses.length > 0 && (
           <>
             <div className={`grid gap-6 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
               {pagedCourses.map((course) => (
@@ -430,7 +447,7 @@ export default function CoursesPage() {
                   compact={viewMode === 'list'}
                   showSaveButton={!!user}
                   isSaved={isSaved(course.id)}
-                  onSave={() => toggleSave(course.id)}
+                  onSave={() => handleToggleSave(course.id)}
                 />
               ))}
             </div>

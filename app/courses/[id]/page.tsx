@@ -7,6 +7,11 @@ import { useAuth } from '@/hooks/use-auth'
 import { useCourseEligibility } from '@/hooks/use-course-matching'
 import { useGradeSummary, useWideningAccessEligibility, useCurrentStudent } from '@/hooks/use-student'
 import { DEGREE_TYPES } from '@/lib/constants'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { ErrorState } from '@/components/ui/error-state'
+import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
+import { classifyError } from '@/lib/errors'
+import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import type { Tables } from '@/types/database'
 
 type Course = Tables<'courses'> & { university?: Tables<'universities'> }
@@ -27,7 +32,12 @@ interface UniversityWideningInfo {
 
 export default function CoursePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const { data: course, isLoading, error } = useCourse(id) as { data: Course | null | undefined; isLoading: boolean; error: Error | null }
+  const { data: course, isLoading, error, refetch } = useCourse(id) as {
+    data: Course | null | undefined
+    isLoading: boolean
+    error: Error | null
+    refetch: () => void
+  }
   const { user } = useAuth()
   const { data: student } = useCurrentStudent() as { data: Student | null | undefined }
   const eligibility = useCourseEligibility(course ?? null)
@@ -35,29 +45,67 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
   const wideningAccess = useWideningAccessEligibility()
   const hasGrades = gradeSummary.totalGrades > 0
 
+  useAuthErrorRedirect([error])
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[var(--pf-teal-50)]">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-1/3" />
-            <div className="h-4 bg-gray-200 rounded w-1/4" />
-            <div className="h-64 bg-gray-200 rounded" />
+        <div className="bg-[var(--pf-white)]">
+          <div className="max-w-4xl mx-auto px-4 py-8">
+            <Skeleton width="120px" height={14} rounded="sm" />
+            <div style={{ height: '16px' }} />
+            <Skeleton width="65%" height={32} rounded="md" />
+            <div style={{ height: '10px' }} />
+            <Skeleton width="40%" height={18} rounded="sm" />
+            <div style={{ height: '16px' }} />
+            <div className="flex gap-2">
+              <Skeleton width={80} height={22} rounded="full" />
+              <Skeleton width={60} height={22} rounded="full" />
+              <Skeleton width={100} height={22} rounded="full" />
+            </div>
           </div>
+        </div>
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="md:col-span-2 space-y-6">
+              <div className="pf-card">
+                <Skeleton width="40%" height={22} rounded="md" />
+                <div style={{ height: '16px' }} />
+                <Skeleton variant="table" rows={4} columns={2} />
+              </div>
+              <div className="pf-card">
+                <Skeleton width="50%" height={22} rounded="md" />
+                <div style={{ height: '16px' }} />
+                <Skeleton variant="text" lines={3} />
+              </div>
+            </div>
+            <div className="space-y-6">
+              <Skeleton variant="card" />
+              <Skeleton variant="card" />
+            </div>
+          </div>
+          <SlowLoadingNotice isLoading={isLoading} />
         </div>
       </div>
     )
   }
 
   if (error || !course) {
+    const classified = error ? classifyError(error) : null
+    const isNotFound = !error || classified?.kind === 'not-found'
     return (
-      <div className="min-h-screen bg-[var(--pf-teal-50)] flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Course not found</h1>
-          <p className="text-gray-600 mb-4">The course you're looking for doesn't exist.</p>
-          <Link href="/courses" className="text-[var(--pf-teal-700)] hover:text-[var(--pf-teal-900)] font-medium">
-            Browse all courses
-          </Link>
+      <div className="min-h-screen bg-[var(--pf-teal-50)]" style={{ padding: '48px 16px' }}>
+        <div className="max-w-4xl mx-auto px-4">
+          <ErrorState
+            title={isNotFound ? 'Course not found' : classified?.title ?? 'Something went wrong'}
+            message={
+              isNotFound
+                ? "The course you're looking for doesn't exist or has been removed."
+                : classified?.message ?? 'Please try again in a moment.'
+            }
+            retryAction={isNotFound ? undefined : () => refetch()}
+            backLink={{ href: '/courses', label: 'Browse all courses' }}
+          />
         </div>
       </div>
     )

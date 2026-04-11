@@ -13,6 +13,8 @@ import {
   WideningAccessStep,
   GradesStep,
 } from '@/components/onboarding'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { useToast } from '@/components/ui/toast'
 import type { QualificationType } from '@/lib/grades'
 
 interface Grade {
@@ -36,6 +38,7 @@ export default function OnboardingPage() {
   const { data: student, isLoading: studentLoading } = useCurrentStudent()
   const createStudent = useCreateStudent()
   const bulkUpsertGrades = useBulkUpsertGrades()
+  const toast = useToast()
 
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -113,32 +116,30 @@ export default function OnboardingPage() {
         )
       }
 
+      toast.success('Welcome to Pathfinder', 'Your profile is ready.')
       router.push('/dashboard')
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create profile. Please try again.'
       setError(errorMessage)
+      toast.error("Couldn't save profile", errorMessage)
       setIsSubmitting(false)
     }
   }
 
   if (authLoading || studentLoading) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--pf-teal-50)' }}
-      >
-        <div className="text-center">
-          <svg
-            className="animate-spin w-8 h-8 mx-auto mb-4"
-            style={{ color: 'var(--pf-teal-700)' }}
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-          </svg>
-          <p style={{ color: 'var(--pf-grey-600)' }}>Loading...</p>
-        </div>
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
+        <main className="max-w-3xl mx-auto px-4" style={{ paddingTop: '40px', paddingBottom: '64px' }}>
+          <div className="pf-card">
+            <Skeleton width="60%" height={28} rounded="md" />
+            <div style={{ height: '16px' }} />
+            <Skeleton variant="text" lines={3} />
+            <div style={{ height: '24px' }} />
+            <Skeleton width="100%" height={40} rounded="md" />
+            <div style={{ height: '12px' }} />
+            <Skeleton width="100%" height={40} rounded="md" />
+          </div>
+        </main>
       </div>
     )
   }

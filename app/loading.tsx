@@ -1,9 +1,30 @@
 export default function Loading() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ backgroundColor: 'var(--pf-teal-50)' }}
+    >
       <div className="text-center">
-        <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-gray-600">Loading...</p>
+        <div
+          className="mx-auto"
+          style={{
+            width: '48px',
+            height: '48px',
+            border: '4px solid var(--pf-teal-100)',
+            borderTopColor: 'var(--pf-teal-700)',
+            borderRadius: '9999px',
+            animation: 'spin 1s linear infinite',
+          }}
+        />
+        <p
+          style={{
+            color: 'var(--pf-grey-600)',
+            marginTop: '16px',
+            fontFamily: "'Space Grotesk', sans-serif",
+          }}
+        >
+          Loading...
+        </p>
       </div>
     </div>
   )

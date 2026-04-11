@@ -2,9 +2,12 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { SubmitButton } from '@/components/ui/submit-button'
+import { useToast } from '@/components/ui/toast'
 
 export default function SettingsPage() {
   const router = useRouter()
+  const toast = useToast()
 
   const [isExporting, setIsExporting] = useState(false)
   const [exportError, setExportError] = useState<string | null>(null)
@@ -25,7 +28,9 @@ export default function SettingsPage() {
 
       if (!res.ok) {
         const body = await res.json()
-        setExportError(body.error || 'Export failed. Please try again.')
+        const msg = body.error || 'Export failed. Please try again.'
+        setExportError(msg)
+        toast.error("Couldn't export data", msg)
         return
       }
 
@@ -40,8 +45,11 @@ export default function SettingsPage() {
       document.body.removeChild(anchor)
       URL.revokeObjectURL(url)
       setExportSuccess(true)
+      toast.success('Download started', 'Check your downloads folder.')
     } catch {
-      setExportError('Failed to download your data. Please try again.')
+      const msg = 'Failed to download your data. Please try again.'
+      setExportError(msg)
+      toast.error("Couldn't export data", msg)
     } finally {
       setIsExporting(false)
     }
@@ -62,14 +70,18 @@ export default function SettingsPage() {
 
       if (!res.ok) {
         const body = await res.json()
-        setDeleteError(body.error || 'Deletion failed. Please try again.')
+        const msg = body.error || 'Deletion failed. Please try again.'
+        setDeleteError(msg)
+        toast.error("Couldn't delete account", msg)
         return
       }
 
-      // Account deleted and session cleared on server — redirect to homepage
+      toast.success('Account deleted', 'Your data has been removed.')
       router.push('/')
     } catch {
-      setDeleteError('Something went wrong. Please try again.')
+      const msg = 'Something went wrong. Please try again.'
+      setDeleteError(msg)
+      toast.error("Couldn't delete account", msg)
     } finally {
       setIsDeleting(false)
     }
@@ -116,13 +128,15 @@ export default function SettingsPage() {
                 <p className="text-sm text-green-600 mt-1">Download started.</p>
               )}
             </div>
-            <button
+            <SubmitButton
               onClick={handleExport}
-              disabled={isExporting}
-              className="shrink-0 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              isLoading={isExporting}
+              loadingText="Preparing..."
+              variant="secondary"
+              className="shrink-0 pf-btn-sm"
             >
-              {isExporting ? 'Preparing…' : 'Download'}
-            </button>
+              Download
+            </SubmitButton>
           </div>
 
           {/* Delete account */}
@@ -195,13 +209,16 @@ export default function SettingsPage() {
               >
                 Cancel
               </button>
-              <button
+              <SubmitButton
                 onClick={handleDeleteConfirm}
-                disabled={confirmationText !== 'DELETE' || isDeleting}
-                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={confirmationText !== 'DELETE'}
+                isLoading={isDeleting}
+                loadingText="Deleting..."
+                variant="danger"
+                className="flex-1"
               >
-                {isDeleting ? 'Deleting…' : 'Delete my account'}
-              </button>
+                Delete my account
+              </SubmitButton>
             </div>
           </div>
         </div>

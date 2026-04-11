@@ -9,6 +9,8 @@ import {
   useGradeSummary,
 } from '@/hooks/use-student'
 import { SubjectGradeChecklist, type GradeEntry } from '@/components/ui/subject-grade-checklist'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { useToast } from '@/components/ui/toast'
 import type { QualificationType } from '@/lib/grades'
 import type { Tables } from '@/types/database'
 
@@ -29,6 +31,7 @@ export function GradesSection() {
   const addGrade = useAddGrade()
   const updateGrade = useUpdateGrade()
   const deleteGrade = useDeleteGrade()
+  const toast = useToast()
 
   const [activeTab, setActiveTab] = useState<QualificationType>('higher')
 
@@ -47,13 +50,12 @@ export function GradesSection() {
   if (isLoading) {
     return (
       <div className="pf-card">
-        <div className="animate-pulse">
-          <div className="h-6 w-32 rounded mb-4" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
-          <div className="space-y-3">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-14 rounded-lg" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
-            ))}
-          </div>
+        <Skeleton width="140px" height={20} rounded="md" />
+        <div style={{ height: '16px' }} />
+        <div className="space-y-3">
+          {[0, 1, 2].map((i) => (
+            <Skeleton key={i} width="100%" height={52} rounded="md" />
+          ))}
         </div>
       </div>
     )
@@ -73,42 +75,47 @@ export function GradesSection() {
       existingByKey.set(key, g)
     }
 
-    const nextKeys = new Set<string>()
-    for (const entry of nextEntries) {
-      const key = entry.subject_id ?? entry.subject.toLowerCase()
-      nextKeys.add(key)
+    try {
+      const nextKeys = new Set<string>()
+      for (const entry of nextEntries) {
+        const key = entry.subject_id ?? entry.subject.toLowerCase()
+        nextKeys.add(key)
 
-      const existing = existingByKey.get(key)
-      if (!existing) {
-        await addGrade.mutateAsync({
-          subject: entry.subject,
-          subject_id: entry.subject_id ?? null,
-          grade: entry.grade ?? '',
-          predicted: entry.predicted,
-          qualification_type: activeTab,
-        })
-      } else {
-        const changed =
-          existing.grade !== entry.grade ||
-          (existing.predicted ?? false) !== entry.predicted
-        if (changed) {
-          await updateGrade.mutateAsync({
-            gradeId: existing.id,
-            data: {
-              grade: entry.grade ?? '',
-              predicted: entry.predicted,
-              subject_id: entry.subject_id ?? existing.subject_id ?? null,
-            },
+        const existing = existingByKey.get(key)
+        if (!existing) {
+          await addGrade.mutateAsync({
+            subject: entry.subject,
+            subject_id: entry.subject_id ?? null,
+            grade: entry.grade ?? '',
+            predicted: entry.predicted,
+            qualification_type: activeTab,
           })
+        } else {
+          const changed =
+            existing.grade !== entry.grade ||
+            (existing.predicted ?? false) !== entry.predicted
+          if (changed) {
+            await updateGrade.mutateAsync({
+              gradeId: existing.id,
+              data: {
+                grade: entry.grade ?? '',
+                predicted: entry.predicted,
+                subject_id: entry.subject_id ?? existing.subject_id ?? null,
+              },
+            })
+          }
         }
       }
-    }
 
-    // Delete rows that are no longer present (subject was unchecked).
-    for (const [key, existing] of existingByKey) {
-      if (!nextKeys.has(key)) {
-        await deleteGrade.mutateAsync(existing.id)
+      // Delete rows that are no longer present (subject was unchecked).
+      for (const [key, existing] of existingByKey) {
+        if (!nextKeys.has(key)) {
+          await deleteGrade.mutateAsync(existing.id)
+        }
       }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Please try again.'
+      toast.error("Couldn't save grades", message)
     }
   }
 

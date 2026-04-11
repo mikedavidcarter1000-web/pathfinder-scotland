@@ -6,6 +6,12 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useSubjects, useCurricularAreas, useCareerSectors } from '@/hooks/use-subjects'
 import type { QualificationLevel, SubjectWithArea } from '@/hooks/use-subjects'
 import { getCurricularAreaColour } from '@/lib/constants'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { ErrorState } from '@/components/ui/error-state'
+import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
+import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
+import { classifyError } from '@/lib/errors'
+import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 
 type LevelFilter = 'all' | QualificationLevel
 
@@ -41,11 +47,13 @@ function SubjectsPageContent() {
 
   const levelFilter = level === 'all' ? undefined : level
 
-  const { data: subjects, isLoading, error } = useSubjects({
+  const { data: subjects, isLoading, error, refetch } = useSubjects({
     curricularAreaId: areaId || undefined,
     level: levelFilter,
     careerSectorId: careerSectorId || undefined,
   })
+
+  useAuthErrorRedirect([error])
 
   const filteredSubjects = useMemo(() => {
     if (!subjects) return []
@@ -223,62 +231,52 @@ function SubjectsPageContent() {
         </div>
 
         {/* Error */}
-        {error && (
-          <div
-            className="rounded-lg p-4 mb-6"
-            style={{
-              backgroundColor: 'rgba(239,68,68,0.08)',
-              color: 'var(--pf-red-500)',
-            }}
-          >
-            Failed to load subjects. Please try again.
-          </div>
+        {!isLoading && error && (
+          <ErrorState
+            title={classifyError(error).title}
+            message="Something went wrong loading subjects. Please try again."
+            retryAction={() => refetch()}
+          />
         )}
 
         {/* Loading */}
         {isLoading && (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[...Array(9)].map((_, i) => (
-              <div key={i} className="pf-card animate-pulse">
-                <div className="h-4 rounded w-3/4 mb-3" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
-                <div className="h-3 rounded w-1/2 mb-4" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
-                <div className="h-12 rounded" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
-              </div>
-            ))}
-          </div>
+          <>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {[...Array(9)].map((_, i) => (
+                <div key={i} className="pf-card" style={{ padding: 0, overflow: 'hidden' }}>
+                  <Skeleton width="100%" height={4} rounded="sm" />
+                  <div style={{ padding: '20px' }}>
+                    <Skeleton width="75%" height={18} rounded="sm" />
+                    <div style={{ height: '8px' }} />
+                    <Skeleton width="40%" height={22} rounded="full" />
+                    <div style={{ height: '16px' }} />
+                    <Skeleton width="100%" height={12} rounded="sm" />
+                    <div style={{ height: '6px' }} />
+                    <Skeleton width="90%" height={12} rounded="sm" />
+                    <div style={{ height: '20px' }} />
+                    <Skeleton width="100%" height={36} rounded="md" />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <SlowLoadingNotice isLoading={isLoading} />
+          </>
         )}
 
         {/* Empty */}
-        {!isLoading && filteredSubjects.length === 0 && (
-          <div className="text-center py-16">
-            <div
-              className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-              style={{ backgroundColor: 'var(--pf-grey-100)' }}
-            >
-              <svg
-                className="w-8 h-8"
-                style={{ color: 'var(--pf-grey-600)' }}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
-              </svg>
-            </div>
-            <h3 style={{ marginBottom: '8px' }}>No subjects found</h3>
-            <p style={{ color: 'var(--pf-grey-600)', marginBottom: '16px' }}>
-              Try adjusting your filters or search term.
-            </p>
-            {hasFilters && (
-              <button onClick={clearFilters} className="pf-btn-primary">
-                Clear all filters
-              </button>
-            )}
-          </div>
+        {!isLoading && !error && filteredSubjects.length === 0 && (
+          <EmptyState
+            icon={EmptyStateIcons.search}
+            title="No subjects found"
+            message="Try adjusting your filters or search term."
+            actionLabel={hasFilters ? 'Clear filters' : undefined}
+            onAction={hasFilters ? clearFilters : undefined}
+          />
         )}
 
         {/* Subject grid */}
-        {!isLoading && filteredSubjects.length > 0 && (
+        {!isLoading && !error && filteredSubjects.length > 0 && (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredSubjects.map((subject) => (
               <SubjectCard

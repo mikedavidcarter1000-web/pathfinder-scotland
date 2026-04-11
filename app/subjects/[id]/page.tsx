@@ -14,6 +14,11 @@ import {
   QUALIFICATION_LEVEL_LABELS,
   RELEVANCE_STYLES,
 } from '@/lib/constants'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { ErrorState } from '@/components/ui/error-state'
+import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
+import { classifyError } from '@/lib/errors'
+import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import type { Tables } from '@/types/database'
 
 type StudentGrade = Tables<'student_grades'>
@@ -49,8 +54,10 @@ type PathwayStep = {
 
 export default function SubjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const { data: subject, isLoading, error } = useSubjectDetail(id)
+  const { data: subject, isLoading, error, refetch } = useSubjectDetail(id)
   const { data: studentGrades } = useStudentGrades() as { data: StudentGrade[] | undefined }
+
+  useAuthErrorRedirect([error])
 
   const achievedLevels = useMemo(() => {
     if (!subject || !studentGrades) return {} as Record<string, string>
@@ -125,34 +132,77 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
   if (isLoading) {
     return (
       <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-teal-50)' }}>
-        <div className="pf-container" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 rounded w-1/3" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
-            <div className="h-4 rounded w-1/4" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
-            <div className="grid lg:grid-cols-2 gap-6">
-              <div className="h-64 rounded" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
-              <div className="h-64 rounded" style={{ backgroundColor: 'var(--pf-grey-100)' }} />
+        <div style={{ backgroundColor: 'var(--pf-white)' }}>
+          <Skeleton width="100%" height={4} rounded="sm" />
+          <div className="pf-container" style={{ paddingTop: '32px', paddingBottom: '32px' }}>
+            <Skeleton width="140px" height={14} rounded="sm" />
+            <div style={{ height: '16px' }} />
+            <Skeleton width="60%" height={36} rounded="md" />
+            <div style={{ height: '12px' }} />
+            <Skeleton width="120px" height={22} rounded="full" />
+            <div style={{ height: '16px' }} />
+            <div className="flex gap-2">
+              <Skeleton width={44} height={22} rounded="full" />
+              <Skeleton width={44} height={22} rounded="full" />
+              <Skeleton width={70} height={22} rounded="full" />
             </div>
           </div>
+        </div>
+        <div className="pf-container" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
+          <div className="grid lg:grid-cols-2 gap-6">
+            <div className="pf-card">
+              <Skeleton width="40%" height={22} rounded="md" />
+              <div style={{ height: '16px' }} />
+              <Skeleton variant="text" lines={4} />
+              <div style={{ height: '24px' }} />
+              <div className="space-y-3">
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="flex gap-3 items-start">
+                    <Skeleton variant="avatar" width={36} height={36} />
+                    <div className="flex-1">
+                      <Skeleton width="50%" height={16} rounded="sm" />
+                      <div style={{ height: '8px' }} />
+                      <Skeleton width="80%" height={12} rounded="sm" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="pf-card">
+              <Skeleton width="50%" height={22} rounded="md" />
+              <div style={{ height: '16px' }} />
+              <Skeleton variant="text" lines={3} />
+              <div style={{ height: '24px' }} />
+              <Skeleton width="100%" height={48} rounded="md" />
+              <div style={{ height: '12px' }} />
+              <Skeleton width="100%" height={48} rounded="md" />
+            </div>
+          </div>
+          <SlowLoadingNotice isLoading={isLoading} />
         </div>
       </div>
     )
   }
 
   if (error || !subject) {
+    const classified = error ? classifyError(error) : null
+    const isNotFound = !error || classified?.kind === 'not-found'
     return (
       <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--pf-teal-50)' }}
+        className="min-h-screen"
+        style={{ backgroundColor: 'var(--pf-teal-50)', padding: '48px 16px' }}
       >
-        <div className="text-center">
-          <h1 style={{ marginBottom: '8px' }}>Subject not found</h1>
-          <p style={{ color: 'var(--pf-grey-600)', marginBottom: '16px' }}>
-            The subject you&apos;re looking for doesn&apos;t exist.
-          </p>
-          <Link href="/subjects" className="pf-btn-primary">
-            Browse all subjects
-          </Link>
+        <div className="pf-container">
+          <ErrorState
+            title={isNotFound ? 'Subject not found' : classified?.title ?? 'Something went wrong'}
+            message={
+              isNotFound
+                ? "The subject you're looking for doesn't exist or has been removed."
+                : classified?.message ?? 'Please try again in a moment.'
+            }
+            retryAction={isNotFound ? undefined : () => refetch()}
+            backLink={{ href: '/subjects', label: 'Browse all subjects' }}
+          />
         </div>
       </div>
     )

@@ -355,11 +355,16 @@ export function useMatchedCourses(filters?: {
   subjectArea?: string
   onlyEligible?: boolean
 }) {
-  const { data: courses, isLoading, error } = useCourses({
+  const { data: courses, isLoading, error, refetch } = useCourses({
     universityId: filters?.universityId,
     subjectArea: filters?.subjectArea,
     limit: 500,
-  }) as { data: Course[] | undefined; isLoading: boolean; error: Error | null }
+  }) as {
+    data: Course[] | undefined
+    isLoading: boolean
+    error: Error | null
+    refetch: () => void
+  }
 
   const gradeSummary = useGradeSummary()
   const { data: student } = useCurrentStudent() as { data: Student | null | undefined }
@@ -407,6 +412,7 @@ export function useMatchedCourses(filters?: {
     data: filtered,
     isLoading,
     error,
+    refetch,
     stats: {
       total: coursesWithEligibility.length,
       eligible: coursesWithEligibility.filter((c) => c.eligibility?.status === 'eligible').length,

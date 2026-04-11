@@ -1,10 +1,11 @@
 'use client'
 
-import Link from 'next/link'
 import { useMemo } from 'react'
 import { useComparisonWithCourses } from '@/hooks/use-comparison'
 import { useCurrentStudent, useStudentGrades, useGradeSummary } from '@/hooks/use-student'
 import { ComparisonTable } from '@/components/ui/comparison-table'
+import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
+import { Skeleton } from '@/components/ui/loading-skeleton'
 import { calculateEligibility, type EligibilityDetail } from '@/hooks/use-course-matching'
 import { useQuery } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
@@ -98,38 +99,27 @@ export default function ComparePage() {
           </p>
         </div>
         {count > 0 && (
-          <button
-            onClick={clearAll}
-            className="shrink-0 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-          >
+          <button onClick={clearAll} className="pf-btn-secondary pf-btn-sm shrink-0">
             Clear all
           </button>
         )}
       </div>
 
       {isLoading && count > 0 && (
-        <div className="bg-white border border-gray-200 rounded-xl p-12 text-center text-gray-500">
-          Loading comparison...
+        <div className="pf-card">
+          <Skeleton variant="table" rows={6} columns={count} />
         </div>
       )}
 
       {!isLoading && count === 0 && (
-        <div className="bg-white border border-dashed border-gray-300 rounded-xl p-12 text-center">
-          <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-          </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-1">Nothing to compare yet</h2>
-          <p className="text-gray-600 mb-4">
-            Browse courses and use the compare button to add up to {maxCourses} side by side.
-          </p>
-          <Link
-            href="/courses"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
-          >
-            Browse courses
-          </Link>
+        <div className="pf-card">
+          <EmptyState
+            icon={EmptyStateIcons.columns}
+            title="Nothing to compare yet"
+            message={`Save at least 2 courses, then come back to compare them side by side.`}
+            actionLabel="Browse courses"
+            actionHref="/courses"
+          />
         </div>
       )}
 

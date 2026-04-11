@@ -5,6 +5,12 @@ import Link from 'next/link'
 import { useUniversity, useUniversityCourses } from '@/hooks/use-universities'
 import { CourseCard } from '@/components/ui/course-card'
 import { CourseCardSkeleton } from '@/components/ui/loading-skeletons'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { ErrorState } from '@/components/ui/error-state'
+import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
+import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
+import { classifyError } from '@/lib/errors'
+import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import { UNIVERSITY_TYPES } from '@/lib/constants'
 import type { Tables } from '@/types/database'
 
@@ -13,32 +19,71 @@ type Course = Tables<'courses'>
 
 export default function UniversityPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const { data: university, isLoading, error } = useUniversity(id) as { data: University | null | undefined; isLoading: boolean; error: Error | null }
+  const { data: university, isLoading, error, refetch } = useUniversity(id) as {
+    data: University | null | undefined
+    isLoading: boolean
+    error: Error | null
+    refetch: () => void
+  }
   const { data: courses, isLoading: coursesLoading } = useUniversityCourses(id) as { data: Course[] | undefined; isLoading: boolean }
+
+  useAuthErrorRedirect([error])
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[var(--pf-teal-50)]">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-1/3" />
-            <div className="h-4 bg-gray-200 rounded w-1/4" />
-            <div className="h-64 bg-gray-200 rounded" />
+        <div className="bg-[var(--pf-white)]">
+          <div className="max-w-4xl mx-auto px-4 py-8">
+            <Skeleton width="140px" height={14} rounded="sm" />
+            <div style={{ height: '16px' }} />
+            <div className="flex items-start gap-4">
+              <Skeleton variant="avatar" width={64} height={64} rounded="lg" />
+              <div className="flex-1">
+                <Skeleton width="60%" height={32} rounded="md" />
+                <div style={{ height: '8px' }} />
+                <Skeleton width="40%" height={18} rounded="sm" />
+              </div>
+            </div>
+            <div style={{ height: '16px' }} />
+            <div className="flex gap-2">
+              <Skeleton width={80} height={22} rounded="full" />
+              <Skeleton width={100} height={22} rounded="full" />
+            </div>
           </div>
+        </div>
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="md:col-span-2 space-y-6">
+              <Skeleton variant="card" />
+              <Skeleton variant="card" />
+            </div>
+            <div className="space-y-6">
+              <Skeleton variant="card" />
+              <Skeleton variant="card" />
+            </div>
+          </div>
+          <SlowLoadingNotice isLoading={isLoading} />
         </div>
       </div>
     )
   }
 
   if (error || !university) {
+    const classified = error ? classifyError(error) : null
+    const isNotFound = !error || classified?.kind === 'not-found'
     return (
-      <div className="min-h-screen bg-[var(--pf-teal-50)] flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">University not found</h1>
-          <p className="text-gray-600 mb-4">The university you're looking for doesn't exist.</p>
-          <Link href="/universities" className="text-[var(--pf-teal-700)] hover:text-[var(--pf-teal-900)] font-medium">
-            Browse all universities
-          </Link>
+      <div className="min-h-screen bg-[var(--pf-teal-50)]" style={{ padding: '48px 16px' }}>
+        <div className="max-w-4xl mx-auto px-4">
+          <ErrorState
+            title={isNotFound ? 'University not found' : classified?.title ?? 'Something went wrong'}
+            message={
+              isNotFound
+                ? "The university you're looking for doesn't exist or has been removed."
+                : classified?.message ?? 'Please try again in a moment.'
+            }
+            retryAction={isNotFound ? undefined : () => refetch()}
+            backLink={{ href: '/universities', label: 'Browse all universities' }}
+          />
         </div>
       </div>
     )
@@ -196,7 +241,14 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 py-8 text-center">No courses found for this university.</p>
+                <EmptyState
+                  icon={EmptyStateIcons.book}
+                  title="No courses listed yet"
+                  message="We don't have any courses on file for this university yet. Check back soon."
+                  actionLabel="Browse all courses"
+                  actionHref="/courses"
+                  tone="subtle"
+                />
               )}
             </section>
           </div>

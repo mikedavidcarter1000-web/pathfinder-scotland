@@ -3,6 +3,10 @@
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-auth'
 import { useUniversities } from '@/hooks/use-universities'
+import { Skeleton } from '@/components/ui/loading-skeleton'
+import { ErrorState } from '@/components/ui/error-state'
+import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
+import { classifyError } from '@/lib/errors'
 import type { Tables } from '@/types/database'
 
 type University = Tables<'universities'>
@@ -56,7 +60,12 @@ function resolveUniWideningInfo(uni: University): {
 
 export default function WideningAccessPage() {
   const { user } = useAuth()
-  const { data: universities, isLoading: universitiesLoading } = useUniversities()
+  const {
+    data: universities,
+    isLoading: universitiesLoading,
+    error: universitiesError,
+    refetch: refetchUniversities,
+  } = useUniversities()
 
   return (
     <main>
@@ -395,18 +404,31 @@ export default function WideningAccessPage() {
           </div>
 
           {universitiesLoading && (
-            <div className="grid md:grid-cols-2 gap-4">
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className="pf-card animate-pulse"
-                  style={{ height: '120px', backgroundColor: 'var(--pf-grey-100)' }}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid md:grid-cols-2 gap-4">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="pf-card" style={{ padding: '20px' }}>
+                    <Skeleton width="60%" height={20} rounded="md" />
+                    <div style={{ height: '8px' }} />
+                    <Skeleton width="35%" height={14} rounded="sm" />
+                    <div style={{ height: '12px' }} />
+                    <Skeleton variant="text" lines={2} />
+                  </div>
+                ))}
+              </div>
+              <SlowLoadingNotice isLoading={universitiesLoading} />
+            </>
           )}
 
-          {!universitiesLoading && universities && (
+          {!universitiesLoading && universitiesError && (
+            <ErrorState
+              title={classifyError(universitiesError).title}
+              message="Something went wrong loading universities. Please try again."
+              retryAction={() => refetchUniversities()}
+            />
+          )}
+
+          {!universitiesLoading && !universitiesError && universities && (
             <div className="grid md:grid-cols-2 gap-4">
               {universities.map((uni) => {
                 const resolved = resolveUniWideningInfo(uni)

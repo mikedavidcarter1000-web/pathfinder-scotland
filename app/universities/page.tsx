@@ -5,14 +5,21 @@ import Link from 'next/link'
 import { useUniversitiesWithStats, useUniversityCities } from '@/hooks/use-universities'
 import { UniversityCard } from '@/components/ui/university-card'
 import { UniversityCardSkeleton } from '@/components/ui/loading-skeletons'
+import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
+import { ErrorState } from '@/components/ui/error-state'
+import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
+import { classifyError } from '@/lib/errors'
+import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import { UNIVERSITY_TYPES } from '@/lib/constants'
 
 export default function UniversitiesPage() {
   const [typeFilter, setTypeFilter] = useState<string>('')
   const [cityFilter, setCityFilter] = useState<string>('')
 
-  const { data: universities, isLoading, error } = useUniversitiesWithStats()
+  const { data: universities, isLoading, error, refetch } = useUniversitiesWithStats()
   const cities = useUniversityCities()
+
+  useAuthErrorRedirect([error])
 
   const filteredUniversities = universities?.filter((uni) => {
     if (typeFilter && uni.type !== typeFilter) return false
@@ -136,56 +143,36 @@ export default function UniversitiesPage() {
           )}
         </div>
 
-        {error && (
-          <div
-            className="rounded-lg mb-6"
-            style={{
-              padding: '16px',
-              backgroundColor: 'rgba(239,68,68,0.08)',
-              color: 'var(--pf-red-500)',
-            }}
-          >
-            Failed to load universities. Please try again.
-          </div>
+        {!isLoading && error && (
+          <ErrorState
+            title={classifyError(error).title}
+            message="Something went wrong loading universities. Please try again."
+            retryAction={() => refetch()}
+          />
         )}
 
         {isLoading && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <UniversityCardSkeleton key={i} />
-            ))}
-          </div>
-        )}
-
-        {!isLoading && filteredUniversities?.length === 0 && (
-          <div className="text-center py-16">
-            <div
-              className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-              style={{ backgroundColor: 'var(--pf-teal-100)' }}
-            >
-              <svg
-                className="w-8 h-8"
-                style={{ color: 'var(--pf-teal-700)' }}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
+          <>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <UniversityCardSkeleton key={i} />
+              ))}
             </div>
-            <h3 style={{ marginBottom: '8px' }}>No universities found</h3>
-            <p style={{ color: 'var(--pf-grey-600)', marginBottom: '16px' }}>
-              Try adjusting your filters.
-            </p>
-            {hasFilters && (
-              <button onClick={clearFilters} className="pf-btn-primary">
-                Clear all filters
-              </button>
-            )}
-          </div>
+            <SlowLoadingNotice isLoading={isLoading} />
+          </>
         )}
 
-        {!isLoading && filteredUniversities && filteredUniversities.length > 0 && (
+        {!isLoading && !error && filteredUniversities?.length === 0 && (
+          <EmptyState
+            icon={EmptyStateIcons.building}
+            title="No universities found"
+            message="Try adjusting your filters."
+            actionLabel={hasFilters ? 'Clear all filters' : undefined}
+            onAction={hasFilters ? clearFilters : undefined}
+          />
+        )}
+
+        {!isLoading && !error && filteredUniversities && filteredUniversities.length > 0 && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUniversities.map((university) => (
               <UniversityCard key={university.id} university={university} />
