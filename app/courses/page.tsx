@@ -151,6 +151,21 @@ function CoursesPageContent() {
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
               Explore courses across Scottish universities
             </p>
+            <Link
+              href="/tools/roi-calculator"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                marginTop: '10px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                color: 'var(--pf-blue-700)',
+              }}
+            >
+              What would it cost? Try our calculator →
+            </Link>
           </div>
 
           {/* Eligibility Stats Banner */}

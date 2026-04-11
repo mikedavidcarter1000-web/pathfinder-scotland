@@ -46,6 +46,12 @@ const HELP_CARDS: Array<{ title: string; body: string; href: string; cta: string
     cta: 'Browse courses',
   },
   {
+    title: 'Worried about costs?',
+    body: 'Our university cost calculator shows exactly what a Scottish degree really costs — tuition is £0 for Scottish students.',
+    href: '/tools/roi-calculator',
+    cta: 'See the real numbers',
+  },
+  {
     title: 'No school subscription needed',
     body: 'Pathfinder is free to use. Your child doesn\u2019t need their school\u2019s permission to create an account.',
     href: '/auth/sign-up',

@@ -14,6 +14,7 @@ export function Footer() {
       { label: 'Simulator', href: '/simulator' },
       { label: 'Courses', href: '/courses' },
       { label: 'Universities', href: '/universities' },
+      { label: 'Cost Calculator', href: '/tools/roi-calculator' },
       { label: 'Widening Access', href: '/widening-access' },
       { label: 'For Parents', href: '/parents' },
       { label: 'Guides & Articles', href: '/blog' },
