@@ -23,49 +23,81 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
     {
       id: 'careExperienced',
       label: 'Care experienced',
-      description: 'You have been in care at any point in your life (looked after child, foster care, residential care, kinship care)',
+      description:
+        'You have been in care at any point in your life (looked after child, foster care, residential care, kinship care).',
       checked: data.careExperienced,
       onChange: (checked: boolean) => onChange({ ...data, careExperienced: checked }),
     },
     {
       id: 'isCarer',
       label: 'Young carer',
-      description: 'You provide unpaid care for a family member or friend who has a disability, illness, mental health condition, or addiction',
+      description:
+        'You provide unpaid care for a family member or friend who has a disability, illness, mental health condition, or addiction.',
       checked: data.isCarer,
       onChange: (checked: boolean) => onChange({ ...data, isCarer: checked }),
     },
     {
       id: 'firstGeneration',
       label: 'First in family to attend university',
-      description: 'Neither of your parents or guardians have attended university',
+      description: 'Neither of your parents or guardians have attended university.',
       checked: data.firstGeneration,
       onChange: (checked: boolean) => onChange({ ...data, firstGeneration: checked }),
     },
   ]
 
   const selectedCount = [data.careExperienced, data.isCarer, data.firstGeneration].filter(Boolean).length
+  const hasAnySelected = selectedCount > 0
+
+  const clearSelections = () => {
+    onChange({ careExperienced: false, isCarer: false, firstGeneration: false })
+  }
+
+  const skipStep = () => {
+    clearSelections()
+    onNext()
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-1">Widening access</h2>
-        <p className="text-gray-600">
-          Select any criteria that apply to you. This helps universities provide additional support and may reduce entry requirements.
+        <h2 style={{ marginBottom: '6px' }}>Widening access</h2>
+        <p style={{ color: 'var(--pf-grey-600)' }}>
+          Select any criteria that apply to you. This helps universities provide additional support and
+          may reduce entry requirements.
         </p>
       </div>
 
-      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+      {/* Why we ask */}
+      <div
+        className="rounded-lg"
+        style={{
+          padding: '16px',
+          backgroundColor: 'var(--pf-teal-100)',
+          color: 'var(--pf-teal-900)',
+        }}
+      >
         <div className="flex gap-3">
-          <div className="flex-shrink-0">
-            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-          </div>
-          <div className="text-sm text-purple-800">
-            <p className="font-medium mb-1">Why we ask this</p>
-            <p>
-              Scottish universities offer reduced entry requirements and extra support for students from
-              widening participation backgrounds. This information is kept confidential.
+          <svg
+            className="w-5 h-5 flex-shrink-0 mt-0.5"
+            style={{ color: 'var(--pf-teal-700)' }}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+            />
+          </svg>
+          <div style={{ fontSize: '0.875rem' }}>
+            <p style={{ fontWeight: 600, marginBottom: '4px', color: 'var(--pf-teal-900)' }}>
+              Why we ask this
+            </p>
+            <p style={{ color: 'var(--pf-teal-900)' }}>
+              Scottish universities offer reduced entry requirements and extra support for students
+              from widening participation backgrounds. This information is kept confidential.
             </p>
           </div>
         </div>
@@ -75,23 +107,41 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
         {criteria.map((criterion) => (
           <label
             key={criterion.id}
-            className={`flex items-start gap-4 p-4 rounded-lg border cursor-pointer transition-colors ${
-              criterion.checked
-                ? 'border-blue-300 bg-blue-50'
-                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-            }`}
+            className="flex items-start gap-4 cursor-pointer transition-all"
+            style={{
+              padding: '16px',
+              borderRadius: '8px',
+              backgroundColor: criterion.checked ? 'var(--pf-teal-50)' : 'var(--pf-white)',
+              border: criterion.checked
+                ? '2px solid var(--pf-teal-700)'
+                : '2px solid var(--pf-grey-300)',
+            }}
           >
             <input
               type="checkbox"
               checked={criterion.checked}
               onChange={(e) => criterion.onChange(e.target.checked)}
-              className="mt-1 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="mt-1 h-5 w-5 rounded"
+              style={{ accentColor: 'var(--pf-teal-700)' }}
             />
             <div className="flex-1">
-              <p className={`font-medium ${criterion.checked ? 'text-blue-900' : 'text-gray-900'}`}>
+              <p
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.9375rem',
+                  color: criterion.checked ? 'var(--pf-teal-900)' : 'var(--pf-grey-900)',
+                }}
+              >
                 {criterion.label}
               </p>
-              <p className={`text-sm ${criterion.checked ? 'text-blue-700' : 'text-gray-500'}`}>
+              <p
+                style={{
+                  fontSize: '0.875rem',
+                  color: 'var(--pf-grey-600)',
+                  marginTop: '2px',
+                }}
+              >
                 {criterion.description}
               </p>
             </div>
@@ -99,47 +149,76 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
         ))}
       </div>
 
-      {selectedCount > 0 && (
-        <div className="p-4 rounded-lg bg-green-50 border border-green-200">
-          <div className="flex items-center gap-2 text-green-700">
+      {hasAnySelected && (
+        <div
+          className="rounded-lg"
+          style={{
+            padding: '14px 16px',
+            backgroundColor: 'rgba(16, 185, 129, 0.08)',
+            border: '1px solid rgba(16, 185, 129, 0.25)',
+          }}
+        >
+          <div className="flex items-center gap-2" style={{ color: 'var(--pf-green-500)' }}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
-            <span className="font-medium">
+            <span style={{ fontWeight: 600, fontSize: '0.9375rem' }}>
               You may qualify for widening access support
             </span>
           </div>
-          <p className="text-sm text-green-600 mt-1">
+          <p
+            style={{
+              fontSize: '0.8125rem',
+              color: 'var(--pf-grey-600)',
+              marginTop: '4px',
+              marginLeft: '28px',
+            }}
+          >
             We&apos;ll show you adjusted entry requirements where available.
           </p>
         </div>
       )}
 
-      <div className="pt-4 space-y-3">
-        {/* Primary actions: Skip OR Continue, given equal weight */}
+      <div className="pt-2 space-y-3">
+        {/* Two equal-weight buttons: skip / clear vs continue */}
         <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={() => {
-              onChange({ careExperienced: false, isCarer: false, firstGeneration: false })
-              onNext()
-            }}
-            className="flex-1 py-3 px-4 bg-white border-2 border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-colors"
-          >
-            None of these apply
-          </button>
+          {hasAnySelected ? (
+            <button
+              type="button"
+              onClick={clearSelections}
+              className="pf-btn pf-btn-secondary"
+              style={{ flex: 1 }}
+            >
+              Clear selections
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={skipStep}
+              className="pf-btn pf-btn-secondary"
+              style={{ flex: 1 }}
+            >
+              None of these apply to me
+            </button>
+          )}
           <button
             type="submit"
-            disabled={selectedCount === 0}
-            className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+            className="pf-btn pf-btn-primary"
+            style={{ flex: 1 }}
           >
-            Continue{selectedCount > 0 ? ` (${selectedCount})` : ''}
+            Continue{hasAnySelected ? ` (${selectedCount})` : ''}
           </button>
         </div>
         <button
           type="button"
           onClick={onBack}
-          className="w-full py-2 text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors"
+          className="w-full pf-btn pf-btn-ghost"
+          style={{ padding: '8px 16px' }}
         >
           ← Back
         </button>

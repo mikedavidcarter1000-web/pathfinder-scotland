@@ -1,4 +1,5 @@
 export { StepIndicator, MobileStepIndicator } from './step-indicator'
+export { WelcomeStep } from './welcome-step'
 export { BasicInfoStep } from './basic-info-step'
 export { PostcodeStep } from './postcode-step'
 export { WideningAccessStep } from './widening-access-step'

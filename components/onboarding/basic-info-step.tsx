@@ -1,6 +1,6 @@
 'use client'
 
-import { SCHOOL_STAGES } from '@/lib/constants'
+import { ONBOARDING_STAGE_CARDS, SCHOOL_STAGES } from '@/lib/constants'
 
 interface BasicInfoData {
   firstName: string
@@ -16,23 +16,26 @@ interface BasicInfoStepProps {
 }
 
 export function BasicInfoStep({ data, onChange, onNext }: BasicInfoStepProps) {
+  const isValid = !!(data.firstName.trim() && data.lastName.trim() && data.schoolStage)
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    if (!isValid) return
     onNext()
   }
-
-  const isValid = data.firstName.trim() && data.lastName.trim() && data.schoolStage
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-1">Tell us about yourself</h2>
-        <p className="text-gray-600">This helps us personalise your experience.</p>
+        <h2 style={{ marginBottom: '6px' }}>Tell us about yourself</h2>
+        <p style={{ color: 'var(--pf-grey-600)' }}>
+          This helps us personalise your experience.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="firstName" className="pf-label">
             First name
           </label>
           <input
@@ -41,13 +44,13 @@ export function BasicInfoStep({ data, onChange, onNext }: BasicInfoStepProps) {
             value={data.firstName}
             onChange={(e) => onChange({ ...data, firstName: e.target.value })}
             required
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter your first name"
+            className="pf-input"
+            placeholder="Your first name"
           />
         </div>
 
         <div>
-          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="lastName" className="pf-label">
             Last name
           </label>
           <input
@@ -56,52 +59,95 @@ export function BasicInfoStep({ data, onChange, onNext }: BasicInfoStepProps) {
             value={data.lastName}
             onChange={(e) => onChange({ ...data, lastName: e.target.value })}
             required
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter your last name"
+            className="pf-input"
+            placeholder="Your last name"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="schoolStage" className="block text-sm font-medium text-gray-700 mb-1">
-          School stage
-        </label>
-        <select
-          id="schoolStage"
-          value={data.schoolStage}
-          onChange={(e) => onChange({ ...data, schoolStage: e.target.value })}
-          required
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-        >
-          <option value="">Select your current stage</option>
-          {Object.entries(SCHOOL_STAGES).map(([key, value]) => (
-            <option key={key} value={key}>
-              {value.label} - {value.description}
-            </option>
-          ))}
-        </select>
+        <span className="pf-label" style={{ marginBottom: '12px' }}>
+          What year are you currently in?
+        </span>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {ONBOARDING_STAGE_CARDS.map((key) => {
+            const stage = SCHOOL_STAGES[key]
+            const active = data.schoolStage === key
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => onChange({ ...data, schoolStage: key })}
+                className="text-left transition-all"
+                style={{
+                  padding: '16px',
+                  borderRadius: '8px',
+                  backgroundColor: active ? 'var(--pf-teal-50)' : 'var(--pf-white)',
+                  border: active
+                    ? '2px solid var(--pf-teal-700)'
+                    : '2px solid var(--pf-grey-300)',
+                  boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                  cursor: 'pointer',
+                }}
+                aria-pressed={active}
+              >
+                <div
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '1.5rem',
+                    color: active ? 'var(--pf-teal-700)' : 'var(--pf-grey-900)',
+                    lineHeight: 1.1,
+                  }}
+                >
+                  {stage.label}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--pf-grey-600)',
+                    marginTop: '4px',
+                    fontWeight: 500,
+                  }}
+                >
+                  {stage.description}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    color: active ? 'var(--pf-teal-700)' : 'var(--pf-grey-600)',
+                    marginTop: '8px',
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {stage.offer}
+                </div>
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       <div>
-        <label htmlFor="schoolName" className="block text-sm font-medium text-gray-700 mb-1">
-          School or college name
-          <span className="text-gray-400 font-normal ml-1">(optional)</span>
+        <label htmlFor="schoolName" className="pf-label">
+          School or college name{' '}
+          <span style={{ fontWeight: 400, color: 'var(--pf-grey-600)' }}>(optional)</span>
         </label>
         <input
           id="schoolName"
           type="text"
           value={data.schoolName}
           onChange={(e) => onChange({ ...data, schoolName: e.target.value })}
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="pf-input"
           placeholder="e.g. Glasgow Academy"
         />
       </div>
 
-      <div className="pt-4">
+      <div className="pt-2">
         <button
           type="submit"
           disabled={!isValid}
-          className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+          className="w-full pf-btn pf-btn-primary"
         >
           Continue
         </button>

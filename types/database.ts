@@ -1065,7 +1065,7 @@ export type Database = {
         | "national_5"
         | "a_level"
         | "btec"
-      school_stage: "s3" | "s4" | "s5" | "s6" | "college" | "mature"
+      school_stage: "s2" | "s3" | "s4" | "s5" | "s6" | "college" | "mature"
       subscription_status:
         | "trialing"
         | "active"
@@ -1229,7 +1229,7 @@ export const Constants = {
         "a_level",
         "btec",
       ],
-      school_stage: ["s3", "s4", "s5", "s6", "college", "mature"],
+      school_stage: ["s2", "s3", "s4", "s5", "s6", "college", "mature"],
       subscription_status: [
         "trialing",
         "active",

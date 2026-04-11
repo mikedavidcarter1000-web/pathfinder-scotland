@@ -220,37 +220,115 @@ export const UNIVERSITY_TYPES = {
 
 // School stages
 export const SCHOOL_STAGES = {
+  s2: {
+    label: 'S2',
+    description: 'Going into S3',
+    offer: 'Plan your S3 subject choices and explore career sectors.',
+    yearGroup: 8,
+  },
   s3: {
     label: 'S3',
-    description: 'Third year of secondary school',
+    description: 'Going into S4',
+    offer: 'Pick your N5 subjects and start mapping pathways.',
     yearGroup: 9,
   },
   s4: {
     label: 'S4',
-    description: 'Fourth year (National 5 year)',
+    description: 'Going into S5',
+    offer: 'Choose Highers and match them to university courses.',
     yearGroup: 10,
   },
   s5: {
     label: 'S5',
-    description: 'Fifth year (Higher year)',
+    description: 'Going into S6',
+    offer: 'Track your Higher results and plan Advanced Highers.',
     yearGroup: 11,
   },
   s6: {
     label: 'S6',
-    description: 'Sixth year (Advanced Higher)',
+    description: 'Applying to university',
+    offer: 'Match your grades to UCAS courses and check entry requirements.',
     yearGroup: 12,
   },
   college: {
     label: 'College',
     description: 'Further education college student',
+    offer: 'Explore degree pathways from your college course.',
     yearGroup: null,
   },
   mature: {
     label: 'Mature Student',
     description: 'Adult returning to education',
+    offer: 'Find routes back into higher education.',
     yearGroup: null,
   },
 } as const
+
+// School stages shown as cards in onboarding (in display order). Excludes
+// college / mature which the onboarding card flow doesn't currently surface.
+export const ONBOARDING_STAGE_CARDS: Array<keyof typeof SCHOOL_STAGES> = [
+  's2',
+  's3',
+  's4',
+  's5',
+  's6',
+]
+
+// Most common SQA subjects shown as the default checklist in onboarding's
+// batch grade entry. Order is meaningful — the checklist renders these in
+// this exact sequence so the most-picked subjects appear first.
+export const COMMON_SUBJECTS_BY_LEVEL: Record<'higher' | 'advanced_higher' | 'national_5', string[]> = {
+  higher: [
+    'English',
+    'Mathematics',
+    'Biology',
+    'Chemistry',
+    'Physics',
+    'History',
+    'Geography',
+    'Modern Studies',
+    'Art and Design',
+    'Music',
+    'French',
+    'Spanish',
+    'Physical Education',
+    'Computing Science',
+    'Business Management',
+  ],
+  advanced_higher: [
+    'English',
+    'Mathematics',
+    'Biology',
+    'Chemistry',
+    'Physics',
+    'History',
+    'Geography',
+    'Modern Studies',
+    'Art and Design',
+    'Music',
+    'French',
+    'Spanish',
+    'Computing Science',
+    'Business Management',
+  ],
+  national_5: [
+    'English',
+    'Mathematics',
+    'Biology',
+    'Chemistry',
+    'Physics',
+    'History',
+    'Geography',
+    'Modern Studies',
+    'Art and Design',
+    'Music',
+    'French',
+    'Spanish',
+    'Physical Education',
+    'Computing Science',
+    'Business Management',
+  ],
+}
 
 // Degree types
 export const DEGREE_TYPES = {
