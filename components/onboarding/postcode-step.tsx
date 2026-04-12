@@ -10,6 +10,7 @@ type SIMDPostcode = Tables<'simd_postcodes'>
 interface PostcodeData {
   postcode: string
   simdDecile: number | null
+  councilArea: string | null
 }
 
 interface PostcodeStepProps {
@@ -39,9 +40,9 @@ export function PostcodeStep({
     const result = (await simdLookup.mutateAsync(data.postcode)) as SIMDPostcode | null
 
     if (result) {
-      onChange({ ...data, simdDecile: result.simd_decile })
+      onChange({ ...data, simdDecile: result.simd_decile, councilArea: result.council_area ?? null })
     } else {
-      onChange({ ...data, simdDecile: null })
+      onChange({ ...data, simdDecile: null, councilArea: null })
     }
   }
 
@@ -124,7 +125,7 @@ export function PostcodeStep({
             type="text"
             value={data.postcode}
             onChange={(e) => {
-              onChange({ ...data, postcode: e.target.value.toUpperCase(), simdDecile: null })
+              onChange({ ...data, postcode: e.target.value.toUpperCase(), simdDecile: null, councilArea: null })
               setLookupAttempted(false)
             }}
             className="pf-input flex-1 uppercase"

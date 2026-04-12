@@ -1243,13 +1243,26 @@ export type Database = {
         Row: {
           care_experienced: boolean | null
           created_at: string | null
+          demographic_completed: boolean | null
+          disability_details: string | null
           email: string
           first_generation: boolean | null
           first_name: string | null
+          has_disability: boolean | null
+          household_income_band: string | null
           id: string
           is_carer: boolean | null
+          is_estranged: boolean | null
+          is_refugee_or_asylum_seeker: boolean | null
+          is_single_parent_household: boolean | null
+          is_young_parent: boolean | null
           last_name: string | null
+          local_authority: string | null
+          number_of_siblings: number | null
+          parental_education: string | null
           postcode: string | null
+          receives_ema: boolean | null
+          receives_free_school_meals: boolean | null
           school_name: string | null
           school_stage: Database["public"]["Enums"]["school_stage"] | null
           simd_decile: number | null
@@ -1259,13 +1272,26 @@ export type Database = {
         Insert: {
           care_experienced?: boolean | null
           created_at?: string | null
+          demographic_completed?: boolean | null
+          disability_details?: string | null
           email: string
           first_generation?: boolean | null
           first_name?: string | null
+          has_disability?: boolean | null
+          household_income_band?: string | null
           id: string
           is_carer?: boolean | null
+          is_estranged?: boolean | null
+          is_refugee_or_asylum_seeker?: boolean | null
+          is_single_parent_household?: boolean | null
+          is_young_parent?: boolean | null
           last_name?: string | null
+          local_authority?: string | null
+          number_of_siblings?: number | null
+          parental_education?: string | null
           postcode?: string | null
+          receives_ema?: boolean | null
+          receives_free_school_meals?: boolean | null
           school_name?: string | null
           school_stage?: Database["public"]["Enums"]["school_stage"] | null
           simd_decile?: number | null
@@ -1275,13 +1301,26 @@ export type Database = {
         Update: {
           care_experienced?: boolean | null
           created_at?: string | null
+          demographic_completed?: boolean | null
+          disability_details?: string | null
           email?: string
           first_generation?: boolean | null
           first_name?: string | null
+          has_disability?: boolean | null
+          household_income_band?: string | null
           id?: string
           is_carer?: boolean | null
+          is_estranged?: boolean | null
+          is_refugee_or_asylum_seeker?: boolean | null
+          is_single_parent_household?: boolean | null
+          is_young_parent?: boolean | null
           last_name?: string | null
+          local_authority?: string | null
+          number_of_siblings?: number | null
+          parental_education?: string | null
           postcode?: string | null
+          receives_ema?: boolean | null
+          receives_free_school_meals?: boolean | null
           school_name?: string | null
           school_stage?: Database["public"]["Enums"]["school_stage"] | null
           simd_decile?: number | null

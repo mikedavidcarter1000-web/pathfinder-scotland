@@ -4,10 +4,41 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { useToast } from '@/components/ui/toast'
+import { useCurrentStudent, useUpdateStudent } from '@/hooks/use-student'
+
+const INCOME_LABELS: Record<string, string> = {
+  under_21000: 'Under £21,000',
+  '21000_24000': '£21,000 – £24,000',
+  '24000_34000': '£24,000 – £34,000',
+  '34000_45000': '£34,000 – £45,000',
+  over_45000: 'Over £45,000',
+  prefer_not_say: 'Prefer not to say',
+}
+
+const EDUCATION_LABELS: Record<string, string> = {
+  no_qualifications: 'No formal qualifications',
+  school_qualifications: 'School qualifications',
+  college_qualifications: 'College qualifications (HNC, HND, SVQ)',
+  degree: 'University degree',
+  postgraduate: 'Postgraduate degree',
+  unknown: "Don't know",
+}
+
+const SCOTTISH_LOCAL_AUTHORITIES = [
+  'Aberdeen City', 'Aberdeenshire', 'Angus', 'Argyll and Bute', 'City of Edinburgh',
+  'Clackmannanshire', 'Comhairle nan Eilean Siar', 'Dumfries and Galloway', 'Dundee City',
+  'East Ayrshire', 'East Dunbartonshire', 'East Lothian', 'East Renfrewshire', 'Falkirk',
+  'Fife', 'Glasgow City', 'Highland', 'Inverclyde', 'Midlothian', 'Moray', 'North Ayrshire',
+  'North Lanarkshire', 'Orkney Islands', 'Perth and Kinross', 'Renfrewshire',
+  'Scottish Borders', 'Shetland Islands', 'South Ayrshire', 'South Lanarkshire', 'Stirling',
+  'West Dunbartonshire', 'West Lothian',
+]
 
 export default function SettingsPage() {
   const router = useRouter()
   const toast = useToast()
+  const { data: student } = useCurrentStudent()
+  const updateStudent = useUpdateStudent()
 
   const [isExporting, setIsExporting] = useState(false)
   const [exportError, setExportError] = useState<string | null>(null)
@@ -101,6 +132,9 @@ export default function SettingsPage() {
         <h1 className="text-2xl font-bold text-gray-900">Account Settings</h1>
         <p className="text-gray-600 mt-1">Manage your account and privacy preferences</p>
       </div>
+
+      {/* Funding Profile section */}
+      {student && <FundingProfileSection student={student} updateStudent={updateStudent} toast={toast} />}
 
       {/* Your Data section */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -223,6 +257,286 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Funding Profile Section
+// ---------------------------------------------------------------------------
+
+interface FundingProfileSectionProps {
+  student: NonNullable<ReturnType<typeof useCurrentStudent>['data']>
+  updateStudent: ReturnType<typeof useUpdateStudent>
+  toast: ReturnType<typeof useToast>
+}
+
+function FundingProfileSection({ student, updateStudent, toast }: FundingProfileSectionProps) {
+  const [editing, setEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
+
+  // Form state initialised from current student data
+  const [income, setIncome] = useState(student.household_income_band ?? '')
+  const [parentalEd, setParentalEd] = useState(student.parental_education ?? '')
+  const [localAuth, setLocalAuth] = useState(student.local_authority ?? '')
+  const [singleParent, setSingleParent] = useState(!!student.is_single_parent_household)
+  const [estranged, setEstranged] = useState(!!student.is_estranged)
+  const [youngParent, setYoungParent] = useState(!!student.is_young_parent)
+  const [refugee, setRefugee] = useState(!!student.is_refugee_or_asylum_seeker)
+  const [disability, setDisability] = useState(!!student.has_disability)
+  const [disabilityDetails, setDisabilityDetails] = useState(student.disability_details ?? '')
+  const [fsm, setFsm] = useState(!!student.receives_free_school_meals)
+  const [ema, setEma] = useState(!!student.receives_ema)
+
+  const isCompleted = !!student.demographic_completed
+
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      const firstGen =
+        parentalEd &&
+        ['no_qualifications', 'school_qualifications', 'college_qualifications'].includes(parentalEd)
+
+      await updateStudent.mutateAsync({
+        household_income_band: income || null,
+        parental_education: parentalEd || null,
+        local_authority: localAuth || null,
+        is_single_parent_household: singleParent,
+        is_estranged: estranged,
+        is_young_parent: youngParent,
+        is_refugee_or_asylum_seeker: refugee,
+        has_disability: disability,
+        disability_details: disability ? disabilityDetails || null : null,
+        receives_free_school_meals: fsm,
+        receives_ema: ema,
+        first_generation: firstGen || !!student.first_generation,
+        demographic_completed: true,
+      })
+      toast.success('Funding profile updated', 'Your benefit recommendations will be refreshed.')
+      setEditing(false)
+    } catch {
+      toast.error("Couldn't save", 'Please try again.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (!editing) {
+    return (
+      <div
+        className="rounded-xl p-6 mb-6"
+        style={{
+          backgroundColor: 'var(--pf-white)',
+          border: '1px solid var(--pf-grey-300)',
+        }}
+      >
+        <div className="mb-4">
+          <h2
+            style={{
+              fontSize: '1.125rem',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              color: 'var(--pf-grey-900)',
+            }}
+          >
+            Funding Profile
+          </h2>
+          <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', marginTop: '4px' }}>
+            Used to match you with bursaries, grants, and other financial support.
+          </p>
+        </div>
+
+        {isCompleted ? (
+          <>
+            <div className="space-y-2 mb-4" style={{ fontSize: '0.875rem' }}>
+              {student.household_income_band && (
+                <ProfileRow
+                  label="Household income"
+                  value={INCOME_LABELS[student.household_income_band] ?? student.household_income_band}
+                />
+              )}
+              {student.parental_education && (
+                <ProfileRow
+                  label="Parental education"
+                  value={EDUCATION_LABELS[student.parental_education] ?? student.parental_education}
+                />
+              )}
+              {student.local_authority && (
+                <ProfileRow label="Council area" value={student.local_authority} />
+              )}
+              {(student.is_estranged || student.is_young_parent || student.is_refugee_or_asylum_seeker ||
+                student.has_disability || student.receives_free_school_meals || student.receives_ema ||
+                student.is_single_parent_household) && (
+                <ProfileRow
+                  label="Circumstances"
+                  value={[
+                    student.receives_free_school_meals && 'Free school meals',
+                    student.receives_ema && 'EMA',
+                    student.is_single_parent_household && 'Single parent household',
+                    student.is_estranged && 'Estranged',
+                    student.is_young_parent && 'Young parent',
+                    student.is_refugee_or_asylum_seeker && 'Refugee/asylum seeker',
+                    student.has_disability && 'Disability/health condition',
+                  ].filter(Boolean).join(', ')}
+                />
+              )}
+            </div>
+            <button
+              onClick={() => setEditing(true)}
+              className="pf-btn pf-btn-secondary"
+              style={{ fontSize: '0.875rem' }}
+            >
+              Update funding profile
+            </button>
+          </>
+        ) : (
+          <div
+            className="rounded-lg"
+            style={{
+              padding: '16px',
+              backgroundColor: 'var(--pf-blue-50)',
+              border: '1px solid var(--pf-blue-100)',
+            }}
+          >
+            <p style={{ fontSize: '0.9375rem', color: 'var(--pf-blue-900)', marginBottom: '12px' }}>
+              Complete your funding profile to see all the bursaries and grants you&apos;re eligible
+              for.
+            </p>
+            <button onClick={() => setEditing(true)} className="pf-btn pf-btn-primary">
+              Complete funding profile
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Editing form
+  return (
+    <div
+      className="rounded-xl p-6 mb-6"
+      style={{
+        backgroundColor: 'var(--pf-white)',
+        border: '1px solid var(--pf-blue-500)',
+      }}
+    >
+      <h2
+        style={{
+          fontSize: '1.125rem',
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          color: 'var(--pf-grey-900)',
+          marginBottom: '16px',
+        }}
+      >
+        {isCompleted ? 'Update Funding Profile' : 'Complete Funding Profile'}
+      </h2>
+
+      <div className="space-y-4">
+        {/* Household income */}
+        <label className="block">
+          <span className="pf-label">Household income</span>
+          <select className="pf-input w-full mt-1" value={income} onChange={(e) => setIncome(e.target.value)}>
+            <option value="">Select...</option>
+            <option value="under_21000">Under £21,000</option>
+            <option value="21000_24000">£21,000 – £24,000</option>
+            <option value="24000_34000">£24,000 – £34,000</option>
+            <option value="34000_45000">£34,000 – £45,000</option>
+            <option value="over_45000">Over £45,000</option>
+            <option value="prefer_not_say">Prefer not to say</option>
+          </select>
+        </label>
+
+        {/* Parental education */}
+        <label className="block">
+          <span className="pf-label">Parent/guardian&apos;s highest qualification</span>
+          <select className="pf-input w-full mt-1" value={parentalEd} onChange={(e) => setParentalEd(e.target.value)}>
+            <option value="">Select...</option>
+            <option value="no_qualifications">No formal qualifications</option>
+            <option value="school_qualifications">School qualifications</option>
+            <option value="college_qualifications">College qualifications (HNC, HND, SVQ)</option>
+            <option value="degree">University degree</option>
+            <option value="postgraduate">Postgraduate degree</option>
+            <option value="unknown">Don&apos;t know</option>
+          </select>
+        </label>
+
+        {/* Council area */}
+        <label className="block">
+          <span className="pf-label">Council area</span>
+          <select className="pf-input w-full mt-1" value={localAuth} onChange={(e) => setLocalAuth(e.target.value)}>
+            <option value="">Select...</option>
+            {SCOTTISH_LOCAL_AUTHORITIES.map((la) => (
+              <option key={la} value={la}>{la}</option>
+            ))}
+          </select>
+        </label>
+
+        {/* Status checkboxes */}
+        <fieldset>
+          <legend className="pf-label mb-2">Circumstances</legend>
+          <div className="space-y-2">
+            {[
+              { label: 'Free school meals', checked: fsm, onChange: setFsm },
+              { label: 'EMA (Education Maintenance Allowance)', checked: ema, onChange: setEma },
+              { label: 'Single parent household', checked: singleParent, onChange: setSingleParent },
+              { label: 'Estranged from parents', checked: estranged, onChange: setEstranged },
+              { label: 'Young parent', checked: youngParent, onChange: setYoungParent },
+              { label: 'Refugee or asylum seeker', checked: refugee, onChange: setRefugee },
+              { label: 'Disability / health condition / learning difficulty', checked: disability, onChange: (v: boolean) => { setDisability(v); if (!v) setDisabilityDetails('') } },
+            ].map((item) => (
+              <label key={item.label} className="flex items-center gap-2 cursor-pointer" style={{ fontSize: '0.875rem' }}>
+                <input
+                  type="checkbox"
+                  checked={item.checked}
+                  onChange={(e) => item.onChange(e.target.checked)}
+                  style={{ width: '18px', height: '18px', accentColor: 'var(--pf-blue-700)' }}
+                />
+                {item.label}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        {disability && (
+          <label className="block">
+            <span className="pf-label">Disability details (optional)</span>
+            <input
+              type="text"
+              className="pf-input w-full mt-1"
+              placeholder="e.g. dyslexia, hearing impairment"
+              value={disabilityDetails}
+              onChange={(e) => setDisabilityDetails(e.target.value)}
+            />
+          </label>
+        )}
+      </div>
+
+      <div className="flex gap-3 mt-6">
+        <button
+          onClick={() => setEditing(false)}
+          disabled={saving}
+          className="pf-btn pf-btn-secondary"
+        >
+          Cancel
+        </button>
+        <SubmitButton
+          onClick={handleSave}
+          isLoading={saving}
+          loadingText="Saving..."
+        >
+          Save funding profile
+        </SubmitButton>
+      </div>
+    </div>
+  )
+}
+
+function ProfileRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-4" style={{ padding: '6px 0', borderBottom: '1px solid var(--pf-grey-100)' }}>
+      <span style={{ color: 'var(--pf-grey-600)' }}>{label}</span>
+      <span style={{ color: 'var(--pf-grey-900)', fontWeight: 500, textAlign: 'right' }}>{value}</span>
     </div>
   )
 }

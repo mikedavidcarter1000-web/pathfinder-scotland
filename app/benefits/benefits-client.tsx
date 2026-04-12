@@ -464,16 +464,29 @@ export function BenefitsClient({
   )
 }
 
-// Compute a rough, transparent estimate of a student's annual support package
-// from known profile signals (care-experienced, school stage, SIMD). Household
-// income isn't on the students table, so we use SIMD decile as a proxy: decile
-// 1–2 triggers the largest means-tested awards, decile 3–4 the smaller tier.
+// FSM pilot areas where expanded free school meals may apply
+const FSM_PILOT_AREAS = [
+  'Aberdeen City', 'Comhairle nan Eilean Siar', 'Fife',
+  'Glasgow City', 'Moray', 'North Ayrshire',
+  'Shetland Islands', 'South Lanarkshire',
+]
+
+// Compute a transparent estimate of a student's annual support package using
+// the full demographic profile (household income, status flags, local authority)
+// rather than SIMD proxy alone.
 function SupportEstimateCard({ student }: { student: Student }) {
   const items: Array<{ label: string; amount: number }> = []
 
   const simd = student.simd_decile ?? null
   const stage = student.school_stage ?? null
+  const income = student.household_income_band ?? null
   const isCare = !!student.care_experienced
+  const isEstranged = !!student.is_estranged
+  const hasDisability = !!student.has_disability
+  const isYoungParent = !!student.is_young_parent
+  const isRefugee = !!student.is_refugee_or_asylum_seeker
+  const receivesFSM = !!student.receives_free_school_meals
+  const localAuth = student.local_authority ?? null
   const isYoungEnoughForBus = stage !== 'mature'
   const isUniOrCollege = stage === 'college' || stage === 'mature'
   const isSchoolPupil =
@@ -481,31 +494,99 @@ function SupportEstimateCard({ student }: { student: Student }) {
     stage === 's5' || stage === 's6'
   const isS5orS6 = stage === 's5' || stage === 's6'
 
-  if (isCare && stage === 'mature') {
+  // --- Care experienced ---
+  if (isCare && isUniOrCollege) {
     items.push({ label: 'Care Experienced Students Bursary', amount: 9000 })
     items.push({ label: 'Summer Accommodation Grant', amount: 1330 })
   }
 
-  if (simd !== null && simd <= 2 && stage === 'mature') {
-    items.push({ label: 'Young Students Bursary (estimated)', amount: 2000 })
-  } else if (simd !== null && simd <= 4 && stage === 'mature') {
-    items.push({ label: 'Young Students Bursary (estimated)', amount: 1125 })
+  // --- Estranged students ---
+  if (isEstranged && isUniOrCollege) {
+    // Estranged Students Bursary total: tuition + maintenance
+    items.push({ label: "Estranged Students' Bursary (maintenance)", amount: 7625 })
+    items.push({ label: 'SAAS tuition fee grant', amount: 1820 })
   }
 
-  if (isS5orS6 && simd !== null && simd <= 4) {
-    items.push({ label: 'Education Maintenance Allowance (~38 weeks)', amount: 1140 })
+  // --- Income-based: Young Students Bursary ---
+  // Use household income if available, fall back to SIMD proxy
+  if (isUniOrCollege) {
+    if (income === 'under_21000') {
+      items.push({ label: "Young Students' Bursary", amount: 2000 })
+    } else if (income === '21000_24000') {
+      items.push({ label: "Young Students' Bursary", amount: 1125 })
+    } else if (income === '24000_34000') {
+      items.push({ label: "Young Students' Bursary", amount: 500 })
+    } else if (!income && simd !== null && simd <= 2) {
+      items.push({ label: "Young Students' Bursary (estimated)", amount: 2000 })
+    } else if (!income && simd !== null && simd <= 4) {
+      items.push({ label: "Young Students' Bursary (estimated)", amount: 1125 })
+    }
   }
 
+  // --- EMA ---
+  if (isS5orS6) {
+    if (income === 'under_21000' || income === '21000_24000') {
+      items.push({ label: 'Education Maintenance Allowance (~38 weeks)', amount: 1140 })
+    } else if (!income && simd !== null && simd <= 4) {
+      items.push({ label: 'Education Maintenance Allowance (~38 weeks, estimated)', amount: 1140 })
+    }
+  }
+
+  // --- Disability (DSA) ---
+  if (hasDisability && isUniOrCollege) {
+    items.push({ label: "Disabled Students' Allowance (up to)", amount: 20520 })
+  }
+
+  // --- Young parent ---
+  if (isYoungParent && isUniOrCollege) {
+    items.push({ label: "Lone Parents' Grant", amount: 1305 })
+    items.push({ label: 'Childcare Grant (up to)', amount: 1215 })
+  }
+
+  // --- Refugee / asylum seeker ---
+  if (isRefugee && isUniOrCollege) {
+    items.push({ label: 'Carnegie Education Fund (up to)', amount: 3400 })
+  }
+
+  // --- Free School Meals ---
+  if (receivesFSM && isSchoolPupil) {
+    const inPilot = localAuth ? FSM_PILOT_AREAS.includes(localAuth) : false
+    items.push({
+      label: `Free school meals${inPilot ? ' (expanded pilot area)' : ''}`,
+      amount: inPilot ? 500 : 400,
+    })
+  }
+
+  // --- School Clothing Grant ---
+  if ((income === 'under_21000' || receivesFSM) && isSchoolPupil) {
+    items.push({ label: 'School Clothing Grant (typical)', amount: 120 })
+  }
+
+  // --- Free bus travel ---
   if (isYoungEnoughForBus) {
     items.push({ label: 'Free bus travel (est. value)', amount: 500 })
   }
 
+  // --- NHS ---
   if (isSchoolPupil || isUniOrCollege) {
     items.push({ label: 'Free NHS prescriptions / eye tests', amount: 60 })
   }
 
   const total = items.reduce((acc, i) => acc + i.amount, 0)
   if (items.length === 0) return null
+
+  // Build profile summary
+  const profileBits = [
+    isCare && 'care-experienced',
+    isEstranged && 'estranged',
+    hasDisability && 'disability',
+    isYoungParent && 'young parent',
+    isRefugee && 'refugee/asylum seeker',
+    income && income !== 'prefer_not_say' && `income: ${income.replace(/_/g, '–').replace('under', '<').replace('over', '>')}`,
+    !income && simd !== null && `SIMD decile ${simd}`,
+    stage && `stage: ${stage.toUpperCase()}`,
+    localAuth && localAuth,
+  ].filter(Boolean)
 
   return (
     <div
@@ -532,11 +613,7 @@ function SupportEstimateCard({ student }: { student: Student }) {
         </div>
       </div>
       <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', marginBottom: '12px' }}>
-        Based on your profile ({[
-          isCare && 'care-experienced',
-          simd !== null && `SIMD decile ${simd}`,
-          stage && `stage: ${stage.toUpperCase()}`,
-        ].filter(Boolean).join(', ')}).
+        Based on your profile ({profileBits.join(', ')}).
       </p>
       <ul style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)', listStyle: 'none', padding: 0 }}>
         {items.map((i) => (
@@ -550,6 +627,24 @@ function SupportEstimateCard({ student }: { student: Student }) {
           </li>
         ))}
       </ul>
+      {!student.demographic_completed && (
+        <div
+          className="rounded-lg mt-3"
+          style={{
+            padding: '12px 14px',
+            backgroundColor: 'var(--pf-blue-50)',
+            border: '1px solid var(--pf-blue-100)',
+          }}
+        >
+          <p style={{ fontSize: '0.8125rem', color: 'var(--pf-blue-700)' }}>
+            <strong>Want a more accurate estimate?</strong>{' '}
+            <a href="/dashboard/settings" style={{ color: 'var(--pf-blue-500)', textDecoration: 'underline' }}>
+              Complete your funding profile
+            </a>{' '}
+            to see exact amounts based on your household income and circumstances.
+          </p>
+        </div>
+      )}
       <p
         style={{
           marginTop: '12px',

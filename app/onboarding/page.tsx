@@ -12,8 +12,10 @@ import {
   BasicInfoStep,
   PostcodeStep,
   WideningAccessStep,
+  DemographicsStep,
   GradesStep,
 } from '@/components/onboarding'
+import type { DemographicData } from '@/components/onboarding/demographics-step'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { useToast } from '@/components/ui/toast'
 import type { QualificationType } from '@/lib/grades'
@@ -36,6 +38,7 @@ interface BasicInfoState {
 interface PostcodeState {
   postcode: string
   simdDecile: number | null
+  councilArea: string | null
 }
 
 interface WideningAccessState {
@@ -49,6 +52,7 @@ interface PersistedState {
   basicInfo: BasicInfoState
   postcode: PostcodeState
   wideningAccess: WideningAccessState
+  demographics: DemographicData
   grades: Grade[]
 }
 
@@ -56,7 +60,8 @@ const STEPS = [
   { id: 1, title: 'Basic Info', description: 'Name & school' },
   { id: 2, title: 'Location', description: 'Postcode' },
   { id: 3, title: 'Widening Access', description: 'Eligibility' },
-  { id: 4, title: 'Grades', description: 'Your qualifications' },
+  { id: 4, title: 'Your Funding', description: 'Bursaries & grants' },
+  { id: 5, title: 'Grades', description: 'Your qualifications' },
 ]
 
 // Parents skip widening-access self-assessment and grade entry — postcode is
@@ -78,12 +83,27 @@ const EMPTY_BASIC_INFO: BasicInfoState = {
 const EMPTY_POSTCODE: PostcodeState = {
   postcode: '',
   simdDecile: null,
+  councilArea: null,
 }
 
 const EMPTY_WIDENING_ACCESS: WideningAccessState = {
   careExperienced: false,
   isCarer: false,
   firstGeneration: false,
+}
+
+const EMPTY_DEMOGRAPHICS: DemographicData = {
+  householdIncomeBand: '',
+  isSingleParentHousehold: false,
+  parentalEducation: '',
+  hasDisability: false,
+  disabilityDetails: '',
+  isEstranged: false,
+  isRefugeeOrAsylumSeeker: false,
+  isYoungParent: false,
+  receivesFreeSchoolMeals: false,
+  receivesEma: false,
+  localAuthority: '',
 }
 
 function loadPersisted(userId: string): PersistedState | null {
@@ -140,7 +160,7 @@ function OnboardingContent() {
   const bulkUpsertGrades = useBulkUpsertGrades()
   const toast = useToast()
 
-  // currentStep === 0 is the welcome screen; 1-4 are the form steps.
+  // currentStep === 0 is the welcome screen; 1-5 are the form steps.
   const [currentStep, setCurrentStep] = useState(0)
   const [isHydrated, setIsHydrated] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -150,6 +170,7 @@ function OnboardingContent() {
   const [basicInfo, setBasicInfo] = useState<BasicInfoState>(EMPTY_BASIC_INFO)
   const [postcodeData, setPostcodeData] = useState<PostcodeState>(EMPTY_POSTCODE)
   const [wideningAccess, setWideningAccess] = useState<WideningAccessState>(EMPTY_WIDENING_ACCESS)
+  const [demographics, setDemographics] = useState<DemographicData>(EMPTY_DEMOGRAPHICS)
   const [grades, setGrades] = useState<Grade[]>([])
 
   // Redirect unauthenticated users
@@ -174,6 +195,7 @@ function OnboardingContent() {
       setBasicInfo({ ...EMPTY_BASIC_INFO, ...persisted.basicInfo })
       setPostcodeData({ ...EMPTY_POSTCODE, ...persisted.postcode })
       setWideningAccess({ ...EMPTY_WIDENING_ACCESS, ...persisted.wideningAccess })
+      setDemographics({ ...EMPTY_DEMOGRAPHICS, ...persisted.demographics })
       setGrades(Array.isArray(persisted.grades) ? persisted.grades : [])
       // Resume on the saved step, but never below 1 (welcome already passed)
       setCurrentStep(Math.max(1, persisted.currentStep || 1))
@@ -194,6 +216,7 @@ function OnboardingContent() {
       basicInfo,
       postcode: postcodeData,
       wideningAccess,
+      demographics,
       grades,
     }
     try {
@@ -201,7 +224,7 @@ function OnboardingContent() {
     } catch {
       // Storage may be disabled — silent fail keeps the in-memory flow working.
     }
-  }, [user, isHydrated, currentStep, basicInfo, postcodeData, wideningAccess, grades])
+  }, [user, isHydrated, currentStep, basicInfo, postcodeData, wideningAccess, demographics, grades])
 
   const handleComplete = async () => {
     if (!user) {
@@ -213,6 +236,30 @@ function OnboardingContent() {
     setError(null)
 
     try {
+      // Derive first_generation from parental education if explicitly set on the
+      // widening access step, or from the demographic parental_education field.
+      const firstGenFromDemographics =
+        demographics.parentalEducation &&
+        ['no_qualifications', 'school_qualifications', 'college_qualifications'].includes(
+          demographics.parentalEducation
+        )
+      const isFirstGen = isParent
+        ? false
+        : wideningAccess.firstGeneration || firstGenFromDemographics
+
+      const demographicCompleted =
+        !isParent &&
+        (!!demographics.householdIncomeBand ||
+          demographics.isSingleParentHousehold ||
+          !!demographics.parentalEducation ||
+          demographics.hasDisability ||
+          demographics.isEstranged ||
+          demographics.isRefugeeOrAsylumSeeker ||
+          demographics.isYoungParent ||
+          demographics.receivesFreeSchoolMeals ||
+          demographics.receivesEma ||
+          !!demographics.localAuthority)
+
       await createStudent.mutateAsync({
         email: user.email || '',
         first_name: basicInfo.firstName,
@@ -231,8 +278,21 @@ function OnboardingContent() {
         simd_decile: postcodeData.simdDecile,
         care_experienced: isParent ? false : wideningAccess.careExperienced,
         is_carer: isParent ? false : wideningAccess.isCarer,
-        first_generation: isParent ? false : wideningAccess.firstGeneration,
+        first_generation: isFirstGen || false,
         user_type: isParent ? 'parent' : 'student',
+        // Demographic fields
+        household_income_band: demographics.householdIncomeBand || null,
+        is_single_parent_household: demographics.isSingleParentHousehold,
+        parental_education: demographics.parentalEducation || null,
+        has_disability: demographics.hasDisability,
+        disability_details: demographics.disabilityDetails || null,
+        is_estranged: demographics.isEstranged,
+        is_refugee_or_asylum_seeker: demographics.isRefugeeOrAsylumSeeker,
+        is_young_parent: demographics.isYoungParent,
+        receives_free_school_meals: demographics.receivesFreeSchoolMeals,
+        receives_ema: demographics.receivesEma,
+        local_authority: demographics.localAuthority || postcodeData.councilArea || null,
+        demographic_completed: demographicCompleted,
       })
 
       // Parents never enter grades — the bulk upsert is skipped entirely.
@@ -370,6 +430,19 @@ function OnboardingContent() {
           )}
 
           {!isParent && currentStep === 4 && (
+            <DemographicsStep
+              data={demographics}
+              onChange={setDemographics}
+              onNext={(skipped) => {
+                if (skipped) setDemographics(EMPTY_DEMOGRAPHICS)
+                setCurrentStep(5)
+              }}
+              onBack={() => setCurrentStep(3)}
+              prefilledCouncilArea={postcodeData.councilArea}
+            />
+          )}
+
+          {!isParent && currentStep === 5 && (
             <>
               {error && (
                 <div
@@ -389,7 +462,7 @@ function OnboardingContent() {
                 grades={grades}
                 onChange={setGrades}
                 onComplete={handleComplete}
-                onBack={() => setCurrentStep(3)}
+                onBack={() => setCurrentStep(4)}
                 isSubmitting={isSubmitting}
               />
             </>
