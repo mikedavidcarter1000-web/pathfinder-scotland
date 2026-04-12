@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth, useSignOut } from '@/hooks/use-auth'
+import { useHasAcceptedOffer } from '@/hooks/use-offers'
 import { UserMenu } from '@/components/auth/user-menu'
 import { getInitials } from '@/lib/utils'
 
@@ -21,13 +22,16 @@ export function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false)
 
   const isParent = student?.user_type === 'parent'
+  const { hasAccepted } = useHasAcceptedOffer()
 
   // Nav items are tagged with `auth` (signed-in only) and `studentOnly`
   // (hidden for parent accounts). The `parentOnly` flag is the inverse for
   // surfacing the Parents landing page to non-parents.
+  // `requiresAcceptedOffer` hides the item until the student accepts an offer.
   const navigation = [
     { name: 'Discover', href: '/discover', auth: false },
     { name: 'Dashboard', href: '/dashboard', auth: true },
+    { name: 'Prep Hub', href: '/prep', auth: true, studentOnly: true, requiresAcceptedOffer: true },
     { name: 'Careers', href: '/careers', auth: false },
     { name: 'AI & Careers', href: '/ai-careers', auth: false },
     { name: 'Subjects', href: '/subjects', auth: false },
@@ -50,6 +54,7 @@ export function Navbar() {
     if (item.auth && !user) return false
     if ('studentOnly' in item && item.studentOnly && isParent) return false
     if ('hideForParents' in item && item.hideForParents && isParent) return false
+    if ('requiresAcceptedOffer' in item && item.requiresAcceptedOffer && !hasAccepted) return false
     return true
   })
 

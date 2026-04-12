@@ -12,6 +12,7 @@ import { ErrorState } from '@/components/ui/error-state'
 import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
+import { OfferTracker } from '@/components/ui/offer-tracker'
 import type { Tables } from '@/types/database'
 
 type Course = Tables<'courses'> & { university?: Tables<'universities'> }
@@ -346,6 +347,16 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Offer Tracker (logged-in students only) */}
+            {user && university && (
+              <OfferTracker
+                courseId={course.id}
+                universityId={university.id}
+                courseName={course.name}
+                universityName={university.name}
+              />
+            )}
+
             {/* Quick Actions */}
             <div className="pf-card">
               <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>

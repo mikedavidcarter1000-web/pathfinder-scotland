@@ -1239,6 +1239,105 @@ export type Database = {
           },
         ]
       }
+      prep_checklist_items: {
+        Row: {
+          id: string
+          student_id: string
+          item_key: string
+          is_completed: boolean | null
+          completed_at: string | null
+          notes: string | null
+        }
+        Insert: {
+          id?: string
+          student_id: string
+          item_key: string
+          is_completed?: boolean | null
+          completed_at?: string | null
+          notes?: string | null
+        }
+        Update: {
+          id?: string
+          student_id?: string
+          item_key?: string
+          is_completed?: boolean | null
+          completed_at?: string | null
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prep_checklist_items_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_offers: {
+        Row: {
+          id: string
+          student_id: string
+          course_id: string
+          university_id: string
+          status: string
+          offer_grades: string | null
+          is_insurance: boolean | null
+          is_firm: boolean | null
+          notes: string | null
+          status_updated_at: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          student_id: string
+          course_id: string
+          university_id: string
+          status?: string
+          offer_grades?: string | null
+          is_insurance?: boolean | null
+          is_firm?: boolean | null
+          notes?: string | null
+          status_updated_at?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          student_id?: string
+          course_id?: string
+          university_id?: string
+          status?: string
+          offer_grades?: string | null
+          is_insurance?: boolean | null
+          is_firm?: boolean | null
+          notes?: string | null
+          status_updated_at?: string | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_offers_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_offers_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_offers_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       students: {
         Row: {
           care_experienced: boolean | null

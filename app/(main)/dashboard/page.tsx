@@ -15,6 +15,8 @@ import {
   ProgressChecklist,
   ParentDashboard,
   BenefitsCard,
+  ApplicationsSection,
+  PrepHubCard,
 } from '@/components/dashboard'
 import { ShareWithParentButton } from '@/components/dashboard/share-with-parent-button'
 import { StatsCard, StatsGrid } from '@/components/ui/stats-card'
@@ -160,6 +162,11 @@ export default function DashboardPage() {
         </StatsGrid>
       </div>
 
+      {/* Prep Hub Card (shows when accepted offer exists) */}
+      <div className="mb-6">
+        <PrepHubCard />
+      </div>
+
       {/* Progress checklist */}
       <div className="mb-6">
         <ProgressChecklist />
@@ -229,6 +236,7 @@ export default function DashboardPage() {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Column */}
         <div className="lg:col-span-2 space-y-6">
+          <ApplicationsSection />
           <GradesSection />
           <SubjectChoicesSection />
           <SavedCoursesSection />
