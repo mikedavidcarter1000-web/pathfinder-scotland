@@ -162,6 +162,58 @@ export default function DashboardPage() {
         </StatsGrid>
       </div>
 
+      {/* Results Day Card */}
+      <div className="mb-6">
+        <Link
+          href="/results-day"
+          className="pf-card-hover no-underline hover:no-underline flex items-center gap-4"
+          style={{ padding: '20px 24px', backgroundColor: 'var(--pf-blue-900)' }}
+        >
+          <div
+            className="flex items-center justify-center flex-shrink-0"
+            style={{
+              width: '52px',
+              height: '52px',
+              borderRadius: '12px',
+              backgroundColor: 'rgba(255,255,255,0.12)',
+              color: '#fff',
+            }}
+            aria-hidden="true"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: '#fff',
+                marginBottom: '2px',
+              }}
+            >
+              Results Day — update your grades
+            </p>
+            <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>
+              Enter your actual results to see your confirmed options
+            </p>
+          </div>
+          <svg
+            className="w-5 h-5 flex-shrink-0"
+            style={{ color: 'rgba(255,255,255,0.7)' }}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
+      </div>
+
       {/* Prep Hub Card (shows when accepted offer exists) */}
       <div className="mb-6">
         <PrepHubCard />

@@ -1190,7 +1190,9 @@ export type Database = {
           created_at: string | null
           grade: string
           id: string
+          is_actual: boolean | null
           predicted: boolean | null
+          predicted_grade: string | null
           qualification_type: Database["public"]["Enums"]["qualification_type"]
           student_id: string
           subject: string
@@ -1202,7 +1204,9 @@ export type Database = {
           created_at?: string | null
           grade: string
           id?: string
+          is_actual?: boolean | null
           predicted?: boolean | null
+          predicted_grade?: string | null
           qualification_type: Database["public"]["Enums"]["qualification_type"]
           student_id: string
           subject: string
@@ -1214,7 +1218,9 @@ export type Database = {
           created_at?: string | null
           grade?: string
           id?: string
+          is_actual?: boolean | null
           predicted?: boolean | null
+          predicted_grade?: string | null
           qualification_type?: Database["public"]["Enums"]["qualification_type"]
           student_id?: string
           subject?: string

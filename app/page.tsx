@@ -158,6 +158,42 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
+      {/* Results Day Banner */}
+      <div
+        style={{
+          backgroundColor: 'var(--pf-blue-900)',
+          padding: '14px 0',
+        }}
+      >
+        <div className="pf-container">
+          <Link
+            href="/results-day"
+            className="flex items-center justify-center gap-3 no-underline hover:no-underline"
+          >
+            <span
+              style={{
+                color: '#fff',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.9375rem',
+              }}
+            >
+              Results Day 2026: Enter your results and see your options instantly
+            </span>
+            <svg
+              className="w-4 h-4"
+              style={{ color: '#fff' }}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+      </div>
+
       {/* Hero Section -- blue-50 */}
       <section
         className="py-12 sm:py-16"
