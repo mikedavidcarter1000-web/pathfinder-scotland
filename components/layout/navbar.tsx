@@ -36,6 +36,7 @@ export function Navbar() {
     { name: 'Simulator', href: '/simulator', auth: false },
     { name: 'Courses', href: '/courses', auth: false },
     { name: 'Universities', href: '/universities', auth: false },
+    { name: 'Colleges', href: '/colleges', auth: false },
     { name: 'Cost calculator', href: '/tools/roi-calculator', auth: false },
     { name: 'Widening Access', href: '/widening-access', auth: false },
     { name: 'Benefits', href: '/benefits', auth: false },

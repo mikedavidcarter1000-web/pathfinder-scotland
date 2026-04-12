@@ -1,12 +1,13 @@
 'use client'
 
-import { use } from 'react'
+import { use, useMemo } from 'react'
 import Link from 'next/link'
 import {
   useUniversity,
   useUniversityBenefits,
   useUniversityCourses,
 } from '@/hooks/use-universities'
+import { useUniversityArticulation, type ArticulationWithCollege } from '@/hooks/use-colleges'
 import { CourseCard } from '@/components/ui/course-card'
 import { CourseCardSkeleton } from '@/components/ui/loading-skeletons'
 import { Skeleton } from '@/components/ui/loading-skeleton'
@@ -31,6 +32,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
   }
   const { data: courses, isLoading: coursesLoading } = useUniversityCourses(id) as { data: Course[] | undefined; isLoading: boolean }
   const { data: uniBenefits } = useUniversityBenefits(id)
+  const { data: collegeArticulation, isLoading: articulationLoading } = useUniversityArticulation(id)
 
   useAuthErrorRedirect([error])
 
@@ -193,6 +195,19 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
       waCourseExamples.length > 0
   )
 
+  // Group college articulation routes by college
+  const articulationByCollege = useMemo(() => {
+    if (!collegeArticulation || collegeArticulation.length === 0) return []
+    const groups: Record<string, { college_id: string; college_name: string; routes: ArticulationWithCollege[] }> = {}
+    for (const r of collegeArticulation) {
+      if (!groups[r.college_id]) {
+        groups[r.college_id] = { college_id: r.college_id, college_name: r.college_name, routes: [] }
+      }
+      groups[r.college_id].routes.push(r)
+    }
+    return Object.values(groups).sort((a, b) => a.college_name.localeCompare(b.college_name))
+  }, [collegeArticulation])
+
   return (
     <div className="min-h-screen bg-[var(--pf-blue-50)]">
       {/* Header */}
@@ -320,6 +335,83 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
                 />
               )}
             </section>
+
+            {/* College Routes In */}
+            {!articulationLoading && articulationByCollege.length > 0 && (
+              <section>
+                <div className="flex items-center gap-3 mb-2">
+                  <h2 className="text-xl font-semibold text-gray-900">College to University Routes</h2>
+                  <span className="pf-badge-blue">{collegeArticulation?.length || 0} routes</span>
+                </div>
+                <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.875rem', marginBottom: '20px' }}>
+                  You can start at college and transfer into {university.name} with advanced standing
+                </p>
+
+                <div className="space-y-6">
+                  {articulationByCollege.map((group) => (
+                    <div key={group.college_id} className="pf-card" style={{ padding: '20px' }}>
+                      <h3 style={{ fontSize: '1.0625rem', marginBottom: '12px' }}>
+                        <Link
+                          href={`/colleges/${group.college_id}`}
+                          style={{ color: 'var(--pf-blue-700)' }}
+                        >
+                          {group.college_name}
+                        </Link>
+                      </h3>
+                      <div className="overflow-x-auto -mx-2 px-2">
+                        <table
+                          style={{
+                            width: '100%',
+                            borderCollapse: 'collapse',
+                            fontSize: '0.875rem',
+                            minWidth: '460px',
+                          }}
+                        >
+                          <thead>
+                            <tr style={{ borderBottom: '2px solid var(--pf-grey-300)' }}>
+                              <th style={{ textAlign: 'left', padding: '8px 12px', color: 'var(--pf-grey-600)', fontWeight: 600, fontSize: '0.8125rem' }}>
+                                College Qualification
+                              </th>
+                              <th style={{ textAlign: 'left', padding: '8px 12px', color: 'var(--pf-grey-600)', fontWeight: 600, fontSize: '0.8125rem' }}>
+                                University Degree
+                              </th>
+                              <th style={{ textAlign: 'center', padding: '8px 12px', color: 'var(--pf-grey-600)', fontWeight: 600, fontSize: '0.8125rem' }}>
+                                Entry Year
+                              </th>
+                              <th style={{ textAlign: 'center', padding: '8px 12px', color: 'var(--pf-grey-600)', fontWeight: 600, fontSize: '0.8125rem' }}>
+                                WP?
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {group.routes.map((route) => (
+                              <tr key={route.id} style={{ borderBottom: '1px solid var(--pf-grey-100)' }}>
+                                <td style={{ padding: '10px 12px', color: 'var(--pf-grey-900)' }}>
+                                  {route.college_qualification}
+                                </td>
+                                <td style={{ padding: '10px 12px', color: 'var(--pf-grey-900)' }}>
+                                  {route.university_degree}
+                                </td>
+                                <td style={{ padding: '10px 12px', textAlign: 'center', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600 }}>
+                                  Year {route.entry_year}
+                                </td>
+                                <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                                  {route.is_widening_participation ? (
+                                    <span className="pf-badge-amber" title={route.wp_eligibility || 'Widening participation'}>WP</span>
+                                  ) : (
+                                    <span style={{ color: 'var(--pf-grey-300)' }}>—</span>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
 
           {/* Sidebar */}

@@ -17,6 +17,7 @@ import {
   AI_ROLE_SOURCE,
 } from '@/lib/constants'
 import { AiRoleBadge } from '@/components/ui/ai-role-badge'
+import { CareerCollegesSection } from '@/components/colleges/career-colleges-section'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
 import { classifyError } from '@/lib/errors'
@@ -353,6 +354,9 @@ function CareerSearchPageContent() {
                     subjects={detail.subjects_by_relevance.related}
                   />
                 )}
+
+                {/* College routes */}
+                <CareerCollegesSection sectorName={detail.sector.name} />
 
                 {/* CTAs */}
                 <div

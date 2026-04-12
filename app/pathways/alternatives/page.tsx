@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { LiveArticulationTable } from '@/components/colleges/live-articulation-table'
 
 export const metadata: Metadata = {
   title:
@@ -115,52 +116,6 @@ const FOUNDATION_FRAMEWORKS: Framework[] = [
     delivery: 'Delivered through local college partnerships',
     sectors: 'Healthcare, Social Care',
     complements: 'Higher Biology, Higher Psychology',
-  },
-]
-
-type Articulation = {
-  course: string
-  level: string
-  articulatesTo: string
-  university: string
-  entryYear: string
-}
-
-const ARTICULATION_EXAMPLES: Articulation[] = [
-  {
-    course: 'HNC Computing',
-    level: 'SCQF 7',
-    articulatesTo: 'BSc Computing Science',
-    university: 'Edinburgh Napier',
-    entryYear: 'Year 2',
-  },
-  {
-    course: 'HND Business',
-    level: 'SCQF 8',
-    articulatesTo: 'BA Business Management',
-    university: 'Glasgow Caledonian',
-    entryYear: 'Year 3',
-  },
-  {
-    course: 'HNC Social Sciences',
-    level: 'SCQF 7',
-    articulatesTo: 'BA Social Work',
-    university: 'University of West of Scotland',
-    entryYear: 'Year 2',
-  },
-  {
-    course: 'HND Engineering',
-    level: 'SCQF 8',
-    articulatesTo: 'BEng Mechanical Engineering',
-    university: 'Heriot-Watt',
-    entryYear: 'Year 2 or 3',
-  },
-  {
-    course: 'HNC Art and Design',
-    level: 'SCQF 7',
-    articulatesTo: 'BA Art and Design',
-    university: 'Duncan of Jordanstone (Dundee)',
-    entryYear: 'Year 2',
   },
 ]
 
@@ -731,66 +686,11 @@ function CollegeSection() {
 
         <SubSection title="Articulation examples">
           <p style={subsectionLeadStyle}>
-            A handful of common college-to-university routes. Articulation agreements vary by
+            Real college-to-university routes from our database. Articulation agreements vary by
             college and university, so always confirm the current arrangement with both
             institutions.
           </p>
-          <div
-            style={{
-              overflowX: 'auto',
-              borderRadius: '8px',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
-              backgroundColor: 'var(--pf-white)',
-            }}
-          >
-            <table
-              style={{
-                width: '100%',
-                borderCollapse: 'collapse',
-                fontSize: '0.9375rem',
-                minWidth: '720px',
-              }}
-            >
-              <thead>
-                <tr style={{ backgroundColor: 'var(--pf-blue-50)' }}>
-                  <ThCell>College course</ThCell>
-                  <ThCell>Level</ThCell>
-                  <ThCell>Articulates to</ThCell>
-                  <ThCell>University</ThCell>
-                  <ThCell>Entry year</ThCell>
-                </tr>
-              </thead>
-              <tbody>
-                {ARTICULATION_EXAMPLES.map((row, idx) => (
-                  <tr
-                    key={row.course}
-                    style={{
-                      borderTop: idx === 0 ? 'none' : '1px solid var(--pf-grey-100)',
-                    }}
-                  >
-                    <TdCell strong>{row.course}</TdCell>
-                    <TdCell>
-                      <span className="pf-badge-blue">{row.level}</span>
-                    </TdCell>
-                    <TdCell>{row.articulatesTo}</TdCell>
-                    <TdCell>{row.university}</TdCell>
-                    <TdCell>{row.entryYear}</TdCell>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p
-            style={{
-              fontSize: '0.8125rem',
-              color: 'var(--pf-grey-600)',
-              marginTop: '12px',
-              fontStyle: 'italic',
-            }}
-          >
-            Articulation agreements vary by college and university. Check with both institutions
-            for current arrangements.
-          </p>
+          <LiveArticulationTable />
         </SubSection>
 
         <SubSection title="Edinburgh College School Partnership">

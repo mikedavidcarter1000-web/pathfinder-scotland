@@ -75,6 +75,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${SITE_URL}/colleges`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
       url: `${SITE_URL}/widening-access`,
       lastModified: now,
       changeFrequency: 'monthly',
@@ -168,11 +174,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const supabase = await createServerSupabaseClient()
 
-    const [subjectsRes, universitiesRes, coursesRes, careerSectorsRes] = await Promise.all([
+    const [subjectsRes, universitiesRes, coursesRes, careerSectorsRes, collegesRes] = await Promise.all([
       supabase.from('subjects').select('id, created_at'),
       supabase.from('universities').select('id, updated_at'),
       supabase.from('courses').select('id, updated_at'),
       supabase.from('career_sectors').select('id'),
+      supabase.from('colleges').select('id, created_at').eq('is_active', true),
     ])
 
     const subjectRoutes: MetadataRoute.Sitemap = (subjectsRes.data ?? []).map((row) => ({
@@ -203,6 +210,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }))
 
+    const collegeRoutes: MetadataRoute.Sitemap = (collegesRes.data ?? []).map((row) => ({
+      url: `${SITE_URL}/colleges/${row.id}`,
+      lastModified: row.created_at ? new Date(row.created_at) : now,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    }))
+
     return [
       ...staticRoutes,
       ...blogRoutes,
@@ -210,6 +224,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...universityRoutes,
       ...courseRoutes,
       ...careerSectorRoutes,
+      ...collegeRoutes,
     ]
   } catch {
     return [...staticRoutes, ...blogRoutes]

@@ -15,6 +15,7 @@ export function Footer() {
       { label: 'Simulator', href: '/simulator' },
       { label: 'Courses', href: '/courses' },
       { label: 'Universities', href: '/universities' },
+      { label: 'Colleges', href: '/colleges' },
       { label: 'Cost Calculator', href: '/tools/roi-calculator' },
       { label: 'Widening Access', href: '/widening-access' },
       { label: 'Student Benefits', href: '/benefits' },

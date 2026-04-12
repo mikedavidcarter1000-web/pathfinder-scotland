@@ -10,6 +10,7 @@ import {
   type ExploreCareerSectorRow,
   type CareerRole,
 } from '@/hooks/use-subjects'
+import { DiscoverCollegesSection } from '@/components/colleges/discover-colleges-section'
 import { getCurricularAreaColour, AI_ROLE_SOURCE } from '@/lib/constants'
 import { AiRoleBadge } from '@/components/ui/ai-role-badge'
 import { Skeleton } from '@/components/ui/loading-skeleton'
@@ -253,6 +254,17 @@ export default function ExplorePage() {
                 {/* Section 3b — Specific roles + AI ratings */}
                 {exploreData.reachable_roles.length > 0 && (
                   <ReachableRolesSection roles={exploreData.reachable_roles} />
+                )}
+
+                {/* Section 3c — College courses */}
+                {areas && (
+                  <DiscoverCollegesSection
+                    selectedAreaNames={
+                      areas
+                        .filter((a) => selectedAreaIds.includes(a.id))
+                        .map((a) => a.name)
+                    }
+                  />
                 )}
 
                 {/* Section 4 — CTAs */}
