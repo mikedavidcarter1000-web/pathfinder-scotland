@@ -402,6 +402,144 @@ export type Database = {
         }
         Relationships: []
       }
+      college_articulation: {
+        Row: {
+          id: string
+          college_id: string
+          university_id: string
+          college_qualification: string
+          college_scqf_level: number
+          university_degree: string
+          entry_year: number
+          is_widening_participation: boolean | null
+          wp_eligibility: string | null
+          graded_unit_requirement: string | null
+          notes: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          college_id: string
+          university_id: string
+          college_qualification: string
+          college_scqf_level: number
+          university_degree: string
+          entry_year: number
+          is_widening_participation?: boolean | null
+          wp_eligibility?: string | null
+          graded_unit_requirement?: string | null
+          notes?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          college_id?: string
+          university_id?: string
+          college_qualification?: string
+          college_scqf_level?: number
+          university_degree?: string
+          entry_year?: number
+          is_widening_participation?: boolean | null
+          wp_eligibility?: string | null
+          graded_unit_requirement?: string | null
+          notes?: string | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "college_articulation_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: false
+            referencedRelation: "colleges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "college_articulation_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      colleges: {
+        Row: {
+          id: string
+          name: string
+          region: string
+          city: string
+          postcode: string | null
+          website_url: string
+          campuses: Json | null
+          course_areas: string[] | null
+          has_swap: boolean | null
+          swap_hub: string | null
+          has_foundation_apprenticeships: boolean | null
+          fa_frameworks: string[] | null
+          has_modern_apprenticeships: boolean | null
+          ma_frameworks: string[] | null
+          uhi_partner: boolean | null
+          schools_programme: boolean | null
+          schools_programme_details: string | null
+          student_count: number | null
+          distinctive_features: string | null
+          description: string | null
+          qualification_levels: string[] | null
+          is_active: boolean | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          region: string
+          city: string
+          postcode?: string | null
+          website_url: string
+          campuses?: Json | null
+          course_areas?: string[] | null
+          has_swap?: boolean | null
+          swap_hub?: string | null
+          has_foundation_apprenticeships?: boolean | null
+          fa_frameworks?: string[] | null
+          has_modern_apprenticeships?: boolean | null
+          ma_frameworks?: string[] | null
+          uhi_partner?: boolean | null
+          schools_programme?: boolean | null
+          schools_programme_details?: string | null
+          student_count?: number | null
+          distinctive_features?: string | null
+          description?: string | null
+          qualification_levels?: string[] | null
+          is_active?: boolean | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          region?: string
+          city?: string
+          postcode?: string | null
+          website_url?: string
+          campuses?: Json | null
+          course_areas?: string[] | null
+          has_swap?: boolean | null
+          swap_hub?: string | null
+          has_foundation_apprenticeships?: boolean | null
+          fa_frameworks?: string[] | null
+          has_modern_apprenticeships?: boolean | null
+          ma_frameworks?: string[] | null
+          uhi_partner?: boolean | null
+          schools_programme?: boolean | null
+          schools_programme_details?: string | null
+          student_count?: number | null
+          distinctive_features?: string | null
+          description?: string | null
+          qualification_levels?: string[] | null
+          is_active?: boolean | null
+          created_at?: string | null
+        }
+        Relationships: []
+      }
       course_choice_rules: {
         Row: {
           breadth_requirements: string | null
