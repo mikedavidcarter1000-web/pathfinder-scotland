@@ -44,14 +44,20 @@ function formatCommissionEstimate(click: ClickWithBenefit): number {
 export default async function RevenueDashboardPage() {
   const supabase = await createServerSupabaseClient()
 
-  // Auth gate — require a signed-in user. This is a hidden internal route;
-  // there's no formal admin role yet so any authenticated user can see it.
-  // The route is not linked anywhere and has noindex metadata.
+  // Auth gate — require a signed-in admin user.
+  // Whitelist approach until a proper admin role column is added.
+  const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean)
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) {
     redirect('/auth/sign-in?redirect=/admin/revenue')
+  }
+
+  // Block non-admin users — email must be in ADMIN_EMAILS env var
+  if (ADMIN_EMAILS.length > 0 && !ADMIN_EMAILS.includes(user.email?.toLowerCase() ?? '')) {
+    redirect('/dashboard')
   }
 
   // Clicks are only readable by the service role (per RLS). Use the admin

@@ -193,13 +193,28 @@ function buildPlainText(
   ].filter(Boolean).join('\n')
 }
 
-// Simple auth via a shared secret for cron callers.
-// Falls back to allowing unauthenticated calls in dev.
+// Auth via shared secret for cron callers.
+// In production, CRON_SECRET is mandatory — missing secret = hard fail.
+// In dev, falls back to allowing unauthenticated calls for local testing.
 function authoriseCron(request: Request): boolean {
   const cronSecret = process.env.CRON_SECRET
-  if (!cronSecret) return process.env.NODE_ENV !== 'production'
+  if (!cronSecret) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[reminders/send] CRON_SECRET is not configured — blocking request in production')
+      return false
+    }
+    return true
+  }
   const header = request.headers.get('authorization')
-  return header === `Bearer ${cronSecret}`
+  if (!header) return false
+  // Constant-time comparison to prevent timing attacks
+  const expected = `Bearer ${cronSecret}`
+  if (header.length !== expected.length) return false
+  let mismatch = 0
+  for (let i = 0; i < header.length; i++) {
+    mismatch |= header.charCodeAt(i) ^ expected.charCodeAt(i)
+  }
+  return mismatch === 0
 }
 
 export async function POST(request: Request) {

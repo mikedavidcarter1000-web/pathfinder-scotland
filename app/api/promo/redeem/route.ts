@@ -5,7 +5,7 @@ import { createServerClient } from '@supabase/ssr'
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { code, user_id, amount } = body
+    const { code, amount } = body
 
     if (!code || typeof code !== 'string' || !code.trim()) {
       return NextResponse.json({ success: false, error: 'Code is required' }, { status: 400 })

@@ -1,8 +1,31 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 
+// Rate limit: max 30 clicks per IP per minute (prevents click spam)
+const clickRateMap = new Map<string, { count: number; resetAt: number }>()
+const CLICK_RATE_MAX = 30
+const CLICK_RATE_WINDOW_MS = 60 * 1000
+
+function isClickRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const entry = clickRateMap.get(ip)
+  if (!entry || now > entry.resetAt) {
+    clickRateMap.set(ip, { count: 1, resetAt: now + CLICK_RATE_WINDOW_MS })
+    return false
+  }
+  entry.count++
+  return entry.count > CLICK_RATE_MAX
+}
+
 export async function POST(req: Request) {
   try {
+    // Rate limit click tracking to prevent spam
+    const forwarded = req.headers.get('x-forwarded-for')
+    const ip = forwarded?.split(',')[0]?.trim() || 'unknown'
+    if (isClickRateLimited(ip)) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    }
+
     const body = (await req.json()) as {
       benefit_id?: string
       source_page?: string
@@ -12,6 +35,17 @@ export async function POST(req: Request) {
 
     if (!benefitId || typeof benefitId !== 'string') {
       return NextResponse.json({ error: 'benefit_id is required' }, { status: 400 })
+    }
+
+    // Validate benefit_id is a UUID to prevent injection
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!uuidRegex.test(benefitId)) {
+      return NextResponse.json({ error: 'Invalid benefit_id format' }, { status: 400 })
+    }
+
+    // Validate source_page if provided (max 500 chars, no script injection)
+    if (sourcePage && (typeof sourcePage !== 'string' || sourcePage.length > 500)) {
+      return NextResponse.json({ error: 'Invalid source_page' }, { status: 400 })
     }
 
     const supabase = await createServerSupabaseClient()
@@ -28,7 +62,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Benefit not found' }, { status: 404 })
     }
 
-    // Resolve student_id from the session if present.
+    // Resolve student_id from the session — only use auth.uid(), never
+    // accept student_id from the request body (IDOR prevention).
     const {
       data: { user },
     } = await supabase.auth.getUser()

@@ -39,8 +39,17 @@ export async function POST(req: Request) {
       user.email!
     )
 
-    // Create checkout session
-    const origin = req.headers.get('origin') || 'http://localhost:3000'
+    // Validate origin to prevent open redirect attacks
+    const rawOrigin = req.headers.get('origin') || ''
+    const allowedOrigins = [
+      process.env.NEXT_PUBLIC_SITE_URL,
+      'http://localhost:3000',
+      'https://pathfinderscot.co.uk',
+      'https://www.pathfinderscot.co.uk',
+    ].filter(Boolean)
+    const origin = allowedOrigins.includes(rawOrigin)
+      ? rawOrigin
+      : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000')
     const session = await createCheckoutSession({
       customerId,
       priceId,

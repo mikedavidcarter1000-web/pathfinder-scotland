@@ -65,6 +65,7 @@ export async function middleware(request: NextRequest) {
     '/grades',
     '/profile',
     '/onboarding',
+    '/admin',
   ]
 
   const isProtectedRoute = protectedRoutes.some(route =>

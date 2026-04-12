@@ -2,8 +2,34 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 
+// Rate limit: max 10 attempts per IP per 15 minutes (prevents promo code enumeration)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
+const RATE_LIMIT_MAX = 10
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const entry = rateLimitMap.get(ip)
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
+    return false
+  }
+  entry.count++
+  return entry.count > RATE_LIMIT_MAX
+}
+
 export async function POST(req: Request) {
   try {
+    // Rate limit by IP to prevent brute-force code enumeration
+    const forwarded = req.headers.get('x-forwarded-for')
+    const ip = forwarded?.split(',')[0]?.trim() || 'unknown'
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { valid: false, error: 'Too many attempts. Please try again later.' },
+        { status: 429 }
+      )
+    }
+
     const body = await req.json()
     const { code } = body
 
