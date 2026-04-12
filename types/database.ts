@@ -212,6 +212,7 @@ export type Database = {
           related_university_id: string | null
           seasonal_notes: string | null
           short_description: string | null
+          support_group: string | null
           updated_at: string | null
           url: string
           verification_notes: string | null
@@ -254,6 +255,7 @@ export type Database = {
           related_university_id?: string | null
           seasonal_notes?: string | null
           short_description?: string | null
+          support_group?: string | null
           updated_at?: string | null
           url: string
           verification_notes?: string | null
@@ -296,6 +298,7 @@ export type Database = {
           related_university_id?: string | null
           seasonal_notes?: string | null
           short_description?: string | null
+          support_group?: string | null
           updated_at?: string | null
           url?: string
           verification_notes?: string | null
