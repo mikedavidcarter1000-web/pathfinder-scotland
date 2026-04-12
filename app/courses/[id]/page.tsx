@@ -660,6 +660,29 @@ function PersonalisedEligibility({
                 you meet other criteria.
               </p>
             )}
+
+            {/* Grade sensitivity CTA for near-misses */}
+            {(detail.status === 'ineligible' || detail.status === 'possible' || detail.status === 'missing_subjects') && (
+              <Link
+                href="/tools/grade-sensitivity"
+                className="mt-3 no-underline hover:no-underline flex items-center gap-2"
+                style={{
+                  display: 'inline-flex',
+                  padding: '8px 14px',
+                  borderRadius: '8px',
+                  backgroundColor: 'var(--pf-blue-50)',
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
+                  color: 'var(--pf-blue-700)',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                See what one grade change could do →
+              </Link>
+            )}
           </div>
         </div>
       </div>

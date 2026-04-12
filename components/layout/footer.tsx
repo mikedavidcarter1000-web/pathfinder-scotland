@@ -17,6 +17,7 @@ export function Footer() {
       { label: 'Universities', href: '/universities' },
       { label: 'Colleges', href: '/colleges' },
       { label: 'Cost Calculator', href: '/tools/roi-calculator' },
+      { label: 'Grade Sensitivity', href: '/tools/grade-sensitivity' },
       { label: 'Widening Access', href: '/widening-access' },
       { label: 'Student Benefits', href: '/benefits' },
       { label: 'For Parents', href: '/parents' },

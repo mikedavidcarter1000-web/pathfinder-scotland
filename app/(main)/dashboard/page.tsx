@@ -172,6 +172,60 @@ export default function DashboardPage() {
         <ProgressChecklist />
       </div>
 
+      {/* Grade Sensitivity card — shown when student has grades entered */}
+      {gradeSummary.totalGrades > 0 && (
+        <div className="mb-6">
+          <Link
+            href="/tools/grade-sensitivity"
+            className="pf-card-hover no-underline hover:no-underline flex items-center gap-4"
+            style={{ padding: '20px 24px' }}
+          >
+            <div
+              className="flex items-center justify-center flex-shrink-0"
+              style={{
+                width: '52px',
+                height: '52px',
+                borderRadius: '12px',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                color: 'var(--pf-green-500)',
+              }}
+              aria-hidden="true"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                  color: 'var(--pf-grey-900)',
+                  marginBottom: '2px',
+                }}
+              >
+                See how your grades affect your options
+              </p>
+              <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+                Find out which single grade change would unlock the most courses for you.
+              </p>
+            </div>
+            <svg
+              className="w-5 h-5 flex-shrink-0"
+              style={{ color: 'var(--pf-green-500)' }}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+      )}
+
       {/* Discover prompt — surfaces the dual-path entry point for students
           who still feel lost even with an account set up. */}
       <div className="mb-6">
