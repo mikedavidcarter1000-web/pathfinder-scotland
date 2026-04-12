@@ -7,7 +7,7 @@ Pathfinder is a B2C SaaS platform helping Scottish students navigate university 
 
 **Domain:** pathfinderscot.co.uk  
 **Tech Stack:** Supabase (PostgreSQL), Next.js (assumed)  
-**Project Location:** `C:\Users\marmu\pathfinder-scotland`  
+**Project Location:** `D:\Dev\pathfinder-scotland`  
 **Supabase Project Ref:** qexfszbhmdducszupyzi
 
 ## Current Status
@@ -113,7 +113,7 @@ Also: `student_grades.subject_id` FK added (nullable) for gradual migration from
 
 ```bash
 # Navigate to project
-cd C:\Users\marmu\pathfinder-scotland
+cd D:\Dev\pathfinder-scotland
 
 # Link to Supabase (if needed)
 npx supabase link --project-ref qexfszbhmdducszupyzi
@@ -144,7 +144,7 @@ npx supabase migration repair --status applied [migration_name]
 ---
 
 ## Session Startup Checklist
-1. `cd C:\Users\marmu\pathfinder-scotland`
+1. `cd D:\Dev\pathfinder-scotland`
 2. `npx supabase db diff` (check current state)
 3. Review pending features above
 4. Continue implementation
