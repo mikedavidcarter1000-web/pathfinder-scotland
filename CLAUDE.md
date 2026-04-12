@@ -109,6 +109,10 @@ Tables created:
 
 Also: `student_grades.subject_id` FK added (nullable) for gradual migration from free-text.
 
+> **subjects table column names (confirmed from live DB):**
+> `is_available_n5`, `is_available_higher`, `is_available_adv_higher`
+> NOT `available_at_n5` / `available_at_higher` / `available_at_adv_higher`
+
 ## Important Commands
 
 ```bash
