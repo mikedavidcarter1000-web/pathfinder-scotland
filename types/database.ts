@@ -1402,13 +1402,14 @@ export type Database = {
           email_reminders_enabled: boolean | null
           first_generation: boolean | null
           first_name: string | null
-          has_disability: boolean | null
+          has_disability: boolean
           household_income_band: string | null
           id: string
           is_carer: boolean | null
           is_estranged: boolean | null
           is_refugee_or_asylum_seeker: boolean | null
           is_single_parent_household: boolean | null
+          is_young_carer: boolean
           is_young_parent: boolean | null
           last_name: string | null
           local_authority: string | null
@@ -1433,13 +1434,14 @@ export type Database = {
           email_reminders_enabled?: boolean | null
           first_generation?: boolean | null
           first_name?: string | null
-          has_disability?: boolean | null
+          has_disability?: boolean
           household_income_band?: string | null
           id: string
           is_carer?: boolean | null
           is_estranged?: boolean | null
           is_refugee_or_asylum_seeker?: boolean | null
           is_single_parent_household?: boolean | null
+          is_young_carer?: boolean
           is_young_parent?: boolean | null
           last_name?: string | null
           local_authority?: string | null
@@ -1464,13 +1466,14 @@ export type Database = {
           email_reminders_enabled?: boolean | null
           first_generation?: boolean | null
           first_name?: string | null
-          has_disability?: boolean | null
+          has_disability?: boolean
           household_income_band?: string | null
           id?: string
           is_carer?: boolean | null
           is_estranged?: boolean | null
           is_refugee_or_asylum_seeker?: boolean | null
           is_single_parent_household?: boolean | null
+          is_young_carer?: boolean
           is_young_parent?: boolean | null
           last_name?: string | null
           local_authority?: string | null
