@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { VerificationCaveat } from '@/components/ui/VerificationCaveat'
+import { VerificationBanner, VerificationCaveat } from '@/components/ui/VerificationCaveat'
 
 export const metadata: Metadata = {
   title: 'Disabled Student Support – Pathfinder Scotland',
@@ -67,6 +67,13 @@ export default function DisabilityPage() {
             available. You do not need a formal diagnosis to ask for help — but evidence does help
             unlock the maximum support.
           </p>
+        </div>
+      </section>
+
+      {/* Verification Banner */}
+      <section className="pf-section pf-section-white" style={{ paddingTop: '24px', paddingBottom: '0' }}>
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <VerificationBanner />
         </div>
       </section>
 

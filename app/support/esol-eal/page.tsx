@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { VerificationBanner } from '@/components/ui/VerificationCaveat'
 
 export const metadata: Metadata = {
   title: 'ESOL and EAL Student Support – Pathfinder Scotland',
@@ -49,6 +50,13 @@ export default function EsolEalPage() {
             Speakers of Other Languages (ESOL), there are routes into college and university in
             Scotland designed for your situation.
           </p>
+        </div>
+      </section>
+
+      {/* Verification Banner */}
+      <section className="pf-section pf-section-white" style={{ paddingTop: '24px', paddingBottom: '0' }}>
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <VerificationBanner />
         </div>
       </section>
 

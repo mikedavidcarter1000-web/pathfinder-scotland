@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { VerificationCaveat } from '@/components/ui/VerificationCaveat'
+import { VerificationBanner, VerificationCaveat } from '@/components/ui/VerificationCaveat'
 
 export const metadata: Metadata = {
   title: 'Support for School Leavers Without a Destination – Pathfinder Scotland',
@@ -41,6 +41,13 @@ export default function EarlyLeaversPage() {
             thinking about leaving — there is a structured support system in Scotland designed
             specifically for you. You are not stuck.
           </p>
+        </div>
+      </section>
+
+      {/* Verification Banner */}
+      <section className="pf-section pf-section-white" style={{ paddingTop: '24px', paddingBottom: '0' }}>
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <VerificationBanner />
         </div>
       </section>
 

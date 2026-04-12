@@ -1,3 +1,51 @@
+/**
+ * Page-top banner used on every support sub-page. Reassures users that figures
+ * and eligibility rules are checked periodically while pointing them back to
+ * the official provider for anything time-sensitive. Kept deliberately subtle
+ * (soft blue tint, no close control) so it does not dominate the page.
+ */
+export function VerificationBanner() {
+  return (
+    <div
+      role="note"
+      style={{
+        display: 'flex',
+        gap: '12px',
+        alignItems: 'flex-start',
+        padding: '12px 16px',
+        backgroundColor: 'var(--pf-blue-50)',
+        borderLeft: '3px solid var(--pf-blue-500)',
+        borderRadius: '8px',
+        color: 'var(--pf-grey-600)',
+        fontSize: '0.875rem',
+        lineHeight: 1.55,
+      }}
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="var(--pf-blue-700)"
+        strokeWidth="2"
+        aria-hidden="true"
+        style={{ flexShrink: 0, marginTop: '2px' }}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <span>
+        This information was verified in April 2026. Amounts, eligibility criteria, and
+        contact details may change. Always check with the official provider before making
+        decisions.
+      </span>
+    </div>
+  )
+}
+
 interface VerificationCaveatProps {
   /** Authoritative organisation to direct the user to verify with. */
   org: string

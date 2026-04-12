@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { VerificationCaveat } from '@/components/ui/VerificationCaveat'
+import { VerificationCaveat, VerificationBanner } from '@/components/ui/VerificationCaveat'
 
 export const metadata: Metadata = {
   title: 'Estranged Student Support – Pathfinder Scotland',
@@ -45,6 +45,13 @@ export default function EstrangedStudentsPage() {
         </div>
       </section>
 
+      {/* Verification banner */}
+      <section className="pf-section pf-section-white" style={{ paddingTop: '24px', paddingBottom: '0' }}>
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <VerificationBanner />
+        </div>
+      </section>
+
       {/* Financial support */}
       <section className="pf-section pf-section-grey">
         <div className="pf-container" style={{ maxWidth: '720px' }}>
@@ -62,7 +69,7 @@ export default function EstrangedStudentsPage() {
             <div className="pf-card" style={{ padding: '20px 24px' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>SAAS total support</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '8px' }}>
-                Up to £11,400 per year (loan + bursary combined) for household incomes under £21,000.
+                Up to GBP 11,400 per year (loan + bursary combined) for household incomes under GBP 21,000.
               </p>
               <VerificationCaveat
                 org="SAAS"
@@ -74,15 +81,16 @@ export default function EstrangedStudentsPage() {
             <div className="pf-card" style={{ padding: '20px 24px' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Estranged Student Bursary top-up</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
-                £1,000/year additional from SAAS. Declare estrangement on your SAAS application.
+                GBP 1,000/year additional from SAAS. Declare estrangement on your SAAS application.
               </p>
             </div>
 
             <div className="pf-card" style={{ padding: '20px 24px' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Stand Alone Pledge bursaries</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '8px' }}>
-                Universities signed to the Stand Alone Pledge offer dedicated support for estranged
-                students. Check{' '}
+                15 of Scotland's 18 universities have signed the Stand Alone Legacy Pledge. They offer
+                bursaries, accommodation guarantees, and dedicated support for estranged students.
+                Check{' '}
                 <a
                   href="https://standalonecharity.org/pledge"
                   target="_blank"
@@ -127,8 +135,18 @@ export default function EstrangedStudentsPage() {
             <div className="pf-card" style={{ padding: '20px 24px' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Year-round accommodation</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
-                Some universities offer accommodation over holidays for students who cannot return
-                home. Check directly with your institution's accommodation team.
+                Stand Alone Pledge universities offer 365-day accommodation guarantees — accommodation
+                is available during holidays, not just term time. This is essential if you cannot return
+                home. Check directly with your university's accommodation team for details.
+              </p>
+            </div>
+
+            <div className="pf-card" style={{ padding: '20px 24px' }}>
+              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Hub for SUCCESS</h3>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '8px' }}>
+                Based at the University of Edinburgh, Hub for SUCCESS offers tailored support for care-experienced
+                and estranged students. They provide mentoring, community, and practical help navigating
+                university life.
               </p>
             </div>
 
@@ -152,7 +170,25 @@ export default function EstrangedStudentsPage() {
               </a>
             </div>
 
+            <div className="pf-card" style={{ padding: '20px 24px' }}>
+              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Unite Foundation housing scholarship</h3>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '8px' }}>
+                The Unite Foundation offers free housing scholarships for estranged students. This
+                support is in addition to university accommodation guarantees.
+              </p>
+            </div>
+
           </div>
+        </div>
+      </section>
+
+      {/* What your school can do */}
+      <section className="pf-section pf-section-grey">
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <h2 style={{ marginBottom: '16px' }}>What your school can do</h2>
+          <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem', lineHeight: 1.7 }}>
+            Tell a trusted adult at school — a guidance teacher, school counsellor, or senior staff member. Schools have pastoral support, can help you access hardship funds, and can flag your situation on UCAS forms to help universities provide appropriate support.
+          </p>
         </div>
       </section>
 

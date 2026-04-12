@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { VerificationCaveat } from '@/components/ui/VerificationCaveat'
+import { VerificationCaveat, VerificationBanner } from '@/components/ui/VerificationCaveat'
 
 export const metadata: Metadata = {
   title: 'Young Parent and Lone Parent Support – Pathfinder Scotland',
@@ -45,6 +45,13 @@ export default function YoungParentsPage() {
         </div>
       </section>
 
+      {/* Verification banner */}
+      <section className="pf-section pf-section-white" style={{ paddingTop: '24px', paddingBottom: '0' }}>
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <VerificationBanner />
+        </div>
+      </section>
+
       {/* University support (SAAS) */}
       <section className="pf-section pf-section-grey">
         <div className="pf-container" style={{ maxWidth: '720px' }}>
@@ -54,7 +61,7 @@ export default function YoungParentsPage() {
             <div className="pf-card" style={{ padding: '20px 24px' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Lone Parents Grant</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
-                Up to £1,305/year, income-assessed, for single parents in full-time undergraduate
+                Up to GBP 1,305/year, income-assessed, for single parents in full-time undergraduate
                 study. Apply through SAAS alongside your main application.
               </p>
             </div>
@@ -62,8 +69,16 @@ export default function YoungParentsPage() {
             <div className="pf-card" style={{ padding: '20px 24px' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Lone Parents Childcare Grant</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
-                Up to £1,215/year towards registered childcare costs. Apply through SAAS alongside
+                Up to GBP 1,215/year towards registered childcare costs. Apply through SAAS alongside
                 your main application.
+              </p>
+            </div>
+
+            <div className="pf-card" style={{ padding: '20px 24px' }}>
+              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Discretionary Childcare Fund</h3>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
+                Universities can also offer up to GBP 3,000 from their Discretionary Childcare Fund
+                for additional childcare support. Ask your university's student funding team about eligibility.
               </p>
             </div>
 
@@ -101,21 +116,21 @@ export default function YoungParentsPage() {
             <div className="pf-card" style={{ padding: '20px 24px' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Best Start Grant (pregnancy and first child)</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
-                £767.50 one-off payment. Means-tested. Apply via Social Security Scotland.
+                GBP 767.50 one-off payment at three key stages (pregnancy, birth, and early years). Means-tested. Apply via Social Security Scotland.
               </p>
             </div>
 
             <div className="pf-card" style={{ padding: '20px 24px' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Best Start Foods</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
-                £4.95–9.90/week in healthy food vouchers. Apply via Social Security Scotland.
+                GBP 4.95–9.90/week in healthy food vouchers. Apply via Social Security Scotland.
               </p>
             </div>
 
             <div className="pf-card" style={{ padding: '20px 24px' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Scottish Child Payment</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '8px' }}>
-                £28.20/week per child under 16. Means-tested. Apply via Social Security Scotland.
+                GBP 28.20/week per child under 16. Means-tested. Apply via Social Security Scotland.
               </p>
               <VerificationCaveat
                 org="Social Security Scotland"
@@ -177,6 +192,16 @@ export default function YoungParentsPage() {
             </div>
 
           </div>
+        </div>
+      </section>
+
+      {/* What your school can do */}
+      <section className="pf-section pf-section-white">
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <h2 style={{ marginBottom: '16px' }}>What your school can do</h2>
+          <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem', lineHeight: 1.7 }}>
+            Tell your guidance teacher. Schools can arrange flexible timetabling, access to crèche or early years support, childcare help, and pastoral support. Your school can also help you navigate benefits and signpost local childcare resources.
+          </p>
         </div>
       </section>
 

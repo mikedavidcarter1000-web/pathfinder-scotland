@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { VerificationCaveat } from '@/components/ui/VerificationCaveat'
+import { VerificationCaveat, VerificationBanner } from '@/components/ui/VerificationCaveat'
 
 export const metadata: Metadata = {
   title: 'Young Carer Support – Pathfinder Scotland',
@@ -47,6 +47,13 @@ export default function YoungCarersPage() {
         </div>
       </section>
 
+      {/* Verification banner */}
+      <section className="pf-section pf-section-white" style={{ paddingTop: '24px', paddingBottom: '0' }}>
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <VerificationBanner />
+        </div>
+      </section>
+
       {/* Financial support */}
       <section className="pf-section pf-section-grey">
         <div className="pf-container" style={{ maxWidth: '720px' }}>
@@ -56,7 +63,7 @@ export default function YoungCarersPage() {
             <div className="pf-card" style={{ padding: '20px 24px' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Young Carer Grant</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '8px' }}>
-                £405.10/year from Social Security Scotland. For young carers aged 16–18 (or 19 if
+                GBP 405.10/year from Social Security Scotland. For young carers aged 16–18 (or 19 if
                 still in school) who care for someone receiving certain disability benefits.{' '}
                 <a
                   href="https://www.mygov.scot/young-carer-grant"
@@ -84,6 +91,14 @@ export default function YoungCarersPage() {
                   See /prep for detail
                 </Link>
                 .
+              </p>
+            </div>
+
+            <div className="pf-card" style={{ padding: '20px 24px' }}>
+              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Carer Support Payment</h3>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
+                GBP 81.90/week if you are a full-time carer (20+ hours/week) for someone on certain disability
+                benefits. Available from Social Security Scotland.
               </p>
             </div>
 
@@ -135,10 +150,27 @@ export default function YoungCarersPage() {
             </div>
 
             <div className="pf-card" style={{ padding: '20px 24px' }}>
+              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>University carer bursaries</h3>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
+                University of Glasgow offers Talent Scholarships (GBP 1,500/year) and Robert Gordon University
+                offers Access Scholarships (GBP 3,000/year) for young carers. Check directly with your
+                chosen university for carer-specific support.
+              </p>
+            </div>
+
+            <div className="pf-card" style={{ padding: '20px 24px' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Independent student status and loan support</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
                 If assessed as an Independent Student due to caring, higher loan support may apply.
                 Your funding is not assessed against parental income.
+              </p>
+            </div>
+
+            <div className="pf-card" style={{ padding: '20px 24px' }}>
+              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Going Higher recognition</h3>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
+                Some Scottish universities have signed the Going Higher recognition award for carer-friendly
+                provision. Ask your chosen university if they are part of this scheme.
               </p>
             </div>
 
@@ -179,6 +211,16 @@ export default function YoungCarersPage() {
               </tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      {/* What your school can do */}
+      <section className="pf-section pf-section-grey">
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <h2 style={{ marginBottom: '16px' }}>What your school can do</h2>
+          <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem', lineHeight: 1.7 }}>
+            Schools can offer flexible timetabling, support with catching up on missed classes, and help applying for EMA if your household qualifies. Your guidance teacher can also flag your caring role on UCAS forms, which helps universities understand your context.
+          </p>
         </div>
       </section>
 

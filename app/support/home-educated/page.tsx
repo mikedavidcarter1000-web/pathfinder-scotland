@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { VerificationCaveat } from '@/components/ui/VerificationCaveat'
+import { VerificationBanner, VerificationCaveat } from '@/components/ui/VerificationCaveat'
 
 export const metadata: Metadata = {
   title: 'Home-Educated Student Support – Pathfinder Scotland',
@@ -42,6 +42,13 @@ export default function HomeEducatedPage() {
             There is no legal requirement to have attended school. What matters is your
             qualifications and how you present your learning to admissions teams.
           </p>
+        </div>
+      </section>
+
+      {/* Verification Banner */}
+      <section className="pf-section pf-section-white" style={{ paddingTop: '24px', paddingBottom: '0' }}>
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <VerificationBanner />
         </div>
       </section>
 

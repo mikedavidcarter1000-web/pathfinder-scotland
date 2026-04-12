@@ -1,8 +1,8 @@
 // Content note: This page covers practical support resources only. No policy commentary.
-// Review annually -- LGBTQ+ policy in Scottish education is a rapidly changing area.
+// LGBTQ+ content should be reviewed annually to ensure organisations and services are current
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { VerificationCaveat } from '@/components/ui/VerificationCaveat'
+import { VerificationBanner, VerificationCaveat } from '@/components/ui/VerificationCaveat'
 
 export const metadata: Metadata = {
   title: 'LGBTQ+ Student Support – Pathfinder Scotland',
@@ -45,6 +45,13 @@ export default function LgbtqPage() {
             practical resources: societies, support contacts, and the limited but real financial
             support that exists.
           </p>
+        </div>
+      </section>
+
+      {/* Verification Banner */}
+      <section className="pf-section pf-section-white" style={{ paddingTop: '24px', paddingBottom: '0' }}>
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <VerificationBanner />
         </div>
       </section>
 

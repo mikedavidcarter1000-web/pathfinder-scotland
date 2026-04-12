@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useAuth } from '@/hooks/use-auth'
 import { useCurrentStudent } from '@/hooks/use-student'
 import { SupportGroupCard } from '@/components/support/SupportGroupCard'
@@ -37,6 +38,7 @@ function getSupportGroups(student: Student | null | undefined): SupportGroup[] {
           <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
         </svg>
       ),
+      highlighted: student?.is_estranged === true || student?.care_experienced === true,
     },
     {
       title: 'Young parents and lone parents',
@@ -153,11 +155,13 @@ export default function SupportPage() {
   // Only highlight if the user is logged in and their profile has loaded
   const resolvedStudent = user ? student : null
   const groups = getSupportGroups(resolvedStudent)
+  const showWideningAccessCallout =
+    resolvedStudent?.simd_decile === 1 || resolvedStudent?.simd_decile === 2
 
   return (
     <div className="pf-container pt-8 sm:pt-10 pb-12 sm:pb-16">
       {/* Header */}
-      <div style={{ maxWidth: '680px', marginBottom: '40px' }}>
+      <div style={{ maxWidth: '680px', marginBottom: '24px' }}>
         <h1 style={{ marginBottom: '12px', fontSize: 'clamp(1.75rem, 5vw, 2.25rem)' }}>
           Support for every student
         </h1>
@@ -166,6 +170,53 @@ export default function SupportPage() {
           describes you — or explore all of them.
         </p>
       </div>
+
+      {showWideningAccessCallout && (
+        <Link
+          href="/widening-access"
+          className="no-underline hover:no-underline"
+          style={{
+            display: 'flex',
+            gap: '16px',
+            alignItems: 'flex-start',
+            padding: '16px 20px',
+            marginBottom: '32px',
+            borderRadius: '8px',
+            backgroundColor: 'var(--pf-blue-50)',
+            borderLeft: '3px solid var(--pf-blue-700)',
+            color: 'var(--pf-grey-900)',
+          }}
+        >
+          <div
+            style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '8px',
+              backgroundColor: 'var(--pf-blue-100)',
+              color: 'var(--pf-blue-700)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+            aria-hidden="true"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+            </svg>
+          </div>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, marginBottom: '4px' }}>
+              You may qualify for Widening Access programmes
+            </p>
+            <p style={{ fontSize: '0.9375rem', color: 'var(--pf-grey-600)', lineHeight: 1.5 }}>
+              Based on your postcode, you could be eligible for lower offers and extra support.
+              See the Widening Access hub for your options.
+            </p>
+          </div>
+        </Link>
+      )}
 
       {/* Support group grid */}
       <div

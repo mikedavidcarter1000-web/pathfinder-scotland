@@ -61,9 +61,9 @@ const NAV_GROUPS: NavGroup[] = [
   {
     name: 'Support',
     items: [
+      { name: 'Support Hub', href: '/support' },
       { name: 'Widening Access', href: '/widening-access' },
       { name: 'Benefits', href: '/benefits' },
-      { name: 'Resources', href: '/support' },
       { name: 'Parents', href: '/parents', hideForParents: true },
       { name: 'Blog', href: '/blog' },
     ],

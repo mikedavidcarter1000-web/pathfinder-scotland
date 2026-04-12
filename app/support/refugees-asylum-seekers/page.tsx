@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { VerificationCaveat } from '@/components/ui/VerificationCaveat'
+import { VerificationCaveat, VerificationBanner } from '@/components/ui/VerificationCaveat'
 
 export const metadata: Metadata = {
   title: 'Refugee and Asylum Seeker Support – Pathfinder Scotland',
@@ -77,6 +77,13 @@ export default function RefugeesAsylumSeekersPage() {
             Access to funding depends on your immigration status, but there are dedicated scholarships
             and support organisations specifically for you.
           </p>
+        </div>
+      </section>
+
+      {/* Verification banner */}
+      <section className="pf-section pf-section-white" style={{ paddingTop: '24px', paddingBottom: '0' }}>
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <VerificationBanner />
         </div>
       </section>
 
@@ -161,6 +168,16 @@ export default function RefugeesAsylumSeekersPage() {
               /support/esol-eal
             </Link>
             . College ESOL courses are a recognised pathway to university.
+          </p>
+        </div>
+      </section>
+
+      {/* What your school can do */}
+      <section className="pf-section pf-section-grey">
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <h2 style={{ marginBottom: '16px' }}>What your school can do</h2>
+          <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem', lineHeight: 1.7 }}>
+            Tell your guidance teacher or school leadership. Scottish schools are experienced in supporting newly-arrived students with ESOL, settling-in support, and can flag your circumstances on UCAS forms so universities can provide appropriate backing.
           </p>
         </div>
       </section>

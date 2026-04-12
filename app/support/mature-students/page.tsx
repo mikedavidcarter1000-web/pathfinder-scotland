@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { VerificationCaveat } from '@/components/ui/VerificationCaveat'
+import { VerificationBanner, VerificationCaveat } from '@/components/ui/VerificationCaveat'
 
 export const metadata: Metadata = {
   title: 'Mature Student Support – Pathfinder Scotland',
@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 const orgs = [
   { name: 'SWAP', site: 'swap.ac.uk', notes: 'Access courses with guaranteed university places' },
   { name: 'SAAS', site: 'saas.gov.uk', notes: 'Independent Student and part-time funding' },
+  { name: 'Open University Scotland', site: 'open.ac.uk', notes: 'Part-time degree study, no entry requirements' },
   { name: 'NowrongPath', site: 'nowrongpath.scot', notes: 'Alternative routes into Scottish universities' },
   { name: 'College Development Network', site: 'cdn.ac.uk', notes: 'FE college information' },
 ]
@@ -44,15 +45,28 @@ export default function MatureStudentsPage() {
         </div>
       </section>
 
+      {/* Verification Banner */}
+      <section className="pf-section pf-section-white" style={{ paddingTop: '24px', paddingBottom: '0' }}>
+        <div className="pf-container" style={{ maxWidth: '720px' }}>
+          <VerificationBanner />
+        </div>
+      </section>
+
       {/* What counts as mature? */}
       <section className="pf-section pf-section-grey">
         <div className="pf-container" style={{ maxWidth: '720px' }}>
           <h2 style={{ marginBottom: '16px' }}>What counts as a mature student?</h2>
           <div className="pf-card" style={{ padding: '20px 24px' }}>
-            <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '12px' }}>
               SAAS defines a mature student as someone who does not meet all the criteria for the
               Young Student Bursary. In practice, if you are 21 or over at the start of your course,
               your funding is not assessed against your parents&apos; income.
+            </p>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
+              You may also qualify as an Independent Student if you are: married or in a civil
+              partnership, estranged from your parents, have been self-supporting for 3 years, or
+              have dependent children. Independent Student classification unlocks funding assessed
+              only on your own income.
             </p>
           </div>
         </div>
@@ -102,6 +116,22 @@ export default function MatureStudentsPage() {
                 Many Scottish universities assess mature applicants on experience and motivation
                 rather than qualifications alone. Contact admissions directly to explain your
                 background.
+              </p>
+            </div>
+
+            <div className="pf-card" style={{ padding: '20px 24px' }}>
+              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Open University Scotland</h3>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
+                Part-time degree study with no formal entry requirements. Study while working or
+                caring. Available across all subject areas.{' '}
+                <a
+                  href="https://open.ac.uk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
+                >
+                  open.ac.uk
+                </a>
               </p>
             </div>
           </div>

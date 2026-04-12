@@ -453,6 +453,10 @@ export default function PrepPage() {
       {/* Phases */}
       <div className="pf-container pt-8 pb-16">
         <div className="max-w-3xl mx-auto space-y-10">
+          {/* Demographic financial support callouts — shown above the checklist so
+              relevant support is surfaced before the student works through tasks. */}
+          <DemographicCallouts student={student ?? null} />
+
           {phases.map((phase, phaseIdx) => {
             const visibleItems = phase.items.filter(
               (item) => !item.condition || item.condition(student ?? null)
@@ -504,9 +508,6 @@ export default function PrepPage() {
               </section>
             )
           })}
-
-          {/* Demographic financial support callouts */}
-          <DemographicCallouts student={student ?? null} />
 
           {/* Personalised items section */}
           {personalisedItems.length > 0 && (
@@ -565,9 +566,10 @@ function DemographicCallouts({ student }: { student: Student | null }) {
   if (!student) return null
   const showYoungCarer = !!student.is_young_carer
   const showDisability = !!student.has_disability
+  const showCareExperienced = !!student.care_experienced
   // is_young_parent is the closest flag for lone parent eligibility
   const showLoneParent = !!student.is_young_parent
-  if (!showYoungCarer && !showDisability && !showLoneParent) return null
+  if (!showYoungCarer && !showDisability && !showCareExperienced && !showLoneParent) return null
 
   const calloutLinkStyle = {
     fontFamily: "'Space Grotesk', sans-serif",
@@ -667,6 +669,40 @@ function DemographicCallouts({ student }: { student: Student | null }) {
             />
             <div className="mt-3">
               <Link href="/support/disability" className="inline-flex items-center gap-1.5 no-underline hover:underline" style={calloutLinkStyle}>
+                Find out more {chevron}
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {showCareExperienced && (
+          <div
+            className="pf-card"
+            style={{ padding: '20px 24px', borderLeft: '4px solid var(--pf-blue-500)' }}
+          >
+            <p
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: 'var(--pf-grey-900)',
+                marginBottom: '8px',
+              }}
+            >
+              Care Experienced Bursary
+            </p>
+            <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', lineHeight: 1.6, marginBottom: '8px' }}>
+              As a care-experienced student, you&apos;re eligible for enhanced bursaries and
+              support &mdash; the Care Experienced Bursary (&pound;9,000/year from SAAS), zero
+              parental income assessment, and 365-day accommodation at most Scottish universities.
+            </p>
+            <VerificationCaveat
+              org="SAAS"
+              url="https://www.saas.gov.uk/full-time/he/dependants/care-experienced-students"
+              year="2025-26"
+            />
+            <div className="mt-3">
+              <Link href="/support/estranged-students" className="inline-flex items-center gap-1.5 no-underline hover:underline" style={calloutLinkStyle}>
                 Find out more {chevron}
               </Link>
             </div>
