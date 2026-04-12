@@ -103,17 +103,71 @@ export function useSignUp() {
 }
 
 // Sign In
+const SIGN_IN_TIMEOUT_MS = 15_000
+
+function friendlySignInMessage(err: unknown): string {
+  const e = err as { status?: number; message?: string; name?: string }
+  const status = e?.status ?? 0
+  const msg = (e?.message || '').toLowerCase()
+
+  if (e?.name === 'SignInTimeoutError' || msg.includes('timeout') || msg.includes('timed out')) {
+    return 'Something went wrong. Please try again.'
+  }
+  if (status === 429 || msg.includes('rate limit') || msg.includes('too many')) {
+    return 'Too many attempts. Please wait a moment.'
+  }
+  if (
+    status === 400 ||
+    msg.includes('invalid login') ||
+    msg.includes('invalid credentials') ||
+    msg.includes('invalid email or password')
+  ) {
+    return 'Invalid email or password.'
+  }
+  if (status >= 500 || msg.includes('database') || msg.includes('schema') || msg.includes('internal')) {
+    return 'Something went wrong. Please try again later.'
+  }
+  // Fall back to friendly generic (never leak raw Supabase/DB text).
+  return 'Invalid email or password.'
+}
+
 export function useSignIn() {
   const supabase = getSupabaseClient()
 
   return useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      let timeoutId: ReturnType<typeof setTimeout> | undefined
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => {
+          const err = new Error('Sign-in request timed out.') as Error & { name: string }
+          err.name = 'SignInTimeoutError'
+          reject(err)
+        }, SIGN_IN_TIMEOUT_MS)
       })
-      if (error) throw error
-      return data
+
+      try {
+        const result = await Promise.race([
+          supabase.auth.signInWithPassword({ email, password }),
+          timeoutPromise,
+        ])
+        const { data, error } = result
+        if (error) {
+          const friendly = new Error(friendlySignInMessage(error))
+          throw friendly
+        }
+        return data
+      } catch (err) {
+        if ((err as Error)?.name === 'SignInTimeoutError') {
+          throw new Error(friendlySignInMessage(err))
+        }
+        if (err instanceof Error && err.message && !err.message.toLowerCase().includes('database')) {
+          // Already a friendly Error thrown above — rethrow as-is.
+          throw err
+        }
+        throw new Error(friendlySignInMessage(err))
+      } finally {
+        if (timeoutId) clearTimeout(timeoutId)
+      }
     },
   })
 }

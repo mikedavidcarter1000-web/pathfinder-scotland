@@ -56,30 +56,31 @@ export function SocialLoginButtons({ redirectTo }: SocialLoginButtonsProps) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-2 gap-3">
       {providers.map((provider) => (
         <button
           key={provider.id}
           type="button"
           onClick={() => handleSocialLogin(provider.id)}
           disabled={oauthSignIn.isPending}
-          className="w-full flex items-center justify-center gap-3 transition-colors disabled:opacity-50"
+          aria-label={`Continue with ${provider.name}`}
+          className="flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
           style={{
             minHeight: '48px',
-            padding: '12px 16px',
+            padding: '10px 12px',
             borderRadius: '8px',
             border: '1px solid var(--pf-grey-300)',
             backgroundColor: 'var(--pf-white)',
             color: 'var(--pf-grey-900)',
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 600,
-            fontSize: '0.9375rem',
+            fontSize: '0.875rem',
           }}
           onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)')}
           onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-white)')}
         >
           {provider.icon}
-          <span>Continue with {provider.name}</span>
+          <span>{provider.name}</span>
         </button>
       ))}
     </div>
@@ -88,7 +89,7 @@ export function SocialLoginButtons({ redirectTo }: SocialLoginButtonsProps) {
 
 export function SocialLoginDivider() {
   return (
-    <div className="relative my-6">
+    <div className="relative my-5">
       <div className="absolute inset-0 flex items-center">
         <div className="w-full" style={{ borderTop: '1px solid var(--pf-grey-300)' }} />
       </div>

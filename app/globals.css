@@ -65,8 +65,6 @@
 
   html {
     background-color: var(--pf-blue-50);
-    /* Prevent any rogue child from creating horizontal overflow on mobile. */
-    overflow-x: hidden;
   }
 
   body {
@@ -77,8 +75,11 @@
     line-height: 1.6;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
-    /* Prevent horizontal overflow from any element leaking out. */
-    overflow-x: hidden;
+    /* Clip horizontal overflow without creating a scroll container.
+       `clip` (vs `hidden`) avoids breaking position:sticky on the navbar
+       and prevents html+body from both becoming scroll containers, which
+       made large pages (and the footer) unreachable by scroll. */
+    overflow-x: clip;
     min-width: 320px;
   }
 

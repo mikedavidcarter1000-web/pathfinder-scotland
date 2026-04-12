@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, lazy, Suspense } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -13,6 +13,63 @@ const SearchBar = lazy(() =>
   import('@/components/ui/search-bar').then((m) => ({ default: m.SearchBar }))
 )
 
+type NavItem = {
+  name: string
+  href: string
+  hideForParents?: boolean
+}
+
+type NavGroup = {
+  name: string
+  items: NavItem[]
+}
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    name: 'Explore',
+    items: [
+      { name: 'Discover', href: '/discover' },
+      { name: 'Careers', href: '/careers' },
+      { name: 'AI & Careers', href: '/ai-careers' },
+      { name: 'Subjects', href: '/subjects' },
+    ],
+  },
+  {
+    name: 'Plan',
+    items: [
+      { name: 'Plan Choices', href: '/pathways' },
+      { name: 'Simulator', href: '/simulator' },
+      { name: 'Alternatives', href: '/pathways/alternatives' },
+    ],
+  },
+  {
+    name: 'Browse',
+    items: [
+      { name: 'Courses', href: '/courses' },
+      { name: 'Universities', href: '/universities' },
+      { name: 'Colleges', href: '/colleges' },
+    ],
+  },
+  {
+    name: 'Tools',
+    items: [
+      { name: 'Cost Calculator', href: '/tools/roi-calculator' },
+      { name: 'Grade Sensitivity', href: '/tools/grade-sensitivity' },
+      { name: 'Results Day', href: '/results-day' },
+    ],
+  },
+  {
+    name: 'Support',
+    items: [
+      { name: 'Widening Access', href: '/widening-access' },
+      { name: 'Benefits', href: '/benefits' },
+      { name: 'Resources', href: '/support' },
+      { name: 'Parents', href: '/parents', hideForParents: true },
+      { name: 'Blog', href: '/blog' },
+    ],
+  },
+]
+
 export function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
@@ -20,71 +77,63 @@ export function Navbar() {
   const signOut = useSignOut()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [openGroup, setOpenGroup] = useState<string | null>(null)
+  const [mobileExpanded, setMobileExpanded] = useState<Set<string>>(new Set())
+  const navRef = useRef<HTMLDivElement>(null)
 
   const isParent = student?.user_type === 'parent'
   const { hasAccepted } = useHasAcceptedOffer()
 
-  // Nav items are tagged with `auth` (signed-in only) and `studentOnly`
-  // (hidden for parent accounts). The `parentOnly` flag is the inverse for
-  // surfacing the Parents landing page to non-parents.
-  // `requiresAcceptedOffer` hides the item until the student accepts an offer.
-  const navigation = [
-    { name: 'Discover', href: '/discover', auth: false },
-    { name: 'Dashboard', href: '/dashboard', auth: true },
-    { name: 'Prep Hub', href: '/prep', auth: true, studentOnly: true, requiresAcceptedOffer: true },
-    { name: 'Careers', href: '/careers', auth: false },
-    { name: 'AI & Careers', href: '/ai-careers', auth: false },
-    { name: 'Subjects', href: '/subjects', auth: false },
-    { name: 'Plan Choices', href: '/pathways', auth: false },
-    { name: 'Support', href: '/support', auth: false },
-    { name: 'Alternatives', href: '/pathways/alternatives', auth: false },
-    { name: 'Simulator', href: '/simulator', auth: false },
-    { name: 'Courses', href: '/courses', auth: false },
-    { name: 'Universities', href: '/universities', auth: false },
-    { name: 'Colleges', href: '/colleges', auth: false },
-    { name: 'Cost calculator', href: '/tools/roi-calculator', auth: false },
-    { name: 'Results Day', href: '/results-day', auth: false },
-    { name: 'Grade sensitivity', href: '/tools/grade-sensitivity', auth: false },
-    { name: 'Widening Access', href: '/widening-access', auth: false },
-    { name: 'Benefits', href: '/benefits', auth: false },
-    { name: 'Parents', href: '/parents', auth: false, parentOnly: false, hideForParents: true },
-    { name: 'Blog', href: '/blog', auth: false },
-    { name: 'Saved', href: '/saved', auth: true, studentOnly: true },
-    { name: 'Compare', href: '/compare', auth: true, studentOnly: true },
-  ] as const
-
-  const filteredNav = navigation.filter((item) => {
-    if (item.auth && !user) return false
-    if ('studentOnly' in item && item.studentOnly && isParent) return false
-    if ('hideForParents' in item && item.hideForParents && isParent) return false
-    if ('requiresAcceptedOffer' in item && item.requiresAcceptedOffer && !hasAccepted) return false
-    return true
-  })
+  const filteredGroups = NAV_GROUPS.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => !(item.hideForParents && isParent)),
+  })).filter((group) => group.items.length > 0)
 
   const isActive = (href: string) => {
-    if (href === '/dashboard') return pathname === href
-    // /pathways has the /pathways/alternatives sibling — match exactly so they
-    // don't both highlight at once.
     if (href === '/pathways') return pathname === href
-    return pathname.startsWith(href)
+    return pathname === href || pathname.startsWith(href + '/')
   }
 
-  // Close mobile menu on route change
+  const isGroupActive = (group: NavGroup) => group.items.some((it) => isActive(it.href))
+
   useEffect(() => {
     setMobileMenuOpen(false)
+    setOpenGroup(null)
   }, [pathname])
 
-  // Lock body scroll when mobile menu open
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenGroup(null)
     }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenGroup(null)
+      }
+    }
+    document.addEventListener('mousedown', onClick)
+    return () => document.removeEventListener('mousedown', onClick)
+  }, [])
+
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''
     return () => {
       document.body.style.overflow = ''
     }
   }, [mobileMenuOpen])
+
+  const toggleMobileGroup = (name: string) => {
+    setMobileExpanded((prev) => {
+      const next = new Set(prev)
+      if (next.has(name)) next.delete(name)
+      else next.add(name)
+      return next
+    })
+  }
 
   const handleSignOut = async () => {
     await signOut.mutateAsync()
@@ -107,11 +156,16 @@ export function Navbar() {
         style={{ backgroundColor: 'var(--pf-blue-900)' }}
       >
         <div className="max-w-[1200px] mx-auto px-4">
-          <div className="flex items-center justify-between" style={{ height: '64px' }}>
+          <div
+            ref={navRef}
+            className="flex items-center justify-between gap-4"
+            style={{ height: '64px' }}
+          >
             {/* Logo */}
             <Link
               href={user ? '/dashboard' : '/'}
               className="flex items-center gap-2 text-white no-underline hover:no-underline"
+              style={{ flexShrink: 0 }}
             >
               <Image
                 src="/logo-white.svg"
@@ -123,7 +177,7 @@ export function Navbar() {
                 style={{ display: 'block', flexShrink: 0 }}
               />
               <span
-                className="text-white"
+                className="text-white hidden sm:inline"
                 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1.125rem' }}
               >
                 Pathfinder Scotland
@@ -131,32 +185,126 @@ export function Navbar() {
             </Link>
 
             {/* Desktop Navigation (lg and up) */}
-            <div className="hidden lg:flex items-center gap-1">
-              {filteredNav.map((item) => {
-                const active = isActive(item.href)
+            <div className="hidden lg:flex items-center gap-1 flex-1 justify-center min-w-0">
+              {user && (
+                <Link
+                  href="/dashboard"
+                  className="px-3 py-2 text-sm text-white no-underline hover:no-underline"
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    opacity: pathname === '/dashboard' ? 1 : 0.82,
+                    borderBottom: pathname === '/dashboard' ? '2px solid #fff' : '2px solid transparent',
+                  }}
+                >
+                  Dashboard
+                </Link>
+              )}
+
+              {user && !isParent && hasAccepted && (
+                <Link
+                  href="/prep"
+                  className="px-3 py-2 text-sm text-white no-underline hover:no-underline"
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    opacity: pathname.startsWith('/prep') ? 1 : 0.82,
+                    borderBottom: pathname.startsWith('/prep') ? '2px solid #fff' : '2px solid transparent',
+                  }}
+                >
+                  Prep Hub
+                </Link>
+              )}
+
+              {filteredGroups.map((group) => {
+                const active = isGroupActive(group)
+                const open = openGroup === group.name
                 return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="px-3 py-2 text-sm text-white no-underline hover:no-underline transition-colors relative"
-                    style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontWeight: 600,
-                      opacity: active ? 1 : 0.82,
-                      borderBottom: active ? '2px solid #fff' : '2px solid transparent',
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-                    onMouseLeave={(e) => (e.currentTarget.style.opacity = active ? '1' : '0.82')}
+                  <div
+                    key={group.name}
+                    className="relative"
+                    onMouseEnter={() => setOpenGroup(group.name)}
+                    onMouseLeave={() => setOpenGroup(null)}
                   >
-                    {item.name}
-                  </Link>
+                    <button
+                      type="button"
+                      onClick={() => setOpenGroup(open ? null : group.name)}
+                      className="flex items-center gap-1 px-3 py-2 text-sm text-white transition-colors"
+                      style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontWeight: 600,
+                        opacity: active || open ? 1 : 0.82,
+                        borderBottom: active ? '2px solid #fff' : '2px solid transparent',
+                        background: 'transparent',
+                      }}
+                      aria-expanded={open}
+                      aria-haspopup="true"
+                    >
+                      {group.name}
+                      <svg
+                        className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {open && (
+                      <div
+                        className="absolute left-0 z-50"
+                        style={{
+                          top: '100%',
+                          paddingTop: '4px',
+                          minWidth: '220px',
+                        }}
+                        role="menu"
+                      >
+                        <div
+                          style={{
+                            backgroundColor: 'var(--pf-white)',
+                            borderRadius: '8px',
+                            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
+                            padding: '8px 0',
+                          }}
+                        >
+                          {group.items.map((item) => {
+                            const itemActive = isActive(item.href)
+                            return (
+                              <Link
+                                key={item.name}
+                                href={item.href}
+                                onClick={() => setOpenGroup(null)}
+                                className="block px-4 py-2 text-sm no-underline hover:no-underline transition-colors"
+                                style={{
+                                  fontFamily: "'Space Grotesk', sans-serif",
+                                  fontWeight: 600,
+                                  color: itemActive ? 'var(--pf-blue-700)' : 'var(--pf-grey-900)',
+                                  backgroundColor: itemActive ? 'var(--pf-blue-50)' : 'transparent',
+                                }}
+                                onMouseEnter={(e) => {
+                                  if (!itemActive) e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)'
+                                }}
+                                onMouseLeave={(e) => {
+                                  if (!itemActive) e.currentTarget.style.backgroundColor = 'transparent'
+                                }}
+                                role="menuitem"
+                              >
+                                {item.name}
+                              </Link>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 )
               })}
             </div>
 
-            {/* Right Side */}
-            <div className="flex items-center gap-1 sm:gap-2">
-              {/* Search Button (hidden on mobile) */}
+            {/* Right Side (pinned) */}
+            <div className="flex items-center gap-1 sm:gap-2" style={{ flexShrink: 0 }}>
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
                 className="hidden sm:inline-flex p-2 rounded-lg transition-colors text-white items-center justify-center"
@@ -172,7 +320,6 @@ export function Navbar() {
                 </svg>
               </button>
 
-              {/* Auth — desktop (lg+) */}
               {isLoading ? (
                 <div className="w-8 h-8 rounded-full animate-pulse hidden lg:block" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }} />
               ) : user ? (
@@ -210,7 +357,6 @@ export function Navbar() {
                 </div>
               )}
 
-              {/* Mobile Menu Button (hamburger) — visible below lg */}
               <button
                 onClick={() => setMobileMenuOpen(true)}
                 className="lg:hidden rounded-lg transition-colors text-white inline-flex items-center justify-center"
@@ -225,7 +371,6 @@ export function Navbar() {
             </div>
           </div>
 
-          {/* Search Bar (Expandable) -- lazy-loaded only when activated */}
           {searchOpen && (
             <div className="py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.12)' }}>
               <Suspense
@@ -248,10 +393,9 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Slide-in Panel (below lg breakpoint) */}
+      {/* Mobile Slide-in Panel */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-[100]">
-          {/* Backdrop */}
           <div
             className="absolute inset-0"
             style={{
@@ -262,8 +406,6 @@ export function Navbar() {
             onClick={() => setMobileMenuOpen(false)}
             aria-hidden="true"
           />
-
-          {/* Panel */}
           <div
             className="absolute right-0 top-0 bottom-0 flex flex-col"
             style={{
@@ -276,7 +418,6 @@ export function Navbar() {
             aria-modal="true"
             aria-label="Mobile navigation"
           >
-            {/* Panel header */}
             <div
               className="flex items-center justify-between px-4"
               style={{
@@ -307,34 +448,101 @@ export function Navbar() {
               </button>
             </div>
 
-            {/* Nav links (scrollable) */}
             <div className="flex-1 overflow-y-auto px-3 py-4">
               <nav className="flex flex-col gap-1">
-                {filteredNav.map((item) => {
-                  const active = isActive(item.href)
+                {user && (
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center px-4 rounded-lg text-white no-underline hover:no-underline"
+                    style={{
+                      minHeight: '48px',
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '1rem',
+                      backgroundColor: pathname === '/dashboard' ? 'rgba(255,255,255,0.12)' : 'transparent',
+                    }}
+                  >
+                    Dashboard
+                  </Link>
+                )}
+                {user && !isParent && hasAccepted && (
+                  <Link
+                    href="/prep"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center px-4 rounded-lg text-white no-underline hover:no-underline"
+                    style={{
+                      minHeight: '48px',
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 600,
+                      fontSize: '1rem',
+                      backgroundColor: pathname.startsWith('/prep') ? 'rgba(255,255,255,0.12)' : 'transparent',
+                    }}
+                  >
+                    Prep Hub
+                  </Link>
+                )}
+
+                {filteredGroups.map((group) => {
+                  const expanded = mobileExpanded.has(group.name)
+                  const groupActive = isGroupActive(group)
                   return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center px-4 rounded-lg text-white no-underline hover:no-underline transition-colors"
-                      style={{
-                        minHeight: '48px',
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontWeight: 600,
-                        fontSize: '1rem',
-                        backgroundColor: active ? 'rgba(255,255,255,0.12)' : 'transparent',
-                        opacity: active ? 1 : 0.9,
-                      }}
-                    >
-                      {item.name}
-                    </Link>
+                    <div key={group.name} className="flex flex-col">
+                      <button
+                        type="button"
+                        onClick={() => toggleMobileGroup(group.name)}
+                        className="flex items-center justify-between px-4 rounded-lg text-white transition-colors"
+                        style={{
+                          minHeight: '48px',
+                          fontFamily: "'Space Grotesk', sans-serif",
+                          fontWeight: 600,
+                          fontSize: '1rem',
+                          backgroundColor: expanded || groupActive ? 'rgba(255,255,255,0.06)' : 'transparent',
+                          textAlign: 'left',
+                        }}
+                        aria-expanded={expanded}
+                      >
+                        <span>{group.name}</span>
+                        <svg
+                          className={`w-4 h-4 transition-transform ${expanded ? 'rotate-180' : ''}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      {expanded && (
+                        <div className="flex flex-col gap-1 pl-3 mt-1 mb-2">
+                          {group.items.map((item) => {
+                            const active = isActive(item.href)
+                            return (
+                              <Link
+                                key={item.name}
+                                href={item.href}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center px-4 rounded-lg text-white no-underline hover:no-underline transition-colors"
+                                style={{
+                                  minHeight: '44px',
+                                  fontFamily: "'Space Grotesk', sans-serif",
+                                  fontWeight: 500,
+                                  fontSize: '0.9375rem',
+                                  backgroundColor: active ? 'rgba(255,255,255,0.12)' : 'transparent',
+                                  opacity: active ? 1 : 0.85,
+                                }}
+                              >
+                                {item.name}
+                              </Link>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </div>
                   )
                 })}
               </nav>
             </div>
 
-            {/* Footer: user info + sign out, or sign-in CTAs */}
             <div
               className="px-4 py-4"
               style={{

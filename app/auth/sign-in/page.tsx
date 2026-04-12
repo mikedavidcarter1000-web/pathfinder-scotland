@@ -18,15 +18,25 @@ export default function SignInPage() {
     ? rawRedirect
     : '/dashboard'
 
+  // Error returned by /auth/callback when OAuth flow fails. Truncated to
+  // avoid reflecting unbounded attacker-supplied text in the banner.
+  const callbackErrorRaw = searchParams.get('error')
+  const callbackError = callbackErrorRaw ? callbackErrorRaw.slice(0, 200) : null
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [dismissedCallbackError, setDismissedCallbackError] = useState(false)
 
   const signIn = useSignIn()
   const toast = useToast()
 
+  const visibleCallbackError =
+    callbackError && !dismissedCallbackError && !signIn.error ? callbackError : null
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setDismissedCallbackError(true)
 
     signIn.mutate(
       { email, password },
@@ -36,7 +46,7 @@ export default function SignInPage() {
           router.push(redirect)
         },
         onError: (err) => {
-          toast.error('Sign in failed', err.message || 'Invalid email or password')
+          toast.error('Sign in failed', err.message || 'Invalid email or password.')
         },
       }
     )
@@ -92,9 +102,10 @@ export default function SignInPage() {
           <SocialLoginButtons redirectTo={redirect} />
           <SocialLoginDivider />
 
-          {/* Error Message */}
-          {signIn.error && (
+          {/* Error Message — shows sign-in errors or a callback error from the OAuth redirect */}
+          {(signIn.error || visibleCallbackError) && (
             <div
+              role="alert"
               className="mb-4 rounded-lg"
               style={{
                 padding: '12px',
@@ -104,7 +115,9 @@ export default function SignInPage() {
                 fontSize: '0.875rem',
               }}
             >
-              {signIn.error.message || 'Invalid email or password'}
+              {signIn.error
+                ? signIn.error.message || 'Invalid email or password.'
+                : visibleCallbackError}
             </div>
           )}
 

@@ -35,7 +35,7 @@ const STAGE_TIMELINE: Array<{
 const HELP_CARDS: Array<{ title: string; body: string; href: string; cta: string }> = [
   {
     title: 'See the full picture',
-    body: 'Our pathway planner shows how today\u2019s choices connect to future qualifications and careers.',
+    body: 'Our pathway planner shows how today’s choices connect to future qualifications and careers.',
     href: '/pathways',
     cta: 'Open the planner',
   },
@@ -53,7 +53,7 @@ const HELP_CARDS: Array<{ title: string; body: string; href: string; cta: string
   },
   {
     title: 'No school subscription needed',
-    body: 'Pathfinder is free to use. Your child doesn\u2019t need their school\u2019s permission to create an account.',
+    body: 'Pathfinder is free to use. Your child doesn’t need their school’s permission to create an account.',
     href: '/auth/sign-up',
     cta: 'Create a free account',
   },
@@ -63,7 +63,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'When does my child need to make subject choices?',
     answer:
-      'Most Scottish schools ask S2 students to choose S3 subjects between January and March. Your child\u2019s school will communicate the exact dates. The TOOLS system is commonly used to record choices.',
+      'Most Scottish schools ask S2 students to choose S3 subjects between January and March. Your child’s school will communicate the exact dates. The TOOLS system is commonly used to record choices.',
   },
   {
     question: 'How many subjects does my child choose?',
@@ -73,20 +73,20 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'Should my child pick subjects they enjoy or subjects that are "useful"?',
     answer:
-      'Both matter. Enjoyment predicts better performance. But some career and university paths require specific subjects \u2014 particularly sciences and maths for STEM degrees. Pathfinder\u2019s simulator shows the trade-offs so you can make an informed decision together.',
+      'Both matter. Enjoyment predicts better performance. But some career and university paths require specific subjects — particularly sciences and maths for STEM degrees. Pathfinder’s simulator shows the trade-offs so you can make an informed decision together.',
   },
   {
     question: "What if my child doesn't know what they want to do?",
     answer:
-      'That\u2019s completely normal. Choosing a broad range of subjects across different curricular areas keeps the most options open. Our Discover tool helps students explore interests and careers.',
+      'That’s completely normal. Choosing a broad range of subjects across different curricular areas keeps the most options open. Our Discover tool helps students explore interests and careers.',
   },
   {
     question: 'How do I know if my child qualifies for widening access?',
     answer:
-      'Enter your postcode on Pathfinder and we\u2019ll check your SIMD decile automatically. We also ask about care experience, young carer status, and first-generation university attendance. All of this is optional and confidential.',
+      'Enter your postcode on Pathfinder and we’ll check your SIMD decile automatically. We also ask about care experience, young carer status, and first-generation university attendance. All of this is optional and confidential.',
   },
   {
-    question: 'Is my child\u2019s data safe on Pathfinder?',
+    question: 'Is my child’s data safe on Pathfinder?',
     answer:
       'Yes. We store data securely, never share it, and your child can download or delete everything at any time. See our privacy policy for full details.',
   },
@@ -157,7 +157,7 @@ function Hero() {
               }}
             >
               Pathfinder gives you the information you need to support your child through
-              Scotland&apos;s subject choice process \u2014 from S3 options to university applications.
+              Scotland&apos;s subject choice process — from S3 options to university applications.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link href="/auth/sign-up?type=parent" className="pf-btn-primary">
@@ -203,7 +203,7 @@ function HeroIllustration() {
         Scottish subject choice timeline
       </div>
       <ol style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-        {['S2 \u2192 S3', 'S3 \u2192 S4', 'S4 \u2192 S5', 'S5 \u2192 S6'].map((label, idx) => (
+        {['S2 → S3', 'S3 → S4', 'S4 → S5', 'S5 → S6'].map((label, idx) => (
           <li
             key={label}
             style={{
@@ -272,8 +272,8 @@ function GuideSection() {
         <div style={{ marginBottom: '40px' }}>
           <h3 style={{ marginBottom: '16px' }}>How Scottish subject choices work</h3>
           <p style={{ color: 'var(--pf-grey-600)', marginBottom: '20px', maxWidth: '720px' }}>
-            Scotland\u2019s senior phase splits into four big choices. At each stage your
-            child narrows their options, and subjects are usually offered in columns \u2014
+            Scotland’s senior phase splits into four big choices. At each stage your
+            child narrows their options, and subjects are usually offered in columns —
             choosing one may mean losing another.
           </p>
           <ol
@@ -306,7 +306,7 @@ function GuideSection() {
                     letterSpacing: '0.08em',
                   }}
                 >
-                  Step {idx + 1} \u2014 {step.stage}
+                  Step {idx + 1} — {step.stage}
                 </span>
                 <h4
                   style={{
@@ -342,7 +342,7 @@ function GuideSection() {
             <p style={{ color: 'var(--pf-grey-900)', marginBottom: '12px' }}>
               If your family lives in a less advantaged area (SIMD20 or SIMD40), your
               child has care experience, is a young carer, or would be the first in your
-              family to attend university \u2014 they may qualify for reduced entry
+              family to attend university — they may qualify for reduced entry
               requirements at Scottish universities.
             </p>
             <p style={{ color: 'var(--pf-grey-600)', marginBottom: '12px', fontSize: '0.9375rem' }}>
@@ -358,7 +358,7 @@ function GuideSection() {
                 fontSize: '0.9375rem',
               }}
             >
-              Read full widening access details \u2192
+              Read full widening access details →
             </Link>
             <div style={{ marginTop: '12px' }}>
               <Link
@@ -370,7 +370,7 @@ function GuideSection() {
                   fontSize: '0.9375rem',
                 }}
               >
-                Find out what your child is entitled to \u2192
+                Find out what your child is entitled to →
               </Link>
             </div>
           </div>
@@ -389,13 +389,13 @@ function GuideSection() {
             }}
           >
             <p style={{ color: 'var(--pf-grey-900)', marginBottom: '12px' }}>
-              University is one option \u2014 not the only one. Foundation Apprenticeships are
+              University is one option — not the only one. Foundation Apprenticeships are
               equivalent to a Higher and start in S5. College HNCs and HNDs articulate into
               second or third year of a degree. Modern and Graduate Apprenticeships let your
               child earn a wage while they qualify.
             </p>
             <p style={{ color: 'var(--pf-grey-600)', marginBottom: '12px', fontSize: '0.9375rem' }}>
-              For many students \u2014 especially widening access students \u2014 these
+              For many students — especially widening access students — these
               non-university routes are the right fit. Funders and employers value them just as
               much.
             </p>
@@ -408,7 +408,7 @@ function GuideSection() {
                 fontSize: '0.9375rem',
               }}
             >
-              Explore alternative pathways \u2192
+              Explore alternative pathways →
             </Link>
           </div>
         </div>
@@ -479,7 +479,7 @@ function GuideSection() {
                   lineHeight: 1.3,
                 }}
               >
-                A parent\u2019s guide to Scottish subject choices
+                A parent’s guide to Scottish subject choices
               </h4>
               <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', margin: 0 }}>
                 Timeline, the column system, common worries, and how to support without pressuring.
@@ -567,7 +567,7 @@ function GuideSection() {
                     color: 'var(--pf-blue-700)',
                   }}
                 >
-                  {card.cta} \u2192
+                  {card.cta} →
                 </span>
               </Link>
             ))}
@@ -678,7 +678,7 @@ function FaqSection() {
         <div style={{ maxWidth: '720px', marginBottom: '32px' }}>
           <h2 style={{ marginBottom: '8px' }}>Common questions from parents</h2>
           <p style={{ color: 'var(--pf-grey-600)' }}>
-            The questions we hear most often. Don\u2019t see yours? {' '}
+            The questions we hear most often. Don’t see yours? {' '}
             <Link href="/help" style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}>
               Get in touch
             </Link>

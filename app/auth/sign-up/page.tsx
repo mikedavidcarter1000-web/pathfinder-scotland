@@ -104,12 +104,12 @@ function SignUpContent() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4"
-      style={{ backgroundColor: 'var(--pf-blue-50)' }}
+      className="flex justify-center px-4 py-8 sm:py-10"
+      style={{ backgroundColor: 'var(--pf-blue-50)', minHeight: '100%' }}
     >
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-5">
           <Link
             href="/"
             className="inline-flex items-center gap-2 no-underline hover:no-underline"
@@ -138,14 +138,14 @@ function SignUpContent() {
 
         {/* Card */}
         <div
-          className="pf-card-flat p-6 sm:p-8"
+          className="pf-card-flat p-5 sm:p-6"
           style={{
             boxShadow: '0 10px 30px rgba(0, 45, 114, 0.08)',
           }}
         >
-          <div className="text-center mb-6">
-            <h1 style={{ marginBottom: '4px' }}>Create your account</h1>
-            <p style={{ color: 'var(--pf-grey-600)' }}>
+          <div className="text-center mb-4">
+            <h1 style={{ marginBottom: '2px' }}>Create your account</h1>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
               {accountType === 'parent'
                 ? 'Support your child through their subject choices.'
                 : 'Start your university journey today.'}
@@ -156,7 +156,7 @@ function SignUpContent() {
           <div
             role="radiogroup"
             aria-label="Account type"
-            className="grid grid-cols-2 gap-3 mb-5"
+            className="grid grid-cols-2 gap-3 mb-4"
           >
             <AccountTypeCard
               label="I'm a student"
@@ -192,7 +192,7 @@ function SignUpContent() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             <div>
               <label htmlFor="email" className="pf-label">
                 Email address
@@ -329,7 +329,7 @@ function SignUpContent() {
             </SubmitButton>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-4 text-center">
             <p style={{ color: 'var(--pf-grey-600)' }}>
               Already have an account?{' '}
               <Link

@@ -23,12 +23,34 @@ interface RawErrorShape {
  * friendly classification so UI can decide what to show (inline error, auth
  * redirect, friendly DB-unavailable banner, etc).
  */
+const GENERIC_FRIENDLY_MESSAGE =
+  "We're having trouble loading this page. Please try again."
+
+/**
+ * Returns true for messages that should never be shown to users — React
+ * minified error codes, raw stack traces, or opaque internal errors.
+ */
+function isInternalErrorMessage(message: string): boolean {
+  if (!message) return true
+  const m = message.toLowerCase()
+  return (
+    m.includes('minified react error') ||
+    m.includes('react error #') ||
+    m.startsWith('error: ') && m.includes('react') ||
+    // Raw Supabase/Postgres schema errors should never be surfaced raw either.
+    m.includes('database error querying schema') ||
+    m.includes('error querying schema') ||
+    // Anything starting with "typeerror:" / "referenceerror:" is a crash, not user-actionable.
+    /^(typeerror|referenceerror|syntaxerror|rangeerror):/i.test(message.trim())
+  )
+}
+
 export function classifyError(error: unknown): ClassifiedError {
   if (!error) {
     return {
       kind: 'generic',
       title: 'Something went wrong',
-      message: 'Please try again in a moment.',
+      message: GENERIC_FRIENDLY_MESSAGE,
     }
   }
 
@@ -95,7 +117,10 @@ export function classifyError(error: unknown): ClassifiedError {
   return {
     kind: 'generic',
     title: 'Something went wrong',
-    message: raw.message || 'An unexpected error occurred. Please try again.',
+    message:
+      raw.message && !isInternalErrorMessage(raw.message)
+        ? raw.message
+        : GENERIC_FRIENDLY_MESSAGE,
   }
 }
 
