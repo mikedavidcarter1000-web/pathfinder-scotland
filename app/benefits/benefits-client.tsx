@@ -5,6 +5,7 @@ import Link from 'next/link'
 import type { Tables } from '@/types/database'
 import { BenefitCard } from './benefit-card'
 import { BenefitRecommendations } from './benefit-recommendations'
+import { useGenerateReminders } from '@/hooks/use-reminders'
 
 type Benefit = Tables<'student_benefits'>
 type Category = Tables<'benefit_categories'>
@@ -78,6 +79,12 @@ export function BenefitsClient({
     if (derived && stageFilter == null) setStageFilter(derived)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [student?.school_stage])
+
+  // Generate benefit deadline reminders (debounced to once per day)
+  const { generate: generateReminders } = useGenerateReminders()
+  useEffect(() => {
+    if (student) generateReminders()
+  }, [student, generateReminders])
 
   const filteredBenefits = useMemo(() => {
     const searchLower = search.trim().toLowerCase()

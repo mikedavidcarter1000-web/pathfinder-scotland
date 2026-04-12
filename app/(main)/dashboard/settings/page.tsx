@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { useToast } from '@/components/ui/toast'
 import { useCurrentStudent, useUpdateStudent } from '@/hooks/use-student'
+import { useGenerateReminders } from '@/hooks/use-reminders'
 
 const INCOME_LABELS: Record<string, string> = {
   under_21000: 'Under £21,000',
@@ -274,6 +275,7 @@ interface FundingProfileSectionProps {
 function FundingProfileSection({ student, updateStudent, toast }: FundingProfileSectionProps) {
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
+  const { generateNow: generateReminders } = useGenerateReminders()
 
   // Form state initialised from current student data
   const [income, setIncome] = useState(student.household_income_band ?? '')
@@ -313,6 +315,8 @@ function FundingProfileSection({ student, updateStudent, toast }: FundingProfile
         demographic_completed: true,
       })
       toast.success('Funding profile updated', 'Your benefit recommendations will be refreshed.')
+      // Refresh benefit deadline reminders with the updated profile
+      generateReminders()
       setEditing(false)
     } catch {
       toast.error("Couldn't save", 'Please try again.')

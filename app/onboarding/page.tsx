@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-auth'
 import { useCurrentStudent, useCreateStudent, useBulkUpsertGrades } from '@/hooks/use-student'
+import { useGenerateReminders } from '@/hooks/use-reminders'
 import {
   StepIndicator,
   MobileStepIndicator,
@@ -159,6 +160,7 @@ function OnboardingContent() {
   const createStudent = useCreateStudent()
   const bulkUpsertGrades = useBulkUpsertGrades()
   const toast = useToast()
+  const { generateNow: generateReminders } = useGenerateReminders()
 
   // currentStep === 0 is the welcome screen; 1-5 are the form steps.
   const [currentStep, setCurrentStep] = useState(0)
@@ -312,6 +314,8 @@ function OnboardingContent() {
       }
 
       clearPersisted(user.id)
+      // Fire-and-forget: create benefit deadline reminders for the new student
+      generateReminders()
       toast.success('Welcome to Pathfinder', 'Your profile is ready.')
       router.push('/dashboard')
     } catch (err) {

@@ -125,6 +125,54 @@ export type Database = {
           },
         ]
       }
+      benefit_reminders: {
+        Row: {
+          id: string
+          student_id: string
+          benefit_id: string
+          reminder_date: string
+          is_sent: boolean | null
+          sent_at: string | null
+          is_dismissed: boolean | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          student_id: string
+          benefit_id: string
+          reminder_date: string
+          is_sent?: boolean | null
+          sent_at?: string | null
+          is_dismissed?: boolean | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          student_id?: string
+          benefit_id?: string
+          reminder_date?: string
+          is_sent?: boolean | null
+          sent_at?: string | null
+          is_dismissed?: boolean | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "benefit_reminders_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benefit_reminders_benefit_id_fkey"
+            columns: ["benefit_id"]
+            isOneToOne: false
+            referencedRelation: "student_benefits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       student_benefits: {
         Row: {
           access_method: string | null
@@ -1345,6 +1393,7 @@ export type Database = {
           demographic_completed: boolean | null
           disability_details: string | null
           email: string
+          email_reminders_enabled: boolean | null
           first_generation: boolean | null
           first_name: string | null
           has_disability: boolean | null
@@ -1362,6 +1411,7 @@ export type Database = {
           postcode: string | null
           receives_ema: boolean | null
           receives_free_school_meals: boolean | null
+          reminder_frequency: string | null
           school_name: string | null
           school_stage: Database["public"]["Enums"]["school_stage"] | null
           simd_decile: number | null
@@ -1374,6 +1424,7 @@ export type Database = {
           demographic_completed?: boolean | null
           disability_details?: string | null
           email: string
+          email_reminders_enabled?: boolean | null
           first_generation?: boolean | null
           first_name?: string | null
           has_disability?: boolean | null
@@ -1391,6 +1442,7 @@ export type Database = {
           postcode?: string | null
           receives_ema?: boolean | null
           receives_free_school_meals?: boolean | null
+          reminder_frequency?: string | null
           school_name?: string | null
           school_stage?: Database["public"]["Enums"]["school_stage"] | null
           simd_decile?: number | null
@@ -1403,6 +1455,7 @@ export type Database = {
           demographic_completed?: boolean | null
           disability_details?: string | null
           email?: string
+          email_reminders_enabled?: boolean | null
           first_generation?: boolean | null
           first_name?: string | null
           has_disability?: boolean | null
@@ -1420,6 +1473,7 @@ export type Database = {
           postcode?: string | null
           receives_ema?: boolean | null
           receives_free_school_meals?: boolean | null
+          reminder_frequency?: string | null
           school_name?: string | null
           school_stage?: Database["public"]["Enums"]["school_stage"] | null
           simd_decile?: number | null
