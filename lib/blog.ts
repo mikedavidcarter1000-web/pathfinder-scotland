@@ -7,6 +7,7 @@ import remarkRehype from 'remark-rehype'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import rehypeExternalLinks from 'rehype-external-links'
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 import rehypeStringify from 'rehype-stringify'
 import type {
   BlogArticle,
@@ -100,9 +101,20 @@ export async function getArticleBySlug(slug: string): Promise<RenderedBlogArticl
   const article = getArticles().find((a) => a.slug === slug)
   if (!article) return null
 
+  // Extend the default GitHub-style sanitisation schema to allow heading IDs
+  // (needed by rehype-slug) and the CSS class used by rehype-autolink-headings.
+  const sanitizeSchema = {
+    ...defaultSchema,
+    attributes: {
+      ...defaultSchema.attributes,
+      '*': [...(defaultSchema.attributes?.['*'] || []), 'id', 'className'],
+      a: [...(defaultSchema.attributes?.['a'] || []), 'target', 'rel'],
+    },
+  }
+
   const processed = await remark()
     .use(remarkGfm)
-    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(remarkRehype, { allowDangerousHtml: false })
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, {
       behavior: 'wrap',
@@ -113,7 +125,8 @@ export async function getArticleBySlug(slug: string): Promise<RenderedBlogArticl
       rel: ['noopener', 'noreferrer'],
       protocols: ['http', 'https'],
     })
-    .use(rehypeStringify, { allowDangerousHtml: true })
+    .use(rehypeSanitize, sanitizeSchema)
+    .use(rehypeStringify)
     .process(article.rawContent)
 
   return {

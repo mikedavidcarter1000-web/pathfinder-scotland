@@ -167,8 +167,13 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
     .eq('stripe_customer_id', customerId)
     .single()
 
+  if (!customer) {
+    console.error('Customer not found for successful payment:', customerId)
+    return
+  }
+
   await getSupabaseAdmin().from('stripe_payments').insert({
-    user_id: customer?.user_id,
+    user_id: customer.user_id,
     stripe_payment_intent_id: inv.payment_intent as string,
     stripe_customer_id: customerId,
     stripe_subscription_id: inv.subscription as string,
@@ -190,8 +195,13 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
     .eq('stripe_customer_id', customerId)
     .single()
 
+  if (!customer) {
+    console.error('Customer not found for failed payment:', customerId)
+    return
+  }
+
   await getSupabaseAdmin().from('stripe_payments').insert({
-    user_id: customer?.user_id,
+    user_id: customer.user_id,
     stripe_payment_intent_id: inv.payment_intent as string,
     stripe_customer_id: customerId,
     stripe_subscription_id: inv.subscription as string,

@@ -12,7 +12,11 @@ import { useToast } from '@/components/ui/toast'
 export default function SignInPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirect = searchParams.get('redirect') || '/dashboard'
+  const rawRedirect = searchParams.get('redirect') || '/dashboard'
+  // Only allow relative paths — reject protocol-relative (//evil.com) and absolute URLs
+  const redirect = (rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') && !rawRedirect.includes('://'))
+    ? rawRedirect
+    : '/dashboard'
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

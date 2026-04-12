@@ -6,7 +6,11 @@ import type { NextRequest } from 'next/server'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
-  const next = requestUrl.searchParams.get('next') || '/dashboard'
+  const rawNext = requestUrl.searchParams.get('next') || '/dashboard'
+  // Only allow relative paths — reject protocol-relative (//evil.com) and absolute URLs
+  const next = (rawNext.startsWith('/') && !rawNext.startsWith('//') && !rawNext.includes('://'))
+    ? rawNext
+    : '/dashboard'
 
   if (code) {
     const cookieStore = await cookies()

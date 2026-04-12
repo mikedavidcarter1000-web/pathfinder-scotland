@@ -110,7 +110,7 @@ const EMPTY_DEMOGRAPHICS: DemographicData = {
 function loadPersisted(userId: string): PersistedState | null {
   if (typeof window === 'undefined') return null
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY_PREFIX + userId)
+    const raw = window.sessionStorage.getItem(STORAGE_KEY_PREFIX + userId)
     if (!raw) return null
     const parsed = JSON.parse(raw) as PersistedState
     // Defensive check: only treat the state as a valid resume if at least one
@@ -137,7 +137,7 @@ function loadPersisted(userId: string): PersistedState | null {
 function clearPersisted(userId: string) {
   if (typeof window === 'undefined') return
   try {
-    window.localStorage.removeItem(STORAGE_KEY_PREFIX + userId)
+    window.sessionStorage.removeItem(STORAGE_KEY_PREFIX + userId)
   } catch {
     // Ignore — quota or disabled storage shouldn't break the flow.
   }
@@ -222,7 +222,7 @@ function OnboardingContent() {
       grades,
     }
     try {
-      window.localStorage.setItem(STORAGE_KEY_PREFIX + user.id, JSON.stringify(state))
+      window.sessionStorage.setItem(STORAGE_KEY_PREFIX + user.id, JSON.stringify(state))
     } catch {
       // Storage may be disabled — silent fail keeps the in-memory flow working.
     }
