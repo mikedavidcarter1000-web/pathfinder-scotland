@@ -47,6 +47,7 @@ export interface DemographicData {
   isEstranged: boolean
   isRefugeeOrAsylumSeeker: boolean
   isYoungParent: boolean
+  isYoungCarer: boolean
   receivesFreeSchoolMeals: boolean
   receivesEma: boolean
   localAuthority: string
@@ -88,6 +89,7 @@ export function DemographicsStep({
     data.isYoungParent,
     data.isRefugeeOrAsylumSeeker,
     data.hasDisability,
+    data.isYoungCarer,
   ]
   const anyStatusSelected = statusCheckboxes.some(Boolean)
 
@@ -102,6 +104,7 @@ export function DemographicsStep({
       isRefugeeOrAsylumSeeker: false,
       hasDisability: false,
       disabilityDetails: '',
+      isYoungCarer: false,
     })
   }
 
@@ -290,6 +293,62 @@ export function DemographicsStep({
               </span>
             </label>
           ))}
+
+          {/* Toggle 1: is_young_carer — added per onboarding spec */}
+          <label
+            className="flex items-start gap-3 cursor-pointer transition-all"
+            style={{
+              padding: '12px 14px',
+              borderRadius: '8px',
+              backgroundColor: data.isYoungCarer ? 'var(--pf-blue-50)' : 'transparent',
+              border: data.isYoungCarer
+                ? '1.5px solid var(--pf-blue-500)'
+                : '1.5px solid transparent',
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={data.isYoungCarer}
+              onChange={(e) => onChange({ ...data, isYoungCarer: e.target.checked })}
+              className="mt-0.5 h-5 w-5 rounded flex-shrink-0"
+              style={{ accentColor: 'var(--pf-blue-700)' }}
+            />
+            <div>
+              <span
+                style={{
+                  fontSize: '0.9375rem',
+                  color: data.isYoungCarer ? 'var(--pf-blue-900)' : 'var(--pf-grey-900)',
+                  display: 'block',
+                }}
+              >
+                I have caring responsibilities
+              </span>
+              <span
+                style={{
+                  fontSize: '0.8125rem',
+                  color: 'var(--pf-grey-600)',
+                  display: 'block',
+                  marginTop: '2px',
+                  lineHeight: 1.5,
+                }}
+              >
+                For example, you care for a family member with a disability, illness or mental
+                health condition.
+              </span>
+              <span
+                style={{
+                  fontSize: '0.75rem',
+                  color: 'var(--pf-blue-700)',
+                  display: 'block',
+                  marginTop: '4px',
+                  lineHeight: 1.5,
+                }}
+              >
+                We use this to show you relevant grants and support you may not know about &mdash;
+                such as the Young Carer Grant.
+              </span>
+            </div>
+          </label>
 
           {/* None of these */}
           <label

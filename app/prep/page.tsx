@@ -8,6 +8,7 @@ import { useCurrentStudent } from '@/hooks/use-student'
 import { useHasAcceptedOffer } from '@/hooks/use-offers'
 import { usePrepChecklist, useToggleChecklistItem, usePrepProgress } from '@/hooks/use-prep'
 import { Skeleton } from '@/components/ui/loading-skeleton'
+import { VerificationCaveat } from '@/components/ui/VerificationCaveat'
 import type { Tables } from '@/types/database'
 
 type Student = Tables<'students'>
@@ -504,6 +505,9 @@ export default function PrepPage() {
             )
           })}
 
+          {/* Demographic financial support callouts */}
+          <DemographicCallouts student={student ?? null} />
+
           {/* Personalised items section */}
           {personalisedItems.length > 0 && (
             <section>
@@ -552,6 +556,158 @@ export default function PrepPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+// ── Demographic financial support callouts ───────────────────────────────────
+
+function DemographicCallouts({ student }: { student: Student | null }) {
+  if (!student) return null
+  const showYoungCarer = !!student.is_young_carer
+  const showDisability = !!student.has_disability
+  // is_young_parent is the closest flag for lone parent eligibility
+  const showLoneParent = !!student.is_young_parent
+  if (!showYoungCarer && !showDisability && !showLoneParent) return null
+
+  const calloutLinkStyle = {
+    fontFamily: "'Space Grotesk', sans-serif",
+    fontWeight: 600 as const,
+    fontSize: '0.875rem',
+    color: 'var(--pf-blue-500)',
+  }
+
+  const chevron = (
+    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  )
+
+  return (
+    <section>
+      <div className="flex items-center gap-3 mb-4">
+        <div
+          className="flex items-center justify-center flex-shrink-0 rounded-full"
+          style={{
+            width: '32px',
+            height: '32px',
+            backgroundColor: 'var(--pf-blue-100)',
+            color: 'var(--pf-blue-700)',
+          }}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '0' }}>Additional financial support</h2>
+          <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}>Based on your profile</p>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {showYoungCarer && (
+          <div
+            className="pf-card"
+            style={{ padding: '20px 24px', borderLeft: '4px solid var(--pf-blue-500)' }}
+          >
+            <p
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: 'var(--pf-grey-900)',
+                marginBottom: '8px',
+              }}
+            >
+              Young Carer Grant
+            </p>
+            <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', lineHeight: 1.6, marginBottom: '8px' }}>
+              As a young carer, you may also be entitled to the Young Carer Grant (&pound;405.10/year
+              from Social Security Scotland).
+            </p>
+            <VerificationCaveat
+              org="Social Security Scotland"
+              url="https://www.mygov.scot/young-carer-grant"
+              year="2026-27"
+            />
+            <div className="mt-3">
+              <Link href="/support/young-carers" className="inline-flex items-center gap-1.5 no-underline hover:underline" style={calloutLinkStyle}>
+                Find out more {chevron}
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {showDisability && (
+          <div
+            className="pf-card"
+            style={{ padding: '20px 24px', borderLeft: '4px solid var(--pf-blue-500)' }}
+          >
+            <p
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: 'var(--pf-grey-900)',
+                marginBottom: '8px',
+              }}
+            >
+              Disabled Students&apos; Allowance (DSA)
+            </p>
+            <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', lineHeight: 1.6, marginBottom: '8px' }}>
+              As a student with a disability or long-term condition, you may be entitled to the
+              Disabled Students Allowance (DSA) &mdash; up to &pound;20,520/year for non-medical
+              personal help, &pound;5,160 for specialist equipment, and &pound;1,725/year for
+              consumables. This is in addition to your standard SAAS support.
+            </p>
+            <VerificationCaveat
+              org="SAAS"
+              url="https://www.saas.gov.uk/guides/disabled-students-allowance"
+              year="2025-26"
+            />
+            <div className="mt-3">
+              <Link href="/support/disability" className="inline-flex items-center gap-1.5 no-underline hover:underline" style={calloutLinkStyle}>
+                Find out more {chevron}
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {showLoneParent && (
+          <div
+            className="pf-card"
+            style={{ padding: '20px 24px', borderLeft: '4px solid var(--pf-blue-500)' }}
+          >
+            <p
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: 'var(--pf-grey-900)',
+                marginBottom: '8px',
+              }}
+            >
+              Lone Parents Grant
+            </p>
+            <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', lineHeight: 1.6, marginBottom: '8px' }}>
+              If you are a lone parent, you may also be entitled to the Lone Parents Grant
+              (up to &pound;1,305/year) and Lone Parents Childcare Grant (up to &pound;1,215/year)
+              from SAAS.
+            </p>
+            <VerificationCaveat
+              org="SAAS"
+              url="https://www.saas.gov.uk"
+              year="2025-26"
+            />
+            <div className="mt-3">
+              <Link href="/support/young-parents" className="inline-flex items-center gap-1.5 no-underline hover:underline" style={calloutLinkStyle}>
+                Find out more {chevron}
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
   )
 }
 

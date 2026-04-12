@@ -390,6 +390,7 @@ type PathwayCardData = {
   body: string
   cta: string
   icon: React.ReactNode
+  badge?: string
 }
 
 function PathwaySelector() {
@@ -421,6 +422,22 @@ function PathwaySelector() {
       body: 'Work and earn a full degree. Funded by your employer.',
       cta: 'Explore Graduate Apprenticeships',
       icon: <IconGradBrief />,
+    },
+    {
+      href: '/support/esol-eal',
+      title: 'College ESOL',
+      body: 'If English is not your first language, a college ESOL course is a fully recognised entry point to the Scottish qualifications system. From ESOL you can progress to Nationals, Highers, HNC/HND, and then university. No prior qualifications needed.',
+      cta: 'Find out more',
+      icon: <IconLanguage />,
+      badge: 'No qualifications needed',
+    },
+    {
+      href: '/support/early-leavers',
+      title: 'Activity Agreements and No One Left Behind',
+      body: "If you have left school without a destination, Scotland's No One Left Behind programme offers personalised one-to-one support and a structured path back into education, training, or employment. Includes financial support of \u00a330/week.",
+      cta: 'Find out more',
+      icon: <IconUsers />,
+      badge: 'For 16\u201319 year olds',
     },
   ]
 
@@ -483,6 +500,11 @@ function PathwaySelector() {
               >
                 {card.title}
               </h3>
+              {card.badge && (
+                <span className="pf-badge-blue" style={{ marginBottom: '10px', alignSelf: 'flex-start' }}>
+                  {card.badge}
+                </span>
+              )}
               <p
                 style={{
                   fontSize: '0.9375rem',
@@ -1459,6 +1481,40 @@ function IconGradBrief() {
         strokeLinejoin="round"
         d="M6 12v5c3 3 9 3 12 0v-5"
       />
+    </svg>
+  )
+}
+
+function IconLanguage() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+    </svg>
+  )
+}
+
+function IconUsers() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
     </svg>
   )
 }

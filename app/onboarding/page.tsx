@@ -102,6 +102,7 @@ const EMPTY_DEMOGRAPHICS: DemographicData = {
   isEstranged: false,
   isRefugeeOrAsylumSeeker: false,
   isYoungParent: false,
+  isYoungCarer: false,
   receivesFreeSchoolMeals: false,
   receivesEma: false,
   localAuthority: '',
@@ -258,6 +259,7 @@ function OnboardingContent() {
           demographics.isEstranged ||
           demographics.isRefugeeOrAsylumSeeker ||
           demographics.isYoungParent ||
+          demographics.isYoungCarer ||
           demographics.receivesFreeSchoolMeals ||
           demographics.receivesEma ||
           !!demographics.localAuthority)
@@ -291,6 +293,7 @@ function OnboardingContent() {
         is_estranged: demographics.isEstranged,
         is_refugee_or_asylum_seeker: demographics.isRefugeeOrAsylumSeeker,
         is_young_parent: demographics.isYoungParent,
+        is_young_carer: demographics.isYoungCarer,
         receives_free_school_meals: demographics.receivesFreeSchoolMeals,
         receives_ema: demographics.receivesEma,
         local_authority: demographics.localAuthority || postcodeData.councilArea || null,

@@ -127,6 +127,194 @@ const SECTIONS: ResourceSection[] = [
     ],
   },
   {
+    title: 'Young Carers',
+    blurb:
+      'Support, advice, and financial help for young people with caring responsibilities.',
+    links: [
+      {
+        name: 'Carers Trust Scotland',
+        url: 'https://www.carers.org',
+        description: 'National carer support and advice.',
+      },
+      {
+        name: 'Coalition of Carers in Scotland',
+        url: 'https://www.carersnet.org',
+        description: 'Local group signposting for carers across Scotland.',
+      },
+      {
+        name: 'Social Security Scotland \u2014 Young Carer Grant',
+        url: 'https://www.mygov.scot/young-carer-grant',
+        description: 'Apply for the Young Carer Grant (\u00a3405.10/year for eligible young carers).',
+      },
+    ],
+  },
+  {
+    title: 'Estranged Students',
+    blurb:
+      'Guidance and bursary support for students who are permanently estranged from their parents or family.',
+    links: [
+      {
+        name: 'Stand Alone',
+        url: 'https://www.standalonecharity.org',
+        description: 'UK charity for estranged students; bursary finder and peer support.',
+      },
+      {
+        name: 'SAAS \u2014 Estranged Students',
+        url: 'https://www.saas.gov.uk',
+        description: 'SAAS estranged student guidance and independent student assessment.',
+      },
+    ],
+  },
+  {
+    title: 'Young Parents',
+    blurb:
+      'Financial support and practical advice for students who are parents or lone parents.',
+    links: [
+      {
+        name: 'One Parent Families Scotland',
+        url: 'https://www.opfs.org.uk',
+        description: 'Lone parent advice, helpline, and support services in Scotland.',
+      },
+      {
+        name: 'Social Security Scotland',
+        url: 'https://www.socialsecurity.gov.scot',
+        description: 'Best Start Grant, Scottish Child Payment, and other family payments.',
+      },
+    ],
+  },
+  {
+    title: 'Disability Support',
+    blurb:
+      'Assistive technology, DSA guidance, and transition funding for disabled students.',
+    links: [
+      {
+        name: 'CALL Scotland',
+        url: 'https://www.callscotland.org.uk',
+        description: 'Assistive technology advice and free equipment loan for Scottish students.',
+      },
+      {
+        name: 'Lead Scotland',
+        url: 'https://www.lead.org.uk',
+        description: 'DSA guidance and supported distance learning for disabled students.',
+      },
+      {
+        name: 'ILF Scotland Transition Fund',
+        url: 'https://www.ilf.scot/transition-fund',
+        description: 'Transition Fund for disabled young people aged 15\u201325 moving into adult life.',
+      },
+    ],
+  },
+  {
+    title: 'LGBTQ+ Students',
+    blurb:
+      'Support, wellbeing, and academic resources for LGBTQ+ young people in Scotland.',
+    links: [
+      {
+        name: 'LGBT Youth Scotland',
+        url: 'https://www.lgbtyouth.org.uk',
+        description: 'Support for LGBTQ+ young people aged 13\u201325 across Scotland.',
+      },
+      {
+        name: 'LGBT Health and Wellbeing',
+        url: 'https://www.lgbthealth.org.uk',
+        description: 'Wellbeing services and counselling for LGBTQ+ people aged 16+.',
+      },
+      {
+        name: 'TransEDU Scotland',
+        url: 'https://www.trans.ac.uk',
+        description: 'Resources on trans and non-binary inclusion in HE and FE.',
+      },
+    ],
+  },
+  {
+    title: 'Refugees and Asylum Seekers',
+    blurb:
+      'Specialist support and university preparation programmes for refugees and asylum seekers in Scotland.',
+    links: [
+      {
+        name: 'Scottish Refugee Council',
+        url: 'https://www.scottishrefugeecouncil.org.uk',
+        description: 'Specialist advice and advocacy for refugees and asylum seekers.',
+      },
+      {
+        name: 'Bridges Programmes',
+        url: 'https://www.bridgesprogrammes.org.uk',
+        description: 'University preparation for refugees in Edinburgh.',
+      },
+      {
+        name: 'BEMIS Scotland',
+        url: 'https://www.bemis.org.uk',
+        description: 'Ethnic minority and New Scots support, including education pathways.',
+      },
+      {
+        name: 'Universities Scotland Sanctuary',
+        url: 'https://www.universities-scotland.ac.uk',
+        description: 'Scottish Sanctuary Scholarships and guidance for displaced students.',
+      },
+    ],
+  },
+  {
+    title: 'Gypsy, Roma and Traveller Students',
+    blurb:
+      'Education support and advocacy for Gypsy, Roma and Traveller young people.',
+    links: [
+      {
+        name: 'STEP',
+        url: 'https://step.education.ed.ac.uk',
+        description: 'GRT education support programme at the University of Edinburgh.',
+      },
+      {
+        name: 'Friends, Families and Travellers',
+        url: 'https://www.gypsy-traveller.org',
+        description: 'UK-wide GRT advice and advocacy organisation.',
+      },
+      {
+        name: 'Romano Lav',
+        url: 'https://www.romanolav.org',
+        description: 'Roma-led Glasgow charity supporting Roma community members.',
+      },
+      {
+        name: 'Article 12 in Scotland',
+        url: 'https://www.article12.org',
+        description: 'Rights-based work with Gypsy, Roma and Traveller young people.',
+      },
+    ],
+  },
+  {
+    title: 'Mature Students and Alternative Entry',
+    blurb:
+      'Access courses and alternative pathways into higher education for adult learners and those returning to study.',
+    links: [
+      {
+        name: 'SWAP',
+        url: 'https://www.swap.ac.uk',
+        description: 'Scottish Wider Access Programme \u2014 access courses with guaranteed university places.',
+      },
+      {
+        name: 'NowrongPath',
+        url: 'https://www.nowrongpath.scot',
+        description: 'Alternative entry routes into Scottish universities and colleges.',
+      },
+    ],
+  },
+  {
+    title: 'Rural and Island Learning',
+    blurb:
+      'Universities and distance learning providers designed for students in Highland, Island, and rural Scotland.',
+    links: [
+      {
+        name: 'UHI \u2014 University of the Highlands and Islands',
+        url: 'https://www.uhi.ac.uk',
+        description: 'The university designed for Highland and Island students \u2014 campus and online.',
+      },
+      {
+        name: 'Open University Scotland',
+        url: 'https://www.open.ac.uk/scotland',
+        description: 'Flexible distance learning with SAAS funding available for Scottish students.',
+      },
+    ],
+  },
+  {
     title: 'Apprenticeships & Work-Based Learning',
     blurb:
       "University isn't the only way. Scotland funds Foundation, Modern, and Graduate Apprenticeships alongside a strong college route.",
