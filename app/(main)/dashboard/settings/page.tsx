@@ -236,6 +236,7 @@ export default function SettingsPage() {
               value={confirmationText}
               onChange={(e) => setConfirmationText(e.target.value)}
               placeholder="Type DELETE to confirm"
+              aria-label="Type the word DELETE to confirm account deletion"
               disabled={isDeleting}
               autoComplete="off"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:opacity-50 mb-4"

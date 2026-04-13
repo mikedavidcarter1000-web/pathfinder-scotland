@@ -123,6 +123,13 @@
     background-color: var(--pf-blue-100);
     color: var(--pf-blue-900);
   }
+
+  /* Global keyboard focus indicator. Components that need a different
+     style (inputs, skip link) override this with their own :focus rule. */
+  *:focus-visible {
+    outline: 2px solid var(--pf-blue-500);
+    outline-offset: 2px;
+  }
 }
 
 @layer components {
