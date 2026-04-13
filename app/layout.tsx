@@ -41,7 +41,8 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   icons: {
-    icon: '/favicon.svg',
+    icon: '/favicon.ico',
+    apple: '/favicon-192.png',
   },
   openGraph: {
     title: 'Pathfinder Scotland | Subject Choices to University Pathways',

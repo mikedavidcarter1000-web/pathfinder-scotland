@@ -36,6 +36,18 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
 
   useAuthErrorRedirect([error])
 
+  const articulationByCollege = useMemo(() => {
+    if (!collegeArticulation || collegeArticulation.length === 0) return []
+    const groups: Record<string, { college_id: string; college_name: string; routes: ArticulationWithCollege[] }> = {}
+    for (const r of collegeArticulation) {
+      if (!groups[r.college_id]) {
+        groups[r.college_id] = { college_id: r.college_id, college_name: r.college_name, routes: [] }
+      }
+      groups[r.college_id].routes.push(r)
+    }
+    return Object.values(groups).sort((a, b) => a.college_name.localeCompare(b.college_name))
+  }, [collegeArticulation])
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[var(--pf-blue-50)]">
@@ -194,19 +206,6 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
       (university.shep_programmes && university.shep_programmes.length > 0) ||
       waCourseExamples.length > 0
   )
-
-  // Group college articulation routes by college
-  const articulationByCollege = useMemo(() => {
-    if (!collegeArticulation || collegeArticulation.length === 0) return []
-    const groups: Record<string, { college_id: string; college_name: string; routes: ArticulationWithCollege[] }> = {}
-    for (const r of collegeArticulation) {
-      if (!groups[r.college_id]) {
-        groups[r.college_id] = { college_id: r.college_id, college_name: r.college_name, routes: [] }
-      }
-      groups[r.college_id].routes.push(r)
-    }
-    return Object.values(groups).sort((a, b) => a.college_name.localeCompare(b.college_name))
-  }, [collegeArticulation])
 
   return (
     <div className="min-h-screen bg-[var(--pf-blue-50)]">

@@ -153,7 +153,7 @@ export function Navbar() {
     <>
       <nav
         className="sticky top-0 z-50"
-        style={{ backgroundColor: 'var(--pf-blue-900)' }}
+        style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid var(--pf-grey-200, #E5E7EB)' }}
       >
         <div className="max-w-[1200px] mx-auto px-4">
           <div
@@ -164,24 +164,28 @@ export function Navbar() {
             {/* Logo */}
             <Link
               href={user ? '/dashboard' : '/'}
-              className="flex items-center gap-2 text-white no-underline hover:no-underline"
-              style={{ flexShrink: 0 }}
+              className="flex items-center no-underline hover:no-underline"
+              style={{ flexShrink: 0, color: '#1B3A5C' }}
+              aria-label="Pathfinder Scotland — home"
             >
               <Image
-                src="/logo-white.svg"
-                alt=""
-                role="presentation"
-                width={32}
-                height={32}
+                src="/logo-full.png"
+                alt="Pathfinder Scotland"
+                width={106}
+                height={44}
                 priority
-                style={{ display: 'block', flexShrink: 0 }}
+                className="hidden sm:block"
+                style={{ height: '44px', width: 'auto' }}
               />
-              <span
-                className="text-white hidden sm:inline"
-                style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1.125rem' }}
-              >
-                Pathfinder Scotland
-              </span>
+              <Image
+                src="/logo-icon.png"
+                alt="Pathfinder Scotland"
+                width={39}
+                height={36}
+                priority
+                className="sm:hidden"
+                style={{ height: '36px', width: 'auto' }}
+              />
             </Link>
 
             {/* Desktop Navigation (lg and up) */}
@@ -189,12 +193,13 @@ export function Navbar() {
               {user && (
                 <Link
                   href="/dashboard"
-                  className="px-3 py-2 text-sm text-white no-underline hover:no-underline"
+                  className="px-3 py-2 text-sm no-underline hover:no-underline"
                   style={{
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 600,
+                    color: '#1B3A5C',
                     opacity: pathname === '/dashboard' ? 1 : 0.82,
-                    borderBottom: pathname === '/dashboard' ? '2px solid #fff' : '2px solid transparent',
+                    borderBottom: pathname === '/dashboard' ? '2px solid #1B3A5C' : '2px solid transparent',
                   }}
                 >
                   Dashboard
@@ -204,12 +209,13 @@ export function Navbar() {
               {user && !isParent && hasAccepted && (
                 <Link
                   href="/prep"
-                  className="px-3 py-2 text-sm text-white no-underline hover:no-underline"
+                  className="px-3 py-2 text-sm no-underline hover:no-underline"
                   style={{
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 600,
+                    color: '#1B3A5C',
                     opacity: pathname.startsWith('/prep') ? 1 : 0.82,
-                    borderBottom: pathname.startsWith('/prep') ? '2px solid #fff' : '2px solid transparent',
+                    borderBottom: pathname.startsWith('/prep') ? '2px solid #1B3A5C' : '2px solid transparent',
                   }}
                 >
                   Prep Hub
@@ -229,12 +235,13 @@ export function Navbar() {
                     <button
                       type="button"
                       onClick={() => setOpenGroup(open ? null : group.name)}
-                      className="flex items-center gap-1 px-3 py-2 text-sm text-white transition-colors"
+                      className="flex items-center gap-1 px-3 py-2 text-sm transition-colors"
                       style={{
                         fontFamily: "'Space Grotesk', sans-serif",
                         fontWeight: 600,
+                        color: '#1B3A5C',
                         opacity: active || open ? 1 : 0.82,
-                        borderBottom: active ? '2px solid #fff' : '2px solid transparent',
+                        borderBottom: active ? '2px solid #1B3A5C' : '2px solid transparent',
                         background: 'transparent',
                       }}
                       aria-expanded={open}
@@ -307,9 +314,10 @@ export function Navbar() {
             <div className="flex items-center gap-1 sm:gap-2" style={{ flexShrink: 0 }}>
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
-                className="hidden sm:inline-flex p-2 rounded-lg transition-colors text-white items-center justify-center"
+                className="hidden sm:inline-flex p-2 rounded-lg transition-colors items-center justify-center"
                 style={{
-                  backgroundColor: searchOpen ? 'rgba(255,255,255,0.1)' : 'transparent',
+                  color: '#1B3A5C',
+                  backgroundColor: searchOpen ? 'rgba(27,58,92,0.08)' : 'transparent',
                   minWidth: '44px',
                   minHeight: '44px',
                 }}
@@ -321,7 +329,7 @@ export function Navbar() {
               </button>
 
               {isLoading ? (
-                <div className="w-8 h-8 rounded-full animate-pulse hidden lg:block" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }} />
+                <div className="w-8 h-8 rounded-full animate-pulse hidden lg:block" style={{ backgroundColor: 'rgba(27,58,92,0.12)' }} />
               ) : user ? (
                 <div className="hidden lg:block">
                   <UserMenu />
@@ -330,8 +338,8 @@ export function Navbar() {
                 <div className="hidden lg:flex items-center gap-2">
                   <Link
                     href="/auth/sign-in"
-                    className="px-3 py-2 text-sm text-white no-underline hover:no-underline"
-                    style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, opacity: 0.85 }}
+                    className="px-3 py-2 text-sm no-underline hover:no-underline"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, color: '#1B3A5C', opacity: 0.85 }}
                     onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
                     onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.85')}
                   >
@@ -344,8 +352,8 @@ export function Navbar() {
                       display: 'inline-flex',
                       alignItems: 'center',
                       padding: '8px 16px',
-                      backgroundColor: '#fff',
-                      color: 'var(--pf-blue-900)',
+                      backgroundColor: '#1B3A5C',
+                      color: '#FFFFFF',
                       borderRadius: '8px',
                       fontFamily: "'Space Grotesk', sans-serif",
                       fontWeight: 600,
@@ -359,8 +367,8 @@ export function Navbar() {
 
               <button
                 onClick={() => setMobileMenuOpen(true)}
-                className="lg:hidden rounded-lg transition-colors text-white inline-flex items-center justify-center"
-                style={{ minWidth: '44px', minHeight: '44px' }}
+                className="lg:hidden rounded-lg transition-colors inline-flex items-center justify-center"
+                style={{ color: '#1B3A5C', minWidth: '44px', minHeight: '44px' }}
                 aria-label="Open menu"
                 aria-expanded={mobileMenuOpen}
               >
@@ -372,7 +380,7 @@ export function Navbar() {
           </div>
 
           {searchOpen && (
-            <div className="py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.12)' }}>
+            <div className="py-3" style={{ borderTop: '1px solid var(--pf-grey-200, #E5E7EB)' }}>
               <Suspense
                 fallback={
                   <div
