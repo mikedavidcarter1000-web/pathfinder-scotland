@@ -8,6 +8,11 @@ import { ErrorState } from '@/components/ui/error-state'
 import { AiImpactBadge } from '@/components/ui/ai-impact-badge'
 import { AI_IMPACT_META, isAiImpactRating, type AiImpactRating } from '@/lib/constants'
 import { classifyError } from '@/lib/errors'
+import {
+  classifyRemoteWork,
+  getCareerRealitiesBySectorName,
+  type RemoteWorkClassification,
+} from '@/data/career-realities'
 
 type GrowthTone = 'growing' | 'stable' | 'variable'
 
@@ -398,6 +403,7 @@ function SectorCard({ sector }: { sector: CareerSectorWithCount }) {
             labelOverride={AI_IMPACT_META[sector.ai_impact_rating].label}
           />
         )}
+        <WorkLocationBadge sectorName={sector.name} />
       </div>
 
       {sector.salary_range_entry && (
@@ -434,6 +440,69 @@ function SectorCard({ sector }: { sector: CareerSectorWithCount }) {
         </span>
       </div>
     </Link>
+  )
+}
+
+const WORK_LOCATION_META: Record<
+  RemoteWorkClassification,
+  { label: string; icon: 'building' | 'laptop' }
+> = {
+  'on-site': { label: 'Mostly on-site', icon: 'building' },
+  hybrid: { label: 'Often hybrid', icon: 'laptop' },
+}
+
+function WorkLocationBadge({ sectorName }: { sectorName: string }) {
+  const realities = getCareerRealitiesBySectorName(sectorName)
+  if (!realities) return null
+  const { label, icon } = WORK_LOCATION_META[classifyRemoteWork(realities.remoteHybrid)]
+  return (
+    <span
+      className="inline-flex items-center"
+      title={realities.remoteHybrid}
+      style={{
+        padding: '4px 10px',
+        borderRadius: '9999px',
+        fontSize: '0.75rem',
+        fontWeight: 500,
+        backgroundColor: 'var(--pf-grey-100)',
+        color: 'var(--pf-grey-600)',
+        gap: '5px',
+      }}
+    >
+      {icon === 'building' ? (
+        <svg
+          width="11"
+          height="11"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <rect x="4" y="2" width="16" height="20" rx="1" />
+          <path d="M9 22v-4h6v4" />
+          <path d="M8 6h2M14 6h2M8 10h2M14 10h2M8 14h2M14 14h2" />
+        </svg>
+      ) : (
+        <svg
+          width="11"
+          height="11"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <rect x="3" y="4" width="18" height="12" rx="1" />
+          <path d="M2 20h20" />
+        </svg>
+      )}
+      {label}
+    </span>
   )
 }
 
