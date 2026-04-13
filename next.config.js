@@ -32,6 +32,14 @@ const nextConfig = {
             value: 'strict-origin-when-cross-origin',
           },
           {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+          },
+          {
             key: 'Strict-Transport-Security',
             value: 'max-age=31536000; includeSubDomains',
           },
@@ -39,12 +47,19 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://js.stripe.com",
+              // Resend tracking pixels and Vercel Analytics use inline scripts.
+              // 'unsafe-inline' is kept because Next.js' runtime still emits inline bootstrap scripts.
+              "script-src 'self' 'unsafe-inline' https://js.stripe.com https://*.vercel-insights.com https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https://*.supabase.co",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com",
+              // Supabase auth uses websockets; Resend posts to their API from the reminders send cron.
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://api.resend.com https://*.vercel-insights.com",
               "frame-src https://js.stripe.com https://hooks.stripe.com",
+              "form-action 'self' https://checkout.stripe.com",
+              "base-uri 'self'",
+              "frame-ancestors 'none'",
+              "object-src 'none'",
             ].join('; '),
           },
         ],

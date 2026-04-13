@@ -1736,6 +1736,78 @@ export type Database = {
         }
         Relationships: []
       }
+      parents: {
+        Row: {
+          id: string
+          user_id: string
+          full_name: string
+          email: string
+          phone: string | null
+          postcode: string | null
+          simd_decile: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          full_name: string
+          email: string
+          phone?: string | null
+          postcode?: string | null
+          simd_decile?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          full_name?: string
+          email?: string
+          phone?: string | null
+          postcode?: string | null
+          simd_decile?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      parent_student_links: {
+        Row: {
+          id: string
+          parent_id: string | null
+          student_id: string
+          status: 'pending' | 'active' | 'revoked'
+          invite_code: string | null
+          expires_at: string | null
+          linked_at: string | null
+          revoked_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          parent_id?: string | null
+          student_id: string
+          status?: 'pending' | 'active' | 'revoked'
+          invite_code?: string | null
+          expires_at?: string | null
+          linked_at?: string | null
+          revoked_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          parent_id?: string | null
+          student_id?: string
+          status?: 'pending' | 'active' | 'revoked'
+          invite_code?: string | null
+          expires_at?: string | null
+          linked_at?: string | null
+          revoked_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

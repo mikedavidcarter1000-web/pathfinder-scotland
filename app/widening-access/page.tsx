@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useMemo } from 'react'
 import { useAuth } from '@/hooks/use-auth'
 import { useUniversities } from '@/hooks/use-universities'
@@ -336,101 +337,15 @@ export default function WideningAccessPage() {
               </div>
             </div>
 
-            {/* Decorative SVG: scales (fair access) */}
             <div className="hidden md:flex justify-center md:col-span-2">
-              <svg
-                viewBox="0 0 360 300"
-                width="100%"
-                style={{ maxWidth: '360px' }}
-                aria-hidden="true"
-              >
-                <defs>
-                  <linearGradient id="pf-wa-grad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="rgba(245, 158, 11, 0.18)" />
-                    <stop offset="100%" stopColor="var(--pf-blue-100)" />
-                  </linearGradient>
-                </defs>
-
-                <rect x="20" y="20" width="320" height="260" rx="16" fill="url(#pf-wa-grad)" />
-
-                {/* Standing pillar */}
-                <line
-                  x1="180"
-                  y1="60"
-                  x2="180"
-                  y2="240"
-                  stroke="var(--pf-blue-700)"
-                  strokeWidth="5"
-                  strokeLinecap="round"
-                />
-                {/* Cross-beam */}
-                <line
-                  x1="80"
-                  y1="100"
-                  x2="280"
-                  y2="100"
-                  stroke="var(--pf-blue-700)"
-                  strokeWidth="5"
-                  strokeLinecap="round"
-                />
-                {/* Left pan — standard requirements */}
-                <g>
-                  <line x1="110" y1="100" x2="110" y2="140" stroke="var(--pf-blue-700)" strokeWidth="2" />
-                  <ellipse cx="110" cy="145" rx="38" ry="8" fill="var(--pf-blue-700)" opacity="0.15" />
-                  <rect x="80" y="125" width="60" height="24" rx="6" fill="var(--pf-white)" stroke="var(--pf-grey-300)" strokeWidth="1" />
-                  <text
-                    x="110"
-                    y="142"
-                    textAnchor="middle"
-                    fontFamily="Space Grotesk, sans-serif"
-                    fontWeight="700"
-                    fontSize="13"
-                    fill="var(--pf-grey-900)"
-                  >
-                    AAAA
-                  </text>
-                  <text
-                    x="110"
-                    y="172"
-                    textAnchor="middle"
-                    fontFamily="Inter, sans-serif"
-                    fontSize="10"
-                    fill="var(--pf-grey-600)"
-                  >
-                    Standard
-                  </text>
-                </g>
-                {/* Right pan — adjusted offer */}
-                <g>
-                  <line x1="250" y1="100" x2="250" y2="165" stroke="var(--pf-blue-700)" strokeWidth="2" />
-                  <ellipse cx="250" cy="170" rx="38" ry="8" fill="var(--pf-amber-500)" opacity="0.2" />
-                  <rect x="220" y="150" width="60" height="24" rx="6" fill="var(--pf-white)" stroke="var(--pf-amber-500)" strokeWidth="2" />
-                  <text
-                    x="250"
-                    y="167"
-                    textAnchor="middle"
-                    fontFamily="Space Grotesk, sans-serif"
-                    fontWeight="700"
-                    fontSize="13"
-                    fill="var(--pf-amber-500)"
-                  >
-                    AABB
-                  </text>
-                  <text
-                    x="250"
-                    y="197"
-                    textAnchor="middle"
-                    fontFamily="Inter, sans-serif"
-                    fontSize="10"
-                    fill="var(--pf-grey-600)"
-                  >
-                    Your offer
-                  </text>
-                </g>
-                {/* Base */}
-                <rect x="130" y="236" width="100" height="10" rx="4" fill="var(--pf-blue-700)" />
-                <rect x="150" y="246" width="60" height="6" rx="3" fill="var(--pf-blue-900)" />
-              </svg>
+              <Image
+                src="/widening-access.png"
+                alt="Illustration showing standard university entry requirements of AAAA compared to an adjusted widening access offer of AABB"
+                width={400}
+                height={400}
+                style={{ objectFit: 'contain', width: '100%', height: 'auto', maxWidth: '400px' }}
+                priority
+              />
             </div>
           </div>
         </div>

@@ -3,13 +3,15 @@
 import { useAuth } from '@/hooks/use-auth'
 
 /**
- * Renders a small parent-only info bar at the top of a page. The bar only
- * appears for accounts where `students.user_type === 'parent'` and is silent
- * (returns null) for everyone else, including unauthenticated visitors.
+ * Renders a small parent-only info bar at the top of a page. Only appears for
+ * accounts with a row in the `parents` table (new flow) or, for legacy
+ * compatibility, a students row with user_type='parent'. Silent for everyone
+ * else, including unauthenticated visitors.
  */
 export function ParentNotice({ children }: { children: React.ReactNode }) {
-  const { student } = useAuth()
-  if (student?.user_type !== 'parent') return null
+  const { student, parent } = useAuth()
+  const isParent = !!parent || student?.user_type === 'parent'
+  if (!isParent) return null
 
   return (
     <div

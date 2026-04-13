@@ -16,6 +16,7 @@ interface AuthContextType {
   user: User | null
   session: Session | null
   student: Tables<'students'> | null
+  parent: Tables<'parents'> | null
   isLoading: boolean
 }
 
@@ -23,6 +24,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
   student: null,
+  parent: null,
   isLoading: true,
 })
 
@@ -30,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [student, setStudent] = useState<Tables<'students'> | null>(null)
+  const [parent, setParent] = useState<Tables<'parents'> | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session)
       setUser(session?.user ?? null)
       if (session?.user) {
-        fetchStudent(session.user.id)
+        fetchProfiles(session.user.id)
       } else {
         setIsLoading(false)
       }
@@ -53,9 +56,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session)
       setUser(session?.user ?? null)
       if (session?.user) {
-        fetchStudent(session.user.id)
+        fetchProfiles(session.user.id)
       } else {
         setStudent(null)
+        setParent(null)
         setIsLoading(false)
       }
     })
@@ -63,20 +67,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  const fetchStudent = async (userId: string) => {
+  // A signed-in user is either a student or a parent (or rarely neither
+  // mid-onboarding). Fetch both in parallel so the dashboard can branch
+  // without a second round-trip.
+  const fetchProfiles = async (userId: string) => {
     const supabase = getSupabaseClient()
-    const { data } = await supabase
-      .from('students')
-      .select('*')
-      .eq('id', userId)
-      .single()
-
-    setStudent(data)
+    const [studentRes, parentRes] = await Promise.all([
+      supabase.from('students').select('*').eq('id', userId).maybeSingle(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any)
+        .from('parents')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle(),
+    ])
+    setStudent(studentRes.data as Tables<'students'> | null)
+    setParent(parentRes.data as Tables<'parents'> | null)
     setIsLoading(false)
   }
 
   return (
-    <AuthContext.Provider value={{ user, session, student, isLoading }}>
+    <AuthContext.Provider value={{ user, session, student, parent, isLoading }}>
       {children}
     </AuthContext.Provider>
   )

@@ -2,6 +2,24 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 
+// Rate limit: 5 redemption attempts per user per hour.
+// Uses the authenticated user id so stolen codes can't be brute-redeemed
+// by rotating IPs.
+const redeemRateMap = new Map<string, { count: number; resetAt: number }>()
+const REDEEM_RATE_MAX = 5
+const REDEEM_RATE_WINDOW_MS = 60 * 60 * 1000
+
+function isRedeemRateLimited(userId: string): boolean {
+  const now = Date.now()
+  const entry = redeemRateMap.get(userId)
+  if (!entry || now > entry.resetAt) {
+    redeemRateMap.set(userId, { count: 1, resetAt: now + REDEEM_RATE_WINDOW_MS })
+    return false
+  }
+  entry.count++
+  return entry.count > REDEEM_RATE_MAX
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json()
@@ -39,6 +57,13 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
+      )
+    }
+
+    if (isRedeemRateLimited(user.id)) {
+      return NextResponse.json(
+        { success: false, error: 'Too many redemption attempts. Please try again later.' },
+        { status: 429 }
       )
     }
 

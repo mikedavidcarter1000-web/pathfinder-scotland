@@ -4,7 +4,13 @@ import { Suspense, useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-auth'
-import { useCurrentStudent, useCreateStudent, useBulkUpsertGrades } from '@/hooks/use-student'
+import {
+  useCurrentStudent,
+  useCreateStudent,
+  useCreateParent,
+  useCurrentParent,
+  useBulkUpsertGrades,
+} from '@/hooks/use-student'
 import { useGenerateReminders } from '@/hooks/use-reminders'
 import {
   StepIndicator,
@@ -158,7 +164,9 @@ function OnboardingContent() {
   const isParent = searchParams.get('type') === 'parent'
   const { user, isLoading: authLoading } = useAuth()
   const { data: student, isLoading: studentLoading } = useCurrentStudent()
+  const { data: parent, isLoading: parentLoading } = useCurrentParent()
   const createStudent = useCreateStudent()
+  const createParent = useCreateParent()
   const bulkUpsertGrades = useBulkUpsertGrades()
   const toast = useToast()
   const { generateNow: generateReminders } = useGenerateReminders()
@@ -183,12 +191,14 @@ function OnboardingContent() {
     }
   }, [authLoading, user, router])
 
-  // Redirect already-onboarded students
+  // Redirect already-onboarded users (either a student or a parent row
+  // exists for this auth user).
   useEffect(() => {
-    if (!studentLoading && student) {
+    if (studentLoading || parentLoading) return
+    if (student || parent) {
       router.push('/dashboard')
     }
-  }, [studentLoading, student, router])
+  }, [studentLoading, parentLoading, student, parent, router])
 
   // Hydrate from localStorage on first mount (after we have a userId)
   useEffect(() => {
@@ -239,6 +249,27 @@ function OnboardingContent() {
     setError(null)
 
     try {
+      // Parent path: create a row in the `parents` table instead of `students`.
+      // Parents don't enter grades, widening access, or demographic data.
+      if (isParent) {
+        const fullName =
+          `${basicInfo.firstName || ''} ${basicInfo.lastName || ''}`.trim() ||
+          user.email ||
+          'Parent'
+
+        await createParent.mutateAsync({
+          full_name: fullName,
+          email: user.email || '',
+          postcode: postcodeData.postcode || null,
+          simd_decile: postcodeData.simdDecile,
+        })
+
+        clearPersisted(user.id)
+        toast.success('Welcome to Pathfinder', 'Link your first child from your dashboard.')
+        router.push('/dashboard?just_created=parent')
+        return
+      }
+
       // Derive first_generation from parental education if explicitly set on the
       // widening access step, or from the demographic parental_education field.
       const firstGenFromDemographics =
@@ -246,23 +277,20 @@ function OnboardingContent() {
         ['no_qualifications', 'school_qualifications', 'college_qualifications'].includes(
           demographics.parentalEducation
         )
-      const isFirstGen = isParent
-        ? false
-        : wideningAccess.firstGeneration || firstGenFromDemographics
+      const isFirstGen = wideningAccess.firstGeneration || firstGenFromDemographics
 
       const demographicCompleted =
-        !isParent &&
-        (!!demographics.householdIncomeBand ||
-          demographics.isSingleParentHousehold ||
-          !!demographics.parentalEducation ||
-          demographics.hasDisability ||
-          demographics.isEstranged ||
-          demographics.isRefugeeOrAsylumSeeker ||
-          demographics.isYoungParent ||
-          demographics.isYoungCarer ||
-          demographics.receivesFreeSchoolMeals ||
-          demographics.receivesEma ||
-          !!demographics.localAuthority)
+        !!demographics.householdIncomeBand ||
+        demographics.isSingleParentHousehold ||
+        !!demographics.parentalEducation ||
+        demographics.hasDisability ||
+        demographics.isEstranged ||
+        demographics.isRefugeeOrAsylumSeeker ||
+        demographics.isYoungParent ||
+        demographics.isYoungCarer ||
+        demographics.receivesFreeSchoolMeals ||
+        demographics.receivesEma ||
+        !!demographics.localAuthority
 
       await createStudent.mutateAsync({
         email: user.email || '',
@@ -280,10 +308,10 @@ function OnboardingContent() {
         school_name: basicInfo.schoolName || null,
         postcode: postcodeData.postcode || null,
         simd_decile: postcodeData.simdDecile,
-        care_experienced: isParent ? false : wideningAccess.careExperienced,
-        is_carer: isParent ? false : wideningAccess.isCarer,
+        care_experienced: wideningAccess.careExperienced,
+        is_carer: wideningAccess.isCarer,
         first_generation: isFirstGen || false,
-        user_type: isParent ? 'parent' : 'student',
+        user_type: 'student',
         // Demographic fields
         household_income_band: demographics.householdIncomeBand || null,
         is_single_parent_household: demographics.isSingleParentHousehold,
@@ -300,20 +328,17 @@ function OnboardingContent() {
         demographic_completed: demographicCompleted,
       })
 
-      // Parents never enter grades — the bulk upsert is skipped entirely.
-      if (!isParent) {
-        const gradesToSave = grades.filter((g) => g.grade)
-        if (gradesToSave.length > 0) {
-          await bulkUpsertGrades.mutateAsync(
-            gradesToSave.map((g) => ({
-              subject: g.subject,
-              subject_id: g.subject_id ?? null,
-              grade: g.grade,
-              predicted: g.predicted,
-              qualification_type: g.qualificationType,
-            }))
-          )
-        }
+      const gradesToSave = grades.filter((g) => g.grade)
+      if (gradesToSave.length > 0) {
+        await bulkUpsertGrades.mutateAsync(
+          gradesToSave.map((g) => ({
+            subject: g.subject,
+            subject_id: g.subject_id ?? null,
+            grade: g.grade,
+            predicted: g.predicted,
+            qualification_type: g.qualificationType,
+          }))
+        )
       }
 
       clearPersisted(user.id)

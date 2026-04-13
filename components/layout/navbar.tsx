@@ -46,6 +46,8 @@ const NAV_GROUPS: NavGroup[] = [
     name: 'Browse',
     items: [
       { name: 'Courses', href: '/courses' },
+      { name: 'Compare by subject', href: '/compare/subjects' },
+      { name: 'Compare saved courses', href: '/compare' },
       { name: 'Universities', href: '/universities' },
       { name: 'Colleges', href: '/colleges' },
     ],
@@ -53,6 +55,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     name: 'Tools',
     items: [
+      { name: 'Career Quiz', href: '/quiz' },
       { name: 'Cost Calculator', href: '/tools/roi-calculator' },
       { name: 'Grade Sensitivity', href: '/tools/grade-sensitivity' },
       { name: 'Results Day', href: '/results-day' },
@@ -63,6 +66,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { name: 'Support Hub', href: '/support' },
       { name: 'Widening Access', href: '/widening-access' },
+      { name: 'Bursaries & Funding', href: '/bursaries' },
       { name: 'Benefits', href: '/benefits' },
       { name: 'Parents', href: '/parents', hideForParents: true },
       { name: 'Blog', href: '/blog' },
@@ -73,7 +77,7 @@ const NAV_GROUPS: NavGroup[] = [
 export function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
-  const { user, student, isLoading } = useAuth()
+  const { user, student, parent, isLoading } = useAuth()
   const signOut = useSignOut()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -81,7 +85,7 @@ export function Navbar() {
   const [mobileExpanded, setMobileExpanded] = useState<Set<string>>(new Set())
   const navRef = useRef<HTMLDivElement>(null)
 
-  const isParent = student?.user_type === 'parent'
+  const isParent = !!parent || student?.user_type === 'parent'
   const { hasAccepted } = useHasAcceptedOffer()
 
   const filteredGroups = NAV_GROUPS.map((group) => ({
@@ -141,11 +145,15 @@ export function Navbar() {
     router.push('/')
   }
 
-  const displayName = student?.first_name
+  const displayName = parent?.full_name
+    ? parent.full_name
+    : student?.first_name
     ? `${student.first_name} ${student.last_name || ''}`
     : user?.email || 'User'
 
-  const initials = student?.first_name
+  const initials = parent?.full_name
+    ? getInitials(parent.full_name)
+    : student?.first_name
     ? getInitials(`${student.first_name} ${student.last_name || ''}`)
     : user?.email?.charAt(0).toUpperCase() || 'U'
 

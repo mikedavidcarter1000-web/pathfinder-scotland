@@ -18,6 +18,7 @@ import {
   ApplicationsSection,
   PrepHubCard,
 } from '@/components/dashboard'
+import { ParentDashboardV2 } from '@/components/dashboard/parent-dashboard-v2'
 import { ShareWithParentButton } from '@/components/dashboard/share-with-parent-button'
 import { StatsCard, StatsGrid } from '@/components/ui/stats-card'
 import { Skeleton } from '@/components/ui/loading-skeleton'
@@ -28,7 +29,7 @@ type Student = Tables<'students'>
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { user, isLoading: authLoading } = useAuth()
+  const { user, parent, isLoading: authLoading } = useAuth()
   const { data: student, isLoading: studentLoading } = useCurrentStudent() as { data: Student | null | undefined; isLoading: boolean }
   const stats = useDashboardStats()
   const gradeSummary = useGradeSummary()
@@ -54,10 +55,13 @@ export default function DashboardPage() {
   }, [user, grades])
 
   useEffect(() => {
-    if (!authLoading && !studentLoading && user && !student) {
+    // Unauthenticated: handled above. A signed-in user with neither a student
+    // nor a parent profile still needs onboarding. The auth context treats
+    // parents with a `parents` row as onboarded.
+    if (!authLoading && !studentLoading && user && !student && !parent) {
       router.push('/onboarding')
     }
-  }, [authLoading, studentLoading, user, student, router])
+  }, [authLoading, studentLoading, user, student, parent, router])
 
   if (authLoading || studentLoading) {
     return (
@@ -92,10 +96,18 @@ export default function DashboardPage() {
     )
   }
 
-  if (!user || !student) {
+  // Parent path (new dedicated parents table): render the linked-children view.
+  if (!user) return null
+  if (parent) {
+    return <ParentDashboardV2 parent={parent} />
+  }
+  if (!student) {
     return null
   }
 
+  // Legacy path: users who signed up as parents BEFORE the dedicated parents
+  // table was introduced will still have a students row with user_type='parent'.
+  // Fall back to the older timeline-based parent dashboard for them.
   if (student.user_type === 'parent') {
     return <ParentDashboard student={student} />
   }

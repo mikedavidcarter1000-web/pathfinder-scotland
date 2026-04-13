@@ -17,6 +17,7 @@ import {
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
 import { AiRoleBadge } from '@/components/ui/ai-role-badge'
+import { CareerRealities } from '@/components/careers/CareerRealities'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import type { CareerSector } from '@/hooks/use-subjects'
@@ -571,7 +572,10 @@ export default function CareerSectorDetailPage({
           linkedSubjects={allLinkedSubjects}
         />
 
-        {/* Section 4d — Explore Further (external links) */}
+        {/* Section 4d — What's the work actually like? (hours, pay, lifestyle) */}
+        <CareerRealities sectorName={sector.name} />
+
+        {/* Section 4e — Explore Further (external links) */}
         <ExploreFurther sector={sector} />
 
         {/* Section 5 — CTAs */}

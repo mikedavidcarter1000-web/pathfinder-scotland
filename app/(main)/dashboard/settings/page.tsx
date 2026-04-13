@@ -8,6 +8,7 @@ import { useCurrentStudent, useUpdateStudent } from '@/hooks/use-student'
 import { useGenerateReminders } from '@/hooks/use-reminders'
 import { useAuth, useUpdatePassword } from '@/hooks/use-auth'
 import { getSupabaseClient } from '@/lib/supabase'
+import { ParentAccessSection } from '@/components/dashboard/parent-access-section'
 
 const INCOME_LABELS: Record<string, string> = {
   under_21000: 'Under £21,000',
@@ -138,6 +139,9 @@ export default function SettingsPage() {
 
       {/* Funding Profile section */}
       {student && <FundingProfileSection student={student} updateStudent={updateStudent} toast={toast} />}
+
+      {/* Parent / guardian access — only shown for student accounts */}
+      {student && <ParentAccessSection />}
 
       {/* Change Password section */}
       <ChangePasswordSection />

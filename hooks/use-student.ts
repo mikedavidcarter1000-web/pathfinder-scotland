@@ -52,6 +52,54 @@ export function useCreateStudent() {
   })
 }
 
+// Create parent profile (dedicated table — parents are NOT rows in students)
+export function useCreateParent() {
+  const supabase = getSupabaseClient()
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: async (data: Omit<InsertTables<'parents'>, 'id' | 'user_id'>) => {
+      if (!user) throw new Error('Not authenticated')
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: parent, error } = await (supabase as any)
+        .from('parents')
+        .insert({ ...data, user_id: user.id })
+        .select()
+        .single()
+
+      if (error) throw error
+      return parent as Tables<'parents'>
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['parent'] })
+    },
+  })
+}
+
+// Fetch current parent profile (returns null for students)
+export function useCurrentParent() {
+  const supabase = getSupabaseClient()
+  const { user } = useAuth()
+
+  return useQuery({
+    queryKey: ['parent', user?.id],
+    queryFn: async () => {
+      if (!user) return null
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase as any)
+        .from('parents')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle()
+      if (error) throw error
+      return (data || null) as Tables<'parents'> | null
+    },
+    enabled: !!user,
+  })
+}
+
 // Update student profile
 export function useUpdateStudent() {
   const supabase = getSupabaseClient()
