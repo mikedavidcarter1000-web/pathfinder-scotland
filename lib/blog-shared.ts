@@ -5,6 +5,7 @@ export type BlogCategory =
   | 'Careers'
   | 'AI & Future'
   | 'Parents'
+  | 'News'
 
 export const BLOG_CATEGORIES: BlogCategory[] = [
   'Subject Choices',
@@ -13,6 +14,7 @@ export const BLOG_CATEGORIES: BlogCategory[] = [
   'Careers',
   'AI & Future',
   'Parents',
+  'News',
 ]
 
 export interface BlogFrontmatter {
@@ -58,6 +60,8 @@ export function categoryColour(category: BlogCategory): { bg: string; fg: string
       return { bg: 'rgba(139, 92, 246, 0.12)', fg: '#6D28D9' }
     case 'Parents':
       return { bg: 'rgba(244, 63, 94, 0.12)', fg: '#BE123C' }
+    case 'News':
+      return { bg: 'rgba(100, 116, 139, 0.12)', fg: '#475569' }
     default:
       return { bg: 'var(--pf-blue-100)', fg: 'var(--pf-blue-700)' }
   }

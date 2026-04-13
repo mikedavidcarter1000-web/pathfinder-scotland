@@ -82,6 +82,11 @@ const TOOL_LINKS: Record<BlogCategory, Array<{ href: string; label: string; desc
     { href: '/widening-access', label: 'Widening access', description: 'Check eligibility' },
     { href: '/pathways', label: 'Pathway planner', description: 'Plan together' },
   ],
+  News: [
+    { href: '/pathways', label: 'Pathway planner', description: 'Plan around current courses' },
+    { href: '/courses', label: 'Course search', description: 'Current entry requirements' },
+    { href: '/widening-access', label: 'Widening access check', description: 'See contextual offers' },
+  ],
 }
 
 export default async function ArticlePage({ params }: PageProps) {
