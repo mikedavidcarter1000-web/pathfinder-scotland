@@ -69,6 +69,11 @@ export async function GET(request: NextRequest) {
   }
 
   const supabase = await createServerSupabaseClient()
+  // TODO [security, medium]: escape PostgREST filter metacharacters in `query`
+  // before interpolating into `.or(...)`. Commas and parens can break out of
+  // the filter list. Impact is low here (all targeted tables are RLS-public
+  // read-only reference data) but a hardening pass would use `.textSearch`
+  // or per-column `.ilike()` calls instead of string-built `.or()`.
   const pattern = `%${query}%`
 
   const [subjectsRes, coursesRes, universitiesRes, careerSectorsRes] = await Promise.all([

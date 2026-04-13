@@ -3,20 +3,23 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
-const CONSENT_COOKIE = 'pf_cookie_consent'
-const CONSENT_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
+const CONSENT_STORAGE_KEY = 'pf_cookie_consent'
 
 function hasConsent(): boolean {
-  if (typeof document === 'undefined') return true
-  return document.cookie
-    .split(';')
-    .map((part) => part.trim())
-    .some((part) => part.startsWith(`${CONSENT_COOKIE}=true`))
+  if (typeof window === 'undefined') return true
+  try {
+    return window.localStorage.getItem(CONSENT_STORAGE_KEY) === 'accepted'
+  } catch {
+    return true
+  }
 }
 
-function setConsentCookie() {
-  const secure = typeof window !== 'undefined' && window.location.protocol === 'https:' ? '; Secure' : ''
-  document.cookie = `${CONSENT_COOKIE}=true; path=/; max-age=${CONSENT_MAX_AGE_SECONDS}; SameSite=Lax${secure}`
+function storeConsent() {
+  try {
+    window.localStorage.setItem(CONSENT_STORAGE_KEY, 'accepted')
+  } catch {
+    /* localStorage unavailable (private mode, quota) — accept is session-only */
+  }
 }
 
 export function CookieConsent() {
@@ -33,7 +36,7 @@ export function CookieConsent() {
   if (!visible) return null
 
   const handleAccept = () => {
-    setConsentCookie()
+    storeConsent()
     setEntered(false)
     window.setTimeout(() => setVisible(false), 220)
   }
@@ -77,11 +80,12 @@ export function CookieConsent() {
             maxWidth: '720px',
           }}
         >
-          We use essential cookies to keep you signed in. We don&apos;t use tracking or advertising cookies.
+          We use cookies to improve your experience. Essential cookies keep you logged in. We don&apos;t
+          use advertising or tracking cookies.
         </p>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <Link
-            href="/privacy#cookies"
+            href="/privacy"
             style={{
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 600,

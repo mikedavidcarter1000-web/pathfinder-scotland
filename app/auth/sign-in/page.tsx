@@ -18,9 +18,12 @@ export default function SignInPage() {
     ? rawRedirect
     : '/dashboard'
 
-  // Error returned by /auth/callback when OAuth flow fails. Truncated to
-  // avoid reflecting unbounded attacker-supplied text in the banner.
-  const callbackErrorRaw = searchParams.get('error')
+  // Error returned by /auth/callback when OAuth flow fails. Prefer
+  // `error_description` (OAuth-standard human-readable text) over `error`
+  // (machine code). Truncated to avoid reflecting unbounded attacker-supplied
+  // text in the banner.
+  const callbackErrorRaw =
+    searchParams.get('error_description') || searchParams.get('error')
   const callbackError = callbackErrorRaw ? callbackErrorRaw.slice(0, 200) : null
 
   const [email, setEmail] = useState('')

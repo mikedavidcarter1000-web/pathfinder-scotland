@@ -103,7 +103,7 @@ export default function TermsPage() {
             <h2 style={{ marginTop: '40px', marginBottom: '12px' }}>Intellectual property</h2>
             <p style={{ marginBottom: '24px' }}>
               The Pathfinder Scotland name, logo, branding, and platform code belong to us. Course and
-              subject information is sourced from publicly available data published by the SQA, UCAS,
+              subject information is sourced from publicly available data published by Qualifications Scotland, UCAS,
               and Scottish universities — we curate and present it, but we do not claim ownership of
               the underlying facts.
             </p>

@@ -55,8 +55,10 @@ export default async function RevenueDashboardPage() {
     redirect('/auth/sign-in?redirect=/admin/revenue')
   }
 
-  // Block non-admin users — email must be in ADMIN_EMAILS env var
-  if (ADMIN_EMAILS.length > 0 && !ADMIN_EMAILS.includes(user.email?.toLowerCase() ?? '')) {
+  // Fail closed: if ADMIN_EMAILS is unset or the user isn't on the list, deny.
+  // Previously this fell through when ADMIN_EMAILS was empty, exposing the
+  // dashboard (and service-role-backed data reads) to any logged-in user.
+  if (!ADMIN_EMAILS.includes(user.email?.toLowerCase() ?? '')) {
     redirect('/dashboard')
   }
 

@@ -21,9 +21,9 @@ const SECTIONS: ResourceSection[] = [
       'The core bodies that set Scottish qualifications, careers advice, and school policy. Always worth starting here.',
     links: [
       {
-        name: 'SQA',
+        name: 'Qualifications Scotland',
         url: 'https://www.sqa.org.uk',
-        description: "Scotland's qualifications authority — course information, past papers, results.",
+        description: "Scotland's qualifications authority (renamed from SQA in February 2026) — course information, past papers, results.",
       },
       {
         name: 'Education Scotland',
@@ -793,7 +793,7 @@ export default function ResourcesPage() {
               lineHeight: 1.65,
             }}
           >
-            We don&rsquo;t replace SQA, My World of Work, SAAS, or your school&rsquo;s careers team
+            We don&rsquo;t replace Qualifications Scotland, My World of Work, SAAS, or your school&rsquo;s careers team
             &mdash; we make the connections between them clearer and help you find the right place for
             each question.
           </p>

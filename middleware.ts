@@ -54,7 +54,11 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Refresh session if expired
+  // TODO [security, medium]: replace getSession() with getUser() for the
+  // protected-route gate. getSession() reads the cookie without re-verifying
+  // the JWT with the auth server, so a stolen/expired-but-revoked token could
+  // pass the middleware redirect check. RLS still enforces real access on the
+  // data layer, so this is defence-in-depth only.
   const { data: { session } } = await supabase.auth.getSession()
 
   // Protected routes

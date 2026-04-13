@@ -186,7 +186,7 @@ export default function AboutPage() {
             }}
           >
             {[
-              { label: 'SQA', url: 'https://www.sqa.org.uk' },
+              { label: 'Qualifications Scotland', url: 'https://www.sqa.org.uk' },
               { label: 'Education Scotland', url: 'https://education.gov.scot' },
               { label: 'Skills Development Scotland', url: 'https://www.skillsdevelopmentscotland.co.uk' },
               { label: 'My World of Work', url: 'https://www.myworldofwork.co.uk' },
