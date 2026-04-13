@@ -6,6 +6,8 @@ import { SubmitButton } from '@/components/ui/submit-button'
 import { useToast } from '@/components/ui/toast'
 import { useCurrentStudent, useUpdateStudent } from '@/hooks/use-student'
 import { useGenerateReminders } from '@/hooks/use-reminders'
+import { useAuth, useUpdatePassword } from '@/hooks/use-auth'
+import { getSupabaseClient } from '@/lib/supabase'
 
 const INCOME_LABELS: Record<string, string> = {
   under_21000: 'Under £21,000',
@@ -136,6 +138,9 @@ export default function SettingsPage() {
 
       {/* Funding Profile section */}
       {student && <FundingProfileSection student={student} updateStudent={updateStudent} toast={toast} />}
+
+      {/* Change Password section */}
+      <ChangePasswordSection />
 
       {/* Your Data section */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -532,6 +537,137 @@ function FundingProfileSection({ student, updateStudent, toast }: FundingProfile
           Save funding profile
         </SubmitButton>
       </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Change Password Section
+// ---------------------------------------------------------------------------
+
+function ChangePasswordSection() {
+  const { user } = useAuth()
+  const toast = useToast()
+  const updatePassword = useUpdatePassword()
+
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    setSuccess(false)
+
+    if (!user?.email) {
+      setError('You must be signed in to change your password.')
+      return
+    }
+    if (newPassword.length < 8) {
+      setError('New password must be at least 8 characters.')
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setError('New password and confirmation do not match.')
+      return
+    }
+    if (newPassword === currentPassword) {
+      setError('New password must be different from your current password.')
+      return
+    }
+
+    setSubmitting(true)
+    try {
+      // Verify current password by re-authenticating. Supabase does not expose
+      // a direct "verify current password" call, so we sign in again to check.
+      const supabase = getSupabaseClient()
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: currentPassword,
+      })
+      if (signInError) {
+        setError('Current password is incorrect.')
+        return
+      }
+
+      await updatePassword.mutateAsync({ password: newPassword })
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+      setSuccess(true)
+      toast.success('Password updated', 'Your password has been changed.')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to update password.'
+      setError(msg)
+      toast.error("Couldn't update password", msg)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold text-gray-900">Change Password</h2>
+        <p className="text-sm text-gray-500 mt-1">
+          Enter your current password and choose a new one. Passwords must be at least 8 characters.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <label className="block">
+          <span className="pf-label">Current password</span>
+          <input
+            type="password"
+            className="pf-input w-full mt-1"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            autoComplete="current-password"
+            required
+          />
+        </label>
+
+        <label className="block">
+          <span className="pf-label">New password</span>
+          <input
+            type="password"
+            className="pf-input w-full mt-1"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            autoComplete="new-password"
+            minLength={8}
+            required
+          />
+        </label>
+
+        <label className="block">
+          <span className="pf-label">Confirm new password</span>
+          <input
+            type="password"
+            className="pf-input w-full mt-1"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            autoComplete="new-password"
+            minLength={8}
+            required
+          />
+        </label>
+
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        {success && <p className="text-sm text-green-600">Password updated successfully.</p>}
+
+        <SubmitButton
+          type="submit"
+          isLoading={submitting}
+          loadingText="Updating..."
+          disabled={!currentPassword || !newPassword || !confirmPassword}
+        >
+          Update password
+        </SubmitButton>
+      </form>
     </div>
   )
 }

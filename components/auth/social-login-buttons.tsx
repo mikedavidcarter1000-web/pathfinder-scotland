@@ -56,7 +56,7 @@ export function SocialLoginButtons({ redirectTo }: SocialLoginButtonsProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-4 gap-2">
       {providers.map((provider) => (
         <button
           key={provider.id}
@@ -64,23 +64,21 @@ export function SocialLoginButtons({ redirectTo }: SocialLoginButtonsProps) {
           onClick={() => handleSocialLogin(provider.id)}
           disabled={oauthSignIn.isPending}
           aria-label={`Continue with ${provider.name}`}
-          className="flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+          title={`Continue with ${provider.name}`}
+          className="flex items-center justify-center transition-colors disabled:opacity-50"
           style={{
-            minHeight: '48px',
-            padding: '10px 12px',
+            minHeight: '44px',
+            padding: '10px',
             borderRadius: '8px',
             border: '1px solid var(--pf-grey-300)',
             backgroundColor: 'var(--pf-white)',
             color: 'var(--pf-grey-900)',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 600,
-            fontSize: '0.875rem',
           }}
           onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)')}
           onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-white)')}
         >
           {provider.icon}
-          <span>{provider.name}</span>
+          <span className="sr-only">{provider.name}</span>
         </button>
       ))}
     </div>
@@ -89,7 +87,7 @@ export function SocialLoginButtons({ redirectTo }: SocialLoginButtonsProps) {
 
 export function SocialLoginDivider() {
   return (
-    <div className="relative my-5">
+    <div className="relative my-4">
       <div className="absolute inset-0 flex items-center">
         <div className="w-full" style={{ borderTop: '1px solid var(--pf-grey-300)' }} />
       </div>

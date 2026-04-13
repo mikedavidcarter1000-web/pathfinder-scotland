@@ -104,12 +104,12 @@ function SignUpContent() {
 
   return (
     <div
-      className="flex justify-center px-4 py-8 sm:py-10"
+      className="flex justify-center px-4 py-4 sm:py-5"
       style={{ backgroundColor: 'var(--pf-blue-50)', minHeight: '100%' }}
     >
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-5">
+        <div className="text-center mb-3">
           <Link
             href="/"
             className="inline-flex items-center gap-2 no-underline hover:no-underline"
@@ -138,12 +138,12 @@ function SignUpContent() {
 
         {/* Card */}
         <div
-          className="pf-card-flat p-5 sm:p-6"
+          className="pf-card-flat p-5"
           style={{
             boxShadow: '0 10px 30px rgba(0, 45, 114, 0.08)',
           }}
         >
-          <div className="text-center mb-4">
+          <div className="text-center mb-3">
             <h1 style={{ marginBottom: '2px' }}>Create your account</h1>
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
               {accountType === 'parent'
@@ -156,7 +156,7 @@ function SignUpContent() {
           <div
             role="radiogroup"
             aria-label="Account type"
-            className="grid grid-cols-2 gap-3 mb-4"
+            className="grid grid-cols-2 gap-3 mb-3"
           >
             <AccountTypeCard
               label="I'm a student"
@@ -329,7 +329,7 @@ function SignUpContent() {
             </SubmitButton>
           </form>
 
-          <div className="mt-4 text-center">
+          <div className="mt-3 text-center">
             <p style={{ color: 'var(--pf-grey-600)' }}>
               Already have an account?{' '}
               <Link
@@ -370,7 +370,7 @@ function AccountTypeCard({
       onClick={onClick}
       className="text-left transition-all"
       style={{
-        padding: '14px 16px',
+        padding: '10px 14px',
         borderRadius: '8px',
         backgroundColor: active ? 'var(--pf-blue-50)' : 'var(--pf-white)',
         border: active
