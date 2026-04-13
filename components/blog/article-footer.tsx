@@ -13,7 +13,7 @@ export function ArticleFooter({ article, next }: Props) {
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null)
   const [copied, setCopied] = useState(false)
 
-  const shareUrl = `https://pathfinder-scotland.vercel.app/blog/${article.slug}`
+  const shareUrl = `https://pathfinderscot.co.uk/blog/${article.slug}`
   const tweetText = encodeURIComponent(`${article.title} — Pathfinder Scotland`)
   const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(shareUrl)}`
 

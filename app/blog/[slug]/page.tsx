@@ -14,7 +14,7 @@ import {
 import { ArticleContent } from '@/components/blog/article-content'
 import { ArticleFooter } from '@/components/blog/article-footer'
 
-const SITE_URL = 'https://pathfinder-scotland.vercel.app'
+const SITE_URL = 'https://pathfinderscot.co.uk'
 
 interface PageProps {
   params: Promise<{ slug: string }>

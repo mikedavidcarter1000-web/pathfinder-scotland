@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getArticles } from '@/lib/blog'
 
-const SITE_URL = 'https://pathfinder-scotland.vercel.app'
+const SITE_URL = 'https://pathfinderscot.co.uk'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()

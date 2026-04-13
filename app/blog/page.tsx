@@ -1,7 +1,7 @@
 import { getArticles } from '@/lib/blog'
 import { BlogList } from '@/components/blog/blog-list'
 
-const SITE_URL = 'https://pathfinder-scotland.vercel.app'
+const SITE_URL = 'https://pathfinderscot.co.uk'
 
 export default function BlogPage() {
   const articles = getArticles()

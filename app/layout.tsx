@@ -17,7 +17,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
 }
 
-const SITE_URL = 'https://pathfinder-scotland.vercel.app'
+const SITE_URL = 'https://pathfinderscot.co.uk'
 const SITE_NAME = 'Pathfinder Scotland'
 const SITE_DESCRIPTION =
   'Free guidance for Scottish students. Plan your Qualifications Scotland subject choices from S3 to S6, check university entry requirements, and discover widening access support.'
