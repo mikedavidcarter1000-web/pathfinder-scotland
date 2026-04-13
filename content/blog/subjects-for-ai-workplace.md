@@ -17,7 +17,7 @@ This article makes the opposite argument: in an AI-augmented workplace, **breadt
 
 ## Computing Science is useful but not sufficient
 
-Let's start with the obvious. Computing Science at SQA Higher is one of the more directly useful subjects you can take. It introduces you to programming, data structures, software design, and computer systems. If you do nothing else with technology in your life, it gives you a basic vocabulary that 90 percent of adults don't have.
+Let's start with the obvious. Computing Science at Qualifications Scotland (formerly SQA) Higher is one of the more directly useful subjects you can take. It introduces you to programming, data structures, software design, and computer systems. If you do nothing else with technology in your life, it gives you a basic vocabulary that 90 percent of adults don't have.
 
 Take it. The argument here isn't against Computing Science.
 

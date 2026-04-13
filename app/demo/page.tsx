@@ -176,7 +176,7 @@ export default async function DemoPage() {
         }
       >
         <div className="grid grid-cols-2 gap-4">
-          <StatCard value={`${stats.subjects}`} label="SQA subjects mapped" />
+          <StatCard value={`${stats.subjects}`} label="Qualifications Scotland subjects mapped" />
           <StatCard value={`${stats.courses}+`} label="University courses" />
           <StatCard value={`${stats.universities}`} label="Scottish universities" />
           <StatCard value={formattedPostcodes} label="Postcodes checked for widening access" compact />

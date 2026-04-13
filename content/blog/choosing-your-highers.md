@@ -91,7 +91,7 @@ What you do in S5 sets up what's possible in S6. If you want Advanced Highers, y
 ## Tools that actually help
 
 - **[Pathfinder pathway planner](/pathways)** — sketch your S5 timetable and see which courses it unlocks.
-- **[Subjects database](/subjects)** — every SQA subject with progression and career links.
+- **[Subjects database](/subjects)** — every Qualifications Scotland (formerly SQA) subject with progression and career links.
 - **[Choice simulator](/simulator)** — compare combinations side by side.
 - **[Widening access check](/widening-access)** — enter your postcode to see your contextual offers.
 

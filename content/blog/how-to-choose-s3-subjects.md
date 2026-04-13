@@ -92,7 +92,7 @@ This isn't a magic combination. It's a default. Tweak it for what you like. The 
 ## What to do next
 
 1. **[Open the Pathfinder pathway planner](/pathways)** and sketch a few possible S3 timetables. See which Highers and university courses each one keeps open.
-2. **[Browse our subject database](/subjects)** to read about each SQA subject in detail — what it covers, what it leads to, and how it's assessed.
+2. **[Browse our subject database](/subjects)** to read about each Qualifications Scotland (formerly SQA) subject in detail — what it covers, what it leads to, and how it's assessed.
 3. **[Try the Discover tool](/discover)** if you're unsure what careers or interests connect to which subjects.
 4. **Talk to your guidance teacher** with a draft plan in front of you. Specific questions get useful answers; vague worries don't.
 

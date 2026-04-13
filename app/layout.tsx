@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import '@fontsource/inter/400.css'
 import '@fontsource/inter/500.css'
 import '@fontsource/inter/600.css'
@@ -11,10 +11,16 @@ import { Footer } from '@/components/layout/footer'
 import { Navbar } from '@/components/layout/navbar'
 import { CookieConsent } from '@/components/ui/cookie-consent'
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+}
+
 const SITE_URL = 'https://pathfinder-scotland.vercel.app'
 const SITE_NAME = 'Pathfinder Scotland'
 const SITE_DESCRIPTION =
-  'Free guidance for Scottish students. Plan your SQA subject choices from S3 to S6, check university entry requirements, and discover widening access support.'
+  'Free guidance for Scottish students. Plan your Qualifications Scotland subject choices from S3 to S6, check university entry requirements, and discover widening access support.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -25,7 +31,7 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   keywords: [
     'Scottish subjects',
-    'SQA',
+    'Qualifications Scotland',
     'Highers',
     'Advanced Highers',
     'university entry requirements',

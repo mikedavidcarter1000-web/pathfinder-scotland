@@ -751,7 +751,7 @@ function PathwaysPageContent() {
 function UsefulLinksPanel() {
   const links: Array<{ label: string; description: string; url: string }> = [
     {
-      label: 'SQA subject choice guidance',
+      label: 'Qualifications Scotland subject choice guidance',
       description: "Scotland's qualifications authority — subject arrangements and guidance.",
       url: 'https://www.sqa.org.uk/sqa/45625.html',
     },

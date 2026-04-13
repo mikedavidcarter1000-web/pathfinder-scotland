@@ -171,7 +171,7 @@ export default function DisabilityPage() {
           <div className="pf-card" style={{ padding: '20px 24px' }}>
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '12px' }}>
               If you need extra support in exams, your school or college can apply for Assessment
-              Arrangements from SQA/Qualifications Scotland. These are not a concession — they are an
+              Arrangements from Qualifications Scotland. These are not a concession — they are an
               adjustment to let you demonstrate your abilities fairly.
             </p>
             <p style={{ color: 'var(--pf-grey-700)', fontSize: '0.9375rem', fontWeight: 500, marginBottom: '8px' }}>
@@ -189,7 +189,7 @@ export default function DisabilityPage() {
               <li>Sign language support</li>
             </ul>
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
-              Your school&apos;s ASN teacher or SQA co-ordinator manages this process. Apply well
+              Your school&apos;s ASN teacher or Qualifications Scotland co-ordinator manages this process. Apply well
               before exam diets — the deadline is typically January for the May/June diet.
             </p>
           </div>

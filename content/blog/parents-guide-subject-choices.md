@@ -11,7 +11,7 @@ featured: true
 readingTime: 8
 ---
 
-If you're reading this, your child is somewhere between S2 and S6 and you've been handed a leaflet, an evening's worth of dense vocabulary, and a deadline. That's how Scottish subject choices feel to most parents — particularly if you didn't go through the SQA system yourself, or if it's been a long time since you did.
+If you're reading this, your child is somewhere between S2 and S6 and you've been handed a leaflet, an evening's worth of dense vocabulary, and a deadline. That's how Scottish subject choices feel to most parents — particularly if you didn't go through the Qualifications Scotland (formerly SQA) system yourself, or if it's been a long time since you did.
 
 This guide explains the timeline, the bits the school doesn't always make clear, and how to support your child through it without making the whole process miserable.
 

@@ -35,7 +35,7 @@ function buildFaqItems(universityCount: number): FaqItem[] {
     {
       question: 'Which schools does Pathfinder work with?',
       answer:
-        'Pathfinder works for students at any Scottish secondary school. Our subject database covers every SQA qualification available across Scotland, from National 4 to Advanced Higher, including college partnership courses and Foundation Apprenticeships.',
+        'Pathfinder works for students at any Scottish secondary school. Our subject database covers every Qualifications Scotland qualification available across Scotland, from National 4 to Advanced Higher, including college partnership courses and Foundation Apprenticeships.',
     },
     {
       question: "Do I need my school's permission to use Pathfinder?",
@@ -572,7 +572,7 @@ export default async function HomePage() {
               className="grid grid-cols-2 md:grid-cols-4 gap-6"
               style={{ marginTop: '8px' }}
             >
-              <Stat number="81" label="SQA subjects" />
+              <Stat number="81" label="Qualifications Scotland subjects" />
               <Stat number={universityCount > 0 ? String(universityCount) : '15'} label="Scottish universities" />
               <Stat number={coursesStatNumber} label="Courses" />
               <Stat number="All" label="Scottish postcodes checked" />

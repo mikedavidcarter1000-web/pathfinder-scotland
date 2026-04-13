@@ -387,7 +387,7 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
                     }}
                   >
                     <p style={{ fontSize: '0.875rem', color: 'var(--pf-blue-900)' }}>
-                      <span style={{ fontWeight: 600 }}>Academy / elective:</span> An enrichment option in the Broad General Education phase. Does not lead directly to an SQA qualification but builds skills for senior phase choices.
+                      <span style={{ fontWeight: 600 }}>Academy / elective:</span> An enrichment option in the Broad General Education phase. Does not lead directly to a Qualifications Scotland qualification but builds skills for senior phase choices.
                     </p>
                   </div>
                 )}

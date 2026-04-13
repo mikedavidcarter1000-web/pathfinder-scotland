@@ -58,7 +58,7 @@ export default function TermsPage() {
             <h2 style={{ marginTop: '40px', marginBottom: '12px' }}>What Pathfinder is</h2>
             <p style={{ marginBottom: '24px' }}>
               Pathfinder Scotland is an <strong>educational guidance platform</strong> for Scottish
-              students. It helps you explore SQA subjects, plan your S3 to S6 pathway, and check your
+              students. It helps you explore Qualifications Scotland subjects, plan your S3 to S6 pathway, and check your
               eligibility against Scottish university entry requirements. It is{' '}
               <strong>not</strong> a substitute for professional careers advice, your school&apos;s
               guidance team, or an official offer from a university.

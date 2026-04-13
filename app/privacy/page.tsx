@@ -77,7 +77,7 @@ export default function PrivacyPage() {
                 and your school stage (S3, S4, S5, S6 or college).
               </li>
               <li style={{ marginBottom: '8px' }}>
-                <strong>Educational data:</strong> your school, SQA grades, predicted grades, subject
+                <strong>Educational data:</strong> your school, Qualifications Scotland grades, predicted grades, subject
                 choices, and any courses or universities you save to your account.
               </li>
               <li style={{ marginBottom: '8px' }}>

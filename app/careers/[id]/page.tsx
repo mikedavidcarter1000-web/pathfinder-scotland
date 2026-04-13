@@ -1004,7 +1004,7 @@ function AiFutureSection({
       {sector.sqa_subjects_text && (
         <div>
           <h3 style={{ fontSize: '1.0625rem', marginBottom: '8px' }}>
-            SQA subjects that lead here
+            Qualifications Scotland subjects that lead here
           </h3>
           <div className="pf-card" style={{ padding: '20px 24px' }}>
             <p

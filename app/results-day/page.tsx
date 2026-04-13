@@ -299,7 +299,7 @@ function ResultsDayContent() {
                         {countdown.daysUntil === 1 ? '1 day' : `${countdown.daysUntil} days`} until Results Day
                       </p>
                       <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
-                        SQA results are released on {RESULTS_DAY_DISPLAY}
+                        Qualifications Scotland results are released on {RESULTS_DAY_DISPLAY}
                       </p>
                     </div>
                   </div>

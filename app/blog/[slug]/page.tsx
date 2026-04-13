@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 const TOOL_LINKS: Record<BlogCategory, Array<{ href: string; label: string; description: string }>> = {
   'Subject Choices': [
     { href: '/pathways', label: 'Pathway planner', description: 'Sketch your S3 to S6 timetable' },
-    { href: '/subjects', label: 'Subjects database', description: 'Browse every SQA subject' },
+    { href: '/subjects', label: 'Subjects database', description: 'Browse every Qualifications Scotland subject' },
     { href: '/simulator', label: 'Choice simulator', description: 'Compare combinations' },
   ],
   'Widening Access': [

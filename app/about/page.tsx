@@ -209,7 +209,7 @@ export default function AboutPage() {
               </div>
               <h3 style={{ margin: 0, fontSize: '1.0625rem' }}>Built for the Scottish curriculum</h3>
               <p style={{ margin: 0, color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.65 }}>
-                Nationals, Highers, Advanced Highers, SQA grading, SAAS funding — Pathfinder understands the Scottish system, not a UK-generic version of it.
+                Nationals, Highers, Advanced Highers, Qualifications Scotland grading, SAAS funding — Pathfinder understands the Scottish system, not a UK-generic version of it.
               </p>
             </div>
           </div>

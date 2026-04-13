@@ -156,10 +156,10 @@ export default function EsolEalPage() {
             </div>
 
             <div className="pf-card" style={{ padding: '20px 24px' }}>
-              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>SQA assessment arrangements</h3>
+              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Qualifications Scotland assessment arrangements</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
-                SQA assessment arrangements include language support for EAL candidates in some
-                circumstances. Ask your school's SQA co-ordinator about what is available.
+                Qualifications Scotland assessment arrangements include language support for EAL candidates in some
+                circumstances. Ask your school's Qualifications Scotland co-ordinator about what is available.
               </p>
             </div>
 

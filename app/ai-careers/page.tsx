@@ -475,7 +475,7 @@ export default function AiCareersPage() {
             />
             <InsightCard
               title="Scotland is investing"
-              body="The Lanarkshire AI Growth Zone is a £15bn project. Scotland's AI Strategy 2026–2031 prioritises healthcare, public services, and SMEs. Digital qualifications at SQA are expanding."
+              body="The Lanarkshire AI Growth Zone is a £15bn project. Scotland's AI Strategy 2026–2031 prioritises healthcare, public services, and SMEs. Digital qualifications at Qualifications Scotland are expanding."
             />
           </div>
         </div>

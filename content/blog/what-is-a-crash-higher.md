@@ -72,7 +72,7 @@ If you've decided to crash a subject, the difference between a pass and a fail u
 1. **Get the N5 textbook anyway.** Read it over the summer before S5/S6 starts.
 2. **Start early.** The first few weeks matter more than they do for any other subject.
 3. **Talk to the teacher on day one.** Make sure they know you're crashing — most are happy to point you at the gaps.
-4. **Use SQA past papers early.** Don't wait until prelim time. Try one in October.
+4. **Use Qualifications Scotland (formerly SQA) past papers early.** Don't wait until prelim time. Try one in October.
 5. **Be honest with yourself by October.** If you're already adrift, you can usually drop without it counting against you.
 
 ## Universities don't care
@@ -94,7 +94,7 @@ Crashing is most useful when **you need the Higher for an S5-results application
 ## Tools that actually help
 
 - **[Pathfinder pathway planner](/pathways)** — see how a crash Higher fits into your S5 / S6 plan.
-- **[Subjects database](/subjects)** — check N5 and Higher availability for every SQA subject.
+- **[Subjects database](/subjects)** — check N5 and Higher availability for every Qualifications Scotland subject.
 - **[Choice simulator](/simulator)** — model the impact of adding a crash Higher to your pattern.
 
 ## What to do next

@@ -59,13 +59,13 @@ export default function HomeEducatedPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div className="pf-card" style={{ padding: '20px 24px' }}>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '12px' }}>
-                You can sit SQA qualifications (Nationals, Highers, Advanced Highers) as a private
+                You can sit Qualifications Scotland qualifications (Nationals, Highers, Advanced Highers) as a private
                 candidate through a local school or college acting as an exam centre. Some FE colleges
                 accept home-educated students directly onto HNC/HND courses. The Open University
                 offers introductory modules with no entry requirements.
               </p>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
-                Contact your local council to ask about accessing SQA exams as a home-educated
+                Contact your local council to ask about accessing Qualifications Scotland exams as a home-educated
                 student. Some councils have a dedicated home education officer.
               </p>
             </div>
@@ -82,7 +82,7 @@ export default function HomeEducatedPage() {
               Scottish universities assess home-educated applicants individually. Most will consider:
             </p>
             <ul style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.8, paddingLeft: '20px', marginBottom: '12px' }}>
-              <li>SQA qualifications gained as a private candidate</li>
+              <li>Qualifications Scotland qualifications gained as a private candidate</li>
               <li>Portfolio of work or independent projects</li>
               <li>Personal statement explaining your educational background</li>
               <li>Interview (some universities offer this as standard for non-traditional applicants)</li>

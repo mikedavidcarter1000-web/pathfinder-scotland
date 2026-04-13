@@ -23,7 +23,7 @@ The shortlist of realistic options for someone retraining into a remote or hybri
 
 ### Software development
 
-Scotland's tech sector employs over 90,000 people. The average software developer salary is around £37,500. [CodeClan's 16-week course](https://codeclan.com/) is SQA-accredited and the standard entry route for adults switching into tech. It's not eligible for SAAS funding, but Professional and Career Development Loans (£300 to £10,000) cover it.
+Scotland's tech sector employs over 90,000 people. The average software developer salary is around £37,500. [CodeClan's 16-week course](https://codeclan.com/) is accredited by Qualifications Scotland (formerly SQA) and the standard entry route for adults switching into tech. It's not eligible for SAAS funding, but Professional and Career Development Loans (£300 to £10,000) cover it.
 
 ### Cyber security
 

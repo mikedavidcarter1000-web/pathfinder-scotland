@@ -38,7 +38,7 @@ export default function HelpPage() {
         },
         {
           q: 'What qualifications are supported?',
-          a: 'We support SQA Highers, Advanced Highers, National 5s, A-Levels, and BTEC qualifications. You can add grades for multiple qualification types.',
+          a: 'We support Qualifications Scotland Highers, Advanced Highers, National 5s, A-Levels, and BTEC qualifications. You can add grades for multiple qualification types.',
         },
         {
           q: 'How are grade strings calculated?',

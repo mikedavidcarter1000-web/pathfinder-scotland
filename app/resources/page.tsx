@@ -359,7 +359,7 @@ const SECTIONS: ResourceSection[] = [
       {
         name: 'Youth Achievement Awards',
         url: 'https://www.youthscotland.org.uk/awards/youth-achievement-awards/',
-        description: 'SQA-accredited awards for young people.',
+        description: 'Qualifications Scotland-accredited awards for young people.',
       },
       {
         name: 'John Muir Award',
