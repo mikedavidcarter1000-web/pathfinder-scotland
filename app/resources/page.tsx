@@ -23,7 +23,7 @@ const SECTIONS: ResourceSection[] = [
       {
         name: 'Qualifications Scotland',
         url: 'https://www.sqa.org.uk',
-        description: "Scotland's qualifications authority (renamed from SQA in February 2026) — course information, past papers, results.",
+        description: "Scotland's qualifications authority — course information, past papers, results.",
       },
       {
         name: 'Education Scotland',
