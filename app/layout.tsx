@@ -7,6 +7,8 @@ import '@fontsource/space-grotesk/600.css'
 import '@fontsource/space-grotesk/700.css'
 import './globals.css'
 import { Providers } from './providers'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Footer } from '@/components/layout/footer'
 import { Navbar } from '@/components/layout/navbar'
 import { CookieConsent } from '@/components/ui/cookie-consent'
@@ -140,6 +142,8 @@ export default function RootLayout({
           </div>
           <CookieConsent />
         </Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
