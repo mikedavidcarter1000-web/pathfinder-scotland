@@ -1,6 +1,6 @@
 # Pathfinder Scotland - Claude Code Context
 
-**Last Updated:** 10 April 2026
+**Last Updated:** 14 April 2026
 
 ## Project Overview
 Pathfinder is a B2C SaaS platform helping Scottish students navigate university applications, with emphasis on widening access programmes and the Scottish education system.
@@ -112,6 +112,27 @@ Also: `student_grades.subject_id` FK added (nullable) for gradual migration from
 > **subjects table column names (confirmed from live DB):**
 > `is_available_n5`, `is_available_higher`, `is_available_adv_higher`
 > NOT `available_at_n5` / `available_at_higher` / `available_at_adv_higher`
+
+### Student Offers & Entitlements Hub (SCHEMA COMPLETE — Task 1 of 6)
+Migration: `supabase/migrations/20260414000002_student_offers_hub.sql` (applied)
+
+New `offer_*` namespace — parallel to the existing `benefit_*` tables used by `/benefits`. The two systems coexist; do not conflate them.
+
+Tables created:
+- `offer_categories` — 15 top-level categories, seeded (slugs like `government-entitlements`, `retail-and-fashion`)
+- `partners` — commercial-relationship register (admin-only; RLS denies all public reads)
+- `offers` — core table, 40 columns incl. `offer_type`, `eligible_stages[]`, `seasonal_tags[]`, `locations[]`, affiliate/commission metadata, `last_verified_at`, `needs_review`
+- `offer_support_groups` — offer ↔ 13 support-group tags (e.g. `care-experienced`, `young-carers`)
+- `offer_clicks` — engagement log (`outbound`, `save`, `detail_view`, `copy_code`, …); anon INSERT allowed, users read only their own rows
+- `saved_offers` — student bookmarks (composite PK)
+- `starting_uni_checklist_items` — master checklist for "starting uni"
+- `student_checklist_progress` — per-student tick state
+
+Triggers & functions:
+- `set_offers_updated_at()` BEFORE UPDATE trigger on `offers`
+- `flag_stale_offers()` — marks offers with `last_verified_at` > 6 months old as `needs_review`. **pg_cron is NOT installed** on this project, so the weekly schedule is only registered conditionally by the migration's DO block. To enable: `CREATE EXTENSION pg_cron;` then re-run the scheduler snippet. Until then, call the function manually.
+
+Existing `benefit_*` tables (`student_benefits`, `benefit_categories`, `benefit_clicks`, `benefit_reminders`) and the `/benefits` page + `/api/benefits/click` endpoint are unchanged.
 
 ## Important Commands
 
