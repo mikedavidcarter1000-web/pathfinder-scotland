@@ -93,6 +93,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${SITE_URL}/offers`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
       url: `${SITE_URL}/parents`,
       lastModified: now,
       changeFrequency: 'monthly',
@@ -174,12 +180,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const supabase = await createServerSupabaseClient()
 
-    const [subjectsRes, universitiesRes, coursesRes, careerSectorsRes, collegesRes] = await Promise.all([
+    const [subjectsRes, universitiesRes, coursesRes, careerSectorsRes, collegesRes, offersRes] = await Promise.all([
       supabase.from('subjects').select('id, created_at'),
       supabase.from('universities').select('id, updated_at'),
       supabase.from('courses').select('id, updated_at'),
       supabase.from('career_sectors').select('id'),
       supabase.from('colleges').select('id, created_at').eq('is_active', true),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any).from('offers').select('slug, updated_at').eq('is_active', true),
     ])
 
     const subjectRoutes: MetadataRoute.Sitemap = (subjectsRes.data ?? []).map((row) => ({
@@ -217,6 +225,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }))
 
+    const offerRoutes: MetadataRoute.Sitemap = (
+      (offersRes.data ?? []) as Array<{ slug: string; updated_at: string | null }>
+    ).map((row) => ({
+      url: `${SITE_URL}/offers/${row.slug}`,
+      lastModified: row.updated_at ? new Date(row.updated_at) : now,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    }))
+
     return [
       ...staticRoutes,
       ...blogRoutes,
@@ -225,6 +242,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...courseRoutes,
       ...careerSectorRoutes,
       ...collegeRoutes,
+      ...offerRoutes,
     ]
   } catch {
     return [...staticRoutes, ...blogRoutes]
