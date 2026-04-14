@@ -46,7 +46,8 @@ next-env.d.ts
 /supabase/.temp
 
 # Data files (large, can be regenerated)
-/data/
+/data/*
+!/data/career-realities.ts
 *.xlsx
 simd_postcodes.xlsx
 
