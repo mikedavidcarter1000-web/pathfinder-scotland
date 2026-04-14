@@ -591,6 +591,39 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_submissions: {
+        Row: {
+          created_at: string
+          email: string
+          email_error: string | null
+          email_sent: boolean
+          id: string
+          message: string
+          name: string
+          role: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          email_error?: string | null
+          email_sent?: boolean
+          id?: string
+          message: string
+          name: string
+          role: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          email_error?: string | null
+          email_sent?: boolean
+          id?: string
+          message?: string
+          name?: string
+          role?: string
+        }
+        Relationships: []
+      }
       course_choice_rules: {
         Row: {
           breadth_requirements: string | null

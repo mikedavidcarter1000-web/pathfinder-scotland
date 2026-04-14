@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getAdminClient } from '@/lib/admin-auth'
 
 export const runtime = 'nodejs'
 
@@ -166,24 +167,70 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
 
+  // --- Step 1: Save to database (fallback so no message is ever lost) ---
+  const db = getAdminClient()
+  let dbRowId: string | null = null
+
+  if (db) {
+    const { data: row, error: dbError } = await db
+      .from('contact_submissions')
+      .insert({
+        name: parsed.data.name,
+        email: parsed.data.email,
+        role: parsed.data.role,
+        message: parsed.data.message,
+        email_sent: false,
+      })
+      .select('id')
+      .single()
+
+    if (dbError) {
+      console.error('[contact] Failed to save submission to database:', dbError)
+    } else {
+      dbRowId = row?.id ?? null
+    }
+  } else {
+    console.warn('[contact] SUPABASE_SERVICE_ROLE_KEY not set — database fallback unavailable.')
+  }
+
+  // --- Step 2: Attempt email notification via Resend ---
   const apiKey = process.env.RESEND_API_KEY
+  let emailSent = false
+  let emailErrorText: string | null = null
+
   if (!apiKey) {
-    const timestamp = new Date().toISOString()
-    console.info(
-      '[contact] RESEND_API_KEY not set — logging submission instead of sending email:\n' +
-        buildEmailBody(parsed.data, timestamp),
-    )
+    console.warn('[contact] RESEND_API_KEY not set — email notification skipped.')
+    emailErrorText = 'RESEND_API_KEY not configured'
+  } else {
+    try {
+      await sendViaResend(parsed.data, apiKey)
+      emailSent = true
+    } catch (error) {
+      emailErrorText = error instanceof Error ? error.message : String(error)
+      console.error('[contact] Failed to send via Resend:', error)
+    }
+  }
+
+  // --- Step 3: Update the DB row with email outcome ---
+  if (db && dbRowId) {
+    await db
+      .from('contact_submissions')
+      .update({
+        email_sent: emailSent,
+        email_error: emailErrorText,
+      })
+      .eq('id', dbRowId)
+  }
+
+  // --- Step 4: Return response ---
+  // If the message was saved to the database, we return success — the message is not lost
+  // even if the email notification failed. If both the DB and email failed, surface an error.
+  if (dbRowId || emailSent) {
     return NextResponse.json({ success: true })
   }
 
-  try {
-    await sendViaResend(parsed.data, apiKey)
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('[contact] Failed to send via Resend:', error)
-    return NextResponse.json(
-      { error: 'Something went wrong sending your message. Please try again shortly.' },
-      { status: 502 },
-    )
-  }
+  return NextResponse.json(
+    { error: 'Something went wrong sending your message. Please try again shortly.' },
+    { status: 502 },
+  )
 }
