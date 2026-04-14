@@ -1,12 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  getCareerRealities,
-  getCareerRealitiesBySectorName,
-  type CareerRealities as CareerRealitiesData,
-  type JobSecurity,
-  type Rating1To5,
+import { getCareerRealities, getCareerRealitiesBySectorName } from '@/data/career-realities'
+import type {
+  CareerRealities as CareerRealitiesData,
+  JobSecurity,
+  Rating1To5,
 } from '@/data/career-realities'
 
 type IconProps = { className?: string; style?: React.CSSProperties }
