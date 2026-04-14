@@ -69,6 +69,7 @@ const NAV_GROUPS: NavGroup[] = [
       { name: 'Bursaries & Funding', href: '/bursaries' },
       { name: 'Benefits', href: '/benefits' },
       { name: 'Student Offers', href: '/offers' },
+      { name: 'Starting Uni Checklist', href: '/starting-uni' },
       { name: 'Parents', href: '/parents', hideForParents: true },
       { name: 'Blog', href: '/blog' },
     ],

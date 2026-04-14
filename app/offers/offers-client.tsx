@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import type { OfferCategory, OfferWithCategory } from '@/types/offers'
+import type { OfferCategory, OfferWithCategory, SupportGroup } from '@/types/offers'
 import type { Tables } from '@/types/database'
 import { OfferCard } from '@/components/offers/offer-card'
 import {
@@ -11,6 +11,7 @@ import {
   stageFilterToApi,
   type StageFilterValue,
 } from '@/components/offers/offer-filters'
+import { SUPPORT_GROUP_LABELS } from '@/components/offers/offer-utils'
 
 interface OffersClientProps {
   offers: OfferWithCategory[]
@@ -71,6 +72,11 @@ export function OffersClient({
   const urlStage = (searchParams.get('stage') ?? '') as StageFilterValue
   const urlSearch = searchParams.get('q') ?? initialSearch ?? ''
   const urlPage = parseInt(searchParams.get('page') ?? '1', 10)
+  const urlSupportGroup = searchParams.get('support_group') as SupportGroup | null
+  const supportGroupLabel =
+    urlSupportGroup && urlSupportGroup in SUPPORT_GROUP_LABELS
+      ? SUPPORT_GROUP_LABELS[urlSupportGroup]
+      : null
 
   const effectiveStage: StageFilterValue = urlStage
 
@@ -190,6 +196,27 @@ export function OffersClient({
                   to save offers and auto-filter by your stage.
                 </p>
               )}
+              {student && (
+                <p
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    color: 'var(--pf-blue-700)',
+                    fontSize: '0.9375rem',
+                  }}
+                >
+                  <Link
+                    href="/offers/saved"
+                    className="inline-flex items-center gap-1"
+                    style={{ color: 'var(--pf-blue-700)', textDecoration: 'underline' }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                    </svg>
+                    View saved offers
+                  </Link>
+                </p>
+              )}
             </div>
             <div className="lg:col-span-2" aria-hidden="true">
               <HeroVisual />
@@ -197,6 +224,49 @@ export function OffersClient({
           </div>
         </div>
       </section>
+
+      {/* Support-group filter chip (rendered when navigating from a support hub) */}
+      {supportGroupLabel && (
+        <div
+          style={{
+            backgroundColor: 'var(--pf-blue-50)',
+            borderBottom: '1px solid var(--pf-blue-100)',
+            padding: '14px 0',
+          }}
+        >
+          <div className="pf-container flex items-center justify-between gap-3 flex-wrap">
+            <div
+              className="inline-flex items-center gap-2"
+              style={{
+                fontSize: '0.9375rem',
+                color: 'var(--pf-grey-900)',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+              }}
+            >
+              <span
+                className="pf-badge-blue"
+                style={{ fontSize: '0.75rem', padding: '3px 10px' }}
+              >
+                Filtered
+              </span>
+              <span>Showing offers relevant to {supportGroupLabel.toLowerCase()}</span>
+            </div>
+            <Link
+              href="/offers"
+              className="no-underline hover:no-underline"
+              style={{
+                color: 'var(--pf-blue-700)',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.875rem',
+              }}
+            >
+              Clear filter
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <OfferFilters
@@ -304,7 +374,12 @@ export function OffersClient({
       {/* Cross-links */}
       <section style={{ backgroundColor: 'var(--pf-grey-100)', padding: '40px 0' }}>
         <div className="pf-container">
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <CrossLinkCard
+              href="/starting-uni"
+              title="Starting uni checklist"
+              description="Every admin, finance, and tech task for your first weeks."
+            />
             <CrossLinkCard
               href="/benefits"
               title="Student benefits"

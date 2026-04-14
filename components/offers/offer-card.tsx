@@ -15,15 +15,43 @@ interface OfferCardProps {
   offer: OfferWithCategory
   supportGroups?: SupportGroup[]
   returnUrl?: string
+  referrerPage?: string
+  onUnsave?: (offerId: string) => void
 }
 
-export function OfferCard({ offer, supportGroups, returnUrl }: OfferCardProps) {
+export function OfferCard({
+  offer,
+  supportGroups,
+  returnUrl,
+  referrerPage,
+  onUnsave,
+}: OfferCardProps) {
   const badge = OFFER_TYPE_BADGE[offer.offer_type] ?? OFFER_TYPE_BADGE.general
   const stagePills = collapseStages(offer.eligible_stages)
   const categoryIconName = offer.category?.icon ?? null
   const categoryName = offer.category?.name ?? null
   const shownGroups = (supportGroups ?? []).slice(0, 2)
   const moreGroups = Math.max(0, (supportGroups?.length ?? 0) - shownGroups.length)
+
+  // Fire detail_view click with explicit referrer when clicked from a referring
+  // context (e.g. a support-hub page). The detail page fires its own detail_view
+  // with its own referrer; the analytics query filters by referrer_page.
+  const handleNavClick = () => {
+    if (!referrerPage) return
+    fetch('/api/offers/click', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        offer_id: offer.id,
+        click_type: 'detail_view',
+        referrer_page: referrerPage,
+      }),
+    }).catch(() => {})
+  }
+
+  const handleSaveToggle = (next: boolean) => {
+    if (!next && onUnsave) onUnsave(offer.id)
+  }
 
   return (
     <article
@@ -62,6 +90,7 @@ export function OfferCard({ offer, supportGroups, returnUrl }: OfferCardProps) {
           initialIsSaved={!!offer.is_saved}
           returnUrl={returnUrl ?? `/offers/${offer.slug}`}
           size="sm"
+          onToggle={handleSaveToggle}
         />
       </div>
 
@@ -113,6 +142,7 @@ export function OfferCard({ offer, supportGroups, returnUrl }: OfferCardProps) {
           style={{ color: 'inherit' }}
           onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--pf-blue-700)')}
           onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}
+          onClick={handleNavClick}
         >
           {offer.title}
         </Link>
@@ -233,6 +263,7 @@ export function OfferCard({ offer, supportGroups, returnUrl }: OfferCardProps) {
             fontSize: '0.875rem',
             color: 'var(--pf-blue-700)',
           }}
+          onClick={handleNavClick}
         >
           View offer
           <span aria-hidden="true">→</span>

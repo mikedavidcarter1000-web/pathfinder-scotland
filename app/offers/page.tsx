@@ -35,22 +35,46 @@ export default async function OffersPage({
     category?: string
     stage?: string
     q?: string
+    support_group?: string
   }>
 }) {
   const params = await searchParams
   const supabase = await createServerSupabaseClient()
 
-  const [offersRes, categoriesRes, userRes] = await Promise.all([
+  // If support_group is provided, resolve the offer_ids up-front so we can
+  // filter the main query to just those tagged offers.
+  let supportGroupOfferIds: string[] | null = null
+  if (params.support_group) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (supabase as any)
-      .from('offers')
-      .select(
-        'id, category_id, title, slug, summary, description, brand, offer_type, discount_text, url, affiliate_url, promo_code, min_age, max_age, eligible_stages, scotland_only, requires_young_scot, requires_totum, requires_unidays, requires_student_beans, verification_method, locations, university_specific, seasonal_tags, active_from, active_until, partner_id, is_featured, featured_until, affiliate_network, commission_type, commission_value, cookie_days, last_verified_at, verified_by, is_active, needs_review, image_url, display_order, created_at, updated_at, category:offer_categories ( id, name, slug, icon )'
-      )
-      .eq('is_active', true)
-      .order('is_featured', { ascending: false })
-      .order('display_order', { ascending: true })
-      .order('title', { ascending: true }),
+    const { data: tagRows } = await (supabase as any)
+      .from('offer_support_groups')
+      .select('offer_id')
+      .eq('support_group', params.support_group)
+    supportGroupOfferIds = ((tagRows ?? []) as { offer_id: string }[]).map((r) => r.offer_id)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let offersQuery = (supabase as any)
+    .from('offers')
+    .select(
+      'id, category_id, title, slug, summary, description, brand, offer_type, discount_text, url, affiliate_url, promo_code, min_age, max_age, eligible_stages, scotland_only, requires_young_scot, requires_totum, requires_unidays, requires_student_beans, verification_method, locations, university_specific, seasonal_tags, active_from, active_until, partner_id, is_featured, featured_until, affiliate_network, commission_type, commission_value, cookie_days, last_verified_at, verified_by, is_active, needs_review, image_url, display_order, created_at, updated_at, category:offer_categories ( id, name, slug, icon )'
+    )
+    .eq('is_active', true)
+    .order('is_featured', { ascending: false })
+    .order('display_order', { ascending: true })
+    .order('title', { ascending: true })
+
+  if (supportGroupOfferIds !== null) {
+    if (supportGroupOfferIds.length === 0) {
+      // Requested group has no offers — short-circuit with empty list.
+      offersQuery = offersQuery.eq('id', '00000000-0000-0000-0000-000000000000')
+    } else {
+      offersQuery = offersQuery.in('id', supportGroupOfferIds)
+    }
+  }
+
+  const [offersRes, categoriesRes, userRes] = await Promise.all([
+    offersQuery,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (supabase as any)
       .from('offer_categories')
@@ -88,7 +112,9 @@ export default async function OffersPage({
   }))
 
   // If logged in and no stage yet set, one-time redirect to pre-filter by their stage.
-  if (student && !params.stage) {
+  // Skip this when a support_group is explicitly requested — that filter is the
+  // whole point of the navigation and we don't want to clobber it.
+  if (student && !params.stage && !params.support_group) {
     const autoStage = deriveStageFromSchoolStage(student.school_stage)
     if (autoStage) {
       const sp = new URLSearchParams()

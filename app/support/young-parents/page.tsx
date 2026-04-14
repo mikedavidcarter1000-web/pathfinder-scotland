@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { VerificationCaveat, VerificationBanner } from '@/components/ui/VerificationCaveat'
+import { SupportGroupOffers } from '@/components/offers/support-group-offers'
 
 export const metadata: Metadata = {
   title: 'Young Parent and Lone Parent Support – Pathfinder Scotland',
@@ -204,6 +205,9 @@ export default function YoungParentsPage() {
           </p>
         </div>
       </section>
+
+      {/* Offers & entitlements */}
+      <SupportGroupOffers supportGroup="young-parents" background="blue" />
 
       {/* Organisations */}
       <section className="pf-section pf-section-grey">

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { VerificationBanner } from '@/components/ui/VerificationCaveat'
+import { SupportGroupOffers } from '@/components/offers/support-group-offers'
 
 export const metadata: Metadata = {
   title: 'ESOL and EAL Student Support – Pathfinder Scotland',
@@ -178,6 +179,9 @@ export default function EsolEalPage() {
           </p>
         </div>
       </section>
+
+      {/* Offers & entitlements */}
+      <SupportGroupOffers supportGroup="esol-eal" background="blue" />
 
       {/* Organisations */}
       <section className="pf-section pf-section-grey">
