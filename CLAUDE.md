@@ -113,26 +113,62 @@ Also: `student_grades.subject_id` FK added (nullable) for gradual migration from
 > `is_available_n5`, `is_available_higher`, `is_available_adv_higher`
 > NOT `available_at_n5` / `available_at_higher` / `available_at_adv_higher`
 
-### Student Offers & Entitlements Hub (SCHEMA COMPLETE — Task 1 of 6)
-Migration: `supabase/migrations/20260414000002_student_offers_hub.sql` (applied)
+### Student Offers & Entitlements Hub (COMPLETE — all 6 tasks shipped)
 
-New `offer_*` namespace — parallel to the existing `benefit_*` tables used by `/benefits`. The two systems coexist; do not conflate them.
+A parallel `offer_*` namespace to the legacy `benefit_*` tables. Both systems coexist; `/offers` and `/benefits` are distinct surfaces and must not be conflated.
 
-Tables created:
-- `offer_categories` — 15 top-level categories, seeded (slugs like `government-entitlements`, `retail-and-fashion`)
+**Database tables** (migration: `supabase/migrations/20260414000002_student_offers_hub.sql`, seed: `supabase/seeds/offers_seed.sql`):
+- `offer_categories` — 15 top-level categories (slugs include `government-entitlements`, `retail-and-fashion`, `streaming-and-media`, etc.)
 - `partners` — commercial-relationship register (admin-only; RLS denies all public reads)
-- `offers` — core table, 40 columns incl. `offer_type`, `eligible_stages[]`, `seasonal_tags[]`, `locations[]`, affiliate/commission metadata, `last_verified_at`, `needs_review`
-- `offer_support_groups` — offer ↔ 13 support-group tags (e.g. `care-experienced`, `young-carers`)
-- `offer_clicks` — engagement log (`outbound`, `save`, `detail_view`, `copy_code`, …); anon INSERT allowed, users read only their own rows
+- `offers` — 40-column core table with `offer_type`, `eligible_stages[]`, `seasonal_tags[]`, `locations[]`, affiliate/commission metadata, `last_verified_at`, `needs_review`, `is_featured`, `featured_until`
+- `offer_support_groups` — offer ↔ 13 support-group tags
+- `offer_clicks` — engagement log (`outbound`, `save`, `unsave`, `detail_view`, `copy_code`); anon INSERT allowed, users read own rows only
 - `saved_offers` — student bookmarks (composite PK)
 - `starting_uni_checklist_items` — master checklist for "starting uni"
 - `student_checklist_progress` — per-student tick state
 
-Triggers & functions:
-- `set_offers_updated_at()` BEFORE UPDATE trigger on `offers`
-- `flag_stale_offers()` — marks offers with `last_verified_at` > 6 months old as `needs_review`. **pg_cron is NOT installed** on this project, so the weekly schedule is only registered conditionally by the migration's DO block. To enable: `CREATE EXTENSION pg_cron;` then re-run the scheduler snippet. Until then, call the function manually.
+**Seed data** (62 offers, 51 support-group junctions, 21 checklist items): covers government entitlements, free software, accommodation essentials, health, transport, streaming, banking, food, and retail. Each offer is tagged with relevant support groups for cross-linking.
 
-Existing `benefit_*` tables (`student_benefits`, `benefit_categories`, `benefit_clicks`, `benefit_reminders`) and the `/benefits` page + `/api/benefits/click` endpoint are unchanged.
+**Public routes:**
+- `/offers` — main hub, server component + `offers-client.tsx` (filter by category, stage, support group, location, search; featured offers pinned)
+- `/offers/[slug]` — offer detail with CTA, related offers, support-group tags
+- `/offers/saved` — logged-in students' bookmarked offers
+- `/starting-uni` — 21-item checklist with progress tracking, linked to underlying offers
+
+**Public API routes:**
+- `GET /api/offers` — list offers with filtering and pagination
+- `GET /api/offers/[slug]` — offer detail + related
+- `POST /api/offers/click` — log click (fire-and-forget, 30/min rate limit); returns resolved URL for outbound clicks
+- `POST /api/offers/save` — toggle save status (auth required)
+- `GET /api/offers/saved` — list saved offers for current user
+- `GET /api/starting-uni/checklist` — checklist with progress
+- `POST /api/starting-uni/progress` — tick/untick items
+
+**Support hub cross-linking**: `/support/[group]` pages (young-carers, estranged-students, young-parents, etc.) render a `<SupportGroupOffers>` section that pulls offers tagged for that group. All clicks from these pages carry `referrer_page` so analytics can attribute engagement back to the support hub.
+
+**Admin routes** (ADMIN_EMAILS whitelist — set env var `ADMIN_EMAILS=me@example.com,other@example.com`):
+- `/admin/offers` — analytics dashboard + offer management (client component for inline actions)
+- `GET /api/admin/offers` — list all offers (active + inactive + needs_review) with category/status/search filters
+- `GET /api/admin/offers/analytics` — JSON analytics payload (summary, top offers, categories, support referrals, saved, stale)
+- `PUT /api/admin/offers/[id]` — update quick-edit fields (url, affiliate_url, promo_code, discount_text, is_active, is_featured, featured_until)
+- `PUT /api/admin/offers/[id]/verify` — set `last_verified_at = today`, `needs_review = false`, `verified_by = admin email`
+- `PUT /api/admin/offers/[id]/toggle-active` — flip `is_active`
+- `PUT /api/admin/offers/[id]/toggle-featured` — flip `is_featured`; body `{ featured_until?: 'YYYY-MM-DD' | null }`. Unfeaturing clears `featured_until`.
+
+All admin routes go through `requireAdminApi()` in `lib/admin-auth.ts`, which fail-closes when `ADMIN_EMAILS` is empty. The service-role client (also in `lib/admin-auth.ts`) bypasses RLS to read `offer_clicks` and `partners`.
+
+**Monetisation hooks already wired:**
+- `offers.affiliate_url` — preferred over `url` for outbound click redirects
+- `offers.promo_code` — copied via `copy_code` click type (tracked separately)
+- `offers.is_featured` + `featured_until` — pinned to top of `/offers`; managed via admin dashboard
+- `partners` table — ready for affiliate network / contract tracking (RLS locked to service role)
+- `offers.affiliate_network`, `commission_type`, `commission_value`, `cookie_days` — metadata columns for attribution modelling
+
+**Triggers & functions:**
+- `set_offers_updated_at()` BEFORE UPDATE trigger on `offers`
+- `flag_stale_offers()` — marks offers with `last_verified_at` > 6 months old as `needs_review`. **pg_cron is NOT installed** on this project, so the weekly schedule is only registered conditionally by the migration's DO block. To enable: `CREATE EXTENSION pg_cron;` then re-run the scheduler snippet. Until then, call the function manually or rely on admin "Mark verified" flow.
+
+Existing `benefit_*` tables (`student_benefits`, `benefit_categories`, `benefit_clicks`, `benefit_reminders`) and the `/benefits` page + `/api/benefits/click` + `/admin/revenue` dashboard are unchanged.
 
 ## Important Commands
 
