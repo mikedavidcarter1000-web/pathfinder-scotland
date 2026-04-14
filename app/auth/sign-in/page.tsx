@@ -65,27 +65,16 @@ export default function SignInPage() {
         <div className="text-center mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 no-underline hover:no-underline"
+            className="inline-flex items-center justify-center no-underline hover:no-underline"
           >
             <Image
-              src="/logo.svg"
-              alt=""
-              role="presentation"
-              width={40}
-              height={40}
+              src="/logo-full.png"
+              alt="Pathfinder Scotland"
+              width={140}
+              height={58}
               priority
-              style={{ display: 'block', flexShrink: 0 }}
+              style={{ height: '58px', width: 'auto' }}
             />
-            <span
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700,
-                fontSize: '1.5rem',
-                color: 'var(--pf-grey-900)',
-              }}
-            >
-              Pathfinder Scotland
-            </span>
           </Link>
         </div>
 

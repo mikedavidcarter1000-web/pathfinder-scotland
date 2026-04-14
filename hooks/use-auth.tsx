@@ -237,7 +237,7 @@ export function useUpdatePassword() {
 }
 
 // OAuth Sign In
-export type OAuthProvider = 'google' | 'github' | 'facebook' | 'apple' | 'twitter'
+export type OAuthProvider = 'google' | 'github' | 'facebook' | 'apple' | 'twitter' | 'azure'
 
 export function useOAuthSignIn() {
   const supabase = getSupabaseClient()
