@@ -181,8 +181,12 @@ function PathwaysPageContent() {
 
     const compulsoryNames = pathway.rule.compulsory_subjects || []
     const allSubjects = pathway.subjectsByArea.flatMap((g) => g.subjects)
-    const compulsoryIdList = allSubjects
-      .filter((s) => compulsoryNames.some((cn) => matchesCompulsory(cn, s.name)))
+    const compulsoryIdsWithoutMaths = allSubjects
+      .filter((s) => {
+        const ln = s.name.toLowerCase()
+        if (ln === 'mathematics' || ln === 'maths' || ln === 'applications of mathematics') return false
+        return compulsoryNames.some((cn) => matchesCompulsory(cn, s.name))
+      })
       .map((s) => s.id)
 
     // Merge saved picks (if any) with compulsory — compulsory always applies.
@@ -190,7 +194,7 @@ function PathwaysPageContent() {
       .map((c) => c.subject_id)
       .filter((id) => allSubjects.some((s) => s.id === id))
 
-    setSelectedIds(new Set<string>([...compulsoryIdList, ...savedIds]))
+    setSelectedIds(new Set<string>([...compulsoryIdsWithoutMaths, ...savedIds]))
 
     if (yearGoingInto === 's3' && savedAcademyChoices && savedAcademyChoices.length > 0) {
       const slots: (string | null)[] = [null, null, null]
@@ -220,7 +224,11 @@ function PathwaysPageContent() {
     const allSubjects = pathway.subjectsByArea.flatMap((g) => g.subjects)
     return new Set(
       allSubjects
-        .filter((s) => names.some((cn) => matchesCompulsory(cn, s.name)))
+        .filter((s) => {
+          const ln = s.name.toLowerCase()
+          if (ln === 'mathematics' || ln === 'maths' || ln === 'applications of mathematics') return false
+          return names.some((cn) => matchesCompulsory(cn, s.name))
+        })
         .map((s) => s.id)
     )
   }, [pathway?.rule, pathway?.subjectsByArea])
@@ -709,6 +717,25 @@ function PathwaysPageContent() {
                 hasSelection={selectedIds.size > 0}
                 onSave={async () => {
                   if (!currentTransition) return
+
+                  // Custom validation: If Mathematics is compulsory, ensure at least one maths subject is picked.
+                  const isMathsRequired = compulsoryNames.some((cn) =>
+                    matchesCompulsory(cn, 'Mathematics')
+                  )
+                  if (isMathsRequired) {
+                    const allSubjects = pathway?.subjectsByArea.flatMap((g) => g.subjects) || []
+                    const hasMaths = Array.from(selectedIds).some((id) => {
+                      const subj = allSubjects.find((s) => s.id === id)
+                      if (!subj) return false
+                      const ln = subj.name.toLowerCase()
+                      return ln === 'mathematics' || ln === 'maths' || ln === 'applications of mathematics'
+                    })
+                    if (!hasMaths) {
+                      pfToast.error('Validation Error', 'You must select at least one of Mathematics or Applications of Mathematics')
+                      return
+                    }
+                  }
+
                   const orderedFreeIds = Array.from(selectedIds).filter(
                     (id) => !compulsoryIds.has(id)
                   )

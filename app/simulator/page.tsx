@@ -65,6 +65,8 @@ function getCompulsoryIds(data: SimulatorData, stage: SimulatorStage): Set<strin
   const set = new Set<string>()
   if (!rule || !rule.compulsory_subjects) return set
   for (const subject of data.subjects) {
+    const ln = subject.name.toLowerCase()
+    if (ln === 'mathematics' || ln === 'maths' || ln === 'applications of mathematics') continue
     if (rule.compulsory_subjects.some((cn) => matchesCompulsory(cn, subject.name))) {
       set.add(subject.id)
     }
@@ -270,7 +272,22 @@ function SimulatorContent() {
       toast.info('Nothing to save', 'Pick some subjects first.')
       return
     }
+
     const transition = STAGE_TO_TRANSITION[stage] as ChoiceTransition
+    const rule = data?.rules[transition]
+    if (rule?.compulsory_subjects?.some((cn) => matchesCompulsory(cn, 'Mathematics'))) {
+      const hasMaths = Array.from(selectedA).some((id) => {
+        const subj = data?.subjects.find((s) => s.id === id)
+        if (!subj) return false
+        const ln = subj.name.toLowerCase()
+        return ln === 'mathematics' || ln === 'maths' || ln === 'applications of mathematics'
+      })
+      if (!hasMaths) {
+        toast.error('Validation Error', 'You must select at least one of Mathematics or Applications of Mathematics')
+        return
+      }
+    }
+
     const ok = window.confirm(
       `Save this combination as your ${stage.toUpperCase()} pathway? This will replace any saved subject choices for this stage.`
     )
