@@ -140,7 +140,7 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
           {/* Badges */}
           <div className="flex flex-wrap gap-2 mb-4">
             {college.has_swap && (
-              <span className="pf-badge-amber">
+              <span className="pf-badge-amber" title="SWAP (Scottish Wider Access Programme) — free access courses for adults without traditional qualifications, leading to guaranteed university interviews">
                 {college.swap_hub ? `SWAP ${college.swap_hub}` : 'SWAP'}
               </span>
             )}
@@ -539,7 +539,7 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
             {college.has_swap && (
               <SupportItem
                 title="SWAP Access"
-                description={`SWAP access courses available${college.swap_hub ? ` through SWAP ${college.swap_hub}` : ''} — free courses for adults (21+) without traditional qualifications`}
+                description={`SWAP (Scottish Wider Access Programme) courses available${college.swap_hub ? ` through SWAP ${college.swap_hub}` : ''} — free access courses for adults (typically 18+) without traditional qualifications, leading to guaranteed university interviews`}
                 badge="SWAP"
                 highlight
               />

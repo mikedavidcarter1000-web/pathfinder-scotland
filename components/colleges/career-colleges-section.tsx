@@ -89,7 +89,7 @@ export function CareerCollegesSection({ sectorName }: Props) {
               </p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
-              {college.has_swap && <span className="pf-badge-amber" style={{ fontSize: '0.6875rem' }}>SWAP</span>}
+              {college.has_swap && <span className="pf-badge-amber" style={{ fontSize: '0.6875rem' }} title="SWAP (Scottish Wider Access Programme) — free access courses for adults without traditional qualifications, leading to guaranteed university interviews">SWAP</span>}
               <svg className="w-4 h-4" style={{ color: 'var(--pf-blue-500)' }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>

@@ -253,9 +253,9 @@ export default function CollegesPage() {
               degree in Scotland.
             </InfoBlock>
             <InfoBlock title="SWAP Access">
-              The Scottish Wider Access Programme helps adults (21+) without traditional
-              qualifications access higher education through free access courses at partner
-              colleges.
+              SWAP (Scottish Wider Access Programme) offers free access courses for adults
+              (typically 18+) without traditional qualifications, leading to guaranteed
+              university interviews upon completion.
             </InfoBlock>
             <InfoBlock title="Free Tuition">
               Full-time further education courses at Scottish colleges are free for eligible
@@ -322,7 +322,7 @@ function CollegeCard({ college }: { college: College }) {
         {/* Badges */}
         <div className="flex flex-wrap gap-1.5 mb-3">
           {college.has_swap && (
-            <span className="pf-badge-amber">
+            <span className="pf-badge-amber" title="SWAP (Scottish Wider Access Programme) — free access courses for adults without traditional qualifications, leading to guaranteed university interviews">
               {college.swap_hub ? `SWAP ${college.swap_hub}` : 'SWAP'}
             </span>
           )}
