@@ -538,6 +538,7 @@ export type Database = {
           qualification_levels: string[] | null
           is_active: boolean | null
           created_at: string | null
+          image_url: string | null
         }
         Insert: {
           id?: string
@@ -563,6 +564,7 @@ export type Database = {
           qualification_levels?: string[] | null
           is_active?: boolean | null
           created_at?: string | null
+          image_url?: string | null
         }
         Update: {
           id?: string
@@ -588,6 +590,7 @@ export type Database = {
           qualification_levels?: string[] | null
           is_active?: boolean | null
           created_at?: string | null
+          image_url?: string | null
         }
         Relationships: []
       }
@@ -1706,6 +1709,7 @@ export type Database = {
           website_url: string | null
           widening_access_info: Json | null
           widening_access_url: string | null
+          image_url: string | null
         }
         Insert: {
           articulation_info?: string | null
@@ -1736,6 +1740,7 @@ export type Database = {
           website_url?: string | null
           widening_access_info?: Json | null
           widening_access_url?: string | null
+          image_url?: string | null
         }
         Update: {
           articulation_info?: string | null
@@ -1766,6 +1771,7 @@ export type Database = {
           website_url?: string | null
           widening_access_info?: Json | null
           widening_access_url?: string | null
+          image_url?: string | null
         }
         Relationships: []
       }

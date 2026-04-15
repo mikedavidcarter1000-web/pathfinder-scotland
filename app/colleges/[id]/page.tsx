@@ -2,6 +2,7 @@
 
 import { use, useMemo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useCollege, useCollegeArticulation, type ArticulationWithUniversity } from '@/hooks/use-colleges'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
@@ -103,9 +104,25 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
             <span style={{ color: 'var(--pf-grey-900)' }}>{college.name}</span>
           </nav>
 
-          <h1 style={{ marginBottom: '8px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>
-            {college.name}
-          </h1>
+          <div className="flex items-start gap-4 mb-2">
+            <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden">
+              {college?.image_url ? (
+                <Image 
+                  src={college.image_url || '/logo-icon.png'} 
+                  alt={college.name || 'College Logo'} 
+                  fill 
+                  style={{ objectFit: 'cover' }} 
+                />
+              ) : (
+                <span className="text-2xl font-bold text-gray-400">{college?.name?.charAt(0) || 'C'}</span>
+              )}
+            </div>
+            <div>
+              <h1 style={{ marginBottom: '8px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>
+                {college?.name}
+              </h1>
+            </div>
+          </div>
 
           <div className="flex items-center gap-2 flex-wrap mb-4">
             <span
@@ -189,11 +206,11 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
                   </dd>
                 </div>
               )}
-              {college.qualification_levels && college.qualification_levels.length > 0 && (
+              {college?.qualification_levels && college.qualification_levels?.length > 0 && (
                 <div>
                   <dt style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', marginBottom: '4px' }}>Qualification levels</dt>
                   <dd className="flex flex-wrap gap-1.5">
-                    {college.qualification_levels.map((level) => (
+                    {college.qualification_levels?.map((level) => (
                       <span key={level} className="pf-badge-blue">{level}</span>
                     ))}
                   </dd>
@@ -244,13 +261,13 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
         )}
 
         {/* Section 3 — Course Areas */}
-        {college.course_areas && college.course_areas.length > 0 && (
+        {college?.course_areas && college.course_areas?.length > 0 && (
           <section className="pf-card" style={{ padding: '24px' }}>
             <h2 style={{ fontSize: '1.25rem', marginBottom: '16px' }}>
-              Course Areas ({college.course_areas.length})
+              Course Areas ({college.course_areas?.length})
             </h2>
             <div className="flex flex-wrap gap-2">
-              {college.course_areas.map((area) => (
+              {college.course_areas?.map((area) => (
                 <span
                   key={area}
                   className="pf-badge-blue"
@@ -415,11 +432,11 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
         </section>
 
         {/* Section 5 — Apprenticeships */}
-        {(college.fa_frameworks?.length || college.ma_frameworks?.length) && (
+        {(college?.fa_frameworks?.length || college?.ma_frameworks?.length) ? (
           <section className="pf-card" style={{ padding: '24px' }}>
             <h2 style={{ fontSize: '1.25rem', marginBottom: '16px' }}>Apprenticeships</h2>
 
-            {college.fa_frameworks && college.fa_frameworks.length > 0 && (
+            {college?.fa_frameworks && college.fa_frameworks?.length > 0 && (
               <div style={{ marginBottom: college.ma_frameworks?.length ? '20px' : 0 }}>
                 <h3 style={{ fontSize: '1rem', marginBottom: '8px', color: 'var(--pf-grey-900)' }}>
                   Foundation Apprenticeships
@@ -428,14 +445,14 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
                   Available for S4-S6 pupils alongside school study (SCQF Level 6)
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {college.fa_frameworks.map((fw) => (
+                  {college.fa_frameworks?.map((fw) => (
                     <span key={fw} className="pf-badge-blue">{fw}</span>
                   ))}
                 </div>
               </div>
             )}
 
-            {college.ma_frameworks && college.ma_frameworks.length > 0 && (
+            {college?.ma_frameworks && college.ma_frameworks?.length > 0 && (
               <div>
                 <h3 style={{ fontSize: '1rem', marginBottom: '8px', color: 'var(--pf-grey-900)' }}>
                   Modern Apprenticeships
@@ -444,7 +461,7 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
                   Earn while you learn — paid employment with college study
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {college.ma_frameworks.map((fw) => (
+                  {college.ma_frameworks?.map((fw) => (
                     <span key={fw} className="pf-badge-blue">{fw}</span>
                   ))}
                 </div>
@@ -465,7 +482,7 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
               </Link>
             </div>
           </section>
-        )}
+        ) : null}
 
         {/* Section 6 — Schools Programme */}
         {college.schools_programme && (

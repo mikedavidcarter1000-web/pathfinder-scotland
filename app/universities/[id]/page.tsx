@@ -2,6 +2,7 @@
 
 import { use, useMemo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   useUniversity,
   useUniversityBenefits,
@@ -139,11 +140,11 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
   }> = []
   if (courses) {
     for (const c of courses) {
-      const wa = c.widening_access_requirements as
+      const wa = c?.widening_access_requirements as
         | Record<string, { highers?: string } | string | undefined>
         | null
       if (!wa || typeof wa !== 'object') continue
-      const entry = c.entry_requirements as { highers?: string } | null
+      const entry = c?.entry_requirements as { highers?: string } | null
       const standardOffer = entry?.highers ?? null
 
       // Pick the most favourable adjusted offer available.
@@ -197,13 +198,13 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
   const waCourseExamples = coursesWithWa.slice(0, 5)
 
   const hasAnyWaData = Boolean(
-    university.wa_programme_name ||
-      university.wa_programme_description ||
-      university.care_experienced_guarantee ||
-      university.wa_grade_reduction ||
-      university.wa_bursary_info ||
-      university.articulation_info ||
-      (university.shep_programmes && university.shep_programmes.length > 0) ||
+    university?.wa_programme_name ||
+      university?.wa_programme_description ||
+      university?.care_experienced_guarantee ||
+      university?.wa_grade_reduction ||
+      university?.wa_bursary_info ||
+      university?.articulation_info ||
+      (university?.shep_programmes && university.shep_programmes.length > 0) ||
       waCourseExamples.length > 0
   )
 
@@ -221,9 +222,18 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
 
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-4">
-              {/* Logo Placeholder */}
-              <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl font-bold text-gray-400">{university.name.charAt(0)}</span>
+              {/* Logo / Image Placeholder */}
+              <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden">
+                {university?.image_url || university?.logo_url ? (
+                  <Image 
+                    src={university.image_url || university.logo_url || '/logo-icon.png'} 
+                    alt={university.name || 'University Logo'} 
+                    fill 
+                    style={{ objectFit: 'cover' }} 
+                  />
+                ) : (
+                  <span className="text-2xl font-bold text-gray-400">{university?.name?.charAt(0) || 'U'}</span>
+                )}
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">{university.name}</h1>
