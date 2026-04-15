@@ -549,6 +549,17 @@ INSERT INTO subjects (
   'school'
 ),
 (
+  'Electronics',
+  (SELECT id FROM curricular_areas WHERE name = 'Technologies'),
+  'Study of electronic systems, circuits, microcontrollers, and their practical applications.',
+  'Highly relevant for electrical and electronic engineering, hardware design, and robotics.',
+  'Exam and practical assignment',
+  false, false, true, true, true,
+  false, false,
+  ARRAY['scientific-method','practical','problem-solving','numeracy','digital'],
+  'school'
+),
+(
   'Graphic Communication',
   (SELECT id FROM curricular_areas WHERE name = 'Technologies'),
   'Produce technical and creative graphics using CAD, illustration and design software.',
@@ -1423,6 +1434,11 @@ INSERT INTO subject_career_sectors (subject_id, career_sector_id, relevance) VAL
 ((SELECT id FROM subjects WHERE name='Engineering Science'), (SELECT id FROM career_sectors WHERE name='Construction & Trades'),          'recommended'),
 ((SELECT id FROM subjects WHERE name='Engineering Science'), (SELECT id FROM career_sectors WHERE name='Science & Research'),             'recommended'),
 ((SELECT id FROM subjects WHERE name='Engineering Science'), (SELECT id FROM career_sectors WHERE name='Computing & Digital Technology'), 'related');
+
+-- Electronics
+INSERT INTO subject_career_sectors (subject_id, career_sector_id, relevance) VALUES
+((SELECT id FROM subjects WHERE name='Electronics'), (SELECT id FROM career_sectors WHERE name='Engineering & Manufacturing'),    'essential'),
+((SELECT id FROM subjects WHERE name='Electronics'), (SELECT id FROM career_sectors WHERE name='Computing & Digital Technology'), 'essential');
 
 -- Graphic Communication
 INSERT INTO subject_career_sectors (subject_id, career_sector_id, relevance) VALUES
