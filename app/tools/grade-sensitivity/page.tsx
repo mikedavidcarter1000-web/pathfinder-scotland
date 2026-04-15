@@ -1024,65 +1024,73 @@ function BiggestRiskSection({ risk }: { risk: SubjectSensitivity }) {
     <section style={{ backgroundColor: 'var(--pf-grey-100)', padding: '48px 0' }}>
       <div className="pf-container">
         <h2 style={{ fontSize: '1.5rem', marginBottom: '16px' }}>Your biggest risks</h2>
-        <div
-          className="pf-card"
+        <Link
+          href="/blog/proven-revision-techniques"
+          className="pf-card pf-card-hover block no-underline hover:no-underline"
           style={{
             padding: '24px',
             borderLeft: '4px solid var(--pf-red-500)',
           }}
         >
-          <div className="flex items-start gap-4">
-            <div
-              className="flex items-center justify-center flex-shrink-0"
-              style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '12px',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                color: 'var(--pf-red-500)',
-              }}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-            </div>
-            <div>
-              <p
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div
+                className="flex items-center justify-center flex-shrink-0"
                 style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 600,
-                  fontSize: '1.0625rem',
-                  color: 'var(--pf-grey-900)',
-                  marginBottom: '6px',
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                  color: 'var(--pf-red-500)',
                 }}
               >
-                Your most grade-sensitive subject is {risk.subject}
-              </p>
-              <p style={{ fontSize: '0.9375rem', color: 'var(--pf-grey-600)', marginBottom: '8px' }}>
-                Dropping from {risk.currentGrade} to {risk.downgradeGrade} would close{' '}
-                <span style={{ fontWeight: 600, color: 'var(--pf-red-500)' }}>
-                  {Math.abs(risk.downgradeDelta)} course{Math.abs(risk.downgradeDelta) !== 1 ? 's' : ''}
-                </span>
-                {risk.worstCaseDelta < risk.downgradeDelta && (
-                  <>
-                    {'. Worst case (dropping to D): '}
-                    <span style={{ fontWeight: 600, color: 'var(--pf-red-500)' }}>
-                      {Math.abs(risk.worstCaseDelta)} courses lost
-                    </span>
-                  </>
-                )}
-              </p>
-              <p style={{ fontSize: '0.875rem', color: 'var(--pf-blue-700)', fontWeight: 500 }}>
-                Focus your revision time where it has the biggest impact on your options.
-              </p>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <p
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    fontSize: '1.0625rem',
+                    color: 'var(--pf-grey-900)',
+                    marginBottom: '6px',
+                  }}
+                >
+                  Your most grade-sensitive subject is {risk.subject}
+                </p>
+                <p style={{ fontSize: '0.9375rem', color: 'var(--pf-grey-600)', marginBottom: '8px' }}>
+                  Dropping from {risk.currentGrade} to {risk.downgradeGrade} would close{' '}
+                  <span style={{ fontWeight: 600, color: 'var(--pf-red-500)' }}>
+                    {Math.abs(risk.downgradeDelta)} course{Math.abs(risk.downgradeDelta) !== 1 ? 's' : ''}
+                  </span>
+                  {risk.worstCaseDelta < risk.downgradeDelta && (
+                    <>
+                      {'. Worst case (dropping to D): '}
+                      <span style={{ fontWeight: 600, color: 'var(--pf-red-500)' }}>
+                        {Math.abs(risk.worstCaseDelta)} courses lost
+                      </span>
+                    </>
+                  )}
+                </p>
+                <p style={{ fontSize: '0.875rem', color: 'var(--pf-blue-700)', fontWeight: 500 }}>
+                  Focus your revision time where it has the biggest impact on your options. Read our revision guide →
+                </p>
+              </div>
+            </div>
+            <div className="hidden sm:flex text-gray-400" style={{ color: 'var(--pf-grey-400)' }}>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
     </section>
   )
