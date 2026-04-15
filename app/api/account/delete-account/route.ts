@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
 
 export async function POST(req: Request) {
   try {
@@ -67,6 +68,26 @@ export async function POST(req: Request) {
     if (deleteError) {
       console.error('delete_user_data RPC error:', deleteError)
       return NextResponse.json({ error: 'Failed to delete account data' }, { status: 500 })
+    }
+
+    // Completely remove the user from Supabase auth
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (!serviceRoleKey) {
+      console.error('SUPABASE_SERVICE_ROLE_KEY is missing')
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
+    }
+    
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      serviceRoleKey,
+      { auth: { persistSession: false } }
+    )
+
+    const { error: authDeleteError } = await supabaseAdmin.auth.admin.deleteUser(user.id)
+    if (authDeleteError) {
+      console.error('Failed to delete auth user:', authDeleteError)
+      // Account may be partially deleted, but we must return an error
+      return NextResponse.json({ error: 'Failed to complete account deletion' }, { status: 500 })
     }
 
     // Sign out the user — clears session cookies
