@@ -86,12 +86,16 @@ function GradeSensitivityContent() {
 
     if (hasStudentHighers && studentGrades) {
       return studentGrades
-        .filter((g) => g.qualification_type === 'higher' && g.grade)
-        .map((g) => ({
-          subject: g.subject,
-          grade: g.grade,
-          subjectId: g.subject_id ?? undefined,
-        }))
+        .filter((g) => g.qualification_type === 'higher')
+        .map((g) => {
+          // If grade exists and is valid, use it. Otherwise default to 'C'.
+          const isValidGrade = g.grade && ['A', 'B', 'C', 'D'].includes(g.grade)
+          return {
+            subject: g.subject,
+            grade: isValidGrade ? g.grade : 'C',
+            subjectId: g.subject_id ?? undefined,
+          }
+        })
     }
 
     return []
