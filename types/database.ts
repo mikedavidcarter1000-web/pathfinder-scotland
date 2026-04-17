@@ -356,7 +356,16 @@ export type Database = {
           id: string
           is_new_ai_role: boolean | null
           salary_entry: string | null
+          salary_entry_uk: number | null
           salary_experienced: string | null
+          salary_experienced_uk: number | null
+          salary_last_updated: string | null
+          salary_median_scotland: number | null
+          salary_median_uk: number | null
+          salary_needs_verification: boolean | null
+          salary_notes: string | null
+          salary_source: string | null
+          soc_code_2020: string | null
           title: string
         }
         Insert: {
@@ -368,7 +377,16 @@ export type Database = {
           id?: string
           is_new_ai_role?: boolean | null
           salary_entry?: string | null
+          salary_entry_uk?: number | null
           salary_experienced?: string | null
+          salary_experienced_uk?: number | null
+          salary_last_updated?: string | null
+          salary_median_scotland?: number | null
+          salary_median_uk?: number | null
+          salary_needs_verification?: boolean | null
+          salary_notes?: string | null
+          salary_source?: string | null
+          soc_code_2020?: string | null
           title: string
         }
         Update: {
@@ -380,7 +398,16 @@ export type Database = {
           id?: string
           is_new_ai_role?: boolean | null
           salary_entry?: string | null
+          salary_entry_uk?: number | null
           salary_experienced?: string | null
+          salary_experienced_uk?: number | null
+          salary_last_updated?: string | null
+          salary_median_scotland?: number | null
+          salary_median_uk?: number | null
+          salary_needs_verification?: boolean | null
+          salary_notes?: string | null
+          salary_source?: string | null
+          soc_code_2020?: string | null
           title?: string
         }
         Relationships: [
