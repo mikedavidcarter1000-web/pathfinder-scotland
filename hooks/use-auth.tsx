@@ -35,6 +35,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [parent, setParent] = useState<Tables<'parents'> | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  // A signed-in user is either a student or a parent (or rarely neither
+  // mid-onboarding). Fetch both in parallel so the dashboard can branch
+  // without a second round-trip.
+  const fetchProfiles = async (userId: string) => {
+    const supabase = getSupabaseClient()
+    const [studentRes, parentRes] = await Promise.all([
+      supabase.from('students').select('*').eq('id', userId).maybeSingle(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any)
+        .from('parents')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle(),
+    ])
+    setStudent(studentRes.data as Tables<'students'> | null)
+    setParent(parentRes.data as Tables<'parents'> | null)
+    setIsLoading(false)
+  }
+
   useEffect(() => {
     const supabase = getSupabaseClient()
 
@@ -66,25 +85,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => subscription.unsubscribe()
   }, [])
-
-  // A signed-in user is either a student or a parent (or rarely neither
-  // mid-onboarding). Fetch both in parallel so the dashboard can branch
-  // without a second round-trip.
-  const fetchProfiles = async (userId: string) => {
-    const supabase = getSupabaseClient()
-    const [studentRes, parentRes] = await Promise.all([
-      supabase.from('students').select('*').eq('id', userId).maybeSingle(),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (supabase as any)
-        .from('parents')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle(),
-    ])
-    setStudent(studentRes.data as Tables<'students'> | null)
-    setParent(parentRes.data as Tables<'parents'> | null)
-    setIsLoading(false)
-  }
 
   return (
     <AuthContext.Provider value={{ user, session, student, parent, isLoading }}>

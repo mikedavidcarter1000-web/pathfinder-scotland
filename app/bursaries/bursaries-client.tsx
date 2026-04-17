@@ -432,6 +432,28 @@ export function BursariesClient({
     return Math.round(sum)
   }, [definite, bursaryById])
 
+  // --- Apply filters to matched sections ---
+  const fDefinite = useMemo(
+    () => definite.filter(m => filteredBursaryIds.has(m.bursary_id)),
+    [definite, filteredBursaryIds]
+  )
+  const fMaybe = useMemo(
+    () => maybe.filter(m => filteredBursaryIds.has(m.bursary_id)),
+    [maybe, filteredBursaryIds]
+  )
+  const fApplied = useMemo(
+    () => applied.filter(m => filteredBursaryIds.has(m.bursary_id)),
+    [applied, filteredBursaryIds]
+  )
+  const fDismissed = useMemo(
+    () => dismissed.filter(m => filteredBursaryIds.has(m.bursary_id)),
+    [dismissed, filteredBursaryIds]
+  )
+  const fOther = useMemo(
+    () => otherBursaries.filter(b => filteredBursaryIds.has(b.id)),
+    [otherBursaries, filteredBursaryIds]
+  )
+
   const renderCard = (m: BursaryMatch) => {
     const b = bursaryById.get(m.bursary_id)
     if (!b) return null
@@ -512,28 +534,6 @@ export function BursariesClient({
       </>
     )
   }
-
-  // --- Apply filters to matched sections ---
-  const fDefinite = useMemo(
-    () => definite.filter(m => filteredBursaryIds.has(m.bursary_id)),
-    [definite, filteredBursaryIds]
-  )
-  const fMaybe = useMemo(
-    () => maybe.filter(m => filteredBursaryIds.has(m.bursary_id)),
-    [maybe, filteredBursaryIds]
-  )
-  const fApplied = useMemo(
-    () => applied.filter(m => filteredBursaryIds.has(m.bursary_id)),
-    [applied, filteredBursaryIds]
-  )
-  const fDismissed = useMemo(
-    () => dismissed.filter(m => filteredBursaryIds.has(m.bursary_id)),
-    [dismissed, filteredBursaryIds]
-  )
-  const fOther = useMemo(
-    () => otherBursaries.filter(b => filteredBursaryIds.has(b.id)),
-    [otherBursaries, filteredBursaryIds]
-  )
 
   // --- Logged in: personalised results ---
   const hasAnyMatches = fDefinite.length + fMaybe.length + fApplied.length > 0
