@@ -1,0 +1,2474 @@
+{
+  "1111": {
+    "description": "Chief executives and senior officials",
+    "p25": null,
+    "p50": 87808,
+    "p75": null
+  },
+  "1112": {
+    "description": "Elected officers and representatives",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1121": {
+    "description": "Production managers and directors in manufacturing",
+    "p25": null,
+    "p50": 55752,
+    "p75": null
+  },
+  "1122": {
+    "description": "Production managers and directors in construction",
+    "p25": null,
+    "p50": 57653,
+    "p75": null
+  },
+  "1123": {
+    "description": "Production managers and directors in mining and energy",
+    "p25": null,
+    "p50": 62747,
+    "p75": null
+  },
+  "1131": {
+    "description": "Financial managers and directors",
+    "p25": null,
+    "p50": 55044,
+    "p75": null
+  },
+  "1132": {
+    "description": "Marketing, sales and advertising directors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1133": {
+    "description": "Public relations and communications directors",
+    "p25": null,
+    "p50": 43580,
+    "p75": null
+  },
+  "1134": {
+    "description": "Purchasing managers and directors",
+    "p25": null,
+    "p50": 42716,
+    "p75": null
+  },
+  "1135": {
+    "description": "Charitable organisation managers and directors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1136": {
+    "description": "Human resource managers and directors",
+    "p25": null,
+    "p50": 49688,
+    "p75": null
+  },
+  "1137": {
+    "description": "Information technology directors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1139": {
+    "description": "Functional managers and directors n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1140": {
+    "description": "Directors in logistics, warehousing and transport",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1150": {
+    "description": "Managers and directors in retail and wholesale",
+    "p25": null,
+    "p50": 34484,
+    "p75": null
+  },
+  "1161": {
+    "description": "Officers in armed forces",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1162": {
+    "description": "Senior police officers",
+    "p25": null,
+    "p50": 65529,
+    "p75": null
+  },
+  "1163": {
+    "description": "Senior officers in fire, ambulance, prison and related services",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1171": {
+    "description": "Health services and public health managers and directors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1172": {
+    "description": "Social services managers and directors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1211": {
+    "description": "Managers and proprietors in agriculture and horticulture",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1212": {
+    "description": "Managers and proprietors in forestry, fishing and related services",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1221": {
+    "description": "Hotel and accommodation managers and proprietors",
+    "p25": null,
+    "p50": 38581,
+    "p75": null
+  },
+  "1222": {
+    "description": "Restaurant and catering establishment managers and proprietors",
+    "p25": null,
+    "p50": 29268,
+    "p75": null
+  },
+  "1223": {
+    "description": "Publicans and managers of licensed premises",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1224": {
+    "description": "Leisure and sports managers",
+    "p25": null,
+    "p50": 29808,
+    "p75": null
+  },
+  "1225": {
+    "description": "Travel agency managers and proprietors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1231": {
+    "description": "Health care practice managers",
+    "p25": null,
+    "p50": 40530,
+    "p75": null
+  },
+  "1232": {
+    "description": "Residential, day and domiciliary care managers and proprietors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1233": {
+    "description": "Early education and childcare services proprietors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1241": {
+    "description": "Managers in transport and distribution",
+    "p25": null,
+    "p50": 47495,
+    "p75": null
+  },
+  "1242": {
+    "description": "Managers in storage and warehousing",
+    "p25": null,
+    "p50": 34232,
+    "p75": null
+  },
+  "1243": {
+    "description": "Managers in logistics",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1251": {
+    "description": "Property, housing and estate managers",
+    "p25": null,
+    "p50": 38052,
+    "p75": null
+  },
+  "1252": {
+    "description": "Garage managers and proprietors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1253": {
+    "description": "Hairdressing and beauty salon managers and proprietors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1254": {
+    "description": "Waste disposal and environmental services managers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1255": {
+    "description": "Managers and directors in the creative industries",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1256": {
+    "description": "Betting shop and gambling establishment managers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1257": {
+    "description": "Hire services managers and proprietors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1258": {
+    "description": "Directors in consultancy services",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "1259": {
+    "description": "Managers and proprietors in other services n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2111": {
+    "description": "Chemical scientists",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2112": {
+    "description": "Biological scientists",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2113": {
+    "description": "Biochemists and biomedical scientists",
+    "p25": null,
+    "p50": 39315,
+    "p75": null
+  },
+  "2114": {
+    "description": "Physical scientists",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2115": {
+    "description": "Social and humanities scientists",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2119": {
+    "description": "Natural and social science professionals n.e.c.",
+    "p25": null,
+    "p50": 35823,
+    "p75": null
+  },
+  "2121": {
+    "description": "Civil engineers",
+    "p25": null,
+    "p50": 54668,
+    "p75": null
+  },
+  "2122": {
+    "description": "Mechanical engineers",
+    "p25": null,
+    "p50": 38478,
+    "p75": null
+  },
+  "2123": {
+    "description": "Electrical engineers",
+    "p25": null,
+    "p50": 59276,
+    "p75": null
+  },
+  "2124": {
+    "description": "Electronics engineers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2125": {
+    "description": "Production and process engineers",
+    "p25": null,
+    "p50": 44998,
+    "p75": null
+  },
+  "2126": {
+    "description": "Aerospace engineers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2127": {
+    "description": "Engineering project managers and project engineers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2129": {
+    "description": "Engineering professionals n.e.c.",
+    "p25": null,
+    "p50": 46487,
+    "p75": null
+  },
+  "2131": {
+    "description": "IT project managers",
+    "p25": null,
+    "p50": 45306,
+    "p75": null
+  },
+  "2132": {
+    "description": "IT managers",
+    "p25": null,
+    "p50": 51782,
+    "p75": null
+  },
+  "2133": {
+    "description": "IT business analysts, architects and systems designers",
+    "p25": null,
+    "p50": 47701,
+    "p75": null
+  },
+  "2134": {
+    "description": "Programmers and software development professionals",
+    "p25": null,
+    "p50": 47301,
+    "p75": null
+  },
+  "2135": {
+    "description": "Cyber security professionals",
+    "p25": null,
+    "p50": 51802,
+    "p75": null
+  },
+  "2136": {
+    "description": "IT quality and testing professionals",
+    "p25": null,
+    "p50": 39116,
+    "p75": null
+  },
+  "2137": {
+    "description": "IT network professionals",
+    "p25": null,
+    "p50": 39029,
+    "p75": null
+  },
+  "2139": {
+    "description": "Information technology professionals n.e.c.",
+    "p25": null,
+    "p50": 40619,
+    "p75": null
+  },
+  "2141": {
+    "description": "Web design professionals",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2142": {
+    "description": "Graphic and multimedia designers",
+    "p25": null,
+    "p50": 32457,
+    "p75": null
+  },
+  "2151": {
+    "description": "Conservation professionals",
+    "p25": null,
+    "p50": 32896,
+    "p75": null
+  },
+  "2152": {
+    "description": "Environment professionals",
+    "p25": null,
+    "p50": 45337,
+    "p75": null
+  },
+  "2161": {
+    "description": "Research and development (R&D) managers",
+    "p25": null,
+    "p50": 51456,
+    "p75": null
+  },
+  "2162": {
+    "description": "Other researchers, unspecified discipline",
+    "p25": null,
+    "p50": 39306,
+    "p75": null
+  },
+  "2211": {
+    "description": "Generalist medical practitioners",
+    "p25": null,
+    "p50": 44511,
+    "p75": null
+  },
+  "2212": {
+    "description": "Specialist medical practitioners",
+    "p25": null,
+    "p50": 114012,
+    "p75": null
+  },
+  "2221": {
+    "description": "Physiotherapists",
+    "p25": null,
+    "p50": 40209,
+    "p75": null
+  },
+  "2222": {
+    "description": "Occupational therapists",
+    "p25": null,
+    "p50": 37220,
+    "p75": null
+  },
+  "2223": {
+    "description": "Speech and language therapists",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2224": {
+    "description": "Psychotherapists and cognitive behaviour therapists",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2225": {
+    "description": "Clinical psychologists",
+    "p25": null,
+    "p50": 60846,
+    "p75": null
+  },
+  "2226": {
+    "description": "Other psychologists",
+    "p25": null,
+    "p50": 48890,
+    "p75": null
+  },
+  "2229": {
+    "description": "Therapy professionals n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2231": {
+    "description": "Midwifery nurses",
+    "p25": null,
+    "p50": 37623,
+    "p75": null
+  },
+  "2232": {
+    "description": "Community nurses",
+    "p25": null,
+    "p50": 36114,
+    "p75": null
+  },
+  "2233": {
+    "description": "Specialist nurses",
+    "p25": null,
+    "p50": 37636,
+    "p75": null
+  },
+  "2234": {
+    "description": "Nurse practitioners",
+    "p25": null,
+    "p50": 39156,
+    "p75": null
+  },
+  "2235": {
+    "description": "Mental health nurses",
+    "p25": null,
+    "p50": 40506,
+    "p75": null
+  },
+  "2236": {
+    "description": "Children's nurses",
+    "p25": null,
+    "p50": 39306,
+    "p75": null
+  },
+  "2237": {
+    "description": "Other nursing professionals",
+    "p25": null,
+    "p50": 36254,
+    "p75": null
+  },
+  "2240": {
+    "description": "Veterinarians",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2251": {
+    "description": "Pharmacists",
+    "p25": null,
+    "p50": 52273,
+    "p75": null
+  },
+  "2252": {
+    "description": "Optometrists",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2253": {
+    "description": "Dental practitioners",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2254": {
+    "description": "Medical radiographers",
+    "p25": null,
+    "p50": 47035,
+    "p75": null
+  },
+  "2255": {
+    "description": "Paramedics",
+    "p25": null,
+    "p50": 59371,
+    "p75": null
+  },
+  "2256": {
+    "description": "Podiatrists",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2259": {
+    "description": "Other health professionals n.e.c.",
+    "p25": null,
+    "p50": 34364,
+    "p75": null
+  },
+  "2311": {
+    "description": "Higher education teaching professionals",
+    "p25": null,
+    "p50": 48035,
+    "p75": null
+  },
+  "2312": {
+    "description": "Further education teaching professionals",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2313": {
+    "description": "Secondary education teaching professionals",
+    "p25": null,
+    "p50": 49684,
+    "p75": null
+  },
+  "2314": {
+    "description": "Primary education teaching professionals",
+    "p25": null,
+    "p50": 46739,
+    "p75": null
+  },
+  "2315": {
+    "description": "Nursery education teaching professionals",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2316": {
+    "description": "Special needs education teaching professionals",
+    "p25": null,
+    "p50": 44338,
+    "p75": null
+  },
+  "2317": {
+    "description": "Teachers of English as a foreign language",
+    "p25": null,
+    "p50": 49375,
+    "p75": null
+  },
+  "2319": {
+    "description": "Teaching professionals n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2321": {
+    "description": "Head teachers and principals",
+    "p25": null,
+    "p50": 67633,
+    "p75": null
+  },
+  "2322": {
+    "description": "Education managers",
+    "p25": null,
+    "p50": 46235,
+    "p75": null
+  },
+  "2323": {
+    "description": "Education advisers and school inspectors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2324": {
+    "description": "Early education and childcare services managers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2329": {
+    "description": "Other educational professionals n.e.c",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2411": {
+    "description": "Barristers and judges",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2412": {
+    "description": "Solicitors and lawyers",
+    "p25": null,
+    "p50": 49581,
+    "p75": null
+  },
+  "2419": {
+    "description": "Legal professionals n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2421": {
+    "description": "Chartered and certified accountants",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2422": {
+    "description": "Finance and investment analysts and advisers",
+    "p25": null,
+    "p50": 51665,
+    "p75": null
+  },
+  "2423": {
+    "description": "Taxation experts",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2431": {
+    "description": "Management consultants and business analysts",
+    "p25": null,
+    "p50": 44197,
+    "p75": null
+  },
+  "2432": {
+    "description": "Marketing and commercial managers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2433": {
+    "description": "Actuaries, economists and statisticians",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2434": {
+    "description": "Business and related research professionals",
+    "p25": null,
+    "p50": 35164,
+    "p75": null
+  },
+  "2435": {
+    "description": "Professional/Chartered company secretaries",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2439": {
+    "description": "Business, research and administrative professionals n.e.c.",
+    "p25": null,
+    "p50": 43026,
+    "p75": null
+  },
+  "2440": {
+    "description": "Business and financial project management professionals",
+    "p25": null,
+    "p50": 58985,
+    "p75": null
+  },
+  "2451": {
+    "description": "Architects",
+    "p25": null,
+    "p50": 41197,
+    "p75": null
+  },
+  "2452": {
+    "description": "Chartered architectural technologists, planning officers and consultants",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2453": {
+    "description": "Quantity surveyors",
+    "p25": null,
+    "p50": 51960,
+    "p75": null
+  },
+  "2454": {
+    "description": "Chartered surveyors",
+    "p25": null,
+    "p50": 47690,
+    "p75": null
+  },
+  "2455": {
+    "description": "Construction project managers and related professionals",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2461": {
+    "description": "Social workers",
+    "p25": null,
+    "p50": 44428,
+    "p75": null
+  },
+  "2462": {
+    "description": "Probation officers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2463": {
+    "description": "Clergy",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2464": {
+    "description": "Youth work professionals",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2469": {
+    "description": "Welfare professionals n.e.c.",
+    "p25": null,
+    "p50": 35434,
+    "p75": null
+  },
+  "2471": {
+    "description": "Librarians",
+    "p25": null,
+    "p50": 32964,
+    "p75": null
+  },
+  "2472": {
+    "description": "Archivists and curators",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2481": {
+    "description": "Quality control and planning engineers",
+    "p25": null,
+    "p50": 44165,
+    "p75": null
+  },
+  "2482": {
+    "description": "Quality assurance and regulatory professionals",
+    "p25": null,
+    "p50": 49587,
+    "p75": null
+  },
+  "2483": {
+    "description": "Environmental health professionals",
+    "p25": null,
+    "p50": 31488,
+    "p75": null
+  },
+  "2491": {
+    "description": "Newspaper and periodical editors",
+    "p25": null,
+    "p50": 35842,
+    "p75": null
+  },
+  "2492": {
+    "description": "Newspaper and periodical journalists and reporters",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "2493": {
+    "description": "Public relations professionals",
+    "p25": null,
+    "p50": 36762,
+    "p75": null
+  },
+  "2494": {
+    "description": "Advertising accounts managers and creative directors",
+    "p25": null,
+    "p50": 35813,
+    "p75": null
+  },
+  "3111": {
+    "description": "Laboratory technicians",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3112": {
+    "description": "Electrical and electronics technicians",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3113": {
+    "description": "Engineering technicians",
+    "p25": null,
+    "p50": 42579,
+    "p75": null
+  },
+  "3114": {
+    "description": "Building and civil engineering technicians",
+    "p25": null,
+    "p50": 34760,
+    "p75": null
+  },
+  "3115": {
+    "description": "Quality assurance technicians",
+    "p25": null,
+    "p50": 35186,
+    "p75": null
+  },
+  "3116": {
+    "description": "Planning, process and production technicians",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3119": {
+    "description": "Science, engineering and production technicians n.e.c.",
+    "p25": null,
+    "p50": 36130,
+    "p75": null
+  },
+  "3120": {
+    "description": "CAD, drawing and architectural technicians",
+    "p25": null,
+    "p50": 33117,
+    "p75": null
+  },
+  "3131": {
+    "description": "IT operations technicians",
+    "p25": null,
+    "p50": 35847,
+    "p75": null
+  },
+  "3132": {
+    "description": "IT user support technicians",
+    "p25": null,
+    "p50": 35021,
+    "p75": null
+  },
+  "3133": {
+    "description": "Database administrators and web content technicians",
+    "p25": null,
+    "p50": 32293,
+    "p75": null
+  },
+  "3211": {
+    "description": "Dispensing opticians",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3212": {
+    "description": "Pharmaceutical technicians",
+    "p25": null,
+    "p50": 30107,
+    "p75": null
+  },
+  "3213": {
+    "description": "Medical and dental technicians",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3214": {
+    "description": "Complementary health associate professionals",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3219": {
+    "description": "Health associate professionals n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3221": {
+    "description": "Youth and community workers",
+    "p25": null,
+    "p50": 29199,
+    "p75": null
+  },
+  "3222": {
+    "description": "Child and early years officers",
+    "p25": null,
+    "p50": 25730,
+    "p75": null
+  },
+  "3223": {
+    "description": "Housing officers",
+    "p25": null,
+    "p50": 34866,
+    "p75": null
+  },
+  "3224": {
+    "description": "Counsellors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3229": {
+    "description": "Welfare and housing associate professionals n.e.c.",
+    "p25": null,
+    "p50": 28667,
+    "p75": null
+  },
+  "3231": {
+    "description": "Higher level teaching assistants",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3232": {
+    "description": "Early education and childcare practitioners",
+    "p25": null,
+    "p50": 22949,
+    "p75": null
+  },
+  "3240": {
+    "description": "Veterinary nurses",
+    "p25": null,
+    "p50": 31986,
+    "p75": null
+  },
+  "3311": {
+    "description": "Non-commissioned officers and other ranks",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3312": {
+    "description": "Police officers (sergeant and below)",
+    "p25": null,
+    "p50": 51135,
+    "p75": null
+  },
+  "3313": {
+    "description": "Fire service officers (watch manager and below)",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3314": {
+    "description": "Prison service officers (below principal officer)",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3319": {
+    "description": "Protective service associate professionals n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3411": {
+    "description": "Artists",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3412": {
+    "description": "Authors, writers and translators",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3413": {
+    "description": "Actors, entertainers and presenters",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3414": {
+    "description": "Dancers and choreographers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3415": {
+    "description": "Musicians",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3416": {
+    "description": "Arts officers, producers and directors",
+    "p25": null,
+    "p50": 36241,
+    "p75": null
+  },
+  "3417": {
+    "description": "Photographers, audio-visual and broadcasting equipment operators",
+    "p25": null,
+    "p50": 30172,
+    "p75": null
+  },
+  "3421": {
+    "description": "Interior designers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3422": {
+    "description": "Clothing, fashion and accessories designers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3429": {
+    "description": "Design occupations n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3431": {
+    "description": "Sports players",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3432": {
+    "description": "Sports coaches, instructors and officials",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3433": {
+    "description": "Fitness and wellbeing instructors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3511": {
+    "description": "Aircraft pilots and air traffic controllers",
+    "p25": null,
+    "p50": 83364,
+    "p75": null
+  },
+  "3512": {
+    "description": "Ship and hovercraft officers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3520": {
+    "description": "Legal associate professionals",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3531": {
+    "description": "Brokers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3532": {
+    "description": "Insurance underwriters",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3533": {
+    "description": "Financial and accounting technicians",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3534": {
+    "description": "Financial accounts managers",
+    "p25": null,
+    "p50": 47214,
+    "p75": null
+  },
+  "3541": {
+    "description": "Estimators, valuers and assessors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3542": {
+    "description": "Importers and exporters",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3543": {
+    "description": "Project support officers",
+    "p25": null,
+    "p50": 37555,
+    "p75": null
+  },
+  "3544": {
+    "description": "Data analysts",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3549": {
+    "description": "Business associate professionals n.e.c.",
+    "p25": null,
+    "p50": 37917,
+    "p75": null
+  },
+  "3551": {
+    "description": "Buyers and procurement officers",
+    "p25": null,
+    "p50": 37063,
+    "p75": null
+  },
+  "3552": {
+    "description": "Business sales executives",
+    "p25": null,
+    "p50": 34489,
+    "p75": null
+  },
+  "3553": {
+    "description": "Merchandisers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3554": {
+    "description": "Marketing associate professionals",
+    "p25": null,
+    "p50": 28428,
+    "p75": null
+  },
+  "3555": {
+    "description": "Estate agents and auctioneers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3556": {
+    "description": "Sales accounts and business development managers",
+    "p25": null,
+    "p50": 54813,
+    "p75": null
+  },
+  "3557": {
+    "description": "Events managers and organisers",
+    "p25": null,
+    "p50": 28372,
+    "p75": null
+  },
+  "3560": {
+    "description": "Public services associate professionals",
+    "p25": null,
+    "p50": 37236,
+    "p75": null
+  },
+  "3571": {
+    "description": "Human resources and industrial relations officers",
+    "p25": null,
+    "p50": 32328,
+    "p75": null
+  },
+  "3572": {
+    "description": "Careers advisers and vocational guidance specialists",
+    "p25": null,
+    "p50": 37711,
+    "p75": null
+  },
+  "3573": {
+    "description": "Information technology trainers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3574": {
+    "description": "Other vocational and industrial trainers",
+    "p25": null,
+    "p50": 34166,
+    "p75": null
+  },
+  "3581": {
+    "description": "Inspectors of standards and regulations",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "3582": {
+    "description": "Health and safety managers and officers",
+    "p25": null,
+    "p50": 48814,
+    "p75": null
+  },
+  "4111": {
+    "description": "National government administrative occupations",
+    "p25": null,
+    "p50": 29381,
+    "p75": null
+  },
+  "4112": {
+    "description": "Local government administrative occupations",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "4113": {
+    "description": "Officers of non-governmental organisations",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "4121": {
+    "description": "Credit controllers",
+    "p25": null,
+    "p50": 26503,
+    "p75": null
+  },
+  "4122": {
+    "description": "Book-keepers, payroll managers and wages clerks",
+    "p25": null,
+    "p50": 27451,
+    "p75": null
+  },
+  "4123": {
+    "description": "Bank and post office clerks",
+    "p25": null,
+    "p50": 26917,
+    "p75": null
+  },
+  "4124": {
+    "description": "Finance officers",
+    "p25": null,
+    "p50": 29387,
+    "p75": null
+  },
+  "4129": {
+    "description": "Financial administrative occupations n.e.c.",
+    "p25": null,
+    "p50": 24746,
+    "p75": null
+  },
+  "4131": {
+    "description": "Records clerks and assistants",
+    "p25": null,
+    "p50": 27150,
+    "p75": null
+  },
+  "4132": {
+    "description": "Pensions and insurance clerks and assistants",
+    "p25": null,
+    "p50": 29422,
+    "p75": null
+  },
+  "4133": {
+    "description": "Stock control clerks and assistants",
+    "p25": null,
+    "p50": 27470,
+    "p75": null
+  },
+  "4134": {
+    "description": "Transport and distribution clerks and assistants",
+    "p25": null,
+    "p50": 31427,
+    "p75": null
+  },
+  "4135": {
+    "description": "Library clerks and assistants",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "4136": {
+    "description": "Human resources administrative occupations",
+    "p25": null,
+    "p50": 26216,
+    "p75": null
+  },
+  "4141": {
+    "description": "Office managers",
+    "p25": null,
+    "p50": 34945,
+    "p75": null
+  },
+  "4142": {
+    "description": "Office supervisors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "4143": {
+    "description": "Customer service managers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "4151": {
+    "description": "Sales administrators",
+    "p25": null,
+    "p50": 26439,
+    "p75": null
+  },
+  "4152": {
+    "description": "Data entry administrators",
+    "p25": null,
+    "p50": 26555,
+    "p75": null
+  },
+  "4159": {
+    "description": "Other administrative occupations n.e.c.",
+    "p25": null,
+    "p50": 25579,
+    "p75": null
+  },
+  "4211": {
+    "description": "Medical secretaries",
+    "p25": null,
+    "p50": 22790,
+    "p75": null
+  },
+  "4212": {
+    "description": "Legal secretaries",
+    "p25": null,
+    "p50": 24835,
+    "p75": null
+  },
+  "4213": {
+    "description": "School secretaries",
+    "p25": null,
+    "p50": 20829,
+    "p75": null
+  },
+  "4214": {
+    "description": "Company secretaries and administrators",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "4215": {
+    "description": "Personal assistants and other secretaries",
+    "p25": null,
+    "p50": 25311,
+    "p75": null
+  },
+  "4216": {
+    "description": "Receptionists",
+    "p25": null,
+    "p50": 19095,
+    "p75": null
+  },
+  "4217": {
+    "description": "Typists and related keyboard occupations",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5111": {
+    "description": "Farmers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5112": {
+    "description": "Horticultural trades",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5113": {
+    "description": "Gardeners and landscape gardeners",
+    "p25": null,
+    "p50": 27038,
+    "p75": null
+  },
+  "5114": {
+    "description": "Groundsmen and greenkeepers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5119": {
+    "description": "Agricultural and fishing trades n.e.c.",
+    "p25": null,
+    "p50": 28647,
+    "p75": null
+  },
+  "5211": {
+    "description": "Sheet metal workers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5212": {
+    "description": "Metal plate workers, smiths, moulders and related occupations",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5213": {
+    "description": "Welding trades",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5214": {
+    "description": "Pipe fitters",
+    "p25": null,
+    "p50": 39025,
+    "p75": null
+  },
+  "5221": {
+    "description": "Metal machining setters and setter-operators",
+    "p25": null,
+    "p50": 36394,
+    "p75": null
+  },
+  "5222": {
+    "description": "Tool makers, tool fitters and markers-out",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5223": {
+    "description": "Metal working production and maintenance fitters",
+    "p25": null,
+    "p50": 41293,
+    "p75": null
+  },
+  "5224": {
+    "description": "Precision instrument makers and repairers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5225": {
+    "description": "Air-conditioning and refrigeration installers and repairers",
+    "p25": null,
+    "p50": 45435,
+    "p75": null
+  },
+  "5231": {
+    "description": "Vehicle technicians, mechanics and electricians",
+    "p25": null,
+    "p50": 35891,
+    "p75": null
+  },
+  "5232": {
+    "description": "Vehicle body builders and repairers",
+    "p25": null,
+    "p50": 39108,
+    "p75": null
+  },
+  "5233": {
+    "description": "Vehicle paint technicians",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5234": {
+    "description": "Aircraft maintenance and related trades",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5235": {
+    "description": "Boat and ship builders and repairers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5236": {
+    "description": "Rail and rolling stock builders and repairers",
+    "p25": null,
+    "p50": 56764,
+    "p75": null
+  },
+  "5241": {
+    "description": "Electricians and electrical fitters",
+    "p25": null,
+    "p50": 37928,
+    "p75": null
+  },
+  "5242": {
+    "description": "Telecoms and related network installers and repairers",
+    "p25": null,
+    "p50": 37731,
+    "p75": null
+  },
+  "5243": {
+    "description": "TV, video and audio servicers and repairers",
+    "p25": null,
+    "p50": 30522,
+    "p75": null
+  },
+  "5244": {
+    "description": "Computer system and equipment installers and servicers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5245": {
+    "description": "Security system installers and repairers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5246": {
+    "description": "Electrical service and maintenance mechanics and repairers",
+    "p25": null,
+    "p50": 40628,
+    "p75": null
+  },
+  "5249": {
+    "description": "Electrical and electronic trades n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5250": {
+    "description": "Skilled metal, electrical and electronic trades supervisors",
+    "p25": null,
+    "p50": 54497,
+    "p75": null
+  },
+  "5311": {
+    "description": "Steel erectors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5312": {
+    "description": "Stonemasons and related trades",
+    "p25": null,
+    "p50": 34108,
+    "p75": null
+  },
+  "5313": {
+    "description": "Bricklayers",
+    "p25": null,
+    "p50": 32309,
+    "p75": null
+  },
+  "5314": {
+    "description": "Roofers, roof tilers and slaters",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5315": {
+    "description": "Plumbers & heating and ventilating installers and repairers",
+    "p25": null,
+    "p50": 37878,
+    "p75": null
+  },
+  "5316": {
+    "description": "Carpenters and joiners",
+    "p25": null,
+    "p50": 33696,
+    "p75": null
+  },
+  "5317": {
+    "description": "Glaziers, window fabricators and fitters",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5319": {
+    "description": "Construction and building trades n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5321": {
+    "description": "Plasterers",
+    "p25": null,
+    "p50": 31821,
+    "p75": null
+  },
+  "5322": {
+    "description": "Floorers and wall tilers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5323": {
+    "description": "Painters and decorators",
+    "p25": null,
+    "p50": 30239,
+    "p75": null
+  },
+  "5330": {
+    "description": "Construction and building trades supervisors",
+    "p25": null,
+    "p50": 46621,
+    "p75": null
+  },
+  "5411": {
+    "description": "Upholsterers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5412": {
+    "description": "Footwear and leather working trades",
+    "p25": null,
+    "p50": 25449,
+    "p75": null
+  },
+  "5413": {
+    "description": "Tailors and dressmakers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5419": {
+    "description": "Textiles, garments and related trades n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5421": {
+    "description": "Pre-press technicians",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5422": {
+    "description": "Printers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5423": {
+    "description": "Print finishing and binding workers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5431": {
+    "description": "Butchers",
+    "p25": null,
+    "p50": 28747,
+    "p75": null
+  },
+  "5432": {
+    "description": "Bakers and flour confectioners",
+    "p25": null,
+    "p50": 24017,
+    "p75": null
+  },
+  "5433": {
+    "description": "Fishmongers and poultry dressers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5434": {
+    "description": "Chefs",
+    "p25": null,
+    "p50": 26967,
+    "p75": null
+  },
+  "5435": {
+    "description": "Cooks",
+    "p25": null,
+    "p50": 18535,
+    "p75": null
+  },
+  "5436": {
+    "description": "Catering and bar managers",
+    "p25": null,
+    "p50": 27509,
+    "p75": null
+  },
+  "5441": {
+    "description": "Glass and ceramics makers, decorators and finishers",
+    "p25": null,
+    "p50": 33061,
+    "p75": null
+  },
+  "5442": {
+    "description": "Furniture makers and other craft woodworkers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5443": {
+    "description": "Florists",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "5449": {
+    "description": "Other skilled trades n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6111": {
+    "description": "Early education and childcare assistants",
+    "p25": null,
+    "p50": 23802,
+    "p75": null
+  },
+  "6112": {
+    "description": "Teaching assistants",
+    "p25": null,
+    "p50": 17529,
+    "p75": null
+  },
+  "6113": {
+    "description": "Educational support assistants",
+    "p25": null,
+    "p50": 16412,
+    "p75": null
+  },
+  "6114": {
+    "description": "Childminders",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6116": {
+    "description": "Nannies and au pairs",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6117": {
+    "description": "Playworkers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6121": {
+    "description": "Pest control officers",
+    "p25": null,
+    "p50": 25297,
+    "p75": null
+  },
+  "6129": {
+    "description": "Animal care services occupations n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6131": {
+    "description": "Nursing auxiliaries and assistants",
+    "p25": null,
+    "p50": 27607,
+    "p75": null
+  },
+  "6132": {
+    "description": "Ambulance staff (excluding paramedics)",
+    "p25": null,
+    "p50": 34274,
+    "p75": null
+  },
+  "6133": {
+    "description": "Dental nurses",
+    "p25": null,
+    "p50": 23361,
+    "p75": null
+  },
+  "6134": {
+    "description": "Houseparents and residential wardens",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6135": {
+    "description": "Care workers and home carers",
+    "p25": null,
+    "p50": 21997,
+    "p75": null
+  },
+  "6136": {
+    "description": "Senior care workers",
+    "p25": null,
+    "p50": 26043,
+    "p75": null
+  },
+  "6137": {
+    "description": "Care escorts",
+    "p25": null,
+    "p50": 8510,
+    "p75": null
+  },
+  "6138": {
+    "description": "Undertakers, mortuary and crematorium assistants",
+    "p25": null,
+    "p50": 27200,
+    "p75": null
+  },
+  "6211": {
+    "description": "Sports and leisure assistants",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6212": {
+    "description": "Travel agents",
+    "p25": null,
+    "p50": 26261,
+    "p75": null
+  },
+  "6213": {
+    "description": "Air travel assistants",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6214": {
+    "description": "Rail travel assistants",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6219": {
+    "description": "Leisure and travel service occupations n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6221": {
+    "description": "Hairdressers and barbers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6222": {
+    "description": "Beauticians and related occupations",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6231": {
+    "description": "Housekeepers and related occupations",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6232": {
+    "description": "Caretakers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6240": {
+    "description": "Cleaning and housekeeping managers and supervisors",
+    "p25": null,
+    "p50": 23018,
+    "p75": null
+  },
+  "6250": {
+    "description": "Bed and breakfast and guest house owners and proprietors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6311": {
+    "description": "Police community support officers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "6312": {
+    "description": "Parking and civil enforcement occupations",
+    "p25": null,
+    "p50": 30344,
+    "p75": null
+  },
+  "7111": {
+    "description": "Sales and retail assistants",
+    "p25": null,
+    "p50": 13717,
+    "p75": null
+  },
+  "7112": {
+    "description": "Retail cashiers and check-out operators",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "7113": {
+    "description": "Telephone salespersons",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "7114": {
+    "description": "Pharmacy and optical dispensing assistants",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "7115": {
+    "description": "Vehicle and parts salespersons and advisers",
+    "p25": null,
+    "p50": 30313,
+    "p75": null
+  },
+  "7121": {
+    "description": "Collector salespersons and credit agents",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "7122": {
+    "description": "Debt, rent and other cash collectors",
+    "p25": null,
+    "p50": 27229,
+    "p75": null
+  },
+  "7123": {
+    "description": "Roundspersons and van salespersons",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "7124": {
+    "description": "Market and street traders and assistants",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "7125": {
+    "description": "Visual merchandisers and related occupations",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "7129": {
+    "description": "Sales related occupations n.e.c.",
+    "p25": null,
+    "p50": 31988,
+    "p75": null
+  },
+  "7131": {
+    "description": "Shopkeepers and owners - retail and wholesale",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "7132": {
+    "description": "Sales supervisors - retail and wholesale",
+    "p25": null,
+    "p50": 26997,
+    "p75": null
+  },
+  "7211": {
+    "description": "Call and contact centre occupations",
+    "p25": null,
+    "p50": 25331,
+    "p75": null
+  },
+  "7212": {
+    "description": "Telephonists",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "7213": {
+    "description": "Communication operators",
+    "p25": null,
+    "p50": 35773,
+    "p75": null
+  },
+  "7214": {
+    "description": "Market research interviewers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "7219": {
+    "description": "Customer service occupations n.e.c.",
+    "p25": null,
+    "p50": 23553,
+    "p75": null
+  },
+  "7220": {
+    "description": "Customer service supervisors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8111": {
+    "description": "Food, drink and tobacco process operatives",
+    "p25": null,
+    "p50": 27681,
+    "p75": null
+  },
+  "8112": {
+    "description": "Textile process operatives",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8113": {
+    "description": "Chemical and related process operatives",
+    "p25": null,
+    "p50": 39079,
+    "p75": null
+  },
+  "8114": {
+    "description": "Plastics process operatives",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8115": {
+    "description": "Metal making and treating process operatives",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8119": {
+    "description": "Process operatives n.e.c.",
+    "p25": null,
+    "p50": 27828,
+    "p75": null
+  },
+  "8120": {
+    "description": "Metal working machine operatives",
+    "p25": null,
+    "p50": 32642,
+    "p75": null
+  },
+  "8131": {
+    "description": "Paper and wood machine operatives",
+    "p25": null,
+    "p50": 32794,
+    "p75": null
+  },
+  "8132": {
+    "description": "Mining and quarry workers and related operatives",
+    "p25": null,
+    "p50": 33671,
+    "p75": null
+  },
+  "8133": {
+    "description": "Energy plant operatives",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8134": {
+    "description": "Water and sewerage plant operatives",
+    "p25": null,
+    "p50": 37592,
+    "p75": null
+  },
+  "8135": {
+    "description": "Printing machine assistants",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8139": {
+    "description": "Plant and machine operatives n.e.c.",
+    "p25": null,
+    "p50": 26206,
+    "p75": null
+  },
+  "8141": {
+    "description": "Assemblers (electrical and electronic products)",
+    "p25": null,
+    "p50": 24573,
+    "p75": null
+  },
+  "8142": {
+    "description": "Assemblers (vehicles and metal goods)",
+    "p25": null,
+    "p50": 28269,
+    "p75": null
+  },
+  "8143": {
+    "description": "Routine inspectors and testers",
+    "p25": null,
+    "p50": 35071,
+    "p75": null
+  },
+  "8144": {
+    "description": "Weighers, graders and sorters",
+    "p25": null,
+    "p50": 25927,
+    "p75": null
+  },
+  "8145": {
+    "description": "Tyre, exhaust and windscreen fitters",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8146": {
+    "description": "Sewing machinists",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8149": {
+    "description": "Assemblers and routine operatives n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8151": {
+    "description": "Scaffolders, stagers and riggers",
+    "p25": null,
+    "p50": 35696,
+    "p75": null
+  },
+  "8152": {
+    "description": "Road construction operatives",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8153": {
+    "description": "Rail construction and maintenance operatives",
+    "p25": null,
+    "p50": 46319,
+    "p75": null
+  },
+  "8159": {
+    "description": "Construction operatives n.e.c.",
+    "p25": null,
+    "p50": 29467,
+    "p75": null
+  },
+  "8160": {
+    "description": "Production, factory and assembly supervisors",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8211": {
+    "description": "Large goods vehicle drivers",
+    "p25": null,
+    "p50": 38032,
+    "p75": null
+  },
+  "8212": {
+    "description": "Bus and coach drivers",
+    "p25": null,
+    "p50": 30880,
+    "p75": null
+  },
+  "8213": {
+    "description": "Taxi and cab drivers and chauffeurs",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8214": {
+    "description": "Delivery drivers and couriers",
+    "p25": null,
+    "p50": 21498,
+    "p75": null
+  },
+  "8215": {
+    "description": "Driving instructors",
+    "p25": null,
+    "p50": 32697,
+    "p75": null
+  },
+  "8219": {
+    "description": "Road transport drivers n.e.c.",
+    "p25": null,
+    "p50": 29851,
+    "p75": null
+  },
+  "8221": {
+    "description": "Crane drivers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8222": {
+    "description": "Fork-lift truck drivers",
+    "p25": null,
+    "p50": 34800,
+    "p75": null
+  },
+  "8229": {
+    "description": "Mobile machine drivers and operatives n.e.c.",
+    "p25": null,
+    "p50": 40352,
+    "p75": null
+  },
+  "8231": {
+    "description": "Train and tram drivers",
+    "p25": null,
+    "p50": 70367,
+    "p75": null
+  },
+  "8232": {
+    "description": "Marine and waterways transport operatives",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8233": {
+    "description": "Air transport operatives",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8234": {
+    "description": "Rail transport operatives",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "8239": {
+    "description": "Other drivers and transport operatives n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9111": {
+    "description": "Farm workers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9112": {
+    "description": "Forestry and related workers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9119": {
+    "description": "Fishing and other elementary agriculture occupations n.e.c.",
+    "p25": null,
+    "p50": 24787,
+    "p75": null
+  },
+  "9121": {
+    "description": "Groundworkers",
+    "p25": null,
+    "p50": 31888,
+    "p75": null
+  },
+  "9129": {
+    "description": "Elementary construction occupations n.e.c.",
+    "p25": null,
+    "p50": 27455,
+    "p75": null
+  },
+  "9131": {
+    "description": "Industrial cleaning process occupations",
+    "p25": null,
+    "p50": 27320,
+    "p75": null
+  },
+  "9132": {
+    "description": "Packers, bottlers, canners and fillers",
+    "p25": null,
+    "p50": 24305,
+    "p75": null
+  },
+  "9139": {
+    "description": "Elementary process plant occupations n.e.c.",
+    "p25": null,
+    "p50": 27290,
+    "p75": null
+  },
+  "9211": {
+    "description": "Postal workers, mail sorters and messengers",
+    "p25": null,
+    "p50": 28601,
+    "p75": null
+  },
+  "9219": {
+    "description": "Elementary administration occupations n.e.c.",
+    "p25": null,
+    "p50": 20946,
+    "p75": null
+  },
+  "9221": {
+    "description": "Window cleaners",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9222": {
+    "description": "Street cleaners",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9223": {
+    "description": "Cleaners and domestics",
+    "p25": null,
+    "p50": 12791,
+    "p75": null
+  },
+  "9224": {
+    "description": "Launderers, dry cleaners and pressers",
+    "p25": null,
+    "p50": 22151,
+    "p75": null
+  },
+  "9225": {
+    "description": "Refuse and salvage occupations",
+    "p25": null,
+    "p50": 29095,
+    "p75": null
+  },
+  "9226": {
+    "description": "Vehicle valeters and cleaners",
+    "p25": null,
+    "p50": 20130,
+    "p75": null
+  },
+  "9229": {
+    "description": "Elementary cleaning occupations n.e.c.",
+    "p25": null,
+    "p50": 26005,
+    "p75": null
+  },
+  "9231": {
+    "description": "Security guards and related occupations",
+    "p25": null,
+    "p50": 29273,
+    "p75": null
+  },
+  "9232": {
+    "description": "School midday and crossing patrol occupations",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9233": {
+    "description": "Exam invigilators",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9241": {
+    "description": "Shelf fillers",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9249": {
+    "description": "Elementary sales occupations n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9251": {
+    "description": "Elementary storage supervisors",
+    "p25": null,
+    "p50": 29353,
+    "p75": null
+  },
+  "9252": {
+    "description": "Warehouse operatives",
+    "p25": null,
+    "p50": 26620,
+    "p75": null
+  },
+  "9253": {
+    "description": "Delivery operatives",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9259": {
+    "description": "Elementary storage occupations n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9261": {
+    "description": "Bar and catering supervisors",
+    "p25": null,
+    "p50": 22681,
+    "p75": null
+  },
+  "9262": {
+    "description": "Hospital porters",
+    "p25": null,
+    "p50": 27988,
+    "p75": null
+  },
+  "9263": {
+    "description": "Kitchen and catering assistants",
+    "p25": null,
+    "p50": 13135,
+    "p75": null
+  },
+  "9264": {
+    "description": "Waiters and waitresses",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9265": {
+    "description": "Bar staff",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9266": {
+    "description": "Coffee shop workers",
+    "p25": null,
+    "p50": 16910,
+    "p75": null
+  },
+  "9267": {
+    "description": "Leisure and theme park attendants",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  },
+  "9269": {
+    "description": "Other elementary services occupations n.e.c.",
+    "p25": null,
+    "p50": null,
+    "p75": null
+  }
+}
