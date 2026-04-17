@@ -355,9 +355,9 @@ export type Database = {
           growth_outlook: string | null
           id: string
           is_new_ai_role: boolean | null
-          salary_entry: string | null
+          salary_entry: number | null
           salary_entry_uk: number | null
-          salary_experienced: string | null
+          salary_experienced: number | null
           salary_experienced_uk: number | null
           salary_last_updated: string | null
           salary_median_scotland: number | null
@@ -376,9 +376,9 @@ export type Database = {
           growth_outlook?: string | null
           id?: string
           is_new_ai_role?: boolean | null
-          salary_entry?: string | null
+          salary_entry?: number | null
           salary_entry_uk?: number | null
-          salary_experienced?: string | null
+          salary_experienced?: number | null
           salary_experienced_uk?: number | null
           salary_last_updated?: string | null
           salary_median_scotland?: number | null
@@ -397,9 +397,9 @@ export type Database = {
           growth_outlook?: string | null
           id?: string
           is_new_ai_role?: boolean | null
-          salary_entry?: string | null
+          salary_entry?: number | null
           salary_entry_uk?: number | null
-          salary_experienced?: string | null
+          salary_experienced?: number | null
           salary_experienced_uk?: number | null
           salary_last_updated?: string | null
           salary_median_scotland?: number | null
