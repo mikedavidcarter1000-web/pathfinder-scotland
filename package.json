@@ -6,16 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-
-    "scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "lint": "eslint",
-  "lint:fix": "eslint --fix"
-}
-    
-    "lint:fix": "next lint --fix",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "type-check": "tsc --noEmit",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset",
@@ -52,6 +44,7 @@
     "tailwind-merge": "^2.2.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.10",
     "@types/node": "^20.10.0",
