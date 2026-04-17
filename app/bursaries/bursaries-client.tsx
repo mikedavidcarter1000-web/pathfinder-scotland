@@ -3,14 +3,20 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { BursaryCard } from './bursary-card'
+import { BursaryFilters } from './bursary-filters'
 import {
   type Bursary,
   type BursaryMatch,
   type StudentMatchRow,
   type MatchStatus,
   type BrowseCategory,
+  type StudentProfile,
+  type BursaryFilterState,
   BROWSE_CATEGORY_LABELS,
   categoriseBursary,
+  profileToFilters,
+  emptyFilters,
+  applyBursaryFilters,
 } from './types'
 
 interface BursariesClientProps {
@@ -20,6 +26,7 @@ interface BursariesClientProps {
   matchStatuses?: StudentMatchRow[]
   missingProfile?: string[]
   matchError?: string | null
+  studentProfile?: StudentProfile | null
 }
 
 function formatGbp(n: number): string {
@@ -350,9 +357,23 @@ export function BursariesClient({
   matchStatuses = [],
   missingProfile = [],
   matchError = null,
+  studentProfile = null,
 }: BursariesClientProps) {
   const [showDismissed, setShowDismissed] = useState(false)
   const [showOther, setShowOther] = useState(false)
+  const [filters, setFilters] = useState<BursaryFilterState>(
+    loggedIn && studentProfile ? profileToFilters(studentProfile) : emptyFilters()
+  )
+
+  const filteredBursaries = useMemo(
+    () => applyBursaryFilters(bursaries, filters),
+    [bursaries, filters]
+  )
+
+  const filteredBursaryIds = useMemo(
+    () => new Set(filteredBursaries.map(b => b.id)),
+    [filteredBursaries]
+  )
 
   const bursaryById = useMemo(() => {
     const m = new Map<string, Bursary>()
@@ -441,7 +462,7 @@ export function BursariesClient({
                 marginBottom: '8px',
               }}
             >
-              Browse all Scottish bursaries &amp; entitlements
+              Browse all bursaries
             </h2>
             <p
               style={{
@@ -452,17 +473,70 @@ export function BursariesClient({
               }}
             >
               Sign in to see which of these you&rsquo;re eligible for based on your profile.
-              Every bursary below is currently open to Scottish students.
+              Use the filters below to find bursaries relevant to you.
             </p>
-            <BrowseView bursaries={bursaries} />
+            <div className="flex flex-col gap-6">
+              <BursaryFilters
+                filters={filters}
+                onChange={setFilters}
+                onReset={() => setFilters(emptyFilters())}
+                isPersonalised={false}
+                resultCount={filteredBursaries.length}
+              />
+              {filteredBursaries.length === 0 ? (
+                <div
+                  style={{
+                    backgroundColor: 'var(--pf-white)',
+                    borderRadius: '8px',
+                    padding: '32px 24px',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: '1rem',
+                      color: 'var(--pf-grey-600)',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    No matching bursaries found. Try adjusting your filters.
+                  </p>
+                </div>
+              ) : (
+                <BrowseView bursaries={filteredBursaries} />
+              )}
+            </div>
           </div>
         </section>
       </>
     )
   }
 
+  // --- Apply filters to matched sections ---
+  const fDefinite = useMemo(
+    () => definite.filter(m => filteredBursaryIds.has(m.bursary_id)),
+    [definite, filteredBursaryIds]
+  )
+  const fMaybe = useMemo(
+    () => maybe.filter(m => filteredBursaryIds.has(m.bursary_id)),
+    [maybe, filteredBursaryIds]
+  )
+  const fApplied = useMemo(
+    () => applied.filter(m => filteredBursaryIds.has(m.bursary_id)),
+    [applied, filteredBursaryIds]
+  )
+  const fDismissed = useMemo(
+    () => dismissed.filter(m => filteredBursaryIds.has(m.bursary_id)),
+    [dismissed, filteredBursaryIds]
+  )
+  const fOther = useMemo(
+    () => otherBursaries.filter(b => filteredBursaryIds.has(b.id)),
+    [otherBursaries, filteredBursaryIds]
+  )
+
   // --- Logged in: personalised results ---
-  const hasAnyMatches = definite.length + maybe.length + applied.length > 0
+  const hasAnyMatches = fDefinite.length + fMaybe.length + fApplied.length > 0
 
   return (
     <>
@@ -488,11 +562,19 @@ export function BursariesClient({
 
             <StatCards
               totalValue={totalValue}
-              eligibleCount={definite.length}
-              checkCount={maybe.length}
+              eligibleCount={fDefinite.length}
+              checkCount={fMaybe.length}
             />
 
             <ProfileBanner missingProfile={missingProfile} />
+
+            <BursaryFilters
+              filters={filters}
+              onChange={setFilters}
+              onReset={() => setFilters(studentProfile ? profileToFilters(studentProfile) : emptyFilters())}
+              isPersonalised={true}
+              resultCount={fDefinite.length + fMaybe.length + fApplied.length + fOther.length}
+            />
 
             {!hasAnyMatches && !matchError && (
               <div
@@ -516,7 +598,7 @@ export function BursariesClient({
               </div>
             )}
 
-            {applied.length > 0 && (
+            {fApplied.length > 0 && (
               <details open>
                 <summary
                   style={{
@@ -528,43 +610,43 @@ export function BursariesClient({
                     marginBottom: '12px',
                   }}
                 >
-                  Applied ({applied.length})
+                  Applied ({fApplied.length})
                 </summary>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                  {applied.map(renderCard)}
+                  {fApplied.map(renderCard)}
                 </div>
               </details>
             )}
 
-            {definite.length > 0 && (
+            {fDefinite.length > 0 && (
               <section>
                 <SectionHeader
                   title="You're eligible"
-                  count={definite.length}
+                  count={fDefinite.length}
                   accent="#10B981"
                   subtitle="Your profile confirms you meet the eligibility criteria."
                 />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {definite.map(renderCard)}
+                  {fDefinite.map(renderCard)}
                 </div>
               </section>
             )}
 
-            {maybe.length > 0 && (
+            {fMaybe.length > 0 && (
               <section>
                 <SectionHeader
                   title="You may be eligible"
-                  count={maybe.length}
+                  count={fMaybe.length}
                   accent="#F59E0B"
-                  subtitle="Check the criteria — these depend on details we can't fully verify from your profile."
+                  subtitle="Check the criteria -- these depend on details we can't fully verify from your profile."
                 />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {maybe.map(renderCard)}
+                  {fMaybe.map(renderCard)}
                 </div>
               </section>
             )}
 
-            {otherBursaries.length > 0 && (
+            {fOther.length > 0 && (
               <section>
                 <button
                   type="button"
@@ -582,7 +664,7 @@ export function BursariesClient({
                   }}
                   aria-expanded={showOther}
                 >
-                  Other support available ({otherBursaries.length})
+                  Other support available ({fOther.length})
                   <svg
                     className={`w-4 h-4 transition-transform ${showOther ? 'rotate-180' : ''}`}
                     fill="none"
@@ -605,7 +687,7 @@ export function BursariesClient({
                 </p>
                 {showOther && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {otherBursaries.map((b) => (
+                    {fOther.map((b) => (
                       <BursaryCard key={b.id} bursary={b} />
                     ))}
                   </div>
@@ -613,7 +695,7 @@ export function BursariesClient({
               </section>
             )}
 
-            {dismissed.length > 0 && (
+            {fDismissed.length > 0 && (
               <section>
                 <button
                   type="button"
@@ -631,11 +713,11 @@ export function BursariesClient({
                   }}
                   aria-expanded={showDismissed}
                 >
-                  {showDismissed ? 'Hide' : 'Show'} dismissed ({dismissed.length})
+                  {showDismissed ? 'Hide' : 'Show'} dismissed ({fDismissed.length})
                 </button>
                 {showDismissed && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                    {dismissed.map(renderCard)}
+                    {fDismissed.map(renderCard)}
                   </div>
                 )}
               </section>

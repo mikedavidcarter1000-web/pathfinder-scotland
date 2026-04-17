@@ -28,6 +28,104 @@ export interface Bursary {
   url: string | null
   notes: string | null
   is_active: boolean
+  // Eligibility criteria (used by filter panel)
+  requires_care_experience: boolean | null
+  requires_estranged: boolean | null
+  requires_carer: boolean | null
+  requires_disability: boolean | null
+  requires_refugee_or_asylum: boolean | null
+  requires_young_parent: boolean | null
+  income_threshold_max: number | null
+  simd_quintile_max: number | null
+  min_age: number | null
+  max_age: number | null
+}
+
+export interface StudentProfile {
+  school_stage: string | null
+  care_experienced: boolean | null
+  has_disability: boolean
+  is_young_carer: boolean
+  is_young_parent: boolean | null
+  simd_decile: number | null
+}
+
+export interface BursaryFilterState {
+  stage: string
+  age: string
+  careExperienced: boolean
+  disability: boolean
+  youngCarer: boolean
+  youngParent: boolean
+  meansTested: string // 'all' | 'yes' | 'no'
+}
+
+const STAGE_MAP: Record<string, string> = {
+  s2: 'S2', s3: 'S3', s4: 'S4', s5: 'S5', s6: 'S6',
+  college: 'FE', mature: 'undergraduate',
+}
+
+export function profileToFilters(profile: StudentProfile | null): BursaryFilterState {
+  if (!profile) return emptyFilters()
+  return {
+    stage: profile.school_stage ? (STAGE_MAP[profile.school_stage] ?? '') : '',
+    age: '',
+    careExperienced: !!profile.care_experienced,
+    disability: !!profile.has_disability,
+    youngCarer: !!profile.is_young_carer,
+    youngParent: !!profile.is_young_parent,
+    meansTested: 'all',
+  }
+}
+
+export function emptyFilters(): BursaryFilterState {
+  return {
+    stage: '',
+    age: '',
+    careExperienced: false,
+    disability: false,
+    youngCarer: false,
+    youngParent: false,
+    meansTested: 'all',
+  }
+}
+
+export function applyBursaryFilters(bursaries: Bursary[], filters: BursaryFilterState): Bursary[] {
+  return bursaries.filter(b => {
+    // Stage filter
+    if (filters.stage && !b.student_stages.includes(filters.stage)) return false
+
+    // Age filter
+    if (filters.age) {
+      const age = parseInt(filters.age, 10)
+      if (!isNaN(age)) {
+        if (b.min_age != null && age < b.min_age) return false
+        if (b.max_age != null && age > b.max_age) return false
+      }
+    }
+
+    // Demographic filters: only apply when at least one is checked.
+    // When active, hide bursaries requiring unchecked demographics.
+    const anyDemographic = filters.careExperienced || filters.disability ||
+                           filters.youngCarer || filters.youngParent
+    if (anyDemographic) {
+      const hasFilterableReq = b.requires_care_experience || b.requires_disability ||
+                               b.requires_carer || b.requires_young_parent
+      if (hasFilterableReq) {
+        const matches = (b.requires_care_experience && filters.careExperienced) ||
+                        (b.requires_disability && filters.disability) ||
+                        (b.requires_carer && filters.youngCarer) ||
+                        (b.requires_young_parent && filters.youngParent)
+        if (!matches) return false
+      }
+    }
+
+    // Means-tested filter
+    if (filters.meansTested === 'yes' && !b.is_means_tested) return false
+    if (filters.meansTested === 'no' && b.is_means_tested) return false
+
+    return true
+  })
 }
 
 export interface BursaryMatch {

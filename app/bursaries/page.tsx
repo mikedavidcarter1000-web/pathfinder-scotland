@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { BursariesClient } from './bursaries-client'
-import type { Bursary, BursaryMatch, StudentMatchRow } from './types'
+import type { Bursary, BursaryMatch, StudentMatchRow, StudentProfile } from './types'
 
 export const metadata: Metadata = {
   title: 'Find funding you\'re eligible for',
@@ -22,6 +22,11 @@ interface ProfileSummary {
   household_income_band: string | null
   school_stage: string | null
   demographic_completed: boolean | null
+  care_experienced: boolean | null
+  has_disability: boolean
+  is_young_carer: boolean
+  is_young_parent: boolean | null
+  simd_decile: number | null
 }
 
 function deriveMissingProfile(p: ProfileSummary | null): string[] {
@@ -47,7 +52,7 @@ export default async function BursariesPage() {
   const { data: bursariesData } = await sb
     .from('bursaries')
     .select(
-      'id, name, administering_body, description, student_stages, award_type, amount_description, amount_min, amount_max, is_means_tested, is_repayable, application_process, application_deadline, url, notes, is_active'
+      'id, name, administering_body, description, student_stages, award_type, amount_description, amount_min, amount_max, is_means_tested, is_repayable, application_process, application_deadline, url, notes, is_active, requires_care_experience, requires_estranged, requires_carer, requires_disability, requires_refugee_or_asylum, requires_young_parent, income_threshold_max, simd_quintile_max, min_age, max_age'
     )
     .eq('is_active', true)
     .order('amount_max', { ascending: false, nullsFirst: false })
@@ -60,7 +65,7 @@ export default async function BursariesPage() {
 
   const { data: profile } = await sb
     .from('students')
-    .select('postcode, household_income_band, school_stage, demographic_completed')
+    .select('postcode, household_income_band, school_stage, demographic_completed, care_experienced, has_disability, is_young_carer, is_young_parent, simd_decile')
     .eq('id', user.id)
     .single()
 
@@ -93,14 +98,25 @@ export default async function BursariesPage() {
 
   const statusByBursary: StudentMatchRow[] = (existingMatchRows ?? []) as StudentMatchRow[]
 
+  const profileData = profile as ProfileSummary | null
+  const studentProfile: StudentProfile | null = profileData ? {
+    school_stage: profileData.school_stage,
+    care_experienced: profileData.care_experienced,
+    has_disability: profileData.has_disability,
+    is_young_carer: profileData.is_young_carer,
+    is_young_parent: profileData.is_young_parent,
+    simd_decile: profileData.simd_decile,
+  } : null
+
   return (
     <BursariesClient
       loggedIn={true}
       bursaries={bursaries}
       matches={matches}
       matchStatuses={statusByBursary}
-      missingProfile={deriveMissingProfile(profile as ProfileSummary | null)}
+      missingProfile={deriveMissingProfile(profileData)}
       matchError={matchError}
+      studentProfile={studentProfile}
     />
   )
 }
