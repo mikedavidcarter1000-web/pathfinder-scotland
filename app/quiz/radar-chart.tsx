@@ -39,7 +39,7 @@ export function RadarChart({ scores, size = 340 }: Props) {
 
   return (
     <svg
-      viewBox="0 0 400 400"
+      viewBox="-70 -10 540 420"
       width={size}
       height={size}
       role="img"
