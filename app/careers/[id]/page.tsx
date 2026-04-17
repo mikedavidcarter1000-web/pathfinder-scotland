@@ -1327,12 +1327,12 @@ function RoleTable({ roles }: { roles: CareerRole[] }) {
                     <>
                       <span style={{ whiteSpace: 'nowrap' }}>
                         {role.salary_entry && (
-                          <span style={{ color: 'var(--pf-grey-600)' }}>{role.salary_entry}</span>
+                          <span style={{ color: 'var(--pf-grey-600)' }}>£{role.salary_entry.toLocaleString('en-GB')}</span>
                         )}
                         {role.salary_entry && role.salary_experienced && (
                           <span style={{ color: 'var(--pf-grey-300)' }}> → </span>
                         )}
-                        {role.salary_experienced && <span>{role.salary_experienced}</span>}
+                        {role.salary_experienced && <span>£{role.salary_experienced.toLocaleString('en-GB')}</span>}
                       </span>
                       {role.salary_needs_verification && (
                         <span
@@ -1479,7 +1479,7 @@ function NewAiRolesSection({ roles }: { roles: CareerRole[] }) {
                     color: 'var(--pf-grey-600)',
                   }}
                 >
-                  up to {role.salary_experienced}
+                  up to £{role.salary_experienced.toLocaleString('en-GB')}
                 </span>
               )}
             </div>
