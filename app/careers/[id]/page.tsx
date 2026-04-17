@@ -1320,18 +1320,50 @@ function RoleTable({ roles }: { roles: CareerRole[] }) {
                     color: 'var(--pf-grey-900)',
                     fontSize: '0.8125rem',
                     verticalAlign: 'top',
-                    whiteSpace: 'nowrap',
+                    minWidth: '140px',
                   }}
                 >
                   {role.salary_entry || role.salary_experienced ? (
                     <>
-                      {role.salary_entry && (
-                        <span style={{ color: 'var(--pf-grey-600)' }}>{role.salary_entry}</span>
+                      <span style={{ whiteSpace: 'nowrap' }}>
+                        {role.salary_entry && (
+                          <span style={{ color: 'var(--pf-grey-600)' }}>{role.salary_entry}</span>
+                        )}
+                        {role.salary_entry && role.salary_experienced && (
+                          <span style={{ color: 'var(--pf-grey-300)' }}> → </span>
+                        )}
+                        {role.salary_experienced && <span>{role.salary_experienced}</span>}
+                      </span>
+                      {role.salary_needs_verification && (
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            marginLeft: '6px',
+                            padding: '1px 6px',
+                            fontSize: '0.625rem',
+                            fontWeight: 600,
+                            borderRadius: '4px',
+                            backgroundColor: 'rgba(245, 158, 11, 0.14)',
+                            color: 'var(--pf-amber-500)',
+                            verticalAlign: 'middle',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          Unverified
+                        </span>
                       )}
-                      {role.salary_entry && role.salary_experienced && (
-                        <span style={{ color: 'var(--pf-grey-300)' }}> → </span>
+                      {role.salary_source && (
+                        <div
+                          style={{
+                            fontSize: '0.625rem',
+                            color: 'var(--pf-grey-400)',
+                            marginTop: '2px',
+                            whiteSpace: 'normal',
+                          }}
+                        >
+                          {role.salary_source.replace('ONS ASHE 2025 ', '')}
+                        </div>
                       )}
-                      {role.salary_experienced && <span>{role.salary_experienced}</span>}
                     </>
                   ) : (
                     <span style={{ color: 'var(--pf-grey-300)' }}>—</span>
