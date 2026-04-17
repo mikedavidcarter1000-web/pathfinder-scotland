@@ -96,11 +96,43 @@ export default function YoungCarersPage() {
             </div>
 
             <div className="pf-card" style={{ padding: '20px 24px' }}>
-              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Carer Support Payment</h3>
-              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
-                GBP 81.90/week if you are a full-time carer (20+ hours/week) for someone on certain disability
-                benefits. Available from Social Security Scotland.
+              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Carer Support Payment / Carer&apos;s Allowance</h3>
+              <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '8px' }}>
+                £81.90/week for people who spend at least 35 hours a week caring for someone receiving
+                certain disability benefits. In Scotland this is now administered by Social Security Scotland
+                as Carer Support Payment (replacing the DWP Carer&apos;s Allowance).
               </p>
+              <p style={{
+                color: 'var(--pf-amber-800, #92400e)',
+                backgroundColor: 'var(--pf-amber-50, #fffbeb)',
+                border: '1px solid var(--pf-amber-200, #fde68a)',
+                borderRadius: '6px',
+                padding: '10px 14px',
+                fontSize: '0.875rem',
+                lineHeight: 1.6,
+                marginBottom: '8px',
+              }}>
+                <strong>Important for students:</strong> Full-time students (studying 21+ hours/week) are
+                generally not eligible. Narrow exceptions exist — check the link below or contact Social
+                Security Scotland to confirm your situation before applying.
+              </p>
+              <a
+                href="https://www.gov.uk/carers-allowance"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1"
+                style={{ color: 'var(--pf-blue-700)', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none' }}
+              >
+                gov.uk/carers-allowance
+                <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              <VerificationCaveat
+                org="Social Security Scotland / DWP"
+                url="https://www.gov.uk/carers-allowance"
+                year="2025-26"
+              />
             </div>
 
             <div className="pf-card" style={{ padding: '20px 24px' }}>
