@@ -13,6 +13,7 @@ export type MatchStatus = 'eligible' | 'applied' | 'received' | 'dismissed'
 
 export interface Bursary {
   id: string
+  slug: string
   name: string
   administering_body: string
   description: string | null

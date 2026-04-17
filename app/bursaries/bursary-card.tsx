@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import type { AwardType, Bursary, MatchConfidence, MatchStatus } from './types'
 
 const MONTHS: Record<string, number> = {
@@ -265,6 +266,13 @@ export function BursaryCard({
       )}
 
       <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 'auto' }}>
+        <Link
+          href={`/bursaries/${bursary.slug}`}
+          className="pf-btn-secondary pf-btn-sm no-underline hover:no-underline"
+          style={{ fontSize: '0.8125rem' }}
+        >
+          Learn more
+        </Link>
         {bursary.url && (
           <a
             href={bursary.url}

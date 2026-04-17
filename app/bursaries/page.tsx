@@ -52,7 +52,7 @@ export default async function BursariesPage() {
   const { data: bursariesData } = await sb
     .from('bursaries')
     .select(
-      'id, name, administering_body, description, student_stages, award_type, amount_description, amount_min, amount_max, is_means_tested, is_repayable, application_process, application_deadline, url, notes, is_active, requires_care_experience, requires_estranged, requires_carer, requires_disability, requires_refugee_or_asylum, requires_young_parent, income_threshold_max, simd_quintile_max, min_age, max_age'
+      'id, slug, name, administering_body, description, student_stages, award_type, amount_description, amount_min, amount_max, is_means_tested, is_repayable, application_process, application_deadline, url, notes, is_active, requires_care_experience, requires_estranged, requires_carer, requires_disability, requires_refugee_or_asylum, requires_young_parent, income_threshold_max, simd_quintile_max, min_age, max_age'
     )
     .eq('is_active', true)
     .order('amount_max', { ascending: false, nullsFirst: false })
