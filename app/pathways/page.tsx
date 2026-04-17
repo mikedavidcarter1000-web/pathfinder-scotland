@@ -606,13 +606,13 @@ function PathwaysPageContent() {
                   const needle = subjectSearch.trim().toLowerCase()
                   const filteredGroups = needle
                     ? pathway.subjectsByArea
-                        .map((g) => ({
-                          ...g,
-                          subjects: g.subjects.filter((s) =>
-                            s.name.toLowerCase().includes(needle)
-                          ),
-                        }))
-                        .filter((g) => g.subjects.length > 0)
+                      .map((g) => ({
+                        ...g,
+                        subjects: g.subjects.filter((s) =>
+                          s.name.toLowerCase().includes(needle)
+                        ),
+                      }))
+                      .filter((g) => g.subjects.length > 0)
                     : pathway.subjectsByArea
 
                   if (filteredGroups.length === 0) {
@@ -626,76 +626,76 @@ function PathwaysPageContent() {
                   }
 
                   return filteredGroups.map((group) => {
-                  const areaColour = getCurricularAreaColour(group.area.name)
-                  const expanded = expandedAreas.has(group.area.id) || !!needle
-                  const areaSelectedCount = group.subjects.filter((s) =>
-                    selectedIds.has(s.id)
-                  ).length
+                    const areaColour = getCurricularAreaColour(group.area.name)
+                    const expanded = expandedAreas.has(group.area.id) || !!needle
+                    const areaSelectedCount = group.subjects.filter((s) =>
+                      selectedIds.has(s.id)
+                    ).length
 
-                  return (
-                    <div
-                      key={group.area.id}
-                      className="pf-card-flat"
-                      style={{ overflow: 'hidden' }}
-                    >
-                      <button
-                        onClick={() => toggleArea(group.area.id)}
-                        className="w-full flex items-center justify-between transition-colors"
-                        style={{ padding: '16px 20px' }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)')}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                    return (
+                      <div
+                        key={group.area.id}
+                        className="pf-card-flat"
+                        style={{ overflow: 'hidden' }}
                       >
-                        <div className="flex items-center gap-3">
-                          <span className={`pf-area-badge ${areaColour.bg} ${areaColour.text}`}>
-                            {group.area.name}
-                          </span>
-                          <span style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
-                            {group.subjects.length} {group.subjects.length === 1 ? 'subject' : 'subjects'}
-                            {areaSelectedCount > 0 && (
-                              <span
-                                className="ml-2"
-                                style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
-                              >
-                                · {areaSelectedCount} selected
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                        <svg
-                          className={`w-5 h-5 transition-transform ${expanded ? 'rotate-180' : ''}`}
-                          style={{ color: 'var(--pf-grey-600)' }}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                        <button
+                          onClick={() => toggleArea(group.area.id)}
+                          className="w-full flex items-center justify-between transition-colors"
+                          style={{ padding: '16px 20px' }}
+                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--pf-blue-50)')}
+                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
-                      {expanded && (
-                        <div style={{ borderTop: '1px solid var(--pf-grey-100)' }} className="divide-y divide-[var(--pf-grey-100)]">
+                          <div className="flex items-center gap-3">
+                            <span className={`pf-area-badge ${areaColour.bg} ${areaColour.text}`}>
+                              {group.area.name}
+                            </span>
+                            <span style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+                              {group.subjects.length} {group.subjects.length === 1 ? 'subject' : 'subjects'}
+                              {areaSelectedCount > 0 && (
+                                <span
+                                  className="ml-2"
+                                  style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
+                                >
+                                  · {areaSelectedCount} selected
+                                </span>
+                              )}
+                            </span>
+                          </div>
+                          <svg
+                            className={`w-5 h-5 transition-transform ${expanded ? 'rotate-180' : ''}`}
+                            style={{ color: 'var(--pf-grey-600)' }}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        {expanded && (
+                          <div style={{ borderTop: '1px solid var(--pf-grey-100)' }} className="divide-y divide-[var(--pf-grey-100)]">
 
-                          {group.subjects.map((subject) => {
-                            const isSelected = selectedIds.has(subject.id)
-                            const isCompulsory = compulsoryIds.has(subject.id)
-                            const isSuggested = suggestedIds.has(subject.id)
-                            return (
-                              <SubjectRow
-                                key={subject.id}
-                                subject={subject}
-                                selected={isSelected}
-                                compulsory={isCompulsory}
-                                suggested={isSuggested}
-                                disabled={!isSelected && !isCompulsory && limitReached}
-                                shaken={shakenId === subject.id}
-                                areaColour={areaColour}
-                                onToggle={() => toggleSubject(subject)}
-                              />
-                            )
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  )
+                            {group.subjects.map((subject) => {
+                              const isSelected = selectedIds.has(subject.id)
+                              const isCompulsory = compulsoryIds.has(subject.id)
+                              const isSuggested = suggestedIds.has(subject.id)
+                              return (
+                                <SubjectRow
+                                  key={subject.id}
+                                  subject={subject}
+                                  selected={isSelected}
+                                  compulsory={isCompulsory}
+                                  suggested={isSuggested}
+                                  disabled={!isSelected && !isCompulsory && limitReached}
+                                  shaken={shakenId === subject.id}
+                                  areaColour={areaColour}
+                                  onToggle={() => toggleSubject(subject)}
+                                />
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )
                   })
                 })()}
               </div>
@@ -1114,8 +1114,8 @@ function SubjectRow({
   const rowBg = selected
     ? 'var(--pf-blue-100)'
     : disabled
-    ? 'var(--pf-grey-100)'
-    : 'transparent'
+      ? 'var(--pf-grey-100)'
+      : 'transparent'
 
   return (
     <div
@@ -1134,9 +1134,8 @@ function SubjectRow({
         disabled={disabled}
         aria-pressed={selected}
         title={compulsory ? `${subject.name} is compulsory and included automatically.` : undefined}
-        className={`w-full text-left flex items-center gap-3 ${
-          disabled ? 'cursor-not-allowed' : compulsory ? 'cursor-help' : 'cursor-pointer'
-        }`}
+        className={`w-full text-left flex items-center gap-3 ${disabled ? 'cursor-not-allowed' : compulsory ? 'cursor-help' : 'cursor-pointer'
+          }`}
         style={{
           padding: '14px 20px',
           minHeight: '56px',
@@ -1629,10 +1628,10 @@ function PathwayPreview({
             const nextLevel = s.is_available_adv_higher
               ? 'Advanced Higher'
               : s.is_available_higher
-              ? 'Higher'
-              : s.is_available_n5
-              ? QUALIFICATION_LEVEL_LABELS.n5
-              : null
+                ? 'Higher'
+                : s.is_available_n5
+                  ? QUALIFICATION_LEVEL_LABELS.n5
+                  : null
             return (
               <li key={s.id} className="flex items-start gap-2" style={{ fontSize: '0.875rem' }}>
                 <svg

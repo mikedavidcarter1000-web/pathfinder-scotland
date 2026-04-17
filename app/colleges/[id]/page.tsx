@@ -107,11 +107,11 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
           <div className="flex items-start gap-4 mb-2">
             <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden">
               {college?.image_url ? (
-                <Image 
-                  src={college.image_url || '/logo-icon.png'} 
-                  alt={college.name || 'College Logo'} 
-                  fill 
-                  style={{ objectFit: 'cover' }} 
+                <Image
+                  src={college.image_url || '/logo-icon.png'}
+                  alt={college.name || 'College Logo'}
+                  fill
+                  style={{ objectFit: 'cover' }}
                 />
               ) : (
                 <span className="text-2xl font-bold text-gray-400">{college?.name?.charAt(0) || 'C'}</span>

@@ -152,37 +152,37 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
         typeof wa.simd20 === 'object' && wa.simd20
           ? (wa.simd20 as { highers?: string }).highers
           : typeof wa.simd20_offer === 'string'
-          ? wa.simd20_offer
-          : undefined
+            ? wa.simd20_offer
+            : undefined
       const simd40 =
         typeof wa.simd40 === 'object' && wa.simd40
           ? (wa.simd40 as { highers?: string }).highers
           : typeof wa.simd40_offer === 'string'
-          ? wa.simd40_offer
-          : undefined
+            ? wa.simd40_offer
+            : undefined
       const care =
         typeof wa.care_experienced === 'object' && wa.care_experienced
           ? (wa.care_experienced as { highers?: string }).highers
           : typeof wa.care_experienced_offer === 'string'
-          ? wa.care_experienced_offer
-          : undefined
+            ? wa.care_experienced_offer
+            : undefined
       const general =
         typeof wa.wa_minimum === 'object' && wa.wa_minimum
           ? (wa.wa_minimum as { highers?: string }).highers
           : typeof wa.general_offer === 'string'
-          ? wa.general_offer
-          : undefined
+            ? wa.general_offer
+            : undefined
 
       const adjusted = simd20 ?? care ?? simd40 ?? general ?? null
       const label = simd20
         ? 'SIMD20'
         : care
-        ? 'Care experienced'
-        : simd40
-        ? 'SIMD40'
-        : general
-        ? 'WA minimum'
-        : null
+          ? 'Care experienced'
+          : simd40
+            ? 'SIMD40'
+            : general
+              ? 'WA minimum'
+              : null
 
       if (adjusted) {
         coursesWithWa.push({
@@ -199,13 +199,13 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
 
   const hasAnyWaData = Boolean(
     university?.wa_programme_name ||
-      university?.wa_programme_description ||
-      university?.care_experienced_guarantee ||
-      university?.wa_grade_reduction ||
-      university?.wa_bursary_info ||
-      university?.articulation_info ||
-      (university?.shep_programmes && university.shep_programmes.length > 0) ||
-      waCourseExamples.length > 0
+    university?.wa_programme_description ||
+    university?.care_experienced_guarantee ||
+    university?.wa_grade_reduction ||
+    university?.wa_bursary_info ||
+    university?.articulation_info ||
+    (university?.shep_programmes && university.shep_programmes.length > 0) ||
+    waCourseExamples.length > 0
   )
 
   return (
@@ -225,11 +225,11 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
               {/* Logo / Image Placeholder */}
               <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden">
                 {university?.image_url || university?.logo_url ? (
-                  <Image 
-                    src={university.image_url || university.logo_url || '/logo-icon.png'} 
-                    alt={university.name || 'University Logo'} 
-                    fill 
-                    style={{ objectFit: 'cover' }} 
+                  <Image
+                    src={university.image_url || university.logo_url || '/logo-icon.png'}
+                    alt={university.name || 'University Logo'}
+                    fill
+                    style={{ objectFit: 'cover' }}
                   />
                 ) : (
                   <span className="text-2xl font-bold text-gray-400">{university?.name?.charAt(0) || 'U'}</span>
@@ -453,16 +453,16 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
               university.widening_access_url ||
               university.scholarships_url ||
               university.undergraduate_url) && (
-              <UniversityLinksCard
-                university={{
-                  name: university.name,
-                  website_url: university.website_url,
-                  widening_access_url: university.widening_access_url,
-                  scholarships_url: university.scholarships_url,
-                  undergraduate_url: university.undergraduate_url,
-                }}
-              />
-            )}
+                <UniversityLinksCard
+                  university={{
+                    name: university.name,
+                    website_url: university.website_url,
+                    widening_access_url: university.widening_access_url,
+                    scholarships_url: university.scholarships_url,
+                    undergraduate_url: university.undergraduate_url,
+                  }}
+                />
+              )}
 
             {/* Key Facts */}
             <div className="pf-card" id="key-facts">

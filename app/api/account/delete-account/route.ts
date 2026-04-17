@@ -22,10 +22,10 @@ export async function POST(req: Request) {
           },
           // Writable cookies needed for signOut to clear the session
           set(name: string, value: string, options: CookieOptions) {
-            try { cookieStore.set({ name, value, ...options }) } catch (_) {}
+            try { cookieStore.set({ name, value, ...options }) } catch (_) { }
           },
           remove(name: string, options: CookieOptions) {
-            try { cookieStore.set({ name, value: '', ...options }) } catch (_) {}
+            try { cookieStore.set({ name, value: '', ...options }) } catch (_) { }
           },
         },
       }
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
       console.error('SUPABASE_SERVICE_ROLE_KEY is missing')
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
     }
-    
+
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       serviceRoleKey,
