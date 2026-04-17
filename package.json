@@ -6,7 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+
+    "scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "lint": "eslint",
+  "lint:fix": "eslint --fix"
+}
+    
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
     "db:migrate": "supabase db push",
