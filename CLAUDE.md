@@ -193,6 +193,26 @@ npx supabase db diff
 npx supabase migration repair --status applied [migration_name]
 ```
 
+## Conventions
+
+### Migration file conventions
+- Supabase migration files MUST NOT include `BEGIN;` / `COMMIT;` statements.
+- The Supabase MCP `apply_migration` tool wraps its own transaction, and Supabase CLI's `db push` also wraps transactions. Explicit `BEGIN` / `COMMIT` in the file causes nested-transaction errors on re-apply.
+- Convention: transaction boundary is owned by the applying tool, not the file.
+- When writing multi-statement cleanup migrations, sequence statements assuming they will execute within an outer transaction.
+
+### AI rating scale (`career_roles.ai_rating`)
+- Range: 1-10 integer, `CHECK` constraint enforces bounds.
+- Direction: 1 = AI barely affects the role (embodied, licensed, human-presence work). 10 = role is AI-native or exists primarily to supervise, train, govern or develop AI systems.
+- Full rubric with anchoring examples: `docs/ai-rating-rubric.md`.
+- The column comment on the database itself mirrors this definition and must be kept in sync with the rubric doc.
+
+### `is_new_ai_role` flag semantics
+- Current meaning: role was created by AI / did not exist in recognisable form pre-2020.
+- Does NOT mean "AI is central to this role today" — several roles where AI is now central (e.g. Bioinformatics Specialist) are correctly flagged false because the role pre-dates the current AI era.
+- Phase 2 backlog: consider renaming to `is_post_2020_ai_role` for semantic clarity, or splitting into two flags for role novelty vs current AI-centrality.
+- Do not rely on this flag as a proxy for AI impact. Use `ai_rating` for that.
+
 ## Revenue Targets
 - Year 1: £3-12k
 - Year 3: £20-50k
