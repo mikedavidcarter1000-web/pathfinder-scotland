@@ -75,6 +75,17 @@ Requires product decision.
 #### ai_rating retagging pass for pre-Round-1 roles
 Round 1 cleanup remapped 30 Round 1 roles plus 95 roles previously at rating 1. The remaining ~100 roles at ratings 2-8 were not re-examined against the new 1-10 rubric. A broader sanity-check pass may be warranted before the ratings become student-facing.
 
+#### Bursary requirement flag logic (AND vs OR)
+`match_bursaries_for_student` function uses AND semantics across all `requires_*` flags: a bursary with two flags requires the student to have both. This is the wrong default for most real-world widening-access bursaries, which typically grant eligibility if the student belongs to any one of several qualifying groups. Workaround applied in the April 2026 cleanup: multi-flag bursaries normalised to the single most inclusive flag (Buttle UK, Unite Foundation, Lone Parent Grant family). Proper fix options: (a) add `requirement_logic` enum column (any/all), (b) change function to OR-semantic default, (c) introduce `bursary_requirements` junction table. Decision needed before Round 2 expansion. Description text on affected bursaries should make multi-group eligibility explicit for students.
+
+Related: several `requires_*` columns on `bursaries` are not consulted by the match function at all (`requires_young_carer`, `requires_lone_parent`). Either the function should reference them or the columns should be removed/repurposed -- decide as part of the same review.
+
+##### Function/schema flag mismatch
+`match_bursaries_for_student` reads `requires_care_experience`, `requires_estranged`, `requires_carer`, `requires_disability`, `requires_refugee_or_asylum`, `requires_young_parent`. It does NOT read `requires_young_carer` or `requires_lone_parent`, even though those columns exist on `bursaries`. April 2026 cleanup fix applied: migrate affected bursaries to use function-read flags (Young Carer-targeted bursaries -> `requires_carer`; Lone Parent Grant family -> `requires_young_parent`). Column-cleanup decisions for `requires_young_carer` and `requires_lone_parent` (drop, or wire into the function, or add matching `is_lone_parent` to students schema) deferred to Phase 2.
+
+#### student_benefits vs offers consolidation
+Two overlapping Layer 2 commercial offer tables exist. `student_benefits` (100 rows, older, flat list) vs `offers` (62 rows, shipped Offers Hub with `offer_categories`, `offer_support_groups` widening-access taxonomy, `saved_offers`, `offer_clicks` analytics, `partners` model for affiliate management). Deferred Round 1 cleanup session did not consolidate because the Offers Hub is production-shipped and dropping it would regress widening-access group coverage (mature-students, esol-eal, rural-island, lgbtq not in bursaries). Decision needed: retire `student_benefits` in favour of `offers`, or keep both with a defined boundary. Requires product and UX scoping before data migration.
+
 ### Salary data quality
 
 #### Dentist salary verification
