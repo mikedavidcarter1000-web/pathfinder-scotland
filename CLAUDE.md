@@ -1,6 +1,10 @@
 # Pathfinder Scotland - Claude Code Context
 
-**Last Updated:** 14 April 2026
+**Last Updated:** 23 April 2026
+
+> **Phase 2 backlog:** See `docs/phase-2-backlog.md` for items parked from Round 1 (growth_outlook enum rework, SOC bundling display, Dentist salary verification, tail-heavy salary policy, subject-to-career mapping, broader ai_rating audit).
+>
+> **AI rating rubric:** See `docs/ai-rating-rubric.md` for the authoritative 1-10 scale used by `career_roles.ai_rating`.
 
 ## Project Overview
 Pathfinder is a B2C SaaS platform helping Scottish students navigate university applications, with emphasis on widening access programmes and the Scottish education system.
