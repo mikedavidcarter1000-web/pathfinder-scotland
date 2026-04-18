@@ -7,6 +7,67 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-18 Housekeeping batch: Phase 0 consolidation, template decision, Dentist salary, ai_rating sanity check
+
+- STOP gates proved their worth again. Four of five tasks had a STOP
+  gate. Three times it produced a meaningful user intervention: the
+  template enrich/delete decision, the Dentist revision migration, and
+  the Data Scientist 7-vs-8 call where the user asked for the verbatim
+  description text before ratifying the higher rating. Without STOP
+  gates I would have silently picked the wrong choice on at least one
+  of these.
+
+- Phase 0 orientation was fragmented across three places (top-of-file
+  blockquote, `## Notes for Claude Code`, `## Phase 0 orientation`).
+  Consolidating into one block surfaced implicit STOP gates that had
+  never been written down (memory-says-feature-complete verification,
+  out-of-scope-problem routing). Lesson: "fragmented across three
+  places" is a signal that the canonical rules haven't been named yet,
+  not just that there's duplication.
+
+- Prompt templates need a real use before they earn a place. The
+  original housekeeping template was skeletal and would have been
+  skipped over in favour of freehand prompting. Enriching it against
+  an actual housekeeping session (this one) produced a structure that
+  matches how sessions actually run -- Problem/Action/STOP-gate per
+  task, conditional-commit handling, reminders block. Next template
+  work should wait for a first real use rather than speculating on
+  shape.
+
+- Scotland-specific dentist pay requires NHS DVT (not DFT) as the
+  entry anchor. Scotland calls the programme Dental Vocational
+  Training, not Dental Foundation Training, and the Scottish pay
+  circular is PCS(DD) rather than England's equivalent. Got confirmed
+  2026/27 figure of GBP 39,603 from a published rate table. NHS Digital
+  Dental Earnings & Expenses publishes Scotland-specific
+  self-employed-dentist average taxable income (GBP 90,600 in 2023/24)
+  -- this is the authoritative mid-to-senior figure and was already in
+  the DB at GBP 90,000 by coincidence rather than citation. Lesson:
+  when BDA and salary pages refuse to open in webfetch, the NHS
+  Digital statistical publications are the Scotland-specific fallback
+  worth trying first.
+
+- Pre-Round-1 ai_rating audit found two distinct failure modes. (a)
+  Analytics / AI-adjacent roles stuck at 2-3 because the original
+  prompt focused on "is it human-facing" rather than "is AI central to
+  the workflow" -- Data Scientist at 3 is the egregious case but
+  Social Services Data Analyst and Learning Technologist both had the
+  same pattern. (b) Knowledge-worker roles at 4 that should be 6
+  because the rating was set before text-generation AI had reshaped
+  the hiring patterns for those roles (Communications Officer, Public
+  Relations Officer, Senior Software Developer, Court Clerk). Watch
+  for both patterns when auditing future cohorts: rating-2 is the red
+  flag for "does this role actually touch AI centrally?"; rating-4
+  flags "has this been re-rated since text-gen tools landed?".
+
+- Pull the full description verbatim before confirming a borderline
+  rating. User caught a 7-vs-8 call on Data Scientist by asking for
+  the exact description text. Truncated previews (the 160-char
+  SUBSTRING) are fine for scanning many rows, but the moment a rating
+  call becomes contested, the full text matters. Add a quick
+  "full description check" step before proposing the final rating on
+  any flagged role.
+
 ## 2026-04-18 Bursary finder one-and-done
 
 - When recommending data changes against a PL/pgSQL function, read the 

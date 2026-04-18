@@ -21,11 +21,13 @@ Items parked from the Round 1 end-of-session cleanup (migration `20260423000009_
   - Diversify by applying small per-role offsets driven by SDS LMI or sector reports, **or**
   - Collapse near-identical roles into one card with sub-role variants.
 
-## 3. Dentist salary verification
+## 3. Dentist salary verification ~~[CLEARED 2026-04-18]~~
 
-- Current `career_roles` row for Dentist uses ASHE, but the early-career path in Scotland is dominated by NHS Dental Foundation Training (DFT) / Dental Core Training (DCT) pay progression.
-- Need to cross-check the stored percentiles against published DFT/DCT bands and the BDA Scotland pay guidance.
-- Likely lands as either a manual override or a sector-specific salary note.
+~~- Current `career_roles` row for Dentist uses ASHE, but the early-career path in Scotland is dominated by NHS Dental Foundation Training (DFT) / Dental Core Training (DCT) pay progression.~~
+~~- Need to cross-check the stored percentiles against published DFT/DCT bands and the BDA Scotland pay guidance.~~
+~~- Likely lands as either a manual override or a sector-specific salary note.~~
+
+**Resolved** by migration `20260423000016_verify_dentist_salary.sql`: entry £37,000 → £39,603 (NHS Scotland DVT Year 1, 2026/27, PCS(DD) circular -- Scotland uses DVT not DFT); experienced £90,000 → £90,600 (NHS Digital Dental Earnings & Expenses 2023/24 Scotland self-employed average). `salary_needs_verification` cleared.
 
 ## 4. Tail-heavy professions -- salary override policy
 
@@ -42,11 +44,13 @@ Items parked from the Round 1 end-of-session cleanup (migration `20260423000009_
 - Pre-req: subjects master list needs to be seeded first (see `CLAUDE.md` -> Subject Pathway & Curriculum Layer).
 - Scope: one focused session, probably Opus, working through the 8 CfE areas and tagging each subject to 1 – 3 career sectors with a relevance weighting.
 
-## 6. Broader `ai_rating` sanity-check pass
+## 6. Broader `ai_rating` sanity-check pass ~~[CLEARED 2026-04-18]~~
 
-- Round-1 cleanup fixed the 30 Round-1 roles and the 94 rating-1 roles.
-- ~100 roles with pre-Round-1 ratings of 2 – 8 were explicitly left alone this session. Most look reasonable against the 1 – 10 rubric on spot-checks, but a full audit has not been done.
-- Low priority -- batch with any future content pass rather than standing it up on its own.
+~~- Round-1 cleanup fixed the 30 Round-1 roles and the 94 rating-1 roles.~~
+~~- ~100 roles with pre-Round-1 ratings of 2 – 8 were explicitly left alone this session. Most look reasonable against the 1 – 10 rubric on spot-checks, but a full audit has not been done.~~
+~~- Low priority -- batch with any future content pass rather than standing it up on its own.~~
+
+**Resolved** by migration `20260423000017_retag_pre_round1_ai_ratings.sql`: all 196 pre-Round-1 roles reviewed against the rubric. Seven retagged -- Data Scientist 3→8, Social Services Data Analyst 2→7, Learning Technologist 2→7, Senior Software Developer 4→6, Court Clerk 4→6, Communications Officer 4→6, Public Relations Officer 4→6. Remaining ~189 judged defensible.
 
 ---
 
@@ -72,8 +76,10 @@ Currently 170+ unique free-text values across 226 roles. Only 4 values map to a 
 
 Requires product decision.
 
-#### ai_rating retagging pass for pre-Round-1 roles
-Round 1 cleanup remapped 30 Round 1 roles plus 95 roles previously at rating 1. The remaining ~100 roles at ratings 2-8 were not re-examined against the new 1-10 rubric. A broader sanity-check pass may be warranted before the ratings become student-facing.
+#### ~~ai_rating retagging pass for pre-Round-1 roles~~ [CLEARED 2026-04-18]
+~~Round 1 cleanup remapped 30 Round 1 roles plus 95 roles previously at rating 1. The remaining ~100 roles at ratings 2-8 were not re-examined against the new 1-10 rubric. A broader sanity-check pass may be warranted before the ratings become student-facing.~~
+
+Resolved by migration `20260423000017_retag_pre_round1_ai_ratings.sql`. See also main item 6 above.
 
 #### Bursary requirement flag logic (AND vs OR)
 `match_bursaries_for_student` function uses AND semantics across all `requires_*` flags: a bursary with two flags requires the student to have both. This is the wrong default for most real-world widening-access bursaries, which typically grant eligibility if the student belongs to any one of several qualifying groups. Workaround applied in the April 2026 cleanup: multi-flag bursaries normalised to the single most inclusive flag (Buttle UK, Unite Foundation, Lone Parent Grant family). Proper fix options: (a) add `requirement_logic` enum column (any/all), (b) change function to OR-semantic default, (c) introduce `bursary_requirements` junction table. Decision needed before Round 2 expansion. Description text on affected bursaries should make multi-group eligibility explicit for students.
@@ -88,8 +94,10 @@ Two overlapping Layer 2 commercial offer tables exist. `student_benefits` (100 r
 
 ### Salary data quality
 
-#### Dentist salary verification
-ASHE SOC 2253 was manually estimated during Session 2 (Healthcare) at GBP 37k entry / GBP 90k experienced. Verify against NHS DFT (Dental Foundation Training) and DCT (Dental Core Training) published pay progression before pilot.
+#### ~~Dentist salary verification~~ [CLEARED 2026-04-18]
+~~ASHE SOC 2253 was manually estimated during Session 2 (Healthcare) at GBP 37k entry / GBP 90k experienced. Verify against NHS DFT (Dental Foundation Training) and DCT (Dental Core Training) published pay progression before pilot.~~
+
+Resolved by migration `20260423000016_verify_dentist_salary.sql`. See also main item 3 above.
 
 #### Tail-heavy professions salary override policy
 Several Round 1 roles have ASHE entry figures materially higher than research file "newly qualified" figures: Airline Pilot, Advocate (devilling stipend), Doctor / GP, Solicitor (trainee), senior aerospace engineers. Decide systematic rule: override ASHE with newly-qualified figure, keep ASHE and add caveat, or case-by-case.
@@ -125,14 +133,16 @@ Items surfaced 2026-04-18 during the cross-session self-improvement
 scaffolding install (commit 29c1a95). None are blocking; each has a 
 natural trigger for when to pick it up.
 
-#### Phase 0 orientation guidance is fragmented
-Phase 0 "read these at session start" guidance now lives in three 
+#### ~~Phase 0 orientation guidance is fragmented~~ [CLEARED 2026-04-18]
+~~Phase 0 "read these at session start" guidance now lives in three 
 places: the new `## Phase 0 orientation` section in CLAUDE.md, the 
 existing `## Notes for Claude Code` section in CLAUDE.md, and the 
 now-deleted `## Session Startup Checklist` (visible only in git 
 history). Consolidate into a single authoritative Phase 0 section and 
 prune or cross-reference the other two. Defer to the next housekeeping 
-session.
+session.~~
+
+Resolved by commit 95623ff: one coherent Phase 0 block covering pre-flight reading, shell, project-state pointers, standing rules, and STOP gates. `## Notes for Claude Code` deleted; Conventions / subagent patterns / session workflow / git hooks sections untouched.
 
 #### Missing feature-session prompt template
 `docs/prompt-templates/` currently holds data-expansion, data-cleanup 
@@ -151,11 +161,13 @@ migration with STOP before apply. Write when the next function
 rewrite session surfaces (likely the AND/OR match function rewrite 
 logged above under "Bursary requirement flag logic").
 
-#### housekeeping.md template is too terse to be useful
-The current template is close to a no-op vs writing the prompt 
+#### ~~housekeeping.md template is too terse to be useful~~ [CLEARED 2026-04-18]
+~~The current template is close to a no-op vs writing the prompt 
 freehand. Either drop it or enrich with a "when to use this template 
 vs write ad-hoc" decision gate at the top. Decide during the next 
-housekeeping session that actually uses the template.
+housekeeping session that actually uses the template.~~
+
+Resolved by commit b78827e: enriched with when-to-use decision gate at top, Problem/Action/STOP-gate/Commit sub-template per task, conditional-commit handling, session-close sequence, reminders block. Decision was enrich over delete because the structure was broadly right; what was missing was STOP-gate treatment and per-task framing.
 
 #### Pre-commit hook variant (nice-to-have, low priority)
 Today's post-commit hook nudges learnings capture AFTER the commit 
