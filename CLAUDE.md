@@ -233,28 +233,40 @@ pg_get_functiondef(oid) to inspect the function definition when in doubt.
 ## Key Contacts/Resources
 - Domain connection: Sister works as careers advisor in England (validation + expansion opportunity)
 
-## Notes for Claude Code
-- Database has real data - never reset without explicit confirmation
-- Always verify outputs with 99% accuracy standard
-- Minimise upfront costs - pragmatic solutions preferred
-- Check existing schema before creating migrations
-
 ---
 
 ## Phase 0 orientation (required at session start)
 
-Before any feature work, read:
-1. CLAUDE.md (this file) in full
-2. docs/session-learnings.md -- scan the 3 most recent session entries
-3. docs/phase-2-backlog.md -- scan for items relevant to the proposed session scope
-4. docs/ai-rating-rubric.md if the session touches career_roles.ai_rating
-5. Any session-specific research file saved to docs/research/
+**Pre-flight reading (in order):**
+1. `CLAUDE.md` (this file) in full
+2. `docs/session-learnings.md` -- 3 most recent entries
+3. `docs/phase-2-backlog.md` -- scan for items in scope of this session
+4. `docs/ai-rating-rubric.md` -- if the session touches `career_roles.ai_rating`
+5. Any session-specific research file in `docs/research/`
 
-Confirm the conventions below still hold before proceeding.
-
-Also run:
+**Pre-flight shell:**
 - `cd D:\Dev\pathfinder-scotland`
-- `npx supabase db diff` (check current state)
+- `npx supabase db diff` to check for drift
+
+**Project state (pointers, not inline duplication):**
+- Current Status -- see `## Current Status` above
+- Shipped features -- see `## Completed Features` above
+- Active conventions -- see `## Conventions` above (migration rules, AI rating scale, `is_new_ai_role` semantics, read-function-before-writing-data)
+- Subagent rules -- see `## Claude Code subagent patterns` below
+- Session-close workflow -- see `## Session workflow` below
+
+**Standing rules (always apply):**
+- Database has real data. Never reset without explicit user confirmation.
+- 99% accuracy standard on engineering outputs. No fabricated citations or specs.
+- Minimise upfront costs. Pragmatic solutions preferred.
+- British English, SI units, GBP (£), ASCII-safe outputs.
+- Verify existing schema before writing a migration. Migrations MUST NOT contain `BEGIN;` / `COMMIT;`.
+
+**STOP gates (pause and ask before proceeding):**
+- Before destructive operations (db resets, bulk deletes, `git reset --hard`, `--force` pushes, dropping/renaming a shipped table/column/function).
+- Before applying a migration that alters production data -- show the SQL and wait for approval.
+- When memory claims a feature is complete -- verify against live schema + function behaviour before trusting.
+- When a task surfaces an out-of-scope problem -- log it to `docs/phase-2-backlog.md` and move on; do not expand session scope without user approval.
 
 ## Claude Code subagent patterns
 
