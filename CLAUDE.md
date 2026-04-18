@@ -213,6 +213,19 @@ npx supabase migration repair --status applied [migration_name]
 - Phase 2 backlog: consider renaming to `is_post_2020_ai_role` for semantic clarity, or splitting into two flags for role novelty vs current AI-centrality.
 - Do not rely on this flag as a proxy for AI impact. Use `ai_rating` for that.
 
+### Reading PL/pgSQL functions before writing dependent data
+
+Before writing UPDATE, INSERT, or DELETE statements against a table used 
+by a PL/pgSQL function, read the function body first. Check every column 
+reference in both the WHERE clause and the SELECT list. Never infer 
+function behaviour from column names.
+
+Pathfinder has had three incidents caused by violating this principle 
+(AND/OR semantic assumptions on bursary requirement flags; ghost columns 
+that exist in the schema but are not read by the function; unqualified 
+table references in SECURITY DEFINER functions). Use 
+pg_get_functiondef(oid) to inspect the function definition when in doubt.
+
 ## Revenue Targets
 - Year 1: £3-12k
 - Year 3: £20-50k
@@ -228,8 +241,65 @@ npx supabase migration repair --status applied [migration_name]
 
 ---
 
-## Session Startup Checklist
-1. `cd D:\Dev\pathfinder-scotland`
-2. `npx supabase db diff` (check current state)
-3. Review pending features above
-4. Continue implementation
+## Phase 0 orientation (required at session start)
+
+Before any feature work, read:
+1. CLAUDE.md (this file) in full
+2. docs/session-learnings.md -- scan the 3 most recent session entries
+3. docs/phase-2-backlog.md -- scan for items relevant to the proposed session scope
+4. docs/ai-rating-rubric.md if the session touches career_roles.ai_rating
+5. Any session-specific research file saved to docs/research/
+
+Confirm the conventions below still hold before proceeding.
+
+Also run:
+- `cd D:\Dev\pathfinder-scotland`
+- `npx supabase db diff` (check current state)
+
+## Claude Code subagent patterns
+
+### Subagent file-deliverable verification
+
+When delegating file creation to a subagent, the delegating prompt must:
+
+1. Specify the absolute file path where the deliverable should be written
+2. Require the subagent to confirm the file exists (e.g. via a view or ls 
+   equivalent) before reporting task completion
+3. Reject verbal-summary-only completions; the deliverable is the file, 
+   not the subagent's summary
+
+Subagents in current Claude Code versions can report "completed" after 
+producing only a verbal summary of what the file would contain. The 
+parent agent then assumes the file exists. This has caused incidents 
+where downstream tasks failed because a named deliverable didn't exist 
+on disk.
+
+## Session workflow
+
+### Capturing lessons at session end
+
+Every session concludes with:
+
+1. Final session report (verification queries, deviations, workflow 
+   feedback)
+2. Append new lessons to docs/session-learnings.md under a heading 
+   dated today with the session title
+3. Update docs/phase-2-backlog.md with any deferred items discovered 
+   during the session
+4. Commit with a session-closing commit message following the pattern 
+   "session: [title] -- [brief summary]"
+5. The post-commit hook will prompt if session-learnings.md was not 
+   updated in this commit
+
+Session learnings should be specific, actionable, and reference the 
+session or incident that surfaced them. Avoid generic retrospective 
+language; aim for "next time, do X" or "this fails when Y" entries a 
+future Claude Code session could act on.
+
+## Git hooks setup
+
+After cloning the repo, install local git hooks:
+
+    bash scripts/git-hooks/install.sh
+
+The post-commit hook nudges learnings capture on session-closing commits.
