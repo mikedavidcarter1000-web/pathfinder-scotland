@@ -118,3 +118,47 @@ Major next work item. Takes all 226 roles and produces the mapping between SCQF-
 - Decision on mapping granularity (strict / suggestive / weighted)
 - Handling of Broad General Education / Senior Phase differences
 - Review process for contested mappings (e.g. can you become a Vet without Higher Physics?)
+
+### Process / tooling
+
+Items surfaced 2026-04-18 during the cross-session self-improvement 
+scaffolding install (commit 29c1a95). None are blocking; each has a 
+natural trigger for when to pick it up.
+
+#### Phase 0 orientation guidance is fragmented
+Phase 0 "read these at session start" guidance now lives in three 
+places: the new `## Phase 0 orientation` section in CLAUDE.md, the 
+existing `## Notes for Claude Code` section in CLAUDE.md, and the 
+now-deleted `## Session Startup Checklist` (visible only in git 
+history). Consolidate into a single authoritative Phase 0 section and 
+prune or cross-reference the other two. Defer to the next housekeeping 
+session.
+
+#### Missing feature-session prompt template
+`docs/prompt-templates/` currently holds data-expansion, data-cleanup 
+and housekeeping starters. A feature-session template would cover work 
+like the Offers Hub build, bursary finder UI, and upcoming 
+subject-to-career mapping UI. Proposed shape: schema-design STOP -> 
+API-surface STOP -> UI-wireup STOP. Write when the next feature 
+session is imminent, rather than speculatively.
+
+#### Missing function-repair prompt template
+The pattern happened twice in April 2026 (AND-vs-OR bursary fixes in 
+`match_bursaries_for_student`, SECURITY DEFINER qualification fixes in 
+`log_audit_event` + siblings). Proposed shape: inspect function body 
+-> identify bug class -> widen scope to sibling functions/rows -> 
+migration with STOP before apply. Write when the next function 
+rewrite session surfaces (likely the AND/OR match function rewrite 
+logged above under "Bursary requirement flag logic").
+
+#### housekeeping.md template is too terse to be useful
+The current template is close to a no-op vs writing the prompt 
+freehand. Either drop it or enrich with a "when to use this template 
+vs write ad-hoc" decision gate at the top. Decide during the next 
+housekeeping session that actually uses the template.
+
+#### Pre-commit hook variant (nice-to-have, low priority)
+Today's post-commit hook nudges learnings capture AFTER the commit 
+has landed. A pre-commit warn-earlier variant would give the 
+developer a chance to amend before landing. Build only if the 
+post-commit nudge proves insufficient in practice -- not speculatively.
