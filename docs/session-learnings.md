@@ -7,6 +7,16 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Sport & Fitness horizon retrofit (11 roles rated)
+
+- **Sport & Fitness is the most uniformly AI-resistant sector retrofitted to date outside Social Work.** Eight of 11 roles rate at 2 or 3 in the first horizon -- the largest low-end cluster in any sector. The sector resists AI displacement through two distinct mechanisms: embodied physical presence (Outdoor Activities Instructor, Sports Coach, Sports Therapist, Fitness Instructor, PE Teacher) and relational accountability (coaching and therapeutic relationships). When a sector's entire value chain is built on physical delivery or trusted human relationships, expect the first-horizon cluster to sit at 2--3 regardless of AI tool adoption around the edges.
+
+- **The sector splits cleanly into three AI archetypes: embodied/relational roles (2/3), management/advisory roles (3/4--5), and data/content roles (5/7).** Sports Coach, Sports Therapist, Outdoor Activities Instructor, and PE Teacher occupy the low end (2/3). AI-Enhanced Performance Coach, E-sports Coach, Fitness Instructor, and Leisure Centre Manager occupy the middle (3/4--5). Digital Fitness Content Creator and Sports Data Analyst share the top (5/7). The data/content split follows the same Media & Communications pattern: roles whose primary output is digital content or analytical data inherit the AI exposure profile of those sectors regardless of the sport & fitness context.
+
+- **Flat robotics 1/1 across all 11 roles with no exceptions -- the sixth sector to produce a completely uniform robotics profile.** Sport and fitness work is entirely physical-presence-based -- gym floor, training ground, pitch-side, outdoor terrain -- but the embodied human is the service, not a process to be automated. Unlike manufacturing or logistics, there is no physical workflow in sport & fitness that robotic systems displace; the physical human presence is the product. When an entire sector is body-based and relational with no production process, confirm flatness in a single sentence per role.
+
+- **Single-gate sessions remain the right pattern.** One STOP gate (11-row NULL check) was sufficient. UPDATE executed cleanly on first attempt; all 11 titles matched exactly. Apostrophe audit (sportscotland''s, Scotland''s, coach''s) is the only per-session preparation step that cannot be skipped.
+
 ## 2026-04-25 Performing Arts & Entertainment horizon retrofit (11 roles rated)
 
 - **Performing Arts & Entertainment is the most AI-resistant creative sector retrofitted to date.** Five roles (Choreographer, Dancer, Musician, Stage Manager, Theatre Director) reach `ai_rating_2030_2035 = 2` -- the lowest first-horizon cluster in any sector outside Social Work & Community. The driver is the live performance premium: Scottish audiences pay specifically for human physical presence, and the Edinburgh Festival, Scottish Ballet, and NTS circuit anchor the sector in an experience-economy context that actively devalues synthetic substitutes.
