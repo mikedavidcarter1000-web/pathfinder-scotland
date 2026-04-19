@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Agriculture & Environment horizon retrofit (12 roles rated)
+
+- **Agriculture & Environment is the most robotics-diverse physical sector retrofitted to date outside Manufacturing.** Farm Worker reaches `robotics_rating_2040_2045 = 4` and Forestry Worker reaches 3 -- both grounded in named, already-deployed or actively-trialled technology (Dogtooth Technologies strawberry pickers, Scottish Forestry tree planting robot trials, Komatsu harvesters). When a physical outdoor sector has heterogeneous terrain and task diversity, expect robotics ratings to reflect the specific automation pathway for each role rather than clustering uniformly.
+
+- **The sector splits cleanly into desk-based (flat robotics 1/1) and field-based (robotics 1–4) roles.** Agricultural Data Analyst, Carbon Footprint / Sustainability Officer, Environmental Consultant, Environmental Data Scientist, and Precision Agriculture Technologist are all flat 1/1 on robotics. All physically present field roles drift in the second horizon. The desk-based/field-based classification predicts robotics flatness as reliably here as it did in Construction & Trades.
+
+- **Peatland Restoration Specialist is the sector's most Scotland-specific role and warrants the most Scotland-specific description.** Scotland holds approximately 20% of the world's blanket bog; the Peatland ACTION fund and NatureScot stewardship make this role near-unique to the Scottish context. When a role exists predominantly or exclusively because of Scottish geography, policy, or institutional context, the description must anchor it to those specifics -- generic UK framing undersells the role's relevance to Scottish students.
+
+- **Environmental Data Scientist has the highest AI rating in the sector (5→7) despite having the flattest robotics profile (1/1).** The decoupling mirrors BIM/Digital Twin Manager in Construction: high AI exposure in a cognitive-analytical role, zero physical automation pathway. When an analytical or data-science role sits inside a physical sector, confirm explicitly that the role has no field presence before assigning robotics 1/1.
+
+- **Single-gate sessions remain the right pattern.** One STOP gate (12-row NULL check) was sufficient. UPDATE executed cleanly on first attempt; all 12 titles matched exactly. Apostrophe audit (Scotland''s, operator''s, Dogtooth Technologies'') is the only per-session preparation step that cannot be skipped.
+
 ## 2026-04-25 Construction & Trades horizon retrofit (16 roles rated)
 
 - **Construction & Trades is the most robotics-diverse sector retrofitted to date across physical trades.** Robotics ratings span 1–3 for the 16 retrofitted roles (excluding the pilot Welder/Fabricator at 7/8), driven by the fundamental heterogeneity of construction work: from Plasterer (flat 1/1, no credible automation path) to Groundworker/Civil Operative (1→3, autonomous earthmoving already operational on Scottish sites). When retrofitting a physical trades sector, identify the specific automation technology at each rating level -- the difference between 1 and 3 is the difference between "no credible robotic system exists" and "Komatsu iMC and Caterpillar Command for Dozing are already deployed."
