@@ -209,3 +209,23 @@ Veterinary Surgeon and Veterinary Nurse both seeded with 2024 survey data (BVA V
 ### Counsellor salary verification
 
 Counsellor (seeded in a prior batch, SOC 3224) has no Scotland median. Verify against BACP Salary Survey 2024/25 and NHS Agenda for Change Band 6/7 community counsellor rates before pilot. Note: BACP survey covers private practice and third sector as well as NHS -- figures differ significantly by setting.
+
+---
+
+## Appended 2026-04-24 -- Horizon ratings session deferrals
+
+### Full retrofit of horizon rating columns across remaining career_roles
+
+15 pilot roles now have `ai_rating_2035_2045`, `robotics_rating_2030_2035`, `robotics_rating_2040_2045`, and `robotics_description`. Remaining ~289 roles have NULLs in all four columns. Retrofit approach: batch by sector (18 sectors), ~45-60 min per sector batch. Pilot descriptions set the quality bar -- specific, Scotland-anchored, horizon drift explained.
+
+### Chef split (holding pattern)
+
+"Chef" renamed to "Chef (Professional Kitchen)" as a scope-clarifying placeholder. A full split into Chain/Volume Kitchen Chef and Independent/Fine Dining Chef is worth doing when the broader role-split audit runs (likely during Hospitality & Tourism sector expansion). The robotics_description already notes the divergence between the two sub-markets, so the data is honest in the interim.
+
+### Horizon rubric re-review cadence
+
+Both rubric docs (`docs/ai-horizon-rubric.md`, `docs/robotics-rating-rubric.md`) set a review cadence of 18-24 months. Target: late 2027. Current assumptions: UK-centric deployment lag, LFP battery cost trajectory, no major regulatory shock (UBI, robot tax, HGV Level 4 approval timeline). Add a calendar prompt before late 2027 session.
+
+### Third AI horizon column (deferred by design)
+
+Consider adding `ai_rating_2030_2035` if student feedback indicates the jump from current `ai_rating` to `ai_rating_2035_2045` is too large to interpret in a single step. For now, one mid-career AI horizon is the agreed design (rationale in `docs/ai-horizon-rubric.md`). Do not add without evidence of student confusion.

@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-24 Horizon ratings schema + 15 pilot ratings
+
+- `pg_get_functiondef` via `execute_sql` raises "array_agg is an aggregate function" error when called without explicit cast in some Supabase MCP query paths. Fallback: query `information_schema.routines` to get function names, then check `prosrc` column via `pg_proc` for individual functions. Both approaches confirmed no career_roles references in the 21 public functions.
+
+- Apostrophe audit on 15 descriptions before writing the migration caught two cases: "Scotland's" (Electrician) and "architect's" (Architect). Both required `''` escaping in the SQL VALUES. The batch-INSERT lesson from Batch 1 applies equally to multi-row UPDATE migrations -- audit apostrophes in every free-text column before writing the SQL, not after.
+
+- Role-title lookup: all 15 pilot titles matched cleanly by exact string. The one non-obvious case was "Doctor / GP" -- spaces around the slash are part of the title and the row exists under Healthcare & Medicine as expected. The lookup query used `ILIKE '%doctor%' OR ILIKE '%GP%'` as a safety net alongside the exact-match IN clause; this correctly returned only one row with no false positives.
+
+- The two-horizon robotics design (2030-2035 and 2040-2045) produced meaningfully different ratings for 10 of 15 pilot roles. The most instructive spread is Warehouse Operative (8→9), HGV Driver (7→9), and Delivery Driver (6→8): the early-career window captures transition-phase partial deployment, the mid-career window captures mature displacement. For roles with identical ratings across both horizons (Software Developers, Social Worker), the description should explain why there is no drift rather than omitting the explanation.
+
+- Description quality gate: the STOP gate C review of all 15 descriptions before applying was the right call for a pilot set. For the full ~289-role retrofit, descriptions will be reviewed in sector batches; the pilot descriptions now serve as the style anchor. Future descriptions should be 2-4 sentences, Scotland-anchored where possible (named employers, routes, regulators), and explain horizon drift explicitly when the two ratings differ.
+
 ## 2026-04-23 Codify STOP gate principle in CLAUDE.md and prompt templates
 
 - STOP gate discipline: distinguish irreversible operations from routine ones.
