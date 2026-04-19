@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Performing Arts & Entertainment horizon retrofit (11 roles rated)
+
+- **Performing Arts & Entertainment is the most AI-resistant creative sector retrofitted to date.** Five roles (Choreographer, Dancer, Musician, Stage Manager, Theatre Director) reach `ai_rating_2030_2035 = 2` -- the lowest first-horizon cluster in any sector outside Social Work & Community. The driver is the live performance premium: Scottish audiences pay specifically for human physical presence, and the Edinburgh Festival, Scottish Ballet, and NTS circuit anchor the sector in an experience-economy context that actively devalues synthetic substitutes.
+
+- **Music Producer is the sole AI-disrupted outlier (5→7) -- the highest in the sector and the clearest evidence that recorded music faces a fundamentally different AI exposure profile than live performance.** Suno, Udio, and Stable Audio are already producing commercially viable music; commodity production (library music, sync licensing) faces acute displacement. When a performing arts sector splits into live and recorded contexts, the recorded side tracks closer to Media & Communications content-production roles than to the live performance roles it sits alongside.
+
+- **Three technical roles drift from robotics 1 to 2 in the second horizon (Lighting Designer, Sound Technician, Virtual Production Technician) -- all driven by the same automated production systems pathway.** AI-assisted cue programming, automated mixing, and AI-accelerated environment rendering are the specific named drivers. The 1→2 drift in technical production roles follows the same pattern as Broadcast Technician in Media & Communications: one clearly automated physical subtask (programming/monitoring) among several non-automatable ones.
+
+- **Flat robotics 1/1 across eight of 11 roles -- the fifth sector to produce a near-uniform robotics profile.** Performance work is stage, studio, and venue-based with no credible embodied robotics pathway. The only drift is in technical/production roles where automated hardware (lighting rigs, mixing consoles, LED volumes) begins operating under reduced manual input. When an entire sector is performance-based, confirm flatness per role rather than constructing elaborate justifications.
+
+- **Single-gate sessions remain the right pattern.** One STOP gate (11-row NULL check) was sufficient. UPDATE executed cleanly on first attempt; all 11 titles matched exactly. Apostrophe audit (Scotland''s, Edinburgh''s, BBC Scotland''s, Screen Scotland''s) is the only per-session preparation step that cannot be skipped.
+
 ## 2026-04-25 Media & Communications horizon retrofit (10 roles rated)
 
 - **Media & Communications splits into two AI archetypes: relationship-capital roles (2–4) and content-production roles (5–8).** Public Relations Officer (3/4), Broadcast Journalist (3/5), and TV/Film Producer (3/5) rate low because their core value is human relationship capital -- journalist contacts, talent relationships, commissioning networks -- that AI cannot replicate. Copywriter (6/8) and Social Media Manager (5/7) rate higher because their primary deliverable is digital content that AI can generate. When a media role's value is embedded in personal relationships rather than content output, expect a first-horizon rating of 2–4 regardless of AI tool adoption.
