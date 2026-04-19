@@ -174,3 +174,38 @@ Today's post-commit hook nudges learnings capture AFTER the commit
 has landed. A pre-commit warn-earlier variant would give the 
 developer a chance to amend before landing. Build only if the 
 post-commit nudge proves insufficient in practice -- not speculatively.
+
+---
+
+## Appended 2026-04-19 -- Batch 1 career roles seeding deferrals
+
+### Batch 2+ role seeding
+
+Batch 1 added 39 roles across Armed Forces (7), Healthcare (7), Education (7), Construction (5), Engineering (8), Business & Finance (5). Several sectors still have coverage gaps and newly-identified roles pending research:
+
+- Healthcare & Medicine: Counsellor (salary_notes confirm BACP data gap); Occupational Therapist; Midwife (split from Nurse SOC 2237); Child Nurse; Adult Nurse (SOC split)
+- Education & Teaching: Educational Psychologist; Learning Technologist (already seeded under Computing)
+- Engineering & Manufacturing: Civil Engineer (distinct from Structural); Electrical Engineer
+- Armed Forces: RAF Regiment; Royal Engineers; Intelligence Analyst
+
+Target: ~+30 roles in Batch 2. Post-pilot preferred to avoid seeding at scale before role-card UI is validated.
+
+### salary_entry / salary_experienced vs UK equivalents -- column naming clarification
+
+The schema has both `salary_entry` / `salary_experienced` (Scotland-specific, used where NHS AfC or SNCT applies) and `salary_entry_uk` / `salary_experienced_uk` (UK-wide ASHE percentiles). No column comment distinguishes them. This caused ambiguity in Batch 1 where some roles have identical Scotland and UK figures (Armed Forces AFPRB is UK-wide).
+
+Decision needed before role-card UI: document which column to display as primary, and whether to surface both with a "Scotland vs UK" toggle. Add column comments at DB level matching the intent.
+
+### Armed Forces salary_median_scotland = NULL -- document as by-design
+
+All 7 Armed Forces roles have `salary_median_scotland = NULL`. This is correct: AFPRB pay is UK-wide and ONS ASHE Scotland Table 15 does not separately publish SOC 1171/3311 for Scotland. The NULL should not be treated as a data gap requiring filling.
+
+Consider adding a `salary_scotland_note` or populating `salary_notes` with a standard phrase so the UI can display "UK-wide pay scale applies -- no Scotland variant" rather than a blank median.
+
+### BVNA / BVA 2025 salary data refresh
+
+Veterinary Surgeon and Veterinary Nurse both seeded with 2024 survey data (BVA Voice of the Veterinary Profession 2024; BVNA salary survey 2024) and `salary_needs_verification = true`. Both organisations publish annual surveys. Refresh when 2025 data is available, likely Q3 2025.
+
+### Counsellor salary verification
+
+Counsellor (seeded in a prior batch, SOC 3224) has no Scotland median. Verify against BACP Salary Survey 2024/25 and NHS Agenda for Change Band 6/7 community counsellor rates before pilot. Note: BACP survey covers private practice and third sector as well as NHS -- figures differ significantly by setting.

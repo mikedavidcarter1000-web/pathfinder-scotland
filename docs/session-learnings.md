@@ -7,6 +7,42 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-19 Batch 1 career roles seeded -- 39 roles, new Armed Forces sector, 2 row splits
+
+- MCP `apply_migration` applies remotely only -- it does NOT create a
+  local migration file. The local file must be written manually with
+  the Write tool before committing, or the git history will have a
+  commit with no corresponding SQL. This has now happened twice; treat
+  it as a standing rule: write local file first, then apply, then
+  commit.
+
+- `career_sectors.ai_impact_rating` has a CHECK constraint that only
+  permits `'human-centric'`, `'ai-augmented'`, `'ai-exposed'`. The
+  schema audit doc from 2026-04-18 had listed "High"/"Medium" as
+  example values -- those were wrong. Always query `pg_constraint` for
+  the actual allowed values before inserting into a constrained text
+  column.
+
+- `salary_median_scotland = NULL` for all Armed Forces roles is correct
+  by design (AFPRB pay is UK-wide; ONS ASHE Scotland Table 15 does not
+  publish SOC 1171/3311 separately). Document this in salary_notes so
+  the UI can display a meaningful message rather than a blank. Log the
+  column-naming clarification (Scotland vs UK salary columns) in the
+  Phase 2 backlog before the role-card UI is built.
+
+- Apostrophe audit before writing a large INSERT is mandatory, not
+  optional. Batch 1 had 11 locations requiring `''` escaping across
+  39 rows. A missed apostrophe causes the entire INSERT to fail with a
+  cryptic syntax error; the migration name in the error won't point to
+  the offending row. Do the audit row-by-row in ai_description,
+  salary_source, and salary_notes before writing the VALUES block.
+
+- The composite unique constraint on `career_roles` is
+  `(career_sector_id, title)` -- the same title can appear under
+  different sectors. Conflict-checking queries must filter by
+  `career_sector_id`, not just scan for duplicate titles across the
+  whole table.
+
 ## 2026-04-18 Housekeeping batch: Phase 0 consolidation, template decision, Dentist salary, ai_rating sanity check
 
 - STOP gates proved their worth again. Four of five tasks had a STOP
