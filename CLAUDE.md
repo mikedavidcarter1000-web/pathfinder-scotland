@@ -1,10 +1,10 @@
 # Pathfinder Scotland - Claude Code Context
 
-**Last Updated:** 23 April 2026
+**Last Updated:** 25 April 2026
 
-> **Phase 2 backlog:** See `docs/phase-2-backlog.md` for items parked from Round 1 (growth_outlook enum rework, SOC bundling display, Dentist salary verification, tail-heavy salary policy, subject-to-career mapping, broader ai_rating audit).
+> **Phase 2 backlog:** See `docs/phase-2-backlog.md` for items parked from Round 1 (growth_outlook enum rework, SOC bundling display, Dentist salary verification, tail-heavy salary policy, subject-to-career mapping, full horizon-rating retrofit for remaining 249 roles).
 >
-> **AI rating rubric:** See `docs/ai-rating-rubric.md` for the authoritative 1-10 scale used by `career_roles.ai_rating`.
+> **AI horizon rubric:** See `docs/ai-horizon-rubric.md` for the authoritative 1-10 scale used by `career_roles.ai_rating_2030_2035` and `career_roles.ai_rating_2040_2045`.
 
 ## Project Overview
 Pathfinder is a B2C SaaS platform helping Scottish students navigate university applications, with emphasis on widening access programmes and the Scottish education system.
@@ -201,18 +201,20 @@ npx supabase migration repair --status applied [migration_name]
 - Convention: transaction boundary is owned by the applying tool, not the file.
 - When writing multi-statement cleanup migrations, sequence statements assuming they will execute within an outer transaction.
 
-### AI rating scale (`career_roles.ai_rating`)
-- Range: 1-10 integer, `CHECK` constraint enforces bounds.
+### AI horizon ratings (`career_roles.ai_rating_2030_2035`, `career_roles.ai_rating_2040_2045`)
+- Range: 1-10 integer (nullable), `CHECK` constraints enforce bounds on each column. `NULL` = not yet rated.
 - Direction: 1 = AI barely affects the role (embodied, licensed, human-presence work). 10 = role is AI-native or exists primarily to supervise, train, govern or develop AI systems.
-- Full rubric with anchoring examples: `docs/ai-rating-rubric.md`.
-- For career_roles ratings: see `docs/ai-rating-rubric.md` (current AI), `docs/ai-horizon-rubric.md` (AI 2035-2045), and `docs/robotics-rating-rubric.md` (robotics 2030-2035 and 2040-2045 horizons).
-- The column comment on the database itself mirrors this definition and must be kept in sync with the rubric doc.
+- `ai_rating_2030_2035`: early-career window — what the role looks like for students entering the workforce 2025–2035.
+- `ai_rating_2040_2045`: mid-career window — what the role looks like for professionals mid-career in 2040–2045.
+- Full rubric, drift guidance, heuristics, and pilot examples: `docs/ai-horizon-rubric.md`.
+- Companion rubric: `docs/robotics-rating-rubric.md` (robotics 2030-2035 and 2040-2045 horizons).
+- The old `ai_rating` column was dropped April 2026; historical snapshot at `docs/audits/ai_rating_historical_snapshot_2026-04-19.csv`.
 
 ### `is_new_ai_role` flag semantics
 - Current meaning: role was created by AI / did not exist in recognisable form pre-2020.
 - Does NOT mean "AI is central to this role today" — several roles where AI is now central (e.g. Bioinformatics Specialist) are correctly flagged false because the role pre-dates the current AI era.
 - Phase 2 backlog: consider renaming to `is_post_2020_ai_role` for semantic clarity, or splitting into two flags for role novelty vs current AI-centrality.
-- Do not rely on this flag as a proxy for AI impact. Use `ai_rating` for that.
+- Do not rely on this flag as a proxy for AI impact. Use `ai_rating_2030_2035` for that.
 
 ### Reading PL/pgSQL functions before writing dependent data
 
@@ -277,7 +279,7 @@ corrections needs one per update/delete pattern plus one for the bulk insert.
 1. `CLAUDE.md` (this file) in full
 2. `docs/session-learnings.md` -- 3 most recent entries
 3. `docs/phase-2-backlog.md` -- scan for items in scope of this session
-4. `docs/ai-rating-rubric.md` -- if the session touches `career_roles.ai_rating`
+4. `docs/ai-horizon-rubric.md` -- if the session touches `ai_rating_2030_2035` or `ai_rating_2040_2045`
 5. Any session-specific research file in `docs/research/`
 
 **Pre-flight shell:**
