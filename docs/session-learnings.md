@@ -7,6 +7,16 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Computing & Digital Technology horizon retrofit (10 roles, Prompt Engineer deleted)
+
+- **Delete FK dependents before deleting a career_roles row.** Prompt Engineer had 5 rows in `career_role_subjects`. The dependency query (`information_schema.referential_constraints`) returned `career_role_subjects` as the only FK table. Always run the FK check and the junction-table count before issuing any `DELETE FROM career_roles`. The pattern: FK check → count dependents → delete junction rows → delete role.
+
+- **Computing & Digital Technology is the first sector where role deletion (not just insertion) was in scope.** Prompt Engineer was removed because it misrepresents a transitional specialism as a stable career destination. When a role deletion is proposed, the session prompt should include the FK dependency check explicitly; do not assume the role has no dependents without querying.
+
+- **AI-native roles in a digital-only sector produce a uniform robotics profile: flat 1/1 across both horizons.** All 10 retrofitted roles are desk-based with no physical automation pathway, so 9 of 10 roles have robotics 1/1. The single exception (IT Support Technician, 1→2) arises from the physical hardware support dimension -- data centre robots and automated hardware-handling in larger facilities. When writing robotics descriptions for a digital-only sector, a single explanatory sentence is sufficient; the description's job is to explain why the rating is flat, not to speculate about physical automation pathways that don't exist.
+
+- **AI governance and oversight roles invert the normal AI exposure pattern.** AI Ethics Officer (2/4), AI Safety Researcher (2/3), and Cybersecurity Analyst (3/5) all score lower on AI exposure than their sector peers precisely because their function is to govern, audit, or defend against AI systems. The rubric heuristic "does the role exist because of AI?" applies: these roles exist because AI creates risk, not because AI replaces the work. Flag this inversion explicitly in the description when the role's low rating might surprise a student browsing a high-AI sector.
+
 ## 2026-04-25 Business & Finance horizon retrofit (20 roles)
 
 - **Finance sector is the purest knowledge-work cohort so far: 19 of 20 roles are flat 1/1 on robotics across both horizons.** The exception is Bank Clerk / Cashier (1→2), where the drift reflects service robots for customer navigation in larger branches -- not task displacement. When an entire sector lacks physical process work, a single sentence explaining the digital-only automation pathway is sufficient for each description; do not over-engineer the robotics rationale.
