@@ -216,7 +216,9 @@ Counsellor (seeded in a prior batch, SOC 3224) has no Scotland median. Verify ag
 
 ### Full retrofit of horizon rating columns across remaining career_roles
 
-15 pilot roles now have `ai_rating_2035_2045`, `robotics_rating_2030_2035`, `robotics_rating_2040_2045`, and `robotics_description`. Remaining ~289 roles have NULLs in all four columns. Retrofit approach: batch by sector (18 sectors), ~45-60 min per sector batch. Pilot descriptions set the quality bar -- specific, Scotland-anchored, horizon drift explained.
+15 pilot roles now have `ai_rating_2030_2035`, `ai_rating_2040_2045`, `robotics_rating_2030_2035`, `robotics_rating_2040_2045`, and `robotics_description` (5 values per row). Remaining ~249 roles have NULLs in all five columns. Retrofit approach: batch by sector (18 sectors), ~45-60 min per sector batch. Pilot descriptions set the quality bar -- specific, Scotland-anchored, horizon drift explained.
+
+Each sector batch should include a pass to flag existing `ai_rating` values that don't match the rubric anchors -- not just populate the new horizon columns. The pilot exposed a 13% drift rate in the baseline (Architect corrected 3→6; Doctor/GP robotics corrected in prior session). Building horizon ratings on top of a mis-rated present-day baseline produces internally consistent but misleading progressions. Flag and correct any suspect `ai_rating` values in the same migration as the horizon data for that sector.
 
 ### Chef split (holding pattern)
 
@@ -226,6 +228,8 @@ Counsellor (seeded in a prior batch, SOC 3224) has no Scotland median. Verify ag
 
 Both rubric docs (`docs/ai-horizon-rubric.md`, `docs/robotics-rating-rubric.md`) set a review cadence of 18-24 months. Target: late 2027. Current assumptions: UK-centric deployment lag, LFP battery cost trajectory, no major regulatory shock (UBI, robot tax, HGV Level 4 approval timeline). Add a calendar prompt before late 2027 session.
 
-### Third AI horizon column (deferred by design)
+### ~~Third AI horizon column (deferred by design)~~ [CLEARED 2026-04-25]
 
-Consider adding `ai_rating_2030_2035` if student feedback indicates the jump from current `ai_rating` to `ai_rating_2035_2045` is too large to interpret in a single step. For now, one mid-career AI horizon is the agreed design (rationale in `docs/ai-horizon-rubric.md`). Do not add without evidence of student confusion.
+~~Consider adding `ai_rating_2030_2035` if student feedback indicates the jump from current `ai_rating` to `ai_rating_2035_2045` is too large to interpret in a single step.~~
+
+**Resolved:** `ai_rating_2030_2035` added as the early-career horizon column (migration `20260425000002`). Two AI horizon columns now exist: `ai_rating_2030_2035` (early career) and `ai_rating_2040_2045` (mid career), matching the two robotics horizons.
