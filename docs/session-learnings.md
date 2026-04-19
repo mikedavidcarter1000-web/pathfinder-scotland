@@ -7,6 +7,16 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Engineering & Manufacturing horizon retrofit (23 roles rated)
+
+- **Engineering & Manufacturing is the most robotics-exposed sector retrofitted to date.** Four roles reach `robotics_rating_2040_2045 = 4` (Automotive Engineer, CNC Operator/Programmer, Quality Control Inspector, Manufacturing Technician) -- the highest robotics ceiling across all sectors retrofitted. Compare to all Social Work, Law, Computing, and Business sectors where the ceiling is 1-2. When retrofitting a physical-manufacturing sector, expect a bimodal robotics profile: design/oversight roles clustering at 1-2, and production/inspection roles reaching 3-4.
+
+- **The robotics and AI profiles of this sector diverge meaningfully by role type.** Automotive Engineer has the highest AI rating (7) but also the highest robotics rating (4) -- both automations are accelerating simultaneously in that role. By contrast, Maintenance Engineer has the lowest AI rating (2/3) while its robotics rating also stays low (1/2) because physical diagnosis and repair resist both forms of automation. When a role has low AI *and* low robotics ratings, the explanation is usually the same: embodied, variable-environment, human-presence work.
+
+- **Robotics Technician is a counter-intuitive low-AI-rating role in a high-automation sector.** The role's demand increases directly with industrial robot deployment; it is structurally a beneficiary of the automation it maintains. Its `ai_rating_2030_2035 = 2` (lowest in sector) reflects the hands-on physical nature of programming, commissioning, and fault-finding work on robotic cells. When a role's purpose is to maintain physical automation systems, expect low AI exposure and increasing demand -- the same counter-intuitive pattern as Digital Inclusion Worker in Social Work.
+
+- **Single-gate sessions with pre-reviewed external ratings remain the right pattern for bulk UPDATEs.** One STOP gate (23-row NULL check) was sufficient. The UPDATE executed cleanly on first attempt with all 23 roles matched by exact title. No title-matching issues arose, but the defence-in-depth habit of quoting titles exactly from the DB schema prevented any mismatch risk.
+
 ## 2026-04-25 Social Work & Community horizon retrofit (14 roles rated)
 
 - **Social Work & Community is the most uniformly AI-resistant sector retrofitted to date.** 12 of 15 roles rate 2/3 across both AI horizons. The dominant driver is SSSC registration combined with statutory accountability frameworks (Children (Scotland) Act 1995, Mental Health (Care and Treatment) (Scotland) Act 2003, Criminal Procedure (Scotland) Act 1995) that legally anchor decision-making to a named human professional. When an entire sector is dominated by registered, regulated, human-accountable roles, expect a tight cluster at the low end of the AI scale.
