@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-19 Healthcare & Medicine horizon retrofit (19 roles)
+
+- **Verify pilot-rated status in the DB before accepting source-document claims.** The session input file listed Physiotherapist as "skipped (already pilot-rated)". DB query showed all 5 horizon columns NULL for that row. Source document was wrong; Physiotherapist was in retrofit scope. Always query `WHERE title = '...' AND career_sector_id = ...` for the specific row before accepting prior-session memory or research-file claims about a row's state.
+
+- **Input file format: expect attachment failures from Claude.ai; require paste fallback.** File attachment failed twice before user pasted raw content. When a session is being handed off from a Claude.ai drafting session to Claude Code, the transfer mechanism is unreliable. Pre-empt by asking for paste at the start of the session rather than waiting for two failed attachment attempts.
+
+- **Source document placeholder descriptions must be drafted by Claude Code, not inherited.** The input file used `[as drafted in Claude.ai]` as the Physiotherapist `robotics_description` placeholder. The Claude.ai description was never retrieved. Next time: if a source document contains placeholder text in a free-text field, flag it at Gate A rather than silently inheriting the placeholder into the migration SQL.
+
+- **Check existing migration number before writing the filename.** This session's migration needed the next available `20260419000NNN` slot. Queried the `supabase/migrations/` directory first to confirm `000005` was last; wrote `000006` accordingly. This takes 10 seconds and prevents a naming collision that would cause `apply_migration` to error or silently overwrite.
+
+- **Role title matching uses exact string -- spaces and punctuation are significant.** `Healthcare Assistant / Care Worker` has a space either side of the slash. `Doctor / GP` likewise. Both matched cleanly, but any slight variation (e.g. "Doctor/GP" without spaces) would have produced 0 rows updated with no error. For any sector batch where role titles are non-obvious, add a pre-migration title-lookup query to confirm exact match before building the UPDATE statements.
+
 ## 2026-04-25 Two-horizon AI design: drop ai_rating, retrofit frontend, rewrite rubric
 
 - **Grep the whole codebase before applying a column-drop migration.** Task 6 refactored 8 named files, but `app/ai-careers/page.tsx:819` had a second `role.ai_rating` reference in a separate code path that was missed. It was caught by `npm run build` (TypeScript error), not by the refactor pass. Next time: run `grep -r "\.ai_rating[^_]"` across all `.ts` and `.tsx` files before staging the drop migration commit. A missed reference post-drop is a build failure, not a runtime error, so TypeScript will catch it — but catching it in grep is faster.

@@ -216,7 +216,9 @@ Counsellor (seeded in a prior batch, SOC 3224) has no Scotland median. Verify ag
 
 ### Full retrofit of horizon rating columns across remaining career_roles
 
-15 pilot roles now have `ai_rating_2030_2035`, `ai_rating_2040_2045`, `robotics_rating_2030_2035`, `robotics_rating_2040_2045`, and `robotics_description` (5 values per row). Remaining ~249 roles have NULLs in all five columns. Retrofit approach: batch by sector (18 sectors), ~45-60 min per sector batch. Pilot descriptions set the quality bar -- specific, Scotland-anchored, horizon drift explained.
+**Progress:** 15 pilot roles (April 2026-04-24) + Healthcare & Medicine 22 roles (2026-04-19) = 37 roles fully rated. Remaining ~227 roles across ~17 sectors. Next sector batch: choose from Armed Forces, Engineering & Manufacturing, Education & Teaching, Law & Justice, Computing & Technology, or another sector with a prepared research file.
+
+Retrofit approach: batch by sector (18 sectors), ~45-60 min per sector batch. Pilot descriptions set the quality bar -- specific, Scotland-anchored, horizon drift explained.
 
 Note: `ai_rating` was dropped 2026-04-25 (historical snapshot at `docs/audits/ai_rating_historical_snapshot_2026-04-19.csv`). The old baseline audit advice no longer applies as a live column check. Instead, cross-reference each role's `ai_rating_2030_2035` against the snapshot CSV during the sector batch -- if the 2030-2035 value seems unexpectedly high or low relative to the historical `ai_rating`, that's the signal to investigate. The pilot found a 13% drift rate (Architect 3→6); assume similar drift in other sectors and budget time for corrections.
 
@@ -244,6 +246,14 @@ Decision needed before the ai-careers page becomes a primary navigation surface:
 - Or show a "ratings coming soon" placeholder when below threshold
 
 Also affects `app/subjects/[id]/page.tsx` which shows average AI rating for careers linked to a subject — same threshold question applies.
+
+### Radiographer ai_rating_2040_2045 = 7 -- rubric tension flag
+
+The ai-horizon-rubric.md states regulated professions cap at 5-6 for 2040-2045. Radiographer was rated 7 because image interpretation is task-level AI displacement (NHS Scotland already piloting AI-first chest X-ray reporting). This is a documented exception, not an error -- the description explains the reasoning. However, when the rubric is next reviewed (target late 2027), revisit whether 7 is the right ceiling for the Radiographer class of roles (image analysis directly in AI capability zone, HCPC registration but not GMC-level liability anchor). At least two other potential candidates when other sectors are retrofitted: Sonographer, Medical Photographer.
+
+### Healthcare Assistant / Care Worker robotics_rating_2040_2045 = 5 -- watch item
+
+The robotics jump from 3 (2030-2035) to 5 (2040-2045) is the largest single-horizon jump in the Healthcare sector. It reflects humanoid deployment in care settings driven by Scottish demographic pressures (ageing population, rural labour shortages, Free Personal Care funding). The description makes this explicit. When the robotics rubric is re-reviewed or if credible evidence of slower-than-expected care-home humanoid deployment emerges, revisit this rating. The 5 is the key signal for students: "this role changes materially if you're mid-career in 2040."
 
 ### Tier threshold re-evaluation after full horizon retrofit
 
