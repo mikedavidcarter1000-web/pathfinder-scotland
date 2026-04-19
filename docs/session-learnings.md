@@ -7,6 +7,16 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Law & Justice horizon retrofit (14 roles rated, Barrister deleted)
+
+- **Barrister is an England & Wales role (Bar Standards Board) with no Scottish equivalent in the career_roles dataset.** Advocate (Faculty of Advocates) is the correct Scottish qualification for court advocacy. When a role deletion is Scotland-jurisdiction-specific, note the jurisdictional reason explicitly in the migration comment so future sessions do not re-add the role.
+
+- **Law & Justice is a uniformly digital-only sector for robotics: all 14 roles rate 1/1 except Prison Officer (1→2).** The Prison Officer drift reflects automated monitoring and access control systems in Scottish Prison Service estates -- augmenting custody work, not displacing it. When an entire sector produces flat 1/1 robotics profiles, the single exception (if any) deserves explicit description of *why* the drift occurs.
+
+- **The junior/senior AI rating split is most pronounced in Law & Justice.** Solicitor (Junior/Trainee) rates 6/7 while Solicitor (Senior) / Partner rates 3/5 -- the widest within-profession gap encountered across all sectors retrofitted to date. The same AI tools (document review, drafting, research) that displace juniors actively augment seniors. When writing descriptions for a profession with a sharp seniority split, make the inversion explicit rather than treating it as self-evident.
+
+- **Faculty of Advocates and Law Society of Scotland are the regulatory anchors for the legal profession in Scotland.** Advocate (Faculty of Advocates) and Procurator Fiscal Depute (Crown Office and Procurator Fiscal Service, COPFS) have Scotland-specific regulators distinct from England & Wales equivalents. Both cap the 2040–2045 ceiling at 5 due to court advocacy and prosecutorial accountability requirements remaining human-gated.
+
 ## 2026-04-25 Computing & Digital Technology horizon retrofit (10 roles, Prompt Engineer deleted)
 
 - **Delete FK dependents before deleting a career_roles row.** Prompt Engineer had 5 rows in `career_role_subjects`. The dependency query (`information_schema.referential_constraints`) returned `career_role_subjects` as the only FK table. Always run the FK check and the junction-table count before issuing any `DELETE FROM career_roles`. The pattern: FK check → count dependents → delete junction rows → delete role.
