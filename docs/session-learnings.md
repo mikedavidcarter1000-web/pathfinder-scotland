@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Post-retrofit corrections -- ratings and em-dash fixes
+
+- **Healthcare AI oversight roles were incorrectly rated very high on the AI axis -- the correct pattern is that AI oversight roles rate low.** Clinical AI Safety Specialist (was 10/10, corrected to 2/3), AI Healthcare Data Analyst (was 9/10, corrected to 5/7), and CNIO (was 9/9, corrected to 3/5) all had ratings that conflated "AI is central to this role" with "this role is being automated by AI". The former is not the rubric criterion; only the latter is. When a role exists specifically to govern, validate, or oversee AI systems, the AI rating should track with other oversight roles (2--5 range), not with AI-automated roles (7--10 range). The oversight function is structurally resistant to the displacement it manages.
+
+- **Vehicle autonomy (AV/autonomous driving) is an AI phenomenon, not a robotics one.** HGV Driver and Delivery Driver had inflated robotics ratings (7/9 and 6/8 respectively) because vehicle autonomy was being treated as physical robotics. After correction: HGV Driver robotics 2/4, Delivery Driver robotics 2/3. AV driving sits squarely in the AI column (HGV Driver ai_2040_2045 corrected up to 9 to reflect genuine autonomous long-haul freight trajectory). Apply the same reasoning to any transport role where the primary displacement mechanism is autonomous navigation software, not a physical robotic arm or warehouse bot.
+
+- **Physical robotics ratings for Warehouse Operative, Welder / Fabricator, and Chef (Professional Kitchen) were inflated by conflating process automation with embodied robotics.** Post-correction maxima: Warehouse Operative 3/5, Welder / Fabricator 3/5, Chef 2/3. The correction aligns with the robotics rubric ceiling of 5 for non-manufacturing roles. When a physical role has automated machinery (conveyor systems, welding robots, kitchen automation) that augments but does not replace the core human function, the robotics rating should reflect augmentation (2--4 range), not displacement (6+ range).
+
+- **Em-dashes (—) in `ai_description` fields are an ASCII-safety violation.** Five descriptions contained em-dashes (Learning Technologist, HR Administrator, Accountant (Qualified), Radiographer, AI / ML Engineer); all corrected to double-hyphens (--) via `REPLACE`. The standing rule is ASCII-safe outputs -- em-dashes are not ASCII. Future session prompts that produce `ai_description` text should explicitly state "use double-hyphens (--) not em-dashes" in the generation instructions. The global em-dash check (`WHERE ai_description LIKE '%—%'`) is a fast post-session hygiene query worth running routinely.
+
+- **Correction sessions need zero STOP gates beyond the pre-flight confirmation.** The pre-flight SELECT confirming current values is the single gate. All three UPDATE steps and the em-dash fix executed without product decisions. The STOP gate principle (gate only on irreversible/user-facing/scope-branching operations) held: corrections to known-bad values are pre-reviewed in the session prompt, making additional gates pure friction.
+
 ## 2026-04-25 Transport & Logistics horizon retrofit (15 roles rated)
 
 - **Transport & Logistics is the most robotics-diverse desk-based sector retrofitted to date.** Ten of 12 retrofitted roles are flat 1/1 on robotics (all desk-based), but Drone Delivery Operator (2→3) and Train Driver (1→2) break the pattern -- the only sector outside Manufacturing and Retail where two distinct non-physical-process robotics drift pathways coexist. When a transport sector includes roles that directly manage or are governed by autonomous systems, expect selective robotics drift even in a predominantly desk-based sector.
