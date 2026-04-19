@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Construction & Trades horizon retrofit (16 roles rated)
+
+- **Construction & Trades is the most robotics-diverse sector retrofitted to date across physical trades.** Robotics ratings span 1–3 for the 16 retrofitted roles (excluding the pilot Welder/Fabricator at 7/8), driven by the fundamental heterogeneity of construction work: from Plasterer (flat 1/1, no credible automation path) to Groundworker/Civil Operative (1→3, autonomous earthmoving already operational on Scottish sites). When retrofitting a physical trades sector, identify the specific automation technology at each rating level -- the difference between 1 and 3 is the difference between "no credible robotic system exists" and "Komatsu iMC and Caterpillar Command for Dozing are already deployed."
+
+- **The desk-based/site-based split cleanly predicts robotics flatness.** BIM/Digital Twin Manager, Quantity Surveyor, Construction Technology Specialist, Site Manager, Building Services Engineer, and Sustainability/Energy Modelling Analyst are all flat 1/1 on robotics across both horizons -- the same pattern as knowledge-work roles in Business & Finance. The physical trades all drift from 1 to 2 (or higher) in the second horizon. When assigning robotics ratings for a mixed-profile sector, classify roles as desk-based vs site-based first; desk-based roles in construction default to 1/1 unless they have a direct physical component.
+
+- **BIM/Digital Twin Manager is the highest AI-rated role in the sector (4→8) with the lowest robotics rating (1/1).** The AI drift is among the steepest in the construction dataset -- AI-native design platforms are collapsing BIM coordination work faster than any other trade or knowledge function. This decoupling (high AI exposure, zero robotics exposure) is the clearest example of the two axes being genuinely independent. When a knowledge-work role in a physical sector has a very high AI rating, confirm explicitly that it has no physical automation pathway before assigning robotics 1/1.
+
+- **Groundworker/Civil Operative is the only role in this sector to reach robotics_rating_2040_2045 = 3 (excluding the Welder pilot row).** The rationale is grounded in specific, named, already-deployed technology (Komatsu iMC, Caterpillar Command for Dozing) -- not speculation. When a physical operative role in a non-manufacturing sector reaches robotics 3, the description must name the specific machinery that drives the drift; "autonomous earthmoving" without a named system is insufficient.
+
+- **Single-gate sessions remain the right pattern for pre-reviewed bulk UPDATEs.** One STOP gate (20-row state check) was sufficient. UPDATE executed cleanly on first attempt; all 16 titles matched exactly. The apostrophe audit (Scotland''s, operator''s, Komatsu''s) is the only per-session preparation step that cannot be skipped.
+
 ## 2026-04-25 Science & Research horizon retrofit (11 roles rated)
 
 - **Science & Research has the most internally diverse robotics profile of any knowledge-sector retrofitted to date.** Lab Technician reaches `robotics_rating_2040_2045 = 4` (highest in sector); six roles are flat 1/1; four roles drift from 1 to 2. The driver of diversity is the lab automation pathway -- physical wet-lab work is exposed to robotics in a way that desk-based science (Computational Scientist, Data Scientist, AI Safety Researcher) is not. When retrofitting a mixed physical/cognitive sector, identify which roles have a wet-lab or fieldwork component before assigning robotics ratings.
