@@ -18,6 +18,7 @@ import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
 import { AiRoleBadge } from '@/components/ui/ai-role-badge'
 import { CareerRealities } from '@/components/careers/CareerRealities'
+import { HorizonRatings } from '@/components/careers/HorizonRatings'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import type { CareerSector } from '@/hooks/use-subjects'
@@ -1319,6 +1320,18 @@ function RoleTable({ roles }: { roles: CareerRole[] }) {
                   }}
                 >
                   {role.ai_description}
+                  {role.ai_rating_2030_2035 != null &&
+                    role.ai_rating_2040_2045 != null &&
+                    role.robotics_rating_2030_2035 != null &&
+                    role.robotics_rating_2040_2045 != null && (
+                      <HorizonRatings
+                        aiRating2030={role.ai_rating_2030_2035}
+                        aiRating2040={role.ai_rating_2040_2045}
+                        roboticsRating2030={role.robotics_rating_2030_2035}
+                        roboticsRating2040={role.robotics_rating_2040_2045}
+                        roboticsDescription={role.robotics_description ?? ''}
+                      />
+                    )}
                 </td>
                 <td
                   style={{
@@ -1476,7 +1489,19 @@ function NewAiRolesSection({ roles }: { roles: CareerRole[] }) {
             >
               {role.ai_description}
             </p>
-            <div className="flex flex-wrap items-center" style={{ gap: '8px' }}>
+            {role.ai_rating_2030_2035 != null &&
+              role.ai_rating_2040_2045 != null &&
+              role.robotics_rating_2030_2035 != null &&
+              role.robotics_rating_2040_2045 != null && (
+                <HorizonRatings
+                  aiRating2030={role.ai_rating_2030_2035}
+                  aiRating2040={role.ai_rating_2040_2045}
+                  roboticsRating2030={role.robotics_rating_2030_2035}
+                  roboticsRating2040={role.robotics_rating_2040_2045}
+                  roboticsDescription={role.robotics_description ?? ''}
+                />
+              )}
+            <div className="flex flex-wrap items-center" style={{ gap: '8px', marginTop: '12px' }}>
               {role.ai_rating_2030_2035 != null && <AiRoleBadge rating={role.ai_rating_2030_2035} size="sm" showLabel={false} />}
               {role.salary_experienced && (
                 <span
