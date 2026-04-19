@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Two-horizon AI design: drop ai_rating, retrofit frontend, rewrite rubric
+
+- **Grep the whole codebase before applying a column-drop migration.** Task 6 refactored 8 named files, but `app/ai-careers/page.tsx:819` had a second `role.ai_rating` reference in a separate code path that was missed. It was caught by `npm run build` (TypeScript error), not by the refactor pass. Next time: run `grep -r "\.ai_rating[^_]"` across all `.ts` and `.tsx` files before staging the drop migration commit. A missed reference post-drop is a build failure, not a runtime error, so TypeScript will catch it — but catching it in grep is faster.
+
+- **`replace_all` on type definitions silently misses optional-variant lines.** When renaming `ai_rating_2035_2045` in `types/database.ts`, `replace_all` on `ai_rating_2035_2045: number | null` (non-optional) matched only the Row block. The Insert/Update blocks use `ai_rating_2035_2045?: number | null` (with `?`), which is a different string and was not renamed. Always verify all three blocks (Row, Insert, Update) explicitly after any column rename in the types file.
+
+- **Verify column names before writing a snapshot query.** The historical snapshot query initially used `sector` as if it were a direct column — it doesn't exist; the column is `career_sector_id` requiring a JOIN to `career_sectors`. Run `information_schema.columns` for the table first, even for "obvious" column names. Cost: one extra query. Saved: a failed query mid-session and risk of writing a malformed CSV.
+
+- **Session summaries must state which STOP gates are pending and which migrations are already applied.** This session resumed from a compacted context. The summary correctly preserved Gate E as pending and noted which migrations had been applied (Tasks 3-6). This allowed resumption without re-applying migrations or re-presenting resolved gates. When writing session summaries for compaction, list each STOP gate status explicitly (resolved / pending / not yet reached) and list applied migrations by name.
+
+- **The rubric rewrite should follow the column drop, not precede it.** Rewriting `docs/ai-horizon-rubric.md` after `ai_rating` was dropped meant the new rubric could cleanly reference only the two horizon columns without hedging language about the legacy column. If the rubric had been rewritten first, it would have needed updating again after the drop. Sequencing: schema change → frontend refactor → types → rubric docs → CLAUDE.md is the right order.
+
 ## 2026-04-24 Horizon ratings schema + 15 pilot ratings
 
 - `pg_get_functiondef` via `execute_sql` raises "array_agg is an aggregate function" error when called without explicit cast in some Supabase MCP query paths. Fallback: query `information_schema.routines` to get function names, then check `prosrc` column via `pg_proc` for individual functions. Both approaches confirmed no career_roles references in the 21 public functions.

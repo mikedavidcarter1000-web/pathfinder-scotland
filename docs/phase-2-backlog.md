@@ -218,7 +218,7 @@ Counsellor (seeded in a prior batch, SOC 3224) has no Scotland median. Verify ag
 
 15 pilot roles now have `ai_rating_2030_2035`, `ai_rating_2040_2045`, `robotics_rating_2030_2035`, `robotics_rating_2040_2045`, and `robotics_description` (5 values per row). Remaining ~249 roles have NULLs in all five columns. Retrofit approach: batch by sector (18 sectors), ~45-60 min per sector batch. Pilot descriptions set the quality bar -- specific, Scotland-anchored, horizon drift explained.
 
-Each sector batch should include a pass to flag existing `ai_rating` values that don't match the rubric anchors -- not just populate the new horizon columns. The pilot exposed a 13% drift rate in the baseline (Architect corrected 3→6; Doctor/GP robotics corrected in prior session). Building horizon ratings on top of a mis-rated present-day baseline produces internally consistent but misleading progressions. Flag and correct any suspect `ai_rating` values in the same migration as the horizon data for that sector.
+Note: `ai_rating` was dropped 2026-04-25 (historical snapshot at `docs/audits/ai_rating_historical_snapshot_2026-04-19.csv`). The old baseline audit advice no longer applies as a live column check. Instead, cross-reference each role's `ai_rating_2030_2035` against the snapshot CSV during the sector batch -- if the 2030-2035 value seems unexpectedly high or low relative to the historical `ai_rating`, that's the signal to investigate. The pilot found a 13% drift rate (Architect 3→6); assume similar drift in other sectors and budget time for corrections.
 
 ### Chef split (holding pattern)
 
@@ -233,3 +233,20 @@ Both rubric docs (`docs/ai-horizon-rubric.md`, `docs/robotics-rating-rubric.md`)
 ~~Consider adding `ai_rating_2030_2035` if student feedback indicates the jump from current `ai_rating` to `ai_rating_2035_2045` is too large to interpret in a single step.~~
 
 **Resolved:** `ai_rating_2030_2035` added as the early-career horizon column (migration `20260425000002`). Two AI horizon columns now exist: `ai_rating_2030_2035` (early career) and `ai_rating_2040_2045` (mid career), matching the two robotics horizons.
+
+### NULL-state UI: sector average suppression threshold
+
+`app/ai-careers/page.tsx` shows a sector average AI rating for each sector card. With only 15/264 roles rated (5.7%), most sector averages are calculated on 0-2 data points. An average of `5.7` from two roles in a 14-role sector misleads students.
+
+Decision needed before the ai-careers page becomes a primary navigation surface:
+- Suppress sector average display until N% of roles in the sector are rated (suggested threshold: 30%)
+- Or show average with a "based on N of M roles" qualifier
+- Or show a "ratings coming soon" placeholder when below threshold
+
+Also affects `app/subjects/[id]/page.tsx` which shows average AI rating for careers linked to a subject — same threshold question applies.
+
+### Tier threshold re-evaluation after full horizon retrofit
+
+Current tier thresholds (resilient ≤3, transforming ≥7) were calibrated against the old `ai_rating` column and carried forward to `ai_rating_2030_2035` unchanged. This is probably correct for the 2030-2035 column. For `ai_rating_2040_2045`, the drift guidance in `docs/ai-horizon-rubric.md` pushes many knowledge-work roles 2-3 points higher — which means more roles will land at 6-8 under the mid-career horizon.
+
+When 80%+ of roles have horizon ratings, revisit whether the tier boundaries should differ between the two horizon columns, or whether UI copy ("resilient in the near term", "resilient across both horizons") is the right differentiator rather than numeric threshold shifts.
