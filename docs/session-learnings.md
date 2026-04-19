@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Retail & Customer Service horizon retrofit (10 roles rated)
+
+- **Retail & Customer Service is the most AI-exposed consumer-facing sector retrofitted to date.** Customer Service Advisor (Call Centre) reaches `ai_rating_2040_2045 = 9` -- the highest in sector and among the highest in the entire dataset. The Gartner 80%-autonomous-resolution projection by 2029 is the explicit rationale. When a role's primary function is answering routine queries at scale, AI agentic systems represent a near-complete displacement pathway rather than an augmentation pathway.
+
+- **Shop Assistant / Sales Associate is the only role in this sector to reach `robotics_rating_2040_2045 = 5`, driven by named, already-deployed technology.** Simbe Robotics Tally shelf-scanning robots (operational in Marks & Spencer), self-checkout (near-universal in Scottish supermarkets), and Amazon Go-style autonomous checkout expansion are the specific named systems grounding the drift. When a customer-facing physical role has multiple distinct robotic automation pathways (transactions + inventory), the second-horizon robotics rating reflects their combined impact rather than any single system.
+
+- **The sector splits cleanly into desk-based (flat robotics 1/1) and store-based (robotics 1-5) roles.** AI-Assisted Customer Experience Manager, Chatbot/AI System Trainer, E-commerce Personalisation Specialist, E-commerce Specialist, Retail Data/AI Analyst, and Supply Chain Coordinator are all flat 1/1 on robotics. Retail Manager, Visual Merchandiser drift to 1→2; Shop Assistant drifts to 2→5. The desk-based/store-based classification predicts robotics flatness as reliably here as in Construction and Agriculture.
+
+- **Supply Chain Coordinator warrants an explicit note separating the warehouse robotics story from the coordinator's desk role.** Warehouse and distribution centre automation is highly visible and well-publicised, making it easy to over-assign robotics to adjacent roles. The coordinator's function (supplier relationships, routing decisions, exception management) is desk-based and does not inherit the robotics exposure of the physical warehouse environment. When a desk role sits adjacent to a highly automated physical environment, confirm explicitly that the role has no physical presence component before assigning robotics 1/1.
+
+- **Single-gate sessions remain the right pattern.** One STOP gate (10-row NULL check) was sufficient. UPDATE executed cleanly on first attempt; all 10 titles matched exactly. Apostrophe audit (Scotland''s, Marks & Spencer''s) is the only per-session preparation step that cannot be skipped.
+
 ## 2026-04-25 Agriculture & Environment horizon retrofit (12 roles rated)
 
 - **Agriculture & Environment is the most robotics-diverse physical sector retrofitted to date outside Manufacturing.** Farm Worker reaches `robotics_rating_2040_2045 = 4` and Forestry Worker reaches 3 -- both grounded in named, already-deployed or actively-trialled technology (Dogtooth Technologies strawberry pickers, Scottish Forestry tree planting robot trials, Komatsu harvesters). When a physical outdoor sector has heterogeneous terrain and task diversity, expect robotics ratings to reflect the specific automation pathway for each role rather than clustering uniformly.
