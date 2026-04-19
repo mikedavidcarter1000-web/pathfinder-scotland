@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Horizon Ratings frontend -- HorizonRatings component
+
+- **`select('*')` queries already carry new columns -- no query change needed when adding columns to an existing table.** The career roles query in `hooks/use-subjects.ts` uses `.select('*')`, so `ai_rating_2040_2045`, `robotics_rating_2030_2035`, `robotics_rating_2040_2045`, and `robotics_description` were already being returned. The only work required was updating `types/database.ts` (already done by the type-gen run after the retrofit migration) and writing the UI component. Always check the query selector before assuming a fetch needs updating.
+
+- **TypeScript types in `types/database.ts` must be verified before assuming new columns are available.** The new columns were present in `database.ts` from the previous retrofit session. If they had not been, using `role.robotics_rating_2030_2035` would have produced a type error at build time -- which is the right signal to update the type file manually (per the `feedback_types_regen.md` memory: never regenerate `database.ts` wholesale).
+
+- **HorizonRatings belongs in the "What changes" table cell, not as a new column.** The `RoleTable` already has 5 columns; adding a sixth would worsen mobile overflow. Embedding HorizonRatings in the existing "What changes" (`ai_description`) cell keeps the column count stable and places the horizon data directly adjacent to the text it contextualises. The cell has `minWidth: 260px` which is sufficient for the bar component.
+
+- **The `NewAiRolesSection` badge div needed `marginTop` after HorizonRatings insertion.** The original code had `marginBottom: 12px` on the `ai_description` paragraph, then the badges div with no top margin. After inserting HorizonRatings between them, a `marginTop: 12px` on the badges div was required to restore the spacing. When inserting a component between two existing siblings, check whether the spacing relied on the previous sibling's bottom margin.
+
+- **Null guard should be "all four null" not "any null".** The spec says "do not show if all four rating values are null." Since the retrofit populated all 269 roles, in practice neither condition occurs -- but the guard uses `!= null` on each of the four ratings, which means the component only renders when all four are non-null. This is slightly stricter than the spec ("all null" = don't show) but correct for our data where partial null would indicate a data error.
+
 ## 2026-04-25 Post-retrofit corrections -- ratings and em-dash fixes
 
 - **Healthcare AI oversight roles were incorrectly rated very high on the AI axis -- the correct pattern is that AI oversight roles rate low.** Clinical AI Safety Specialist (was 10/10, corrected to 2/3), AI Healthcare Data Analyst (was 9/10, corrected to 5/7), and CNIO (was 9/9, corrected to 3/5) all had ratings that conflated "AI is central to this role" with "this role is being automated by AI". The former is not the rubric criterion; only the latter is. When a role exists specifically to govern, validate, or oversee AI systems, the AI rating should track with other oversight roles (2--5 range), not with AI-automated roles (7--10 range). The oversight function is structurally resistant to the displacement it manages.
