@@ -7,6 +7,14 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Education & Teaching horizon retrofit (13 roles)
+
+- **Single-gate sessions are the right pattern for pre-reviewed bulk UPDATEs.** The prompt supplied externally drafted ratings and descriptions; one STOP gate (pre-flight NULL check) was sufficient. No further gates were warranted because the content had already been reviewed upstream and the UPDATE was not irreversible in a meaningful sense (values can be corrected with another UPDATE). Adding gates for each role or each column would have been friction without risk reduction.
+
+- **Education & Teaching sector robotics profile is dominated by assistive-tech, not displacement.** Roles in ASN teaching, Teaching Assistant, and School Librarian rate robotics at 2/3 across horizons specifically because assistive robotics (Leka, MILO, Bee-Bot) are already deployed in Scottish schools as therapeutic/learning aids. This is a different robotics pathway than task automation -- operators and supervisors of these tools, not displaced workers. Distinguish assistive-robotic exposure from displacement-robotic exposure when writing descriptions for care and education roles.
+
+- **Highly relational and regulated roles cluster at ai_rating 1-3 / robotics_rating 1-2.** Six of 13 Education & Teaching roles have ai_rating_2030_2035 ≤ 2, all with robotics ≤ 2. GTCS, HCPC, SSSC, and Care Inspectorate registrations are the primary rating anchors. When a role has dual regulatory oversight (e.g. Early Years Teacher under both GTCS and Care Inspectorate), note both regulators in the robotics_description to make the anchor explicit.
+
 ## 2026-04-19 Healthcare & Medicine horizon retrofit (19 roles)
 
 - **Verify pilot-rated status in the DB before accepting source-document claims.** The session input file listed Physiotherapist as "skipped (already pilot-rated)". DB query showed all 5 horizon columns NULL for that row. Source document was wrong; Physiotherapist was in retrofit scope. Always query `WHERE title = '...' AND career_sector_id = ...` for the specific row before accepting prior-session memory or research-file claims about a row's state.
