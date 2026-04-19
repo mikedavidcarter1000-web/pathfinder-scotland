@@ -7,6 +7,16 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Hospitality & Tourism horizon retrofit (10 roles rated)
+
+- **Hospitality & Tourism has the most uniform AI profile of any consumer-facing sector retrofitted to date.** Seven of 10 roles (including the Chef pilot) rate at 3 or 4 in the first horizon -- the tightest low-end cluster seen. The sector resists AI displacement not through regulation (unlike Law or Social Work) but through the experience economy premium: Scottish tourism is sold on human warmth and authenticity, which actively devalues automation even where it is technically feasible. When a hospitality sector's commercial proposition is built on personal service, expect AI ratings to cluster at the low end even for roles with meaningful AI augmentation.
+
+- **Revenue / Yield Analyst is the sector outlier (5→7) and the only role where AI is already the primary decision-making engine.** AI-powered revenue management systems (STR data platforms, automated RevPAR management) already handle the majority of routine optimisation; the human role concentrates on strategy and exception management. The 2040-2045 ceiling of 7 is the highest in the sector and reflects the fully analytical, desk-based nature of the role. When a hospitality role is entirely analytical with no service-delivery or physical component, expect the AI profile to track with Finance/Analytics sector equivalents rather than the hospitality sector average.
+
+- **Four roles drift from robotics 1 to 2 in the second horizon (Hotel Receptionist, Restaurant Manager, Sustainability Specialist, Waiter/Bar Staff) -- all driven by the same physical venue automation pathway.** Self-check-in kiosks, food runner robots (Bear Robotics Servi), kitchen monitoring systems, and smart waste platforms are the specific named technologies. The 1→2 drift pattern indicates augmentation with physical machinery without displacing the core human role. When multiple roles in a venue-based sector share the same 1→2 robotics drift, a common underlying technology trend (smart venue automation) is usually the driver -- name it explicitly in each description.
+
+- **Single-gate sessions remain the right pattern.** One STOP gate (10-row NULL check) was sufficient. UPDATE executed cleanly on first attempt; all 9 titles matched exactly. Apostrophe audit (Scotland''s, VisitScotland''s, Edinburgh''s, Bear Robotics'') is the only per-session preparation step that cannot be skipped.
+
 ## 2026-04-25 Public Services & Government horizon retrofit (10 roles rated)
 
 - **Public Services & Government is the most AI-governance-dense sector retrofitted to date.** Four of 10 roles (Government Chief AI Officer, AI Policy Analyst, Public Sector AI Adoption Specialist, i.AI Prototyping Specialist) exist explicitly to govern, develop, or implement AI in public services. All four score low on AI exposure (2–3 first horizon) for the same reason as AI Ethics Officer in Computing: their purpose is to manage AI risk, making them structurally resistant to the displacement they govern. When a sector contains multiple AI-governance roles, expect a cluster of low AI ratings that might otherwise look counterintuitive.
