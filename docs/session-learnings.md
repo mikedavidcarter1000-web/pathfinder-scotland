@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Armed Forces horizon retrofit (15 roles rated, 8 inserted, 1 renamed)
+
+- **Armed Forces is the most robotics-diverse non-manufacturing sector retrofitted to date.** Four role groups reach `robotics_rating_2040_2045 = 5` (Army Soldier -- Infantry, Army Engineer, Army Logistics, Royal Navy Rating) -- the highest second-horizon robotics cluster outside Retail/Manufacturing. The driver is the pace of autonomous systems deployment in military contexts: FPV drones, loitering munitions, autonomous resupply, and mine-clearance robots are operational now, not speculative. When a physical sector has an active, well-funded autonomous systems programme (UK MOD RAS), expect higher robotics ratings than comparable civilian physical roles.
+
+- **IHL (International Humanitarian Law) functions as the primary ceiling constraint for AI ratings in combat roles, analogous to GMC/NMC in medical roles.** The human accountability requirement for use-of-force decisions caps AI ratings for command and combat roles at 2--4 in the first horizon regardless of AI capability trajectory. This is a legal constraint, not a technical one. Apply the same ceiling-reasoning to IHL that the rubric applies to regulated professions: the statutory layer does not move at the pace of AI deployment.
+
+- **The sector splits cleanly into two AI archetypes: command/combat roles (2--4) and intelligence/analytical roles (4--6).** Army Intelligence Analyst and RAF Intelligence / Cyber Specialist share the sector's highest AI ceiling (ai_2040_2045 = 6) because their primary function is desk-based cognitive analysis to which IHL does not apply. All command and direct combat roles cluster at 2--4. When a military sector includes explicit intelligence/analytical roles, expect them to inherit the AI exposure profile of equivalent civilian analytical roles rather than the military sector average.
+
+- **`ai_description` is NOT NULL in `career_roles` -- new role inserts must include it.** The session prompt did not specify `ai_description` in the INSERT, causing an immediate constraint error on the first attempt. The fix was straightforward (add placeholder descriptions), but it cost one round-trip. Future session prompts for role insertion should either include `ai_description` values or add an explicit `DEFAULT ''` fallback note. Check NOT NULL constraints with a schema query before finalising INSERT SQL.
+
+- **Three-step sessions (rename + insert + bulk UPDATE) need only the single pre-insert STOP gate.** The rename was independently verifiable by SELECT. The insert required a schema check (NOT NULL discovery) but no product decision. The bulk UPDATE was pre-reviewed in the session prompt. One gate was sufficient; the schema discovery was an obstacle to resolve, not a gate.
+
 ## 2026-04-25 Sport & Fitness horizon retrofit (11 roles rated)
 
 - **Sport & Fitness is the most uniformly AI-resistant sector retrofitted to date outside Social Work.** Eight of 11 roles rate at 2 or 3 in the first horizon -- the largest low-end cluster in any sector. The sector resists AI displacement through two distinct mechanisms: embodied physical presence (Outdoor Activities Instructor, Sports Coach, Sports Therapist, Fitness Instructor, PE Teacher) and relational accountability (coaching and therapeutic relationships). When a sector's entire value chain is built on physical delivery or trusted human relationships, expect the first-horizon cluster to sit at 2--3 regardless of AI tool adoption around the edges.
