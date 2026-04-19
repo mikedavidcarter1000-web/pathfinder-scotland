@@ -350,6 +350,7 @@ export type Database = {
         Row: {
           ai_description: string
           ai_rating: number
+          ai_rating_2030_2035: number | null
           ai_rating_2040_2045: number | null
           career_sector_id: string
           created_at: string | null
@@ -375,7 +376,8 @@ export type Database = {
         Insert: {
           ai_description: string
           ai_rating: number
-          ai_rating_2035_2045?: number | null
+          ai_rating_2030_2035?: number | null
+          ai_rating_2040_2045?: number | null
           career_sector_id: string
           created_at?: string | null
           growth_outlook?: string | null
@@ -400,7 +402,8 @@ export type Database = {
         Update: {
           ai_description?: string
           ai_rating?: number
-          ai_rating_2035_2045?: number | null
+          ai_rating_2030_2035?: number | null
+          ai_rating_2040_2045?: number | null
           career_sector_id?: string
           created_at?: string | null
           growth_outlook?: string | null
