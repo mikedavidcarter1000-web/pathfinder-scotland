@@ -7,6 +7,16 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Science & Research horizon retrofit (11 roles rated)
+
+- **Science & Research has the most internally diverse robotics profile of any knowledge-sector retrofitted to date.** Lab Technician reaches `robotics_rating_2040_2045 = 4` (highest in sector); six roles are flat 1/1; four roles drift from 1 to 2. The driver of diversity is the lab automation pathway -- physical wet-lab work is exposed to robotics in a way that desk-based science (Computational Scientist, Data Scientist, AI Safety Researcher) is not. When retrofitting a mixed physical/cognitive sector, identify which roles have a wet-lab or fieldwork component before assigning robotics ratings.
+
+- **Three roles in this sector invert the normal AI-exposure expectation for a science-adjacent field.** AI Safety Researcher (Scientific) (2/3), Laboratory Automation Specialist (2/4), and Robotics Integration Engineer (2/4) all score lower than sector peers despite working in AI/automation-adjacent domains -- because their purpose is to govern, implement, or maintain AI/robotic systems rather than be replaced by them. The same counter-intuitive pattern appeared in Computing (AI Ethics Officer, Cybersecurity Analyst) and Social Work (Digital Inclusion Worker). When a role's function is to enable or govern the automation technology, AI/robotics ratings should be low; demand is the inverse of displacement risk.
+
+- **Lab Technician is the only role in the Science & Research sector with a meaningful robotics exposure path (2→4).** The self-driving laboratory concept (AI-directed automated experimental execution) is already operational at Liverpool and Carnegie Mellon; UK research lab adoption is the 2035--2045 horizon event. When a single role in an otherwise desk-dominated sector has physical automation exposure, make the specific technology (liquid handling robots, Opentrons, Hamilton platforms) explicit in the description so the drift is grounded rather than speculative.
+
+- **Single-gate sessions with pre-reviewed external ratings remain the right pattern.** One STOP gate (11-row NULL check) was sufficient. UPDATE executed cleanly on first attempt; all 11 titles matched exactly. The apostrophe audit (Dundee''s, Edinburgh''s, Roslin''s) is the only per-session preparation step that cannot be skipped when descriptions contain possessives.
+
 ## 2026-04-25 Engineering & Manufacturing horizon retrofit (23 roles rated)
 
 - **Engineering & Manufacturing is the most robotics-exposed sector retrofitted to date.** Four roles reach `robotics_rating_2040_2045 = 4` (Automotive Engineer, CNC Operator/Programmer, Quality Control Inspector, Manufacturing Technician) -- the highest robotics ceiling across all sectors retrofitted. Compare to all Social Work, Law, Computing, and Business sectors where the ceiling is 1-2. When retrofitting a physical-manufacturing sector, expect a bimodal robotics profile: design/oversight roles clustering at 1-2, and production/inspection roles reaching 3-4.
