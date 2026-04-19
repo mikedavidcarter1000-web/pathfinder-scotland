@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-23 Codify STOP gate principle in CLAUDE.md and prompt templates
+
+- STOP gate discipline: distinguish irreversible operations from routine ones.
+  Over-gating adds friction without reducing risk -- a STOP gate on passing
+  validation or on a pre-reviewed INSERT delays the session without catching
+  anything. The test is: would a wrong outcome here be expensive to reverse,
+  or is this user-facing content that benefits from a first look? If neither,
+  do not gate. The typical gate count for a seeding session is one (bulk
+  insert preview); splits and deletes each add one gate. More than that is
+  a sign the template is compensating for unclear input, not preventing real
+  mistakes.
+
 ## 2026-04-19 Batch 1 career roles seeded -- 39 roles, new Armed Forces sector, 2 row splits
 
 - MCP `apply_migration` applies remotely only -- it does NOT create a

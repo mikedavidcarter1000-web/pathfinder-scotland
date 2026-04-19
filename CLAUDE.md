@@ -226,6 +226,41 @@ that exist in the schema but are not read by the function; unqualified
 table references in SECURITY DEFINER functions). Use 
 pg_get_functiondef(oid) to inspect the function definition when in doubt.
 
+### STOP gate principle
+
+A STOP gate is a session pause where Claude Code must show the user what it
+is about to do and wait for explicit approval. STOP gates are valuable when
+they prevent irreversible mistakes; they add friction when applied to routine
+operations. Apply this test before adding a STOP gate to any task prompt:
+
+**A STOP gate is warranted only if at least one of these applies:**
+
+1. The change is irreversible or expensive to reverse -- any DELETE, DROP,
+   schema change, or sector creation with UI dependencies.
+2. The content is user-facing and first-look review adds value -- new sector
+   narratives, public-facing descriptions, external copy.
+3. The session has branched on findings that warrant a product decision --
+   unexpected data state, ambiguous research output, scope question.
+
+**A STOP gate is NOT warranted for:**
+
+- Input validation that is expected to pass (fail loudly if it fails; proceed
+  silently if it passes).
+- INSERT of pre-reviewed data (the review happened upstream; duplicating it
+  is friction).
+- Read-only operations.
+- Routine reporting or summary output.
+
+**Typical gate count for data-expansion sessions:**
+
+- Gate A: pre-seed snapshot (count summary + 2-3 sample transformed rows)
+  before any bulk INSERT.
+- Gate B: before-after diff for any UPDATE to existing rows.
+- Gate C: row-ID guard for any DELETE.
+
+A session with only inserts needs one gate. A session with splits or
+corrections needs one per update/delete pattern plus one for the bulk insert.
+
 ## Revenue Targets
 - Year 1: £3-12k
 - Year 3: £20-50k
