@@ -7,6 +7,20 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Media & Communications horizon retrofit (10 roles rated)
+
+- **Media & Communications splits into two AI archetypes: relationship-capital roles (2–4) and content-production roles (5–8).** Public Relations Officer (3/4), Broadcast Journalist (3/5), and TV/Film Producer (3/5) rate low because their core value is human relationship capital -- journalist contacts, talent relationships, commissioning networks -- that AI cannot replicate. Copywriter (6/8) and Social Media Manager (5/7) rate higher because their primary deliverable is digital content that AI can generate. When a media role's value is embedded in personal relationships rather than content output, expect a first-horizon rating of 2–4 regardless of AI tool adoption.
+
+- **Public Relations Officer has the lowest AI ceiling in the sector (3/4) -- lower than Broadcast Journalist (3/5).** The rationale is that PR value is concentrated in non-transferable journalist relationships and crisis judgment, which are more resistant to AI than journalism's research and drafting functions. AI can assist a journalist's research; it cannot substitute for a PR officer's personal credibility with editors. When a role's commercial value is purely relational and reputational, the second-horizon ceiling is lower than roles with a mixed cognitive/relational profile.
+
+- **Copywriter reaches ai_rating_2040_2045 = 8 -- the highest in the sector and consistent with the Creative Arts & Design pattern.** The driver is identical: the primary deliverable (advertising copy, website content, marketing text) is directly reproduced by AI generation tools. Scotland's Edinburgh and Glasgow agency sectors are already navigating this. When a media role's core output is text that AI can generate competently, expect the second-horizon rating to track with content-production roles in Creative Arts & Design rather than the media sector average.
+
+- **Broadcast Technician is the only role in this sector with robotics > 1 (1→2), driven by robotic camera systems already deployed at BBC and Sky.** The drift is modest because the physical technical scope of the role extends well beyond camera operation; fault diagnosis, transmission systems, and production infrastructure are not credibly automated. When a broadcast technical role has one clearly automated physical subtask (camera operation) among several non-automatable ones, a 1→2 drift is the right call rather than a higher rating.
+
+- **Flat robotics 1/1 across nine of 10 roles -- the fourth sector to produce a near-uniform robotics profile.** Media and communications work is overwhelmingly desk-based, studio-based, and relationship-based. The only physical automation pathway in the sector is camera robotics for Broadcast Technician. When an entire sector is desk-based and digital, confirm the flatness in a single sentence per role rather than constructing elaborate justifications.
+
+- **Single-gate sessions remain the right pattern.** One STOP gate (10-row NULL check) was sufficient. UPDATE executed cleanly on first attempt; all 10 titles matched exactly. Apostrophe audit (Scotland''s, STV''s, Edinburgh''s) is the only per-session preparation step that cannot be skipped.
+
 ## 2026-04-25 Creative Arts & Design horizon retrofit (14 roles rated, 1 deleted)
 
 - **Creative Arts & Design is the most AI-disrupted creative sector retrofitted to date.** Five roles reach `ai_rating_2030_2035 = 6` (Games Artist, Graphic Designer, Illustrator, Journalist / Content Writer, Marketing Content Creator) -- the highest first-horizon cluster in any sector outside Computing. The driver is that the core output of these roles (images, text, layouts, content) is directly reproduced by AI generation tools. When a creative role's primary deliverable is a digital artefact that AI can generate independently, expect a first-horizon rating of 6 or higher regardless of the skill required to produce it.
