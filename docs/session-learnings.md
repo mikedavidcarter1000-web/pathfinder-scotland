@@ -7,6 +7,16 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Public Services & Government horizon retrofit (10 roles rated)
+
+- **Public Services & Government is the most AI-governance-dense sector retrofitted to date.** Four of 10 roles (Government Chief AI Officer, AI Policy Analyst, Public Sector AI Adoption Specialist, i.AI Prototyping Specialist) exist explicitly to govern, develop, or implement AI in public services. All four score low on AI exposure (2–3 first horizon) for the same reason as AI Ethics Officer in Computing: their purpose is to manage AI risk, making them structurally resistant to the displacement they govern. When a sector contains multiple AI-governance roles, expect a cluster of low AI ratings that might otherwise look counterintuitive.
+
+- **The sector splits cleanly into two AI archetypes: governance/leadership roles (2–3) and administrative-processing roles (6–8).** Administrative Assistant and HR Administrator share the highest ratings (6/8) because their core tasks -- document processing, data entry, scheduling, contract administration -- are among the most AI-automatable office functions regardless of sector. Policy Analyst / Civil Servant (Fast Stream) sits in the middle (4/6) because AI automates the research and drafting layer but not ministerial relationships or interdepartmental negotiation. When a public sector role's primary value is routine processing, expect high AI exposure; when it is political judgment or accountability, expect low.
+
+- **Flat robotics 1/1 across all 10 roles with no exceptions -- the second sector after Social Work & Community to produce a completely uniform robotics profile.** Public sector work is entirely desk-based and citizen-facing with no physical process pathway for robotics in either horizon. When writing robotics descriptions for a sector with no physical automation pathway, a single explanatory sentence confirming the flatness is sufficient.
+
+- **Single-gate sessions remain the right pattern.** One STOP gate (10-row NULL check) was sufficient. UPDATE executed cleanly on first attempt; all 10 titles matched exactly. Apostrophe audit (Scotland''s, Government''s, role''s) is the only per-session preparation step that cannot be skipped.
+
 ## 2026-04-25 Retail & Customer Service horizon retrofit (10 roles rated)
 
 - **Retail & Customer Service is the most AI-exposed consumer-facing sector retrofitted to date.** Customer Service Advisor (Call Centre) reaches `ai_rating_2040_2045 = 9` -- the highest in sector and among the highest in the entire dataset. The Gartner 80%-autonomous-resolution projection by 2029 is the explicit rationale. When a role's primary function is answering routine queries at scale, AI agentic systems represent a near-complete displacement pathway rather than an augmentation pathway.
