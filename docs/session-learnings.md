@@ -7,6 +7,16 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Social Work & Community horizon retrofit (14 roles rated)
+
+- **Social Work & Community is the most uniformly AI-resistant sector retrofitted to date.** 12 of 15 roles rate 2/3 across both AI horizons. The dominant driver is SSSC registration combined with statutory accountability frameworks (Children (Scotland) Act 1995, Mental Health (Care and Treatment) (Scotland) Act 2003, Criminal Procedure (Scotland) Act 1995) that legally anchor decision-making to a named human professional. When an entire sector is dominated by registered, regulated, human-accountable roles, expect a tight cluster at the low end of the AI scale.
+
+- **The sector splits cleanly into two AI archetypes: statutory/therapeutic roles (2/3) vs administrative-processing roles (4/6).** Housing Officer and Social Services Data Analyst are the only roles above 3, both because a meaningful portion of their work is routine data processing or case administration that AI tools will progressively handle. All frontline social care, counselling, and community roles sit at 2/3. When a social care sector has a mixed workforce (frontline + administrative), identify which archetype each role belongs to before assigning a rating.
+
+- **Flat robotics 1/1 across all 15 roles with no exceptions -- the first sector to produce a completely uniform robotics profile.** Social Work & Community is entirely human-presence and desk-based; there is no physical process pathway for robotics even in the 2040-2045 horizon. Compare to Education (assistive robots in ASN settings), Healthcare (surgical and care robots), and Law & Justice (Prison Officer at 1/2). When writing robotics descriptions for a sector with no physical automation pathway, one explanatory sentence is sufficient -- the description's job is to confirm the flatness is considered, not speculate about pathways that don't exist.
+
+- **Digital Inclusion Worker is a counter-intuitive low-AI-rating role.** The role's function is to help people access digital services -- demand that increases as AI expands the digital divide rather than decreases as AI automates the role's tasks. When a role's purpose is to bridge a digital access gap, AI growth is a demand driver, not a displacement driver. The rubric heuristic "does the role exist because of AI?" applies: Digital Inclusion Worker exists because AI creates a literacy and access gap, not because AI replaces the work.
+
 ## 2026-04-25 Law & Justice horizon retrofit (14 roles rated, Barrister deleted)
 
 - **Barrister is an England & Wales role (Bar Standards Board) with no Scottish equivalent in the career_roles dataset.** Advocate (Faculty of Advocates) is the correct Scottish qualification for court advocacy. When a role deletion is Scotland-jurisdiction-specific, note the jurisdictional reason explicitly in the migration comment so future sessions do not re-add the role.
