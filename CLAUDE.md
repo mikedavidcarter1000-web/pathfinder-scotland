@@ -205,6 +205,7 @@ npx supabase migration repair --status applied [migration_name]
 - Range: 1-10 integer, `CHECK` constraint enforces bounds.
 - Direction: 1 = AI barely affects the role (embodied, licensed, human-presence work). 10 = role is AI-native or exists primarily to supervise, train, govern or develop AI systems.
 - Full rubric with anchoring examples: `docs/ai-rating-rubric.md`.
+- For career_roles ratings: see `docs/ai-rating-rubric.md` (current AI), `docs/ai-horizon-rubric.md` (AI 2035-2045), and `docs/robotics-rating-rubric.md` (robotics 2030-2035 and 2040-2045 horizons).
 - The column comment on the database itself mirrors this definition and must be kept in sync with the rubric doc.
 
 ### `is_new_ai_role` flag semantics
