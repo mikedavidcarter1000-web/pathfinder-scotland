@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Transport & Logistics horizon retrofit (15 roles rated)
+
+- **Transport & Logistics is the most robotics-diverse desk-based sector retrofitted to date.** Ten of 12 retrofitted roles are flat 1/1 on robotics (all desk-based), but Drone Delivery Operator (2→3) and Train Driver (1→2) break the pattern -- the only sector outside Manufacturing and Retail where two distinct non-physical-process robotics drift pathways coexist. When a transport sector includes roles that directly manage or are governed by autonomous systems, expect selective robotics drift even in a predominantly desk-based sector.
+
+- **Airline Pilot has the lowest AI ceiling in the sector (2,4) despite high AI investment in avionics.** The CAA's two-qualified-pilot requirement for commercial aviation functions as the statutory ceiling, analogous to IHL in military roles and GMC in medicine. The AI tooling (autopilot, fuel optimisation, ETCS-equivalent systems) is advanced, but the regulatory accountability layer is immovable on the 2040-2045 horizon. When a transport role has a statutory two-human requirement (aviation, rail command), the AI ceiling is set by the regulation, not by the technology.
+
+- **Remote Vehicle Operator is a transitional role with a deliberate mid-horizon peak.** The first-horizon rating (3) reflects genuine near-term demand as AV fleets scale; the second-horizon drift (+2 to 5) reflects a role that exists only as a transitional function -- as AI handles more edge cases, the operator's core value erodes. This is the first retrofit role where the second-horizon rating is not a ceiling but a waypoint in a trajectory toward obsolescence. When rating transitional oversight roles, note explicitly in the description that demand peaks in the first horizon and the trajectory is toward contraction.
+
+- **Ten of 12 retrofitted roles are flat 1/1 on robotics -- consistent with the desk-based transport pattern.** Route optimisation, freight documentation, supply chain management, traffic planning, and AV oversight are all control-room or desk functions with no physical automation pathway. The sector's physical automation story (autonomous vehicles, warehouse robots, drones) affects roles adjacent to these desk functions but not the desk functions themselves. Confirm desk-based flatness in a single sentence per role.
+
+- **Single-gate sessions remain the right pattern.** One STOP gate (15-row NULL check) was sufficient. UPDATE executed cleanly on first attempt; all 12 titles matched exactly. Apostrophe audit (Scotland''s, Government''s, operator''s) is the only per-session preparation step that cannot be skipped.
+
 ## 2026-04-25 Armed Forces horizon retrofit (15 roles rated, 8 inserted, 1 renamed)
 
 - **Armed Forces is the most robotics-diverse non-manufacturing sector retrofitted to date.** Four role groups reach `robotics_rating_2040_2045 = 5` (Army Soldier -- Infantry, Army Engineer, Army Logistics, Royal Navy Rating) -- the highest second-horizon robotics cluster outside Retail/Manufacturing. The driver is the pace of autonomous systems deployment in military contexts: FPV drones, loitering munitions, autonomous resupply, and mine-clearance robots are operational now, not speculative. When a physical sector has an active, well-funded autonomous systems programme (UK MOD RAS), expect higher robotics ratings than comparable civilian physical roles.
