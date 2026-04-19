@@ -7,6 +7,14 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Business & Finance horizon retrofit (20 roles)
+
+- **Finance sector is the purest knowledge-work cohort so far: 19 of 20 roles are flat 1/1 on robotics across both horizons.** The exception is Bank Clerk / Cashier (1→2), where the drift reflects service robots for customer navigation in larger branches -- not task displacement. When an entire sector lacks physical process work, a single sentence explaining the digital-only automation pathway is sufficient for each description; do not over-engineer the robotics rationale.
+
+- **AI ratings in this sector split cleanly between two archetypes: oversight/governance roles (2–3) and transaction-processing roles (6–7).** Oversight roles (Data Governance Manager, Financial AI Compliance Specialist, Forensic AI Auditor) score low because their purpose is to govern AI, not be replaced by it. Transaction-processing roles (Bank Clerk, Bookkeeper, Insurance Underwriter) score high because their core tasks are already being automated algorithmically. When rating a finance role, identify which archetype it belongs to before assigning a number.
+
+- **Management Consultant is the only role in this sector where ai_rating_2040_2045 reaches 8 without a parallel robotics exposure.** The explanation is that consultants who cannot leverage AI tools will be displaced by those who can -- the displacement pathway is AI capability, not physical automation. When writing a description for a cognitive role with a high second-horizon AI rating, make the human-vs-AI-augmented-human framing explicit.
+
 ## 2026-04-25 Education & Teaching horizon retrofit (13 roles)
 
 - **Single-gate sessions are the right pattern for pre-reviewed bulk UPDATEs.** The prompt supplied externally drafted ratings and descriptions; one STOP gate (pre-flight NULL check) was sufficient. No further gates were warranted because the content had already been reviewed upstream and the UPDATE was not irreversible in a meaningful sense (values can be corrected with another UPDATE). Adding gates for each role or each column would have been friction without risk reduction.
