@@ -725,10 +725,10 @@ function SubjectCard({ subject }: { subject: CareerSubjectRow }) {
 }
 
 function SectorRolesPanel({ roles }: { roles: CareerRole[] }) {
-  const resilient = roles.filter((r) => !r.is_new_ai_role && r.ai_rating <= 3)
-  const evolving = roles.filter((r) => !r.is_new_ai_role && r.ai_rating >= 4 && r.ai_rating <= 6)
-  const transforming = roles.filter((r) => !r.is_new_ai_role && r.ai_rating >= 7 && r.ai_rating <= 9)
-  const reshaped = roles.filter((r) => !r.is_new_ai_role && r.ai_rating === 10)
+  const resilient = roles.filter((r) => !r.is_new_ai_role && r.ai_rating_2030_2035 != null && r.ai_rating_2030_2035 <= 3)
+  const evolving = roles.filter((r) => !r.is_new_ai_role && r.ai_rating_2030_2035 != null && r.ai_rating_2030_2035 >= 4 && r.ai_rating_2030_2035 <= 6)
+  const transforming = roles.filter((r) => !r.is_new_ai_role && r.ai_rating_2030_2035 != null && r.ai_rating_2030_2035 >= 7 && r.ai_rating_2030_2035 <= 9)
+  const reshaped = roles.filter((r) => !r.is_new_ai_role && r.ai_rating_2030_2035 === 10)
   const newAiRoles = roles.filter((r) => r.is_new_ai_role)
 
   return (
@@ -900,7 +900,7 @@ function RoleGroupCard({
             fontWeight: 600,
           }}
         >
-          AI rating {range}
+          AI impact (2030–2035) {range}
         </span>
       </div>
       <p
@@ -958,7 +958,7 @@ function RoleGroupCard({
                 {role.ai_description}
               </p>
             </div>
-            <AiRoleBadge rating={role.ai_rating} size="sm" showLabel={false} />
+            {role.ai_rating_2030_2035 != null && <AiRoleBadge rating={role.ai_rating_2030_2035} size="sm" showLabel={false} />}
           </li>
         ))}
       </ul>

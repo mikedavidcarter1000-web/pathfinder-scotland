@@ -495,7 +495,7 @@ export function useCareerSectorDetail(sectorId: string | null) {
         .from('career_roles')
         .select('*')
         .eq('career_sector_id', sectorId)
-        .order('ai_rating', { ascending: true })
+        .order('ai_rating_2030_2035', { ascending: true, nullsFirst: false })
         .order('title', { ascending: true })
       if (rolesErr) throw rolesErr
 
@@ -631,7 +631,7 @@ export function useCareerSectorPageData(sectorId: string | null) {
         .from('career_roles')
         .select('*')
         .eq('career_sector_id', sectorId)
-        .order('ai_rating', { ascending: true })
+        .order('ai_rating_2030_2035', { ascending: true, nullsFirst: false })
         .order('title', { ascending: true })
       if (rolesErr) throw rolesErr
 
@@ -699,7 +699,9 @@ export function useSubjectCareerRoles(subjectId: string | null) {
           relevance: r.relevance,
         }))
         .sort((a, b) => {
-          if (a.ai_rating !== b.ai_rating) return a.ai_rating - b.ai_rating
+          const ra = a.ai_rating_2030_2035 ?? 999
+          const rb = b.ai_rating_2030_2035 ?? 999
+          if (ra !== rb) return ra - rb
           return a.title.localeCompare(b.title)
         })
     },
@@ -733,7 +735,7 @@ export function useAiCareersHubData() {
         supabase
           .from('career_roles')
           .select('*')
-          .order('ai_rating', { ascending: true })
+          .order('ai_rating_2030_2035', { ascending: true, nullsFirst: false })
           .order('title', { ascending: true }),
       ])
       if (sectorsRes.error) throw sectorsRes.error
@@ -891,7 +893,9 @@ export function useExploreData(curricularAreaIds: string[]) {
           })
         }
         reachable_roles = Array.from(roleMap.values()).sort((a, b) => {
-          if (a.ai_rating !== b.ai_rating) return a.ai_rating - b.ai_rating
+          const ra = a.ai_rating_2030_2035 ?? 999
+          const rb = b.ai_rating_2030_2035 ?? 999
+          if (ra !== rb) return ra - rb
           return a.title.localeCompare(b.title)
         })
       }

@@ -549,8 +549,8 @@ function ReachableRolesSection({
 }) {
   // Show the most resilient and most exposed sets, plus a small spotlight
   // on any new AI roles connected to the chosen areas.
-  const resilient = roles.filter((r) => r.ai_rating <= 3 && !r.is_new_ai_role).slice(0, 8)
-  const transforming = roles.filter((r) => r.ai_rating >= 7 && !r.is_new_ai_role).slice(0, 6)
+  const resilient = roles.filter((r) => r.ai_rating_2030_2035 != null && r.ai_rating_2030_2035 <= 3 && !r.is_new_ai_role).slice(0, 8)
+  const transforming = roles.filter((r) => r.ai_rating_2030_2035 != null && r.ai_rating_2030_2035 >= 7 && !r.is_new_ai_role).slice(0, 6)
   const newAi = roles.filter((r) => r.is_new_ai_role).slice(0, 6)
 
   return (
@@ -735,7 +735,7 @@ function RoleChipList({
               </p>
             )}
           </div>
-          <AiRoleBadge rating={role.ai_rating} size="sm" />
+          {role.ai_rating_2030_2035 != null && <AiRoleBadge rating={role.ai_rating_2030_2035} size="sm" />}
         </li>
       ))}
     </ul>

@@ -110,7 +110,7 @@ export function useSimulatorData() {
         supabase
           .from('career_roles')
           .select('*')
-          .order('ai_rating', { ascending: true })
+          .order('ai_rating_2030_2035', { ascending: true, nullsFirst: false })
           .order('title', { ascending: true }),
         supabase.from('career_role_subjects').select('career_role_id, subject_id'),
       ])
@@ -422,18 +422,25 @@ export function calculateSimulatorImpact(
     if (role) reachableRoles.push(role)
   }
   reachableRoles.sort((a, b) => {
-    if (a.ai_rating !== b.ai_rating) return a.ai_rating - b.ai_rating
+    const ra = a.ai_rating_2030_2035 ?? 999
+    const rb = b.ai_rating_2030_2035 ?? 999
+    if (ra !== rb) return ra - rb
     return a.title.localeCompare(b.title)
   })
 
+  const ratedReachable = reachableRoles.filter((r) => r.ai_rating_2030_2035 != null)
   const averageRating =
-    reachableRoles.length > 0
-      ? reachableRoles.reduce((acc, r) => acc + r.ai_rating, 0) / reachableRoles.length
+    ratedReachable.length > 0
+      ? ratedReachable.reduce((acc, r) => acc + (r.ai_rating_2030_2035 as number), 0) / ratedReachable.length
       : null
 
   const topResilient = reachableRoles.slice(0, 3)
   const topTransforming = [...reachableRoles]
-    .sort((a, b) => b.ai_rating - a.ai_rating)
+    .sort((a, b) => {
+      const ra = a.ai_rating_2030_2035 ?? -1
+      const rb = b.ai_rating_2030_2035 ?? -1
+      return rb - ra
+    })
     .slice(0, 3)
 
   const rolesBySectorCovered = new Map<string, CareerRole[]>()

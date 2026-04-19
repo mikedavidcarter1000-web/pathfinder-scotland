@@ -36,9 +36,10 @@ export default function AiCareersPage() {
     return sectors
       .map((sector) => {
         const sectorRoles = rolesBySector.get(sector.id) ?? []
+        const ratedInSector = sectorRoles.filter((r) => r.ai_rating_2030_2035 != null)
         const avg =
-          sectorRoles.length > 0
-            ? sectorRoles.reduce((acc, r) => acc + r.ai_rating, 0) / sectorRoles.length
+          ratedInSector.length > 0
+            ? ratedInSector.reduce((acc, r) => acc + (r.ai_rating_2030_2035 as number), 0) / ratedInSector.length
             : null
         return { sector, roles: sectorRoles, avg }
       })
@@ -54,10 +55,10 @@ export default function AiCareersPage() {
         if (!haystack.includes(needle)) return false
       }
       if (tierFilter === 'new') return role.is_new_ai_role === true
-      if (tierFilter === 'resilient') return role.ai_rating <= 3 && !role.is_new_ai_role
+      if (tierFilter === 'resilient') return role.ai_rating_2030_2035 != null && role.ai_rating_2030_2035 <= 3 && !role.is_new_ai_role
       if (tierFilter === 'evolving')
-        return role.ai_rating >= 4 && role.ai_rating <= 6 && !role.is_new_ai_role
-      if (tierFilter === 'transforming') return role.ai_rating >= 7
+        return role.ai_rating_2030_2035 != null && role.ai_rating_2030_2035 >= 4 && role.ai_rating_2030_2035 <= 6 && !role.is_new_ai_role
+      if (tierFilter === 'transforming') return role.ai_rating_2030_2035 != null && role.ai_rating_2030_2035 >= 7
       return true
     })
   }, [allRoles, search, tierFilter])
@@ -77,7 +78,7 @@ export default function AiCareersPage() {
   const resilientSubjectHints = useMemo(() => {
     const hints = new Set<string>()
     for (const role of allRoles) {
-      if (role.ai_rating > 3) continue
+      if (role.ai_rating_2030_2035 == null || role.ai_rating_2030_2035 > 3) continue
       // Conservative heuristic: surface the four universally valuable
       // subjects rather than computing per-role mappings here. The mapping
       // table itself lives on /subjects.
@@ -418,7 +419,7 @@ export default function AiCareersPage() {
                           {role.sector_name}
                         </p>
                       </div>
-                      <AiRoleBadge rating={role.ai_rating} size="sm" />
+                      {role.ai_rating_2030_2035 != null && <AiRoleBadge rating={role.ai_rating_2030_2035} size="sm" />}
                     </li>
                   ))}
                 </ul>

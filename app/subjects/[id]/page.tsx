@@ -809,9 +809,10 @@ function CareerRolesSection({
   })()
 
   const sectorCount = groups.length
+  const ratedRoles = roles.filter((r) => r.ai_rating_2030_2035 != null)
   const avgRating =
-    roles.length > 0
-      ? roles.reduce((acc, r) => acc + r.ai_rating, 0) / roles.length
+    ratedRoles.length > 0
+      ? ratedRoles.reduce((acc, r) => acc + (r.ai_rating_2030_2035 as number), 0) / ratedRoles.length
       : 0
   const newAiRoles = roles.filter((r) => r.is_new_ai_role)
 
@@ -904,7 +905,7 @@ function CareerRolesSection({
                         {role.ai_description}
                       </p>
                     </div>
-                    <AiRoleBadge rating={role.ai_rating} size="sm" showLabel={false} />
+                    {role.ai_rating_2030_2035 != null && <AiRoleBadge rating={role.ai_rating_2030_2035} size="sm" showLabel={false} />}
                   </div>
                 </li>
               ))}

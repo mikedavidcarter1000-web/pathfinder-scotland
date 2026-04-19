@@ -911,13 +911,17 @@ function AiFutureSection({
   const sortedRoles = useMemo(() => {
     const arr = [...existingRoles]
     if (sort === 'rating-asc') {
-      arr.sort((a, b) =>
-        a.ai_rating !== b.ai_rating ? a.ai_rating - b.ai_rating : a.title.localeCompare(b.title)
-      )
+      arr.sort((a, b) => {
+        const ra = a.ai_rating_2030_2035 ?? 999
+        const rb = b.ai_rating_2030_2035 ?? 999
+        return ra !== rb ? ra - rb : a.title.localeCompare(b.title)
+      })
     } else if (sort === 'rating-desc') {
-      arr.sort((a, b) =>
-        a.ai_rating !== b.ai_rating ? b.ai_rating - a.ai_rating : a.title.localeCompare(b.title)
-      )
+      arr.sort((a, b) => {
+        const ra = a.ai_rating_2030_2035 ?? -1
+        const rb = b.ai_rating_2030_2035 ?? -1
+        return ra !== rb ? rb - ra : a.title.localeCompare(b.title)
+      })
     } else {
       arr.sort((a, b) => a.title.localeCompare(b.title))
     }
@@ -1229,7 +1233,7 @@ function RoleTable({ roles }: { roles: CareerRole[] }) {
                   whiteSpace: 'nowrap',
                 }}
               >
-                AI rating
+                AI impact (2030–2035)
               </th>
               <th
                 scope="col"
@@ -1302,7 +1306,9 @@ function RoleTable({ roles }: { roles: CareerRole[] }) {
                   {role.title}
                 </td>
                 <td style={{ padding: '14px 16px', verticalAlign: 'top' }}>
-                  <AiRoleBadge rating={role.ai_rating} size="md" />
+                  {role.ai_rating_2030_2035 != null
+                    ? <AiRoleBadge rating={role.ai_rating_2030_2035} size="md" />
+                    : <span style={{ color: 'var(--pf-grey-400)', fontSize: '0.75rem' }}>Not yet rated</span>}
                 </td>
                 <td
                   style={{
@@ -1471,7 +1477,7 @@ function NewAiRolesSection({ roles }: { roles: CareerRole[] }) {
               {role.ai_description}
             </p>
             <div className="flex flex-wrap items-center" style={{ gap: '8px' }}>
-              <AiRoleBadge rating={role.ai_rating} size="sm" showLabel={false} />
+              {role.ai_rating_2030_2035 != null && <AiRoleBadge rating={role.ai_rating_2030_2035} size="sm" showLabel={false} />}
               {role.salary_experienced && (
                 <span
                   style={{

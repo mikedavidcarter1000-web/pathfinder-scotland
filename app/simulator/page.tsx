@@ -1770,9 +1770,9 @@ function ComparisonAiCard({
                   padding: '2px 0',
                 }}
               >
-                <AiRoleDot rating={r.ai_rating} size={6} />
+                {r.ai_rating_2030_2035 != null && <AiRoleDot rating={r.ai_rating_2030_2035} size={6} />}
                 <span style={{ flex: 1, minWidth: 0 }}>{r.title}</span>
-                <span style={{ color: 'var(--pf-grey-600)' }}>{r.ai_rating}/10</span>
+                {r.ai_rating_2030_2035 != null && <span style={{ color: 'var(--pf-grey-600)' }}>{r.ai_rating_2030_2035}/10</span>}
               </li>
             ))}
           </ul>
@@ -2031,20 +2031,26 @@ function SectorRoleRow({
                 fontSize: '0.75rem',
               }}
             >
-              <AiRoleDot rating={role.ai_rating} size={8} />
+              {role.ai_rating_2030_2035 != null && <AiRoleDot rating={role.ai_rating_2030_2035} size={8} />}
               <span style={{ color: 'var(--pf-grey-900)', flex: 1, minWidth: 0 }}>
                 {role.title}
               </span>
-              <span
-                style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 600,
-                  color: AI_ROLE_TIER_META[getAiRoleTier(role.ai_rating)].text,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {role.ai_rating}/10
-              </span>
+              {role.ai_rating_2030_2035 != null ? (
+                <span
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    color: AI_ROLE_TIER_META[getAiRoleTier(role.ai_rating_2030_2035)].text,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {role.ai_rating_2030_2035}/10
+                </span>
+              ) : (
+                <span style={{ color: 'var(--pf-grey-400)', fontSize: '0.7rem', fontStyle: 'italic' }}>
+                  Not yet rated
+                </span>
+              )}
               {role.is_new_ai_role && (
                 <span
                   style={{
@@ -2198,9 +2204,9 @@ function ResilienceList({
               color: 'var(--pf-grey-900)',
             }}
           >
-            <AiRoleDot rating={role.ai_rating} size={8} />
+            {role.ai_rating_2030_2035 != null && <AiRoleDot rating={role.ai_rating_2030_2035} size={8} />}
             <span style={{ flex: 1, minWidth: 0 }}>{role.title}</span>
-            <AiRoleBadge rating={role.ai_rating} size="sm" showLabel={false} />
+            {role.ai_rating_2030_2035 != null && <AiRoleBadge rating={role.ai_rating_2030_2035} size="sm" showLabel={false} />}
           </li>
         ))}
       </ul>
