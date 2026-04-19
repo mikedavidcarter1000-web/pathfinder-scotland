@@ -816,7 +816,9 @@ function SectorCard({
                   </span>
                 )}
               </span>
-              <AiRoleBadge rating={role.ai_rating} size="sm" showLabel={false} />
+              {role.ai_rating_2030_2035 != null && (
+                <AiRoleBadge rating={role.ai_rating_2030_2035} size="sm" showLabel={false} />
+              )}
             </li>
           ))}
         </ul>
