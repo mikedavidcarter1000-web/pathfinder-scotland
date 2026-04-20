@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { createClient } from '@supabase/supabase-js'
 import type { Metadata } from 'next'
 import { HorizonRatings } from '@/components/careers/HorizonRatings'
+import { getAnonSupabase } from '@/lib/supabase-public'
 import type { Database } from '@/types/database'
 
 interface CareerStage {
@@ -20,13 +20,6 @@ type SectorRow = Database['public']['Tables']['career_sectors']['Row']
 
 type SectorSummary = Pick<SectorRow, 'id' | 'name' | 'description'>
 type FullRole = RoleRow & { career_sectors: SectorSummary }
-
-function getAnonSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) return null
-  return createClient<Database>(url, key)
-}
 
 export async function generateStaticParams() {
   const supabase = getAnonSupabase()
