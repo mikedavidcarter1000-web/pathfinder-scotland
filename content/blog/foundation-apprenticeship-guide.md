@@ -11,6 +11,8 @@ featured: true
 readingTime: 7
 ---
 
+> Want the full story on how FAs work and who they suit? [Read our in-depth Foundation Apprenticeships guide →](/blog/foundation-apprenticeships)
+
 A **Foundation Apprenticeship (FA)** is a real Higher-level qualification you take in S5 or S6 alongside your other subjects. It sits at SCQF Level 6 — the same level as a Higher — combines classroom learning at college with real workplace experience, and is accepted by every Scottish university.
 
 It takes one or two years. It is free. And it counts in your university application as one of your Higher-level qualifications.

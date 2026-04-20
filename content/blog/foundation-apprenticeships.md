@@ -11,6 +11,8 @@ featured: false
 readingTime: 7
 ---
 
+> Looking for the quick-reference guide with per-university entry tables? [See our Foundation Apprenticeship Guide →](/blog/foundation-apprenticeship-guide)
+
 If you've never heard of a Foundation Apprenticeship, you're not alone. Most Scottish students leave school without ever being told they exist. That's a shame, because for the right student, a Foundation Apprenticeship is one of the most useful things you can do in S5 and S6 — and it counts as one of your Higher-level qualifications for university entry.
 
 This guide explains what they are, how they work in practice, and how to decide whether one is right for you.
