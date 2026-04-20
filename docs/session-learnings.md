@@ -7,6 +7,14 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Seed role_profiles -- Armed Forces (final sector)
+
+- **"ALL SECTORS COMPLETE" claim requires a gap query before asserting it.** After seeding Armed Forces (15 roles), total role_profiles was 258 not 269. The 11-role gap was the entire Science & Research sector -- never seeded, not an Armed Forces omission. Always run `SELECT cr.id, cr.title FROM career_roles cr WHERE cr.id NOT IN (SELECT career_role_id FROM role_profiles)` before claiming all sectors complete.
+
+- **MCP-only seeds produce no local diff -- git commit has nothing to stage.** When SQL is applied directly via Supabase MCP (not via a local migration file), the working tree stays clean. The commit step is a no-op. If the task workflow requires a commit, write the seed SQL to a local file first, or skip the commit and note the reason.
+
+- **Armed Forces sector confirmed correct:** all 15 roles show `union_presence=None`, `disclosure_checks=Enhanced`, `visa_restrictions=Some roles restricted`. Science & Research (11 roles) remains unseeded and should be the next role_profiles session.
+
 ## 2026-04-25 Create role_profiles table
 
 - **`supabase gen types typescript` regenerates `types/supabase.ts` wholesale -- safe here because `role_profiles` is a new table with no hand-added columns.** The standard warning (feedback_types_regen.md: never regenerate wholesale) applies when regenerating types for tables that have columns added manually outside the CLI cycle. For a brand-new table whose entire schema was applied via `apply_migration`, a full regen is the right call -- the generated output will include all columns exactly as migrated. Confirm with `grep -c "role_profiles" types/supabase.ts` before trusting the regen.
