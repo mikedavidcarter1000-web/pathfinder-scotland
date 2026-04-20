@@ -7,6 +7,14 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Create role_profiles table
+
+- **`supabase gen types typescript` regenerates `types/supabase.ts` wholesale -- safe here because `role_profiles` is a new table with no hand-added columns.** The standard warning (feedback_types_regen.md: never regenerate wholesale) applies when regenerating types for tables that have columns added manually outside the CLI cycle. For a brand-new table whose entire schema was applied via `apply_migration`, a full regen is the right call -- the generated output will include all columns exactly as migrated. Confirm with `grep -c "role_profiles" types/supabase.ts` before trusting the regen.
+
+- **44 columns is the correct count for role_profiles (not 43 as spec stated).** The session spec said "43 columns returned" but the actual count is 44: id + career_role_id + 41 profile fields + created_at + updated_at = 44. The spec had an off-by-one error. Always count from the actual schema query output, not the session prompt's stated expectation.
+
+- **Single-step DDL sessions (no existing data, no UPDATE/DELETE) need zero STOP gates.** The migration was DDL-only on a new table with no prior data. Pre-flight build check + post-migration column count + row count + FK join test is sufficient verification without any interactive gate.
+
 ## 2026-04-25 Horizon Ratings frontend -- HorizonRatings component
 
 - **`select('*')` queries already carry new columns -- no query change needed when adding columns to an existing table.** The career roles query in `hooks/use-subjects.ts` uses `.select('*')`, so `ai_rating_2040_2045`, `robotics_rating_2030_2035`, `robotics_rating_2040_2045`, and `robotics_description` were already being returned. The only work required was updating `types/database.ts` (already done by the type-gen run after the retrofit migration) and writing the UI component. Always check the query selector before assuming a fetch needs updating.
