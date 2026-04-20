@@ -268,12 +268,12 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
                 {typeInfo.label}
               </span>
             )}
-            {university.russell_group && (
+            {university.russell_group === true && (
               <span className="pf-badge-amber">
                 Russell Group
               </span>
             )}
-            {university.founded_year && (
+            {university.founded_year != null && (
               <span className="pf-badge-grey">
                 Est. {university.founded_year}
               </span>
@@ -468,7 +468,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
             <div className="pf-card" id="key-facts">
               <h3 className="font-semibold text-gray-900 mb-4">Key Facts</h3>
               <dl className="space-y-3">
-                {university.founded_year && (
+                {university.founded_year != null && (
                   <div className="flex justify-between">
                     <dt className="text-gray-500">Founded</dt>
                     <dd className="font-medium text-gray-900">{university.founded_year}</dd>
@@ -486,7 +486,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
                     <dd className="font-medium text-gray-900">{typeInfo.label}</dd>
                   </div>
                 )}
-                {university.russell_group && (
+                {university.russell_group === true && (
                   <div className="flex justify-between">
                     <dt className="text-gray-500">Russell Group</dt>
                     <dd className="font-medium text-gray-900">Yes</dd>
@@ -535,7 +535,7 @@ function WideningAccessDetailSection({
     <section aria-labelledby="wa-section-title">
       <div className="flex items-center gap-3 mb-4">
         <span className="pf-badge-amber">Widening Access</span>
-        {university.wa_pre_entry_required && (
+        {university.wa_pre_entry_required === true && (
           <span
             className="pf-badge"
             style={{

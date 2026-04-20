@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Fix /universities/[id] and /colleges/[id] null safety crash
+
+- **`boolean | null` fields must use `=== true` guard in JSX, not bare `&&`.** `null && <span>` evaluates to `null` (safe), but the intent is ambiguous and a future refactor may introduce a truthy non-boolean. Applied `=== true` to `russell_group`, `wa_pre_entry_required`, `has_swap`, `uhi_partner`, `schools_programme`, `has_foundation_apprenticeships`, `has_modern_apprenticeships`. Treat all `boolean | null` DB columns this way.
+
+- **`number | null` fields must use `!= null` guard, not bare `&&`.** `{college.student_count && ...}` renders `"0"` as a text node if the value is 0, producing a React "Objects are not valid as a React child" error. Changed to `{college.student_count != null && ...}`. Same fix applied to `university.founded_year`. Pattern: bare `&&` is only safe for `string | null` (empty string is also falsy) and explicit boolean true/false.
+
+- **Array truthiness in JSX outer conditions masks empty-content renders.** `{(... || college.qualification_levels) && <section>}` — an empty array `[]` is truthy and causes the section to render with no content. Changed to `(college.qualification_levels?.length ?? 0) > 0`. Always use `.length > 0` not array identity for conditional rendering of list sections.
+
+- **`image_url` migration applied locally but not to remote DB.** `types/database.ts` includes `image_url: string | null` but the column does not exist on the remote Supabase instance. At runtime `university.image_url` is `undefined`. Components handle this gracefully (`undefined || logo_url || fallback`), so it is not the crash source, but the type drift is a latent issue. Migration `20260415000000_add_image_urls.sql` needs to be applied to remote or the type column removed.
+
+- **Static analysis + TypeScript passing does not rule out a React rendering crash.** Both `npx tsc --noEmit` and `npm run build` exit 0 even with `number | null` zero-rendering bugs present. The build succeeds because the type system sees a conditional guard — it doesn't evaluate the runtime falsy semantics. Always review nullable primitive renders by hand rather than relying on the type checker.
+
 ## 2026-04-25 Seed role_profiles -- Science & Research (11 roles, gap closed)
 
 - **Science & Research was the final gap sector -- all 269 role_profiles now seeded.** 11 roles inserted: AI Drug Discovery Scientist, AI Safety Researcher (Science), Bioinformatics Specialist, Clinical Researcher, Computational Scientist, Data Scientist (Science), Environmental Scientist, Laboratory Technician, Laboratory Automation Specialist, Research Scientist, Robotics Integration Engineer. Gap query returns 0.

@@ -139,21 +139,21 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
 
           {/* Badges */}
           <div className="flex flex-wrap gap-2 mb-4">
-            {college.has_swap && (
+            {college.has_swap === true && (
               <span className="pf-badge-amber" title="SWAP (Scottish Wider Access Programme) — free access courses for adults without traditional qualifications, leading to guaranteed university interviews">
                 {college.swap_hub ? `SWAP ${college.swap_hub}` : 'SWAP'}
               </span>
             )}
-            {college.uhi_partner && (
+            {college.uhi_partner === true && (
               <span className="pf-badge-blue">UHI Partner</span>
             )}
-            {college.schools_programme && (
+            {college.schools_programme === true && (
               <span className="pf-badge-green">Schools Programme</span>
             )}
-            {college.has_foundation_apprenticeships && (
+            {college.has_foundation_apprenticeships === true && (
               <span className="pf-badge-blue">Foundation Apprenticeships</span>
             )}
-            {college.has_modern_apprenticeships && (
+            {college.has_modern_apprenticeships === true && (
               <span className="pf-badge-blue">Modern Apprenticeships</span>
             )}
           </div>
@@ -184,7 +184,7 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
         {/* Section 1 — About */}
-        {(college.description || college.distinctive_features || college.student_count || college.qualification_levels) && (
+        {(college.description || college.distinctive_features || college.student_count != null || (college.qualification_levels?.length ?? 0) > 0) && (
           <section className="pf-card" style={{ padding: '24px' }}>
             <h2 style={{ fontSize: '1.25rem', marginBottom: '16px' }}>About</h2>
             {college.description && (
@@ -198,7 +198,7 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
               </p>
             )}
             <div className="flex flex-wrap gap-x-8 gap-y-3" style={{ marginTop: '16px' }}>
-              {college.student_count && (
+              {college.student_count != null && (
                 <div>
                   <dt style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}>Students</dt>
                   <dd style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '1.125rem' }}>
