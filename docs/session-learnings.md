@@ -7,6 +7,22 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Role detail pages -- /careers/[sectorId]/[roleId]
+
+- **Next.js requires a single dynamic-segment name per depth, so adding `[sectorId]/[roleId]` forced a rename of the existing `[id]` folder.** Tried naively creating `app/careers/[sectorId]/[roleId]/page.tsx` alongside `app/careers/[id]/page.tsx` would produce "different slug names for the same dynamic path" error. Renamed `[id]` -> `[sectorId]` via `git mv` and updated only the param destructuring (`{ id }` -> `{ sectorId }`) in the one page. External URLs `/careers/{uuid}` continue to work because internal Links target the URL shape, not the param name. No other code changed.
+
+- **`role_profiles` is defined in `types/supabase.ts` but NOT in `types/database.ts` -- the two type files are out of sync.** `lib/supabase-server.ts` and `lib/supabase.ts` both type their clients with `Database` from `types/database.ts`, so selects against `role_profiles` would not typecheck until the Row/Insert/Update block was added manually. Followed the feedback_types_regen.md rule (never regenerate database.ts wholesale) and copy-pasted the block from `types/supabase.ts` into the correct alphabetical slot. A future session should audit for other tables present in `types/supabase.ts` but absent from `types/database.ts` -- this drift is likely not unique to `role_profiles`.
+
+- **Stale `.next` cache references the old dynamic-segment folder name after a rename and causes `tsc --noEmit` to fail.** First `tsc` run reported `Cannot find module '../../app/careers/[id]/page.js'` from `.next/types/validator.ts`. Deleted `.next` before retrying -- clean pass. Always `rm -rf .next` after renaming any dynamic-segment folder.
+
+- **`notFound()` returns HTTP 200 in `next dev` but 404 in the production build.** Smoke-test against the dev server showed the not-found boundary rendered but the status code was 200. The production build (which I ran before dev) generates the correct 404. Don't treat dev-mode status codes as indicative of production behaviour for the `notFound()` helper.
+
+- **The existing sector page (`app/careers/[sectorId]/page.tsx`) is a client component that fetches data via React Query, so initial SSR HTML returns only a skeleton.** A `curl` check for role-detail links in the rendered HTML returns nothing -- the links only appear post-hydration when React Query resolves. Role detail link verification via curl is not possible for this page; rely on the type system and a browser smoke test if full coverage is needed.
+
+- **Reverse one-to-one Supabase joins have ambiguous array/object return shapes; two separate queries sidestep the issue.** The schema has `isOneToOne: true` on `role_profiles.career_role_id -> career_roles.id`, which means a `career_roles.select('*, role_profiles(*)')` could return `role_profiles` as either an object or a single-element array depending on the type generator version. Chose to run two `Promise.all` queries (`career_roles` with `career_sectors` inner join, plus a separate `role_profiles` lookup keyed on `career_role_id`) to avoid the shape normalization gymnastics. Cleaner typing; one extra round trip.
+
+- **All 269 roles currently have a role_profiles row, so the "no profile" graceful-degradation path is not exercised against live data.** Confirmed via `SELECT count(*) FROM career_roles WHERE NOT EXISTS (...role_profiles...)` = 0. The page code guards every `rp?.` access, so the happy path is a subset of the null path. The null path is live-deployable even though it is not currently reached.
+
 ## 2026-04-25 Fix /universities/[id] and /colleges/[id] null safety crash
 
 - **`boolean | null` fields must use `=== true` guard in JSX, not bare `&&`.** `null && <span>` evaluates to `null` (safe), but the intent is ambiguous and a future refactor may introduce a truthy non-boolean. Applied `=== true` to `russell_group`, `wa_pre_entry_required`, `has_swap`, `uhi_partner`, `schools_programme`, `has_foundation_apprenticeships`, `has_modern_apprenticeships`. Treat all `boolean | null` DB columns this way.

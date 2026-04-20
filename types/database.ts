@@ -937,6 +937,155 @@ export type Database = {
         }
         Relationships: []
       }
+      role_profiles: {
+        Row: {
+          antisocial_hours: string | null
+          bonus_payments: string | null
+          career_progression: Json | null
+          career_role_id: string
+          competition_level: string | null
+          contract_type: string | null
+          created_at: string | null
+          criminal_record_impact: string | null
+          customer_facing: string | null
+          day_in_the_life: string | null
+          deals_with_public: string | null
+          description: string | null
+          disclosure_checks: string | null
+          disclosure_notes: string | null
+          dress_code: string | null
+          driving_licence: string | null
+          emotionally_demanding: string | null
+          emotionally_demanding_notes: string | null
+          entry_cost_notes: string | null
+          geographic_availability: string | null
+          geographic_notes: string | null
+          health_fitness_requirements: string | null
+          hours_pattern: string | null
+          id: string
+          job_security: string | null
+          minimum_age: number | null
+          on_call: string | null
+          pension_quality: string | null
+          physical_demands: string | null
+          remote_hybrid_realistic: string | null
+          salary_progression_speed: string | null
+          self_employment_viability: string | null
+          sick_pay: string | null
+          stress_level: string | null
+          team_vs_solo: string | null
+          tips_or_commission: string | null
+          travel_requirement: string | null
+          union_presence: string | null
+          unpaid_overtime: string | null
+          updated_at: string | null
+          visa_restrictions: string | null
+          work_life_balance: string | null
+          working_location: string | null
+          works_with_vulnerable: string | null
+        }
+        Insert: {
+          antisocial_hours?: string | null
+          bonus_payments?: string | null
+          career_progression?: Json | null
+          career_role_id: string
+          competition_level?: string | null
+          contract_type?: string | null
+          created_at?: string | null
+          criminal_record_impact?: string | null
+          customer_facing?: string | null
+          day_in_the_life?: string | null
+          deals_with_public?: string | null
+          description?: string | null
+          disclosure_checks?: string | null
+          disclosure_notes?: string | null
+          dress_code?: string | null
+          driving_licence?: string | null
+          emotionally_demanding?: string | null
+          emotionally_demanding_notes?: string | null
+          entry_cost_notes?: string | null
+          geographic_availability?: string | null
+          geographic_notes?: string | null
+          health_fitness_requirements?: string | null
+          hours_pattern?: string | null
+          id?: string
+          job_security?: string | null
+          minimum_age?: number | null
+          on_call?: string | null
+          pension_quality?: string | null
+          physical_demands?: string | null
+          remote_hybrid_realistic?: string | null
+          salary_progression_speed?: string | null
+          self_employment_viability?: string | null
+          sick_pay?: string | null
+          stress_level?: string | null
+          team_vs_solo?: string | null
+          tips_or_commission?: string | null
+          travel_requirement?: string | null
+          union_presence?: string | null
+          unpaid_overtime?: string | null
+          updated_at?: string | null
+          visa_restrictions?: string | null
+          work_life_balance?: string | null
+          working_location?: string | null
+          works_with_vulnerable?: string | null
+        }
+        Update: {
+          antisocial_hours?: string | null
+          bonus_payments?: string | null
+          career_progression?: Json | null
+          career_role_id?: string
+          competition_level?: string | null
+          contract_type?: string | null
+          created_at?: string | null
+          criminal_record_impact?: string | null
+          customer_facing?: string | null
+          day_in_the_life?: string | null
+          deals_with_public?: string | null
+          description?: string | null
+          disclosure_checks?: string | null
+          disclosure_notes?: string | null
+          dress_code?: string | null
+          driving_licence?: string | null
+          emotionally_demanding?: string | null
+          emotionally_demanding_notes?: string | null
+          entry_cost_notes?: string | null
+          geographic_availability?: string | null
+          geographic_notes?: string | null
+          health_fitness_requirements?: string | null
+          hours_pattern?: string | null
+          id?: string
+          job_security?: string | null
+          minimum_age?: number | null
+          on_call?: string | null
+          pension_quality?: string | null
+          physical_demands?: string | null
+          remote_hybrid_realistic?: string | null
+          salary_progression_speed?: string | null
+          self_employment_viability?: string | null
+          sick_pay?: string | null
+          stress_level?: string | null
+          team_vs_solo?: string | null
+          tips_or_commission?: string | null
+          travel_requirement?: string | null
+          union_presence?: string | null
+          unpaid_overtime?: string | null
+          updated_at?: string | null
+          visa_restrictions?: string | null
+          work_life_balance?: string | null
+          working_location?: string | null
+          works_with_vulnerable?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_profiles_career_role_id_fkey"
+            columns: ["career_role_id"]
+            isOneToOne: true
+            referencedRelation: "career_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       saved_courses: {
         Row: {
           course_id: string

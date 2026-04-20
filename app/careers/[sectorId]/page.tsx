@@ -216,10 +216,10 @@ function getJobBlurb(title: string): string {
 export default function CareerSectorDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ sectorId: string }>
 }) {
-  const { id } = use(params)
-  const { data, isLoading, error, refetch } = useCareerSectorPageData(id)
+  const { sectorId } = use(params)
+  const { data, isLoading, error, refetch } = useCareerSectorPageData(sectorId)
 
   useAuthErrorRedirect([error])
 
@@ -998,12 +998,12 @@ function AiFutureSection({
             </h3>
             <RoleSortToggle sort={sort} onChange={setSort} />
           </div>
-          <RoleTable roles={sortedRoles} />
+          <RoleTable roles={sortedRoles} sectorId={sector.id} />
         </div>
       )}
 
       {/* New AI roles */}
-      {newAiRoles.length > 0 && <NewAiRolesSection roles={newAiRoles} />}
+      {newAiRoles.length > 0 && <NewAiRolesSection roles={newAiRoles} sectorId={sector.id} />}
 
       {/* SQA subjects */}
       {sector.sqa_subjects_text && (
@@ -1187,7 +1187,7 @@ function RoleSortToggle({
   )
 }
 
-function RoleTable({ roles }: { roles: CareerRole[] }) {
+function RoleTable({ roles, sectorId }: { roles: CareerRole[]; sectorId: string }) {
   return (
     <div
       className="pf-card"
@@ -1304,7 +1304,13 @@ function RoleTable({ roles }: { roles: CareerRole[] }) {
                     verticalAlign: 'top',
                   }}
                 >
-                  {role.title}
+                  <Link
+                    href={`/careers/${sectorId}/${role.id}`}
+                    style={{ color: 'var(--pf-blue-700)', textDecoration: 'none' }}
+                    className="hover:underline"
+                  >
+                    {role.title}
+                  </Link>
                 </td>
                 <td style={{ padding: '14px 16px', verticalAlign: 'top' }}>
                   {role.ai_rating_2030_2035 != null
@@ -1409,7 +1415,7 @@ function RoleTable({ roles }: { roles: CareerRole[] }) {
   )
 }
 
-function NewAiRolesSection({ roles }: { roles: CareerRole[] }) {
+function NewAiRolesSection({ roles, sectorId }: { roles: CareerRole[]; sectorId: string }) {
   return (
     <div>
       <div className="flex items-center" style={{ gap: '10px', marginBottom: '8px' }}>
@@ -1472,12 +1478,17 @@ function NewAiRolesSection({ roles }: { roles: CareerRole[] }) {
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontWeight: 600,
                 fontSize: '0.9375rem',
-                color: 'var(--pf-grey-900)',
                 margin: 0,
                 marginBottom: '8px',
               }}
             >
-              {role.title}
+              <Link
+                href={`/careers/${sectorId}/${role.id}`}
+                style={{ color: 'var(--pf-blue-700)', textDecoration: 'none' }}
+                className="hover:underline"
+              >
+                {role.title}
+              </Link>
             </h4>
             <p
               style={{
