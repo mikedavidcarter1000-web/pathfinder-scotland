@@ -7,6 +7,14 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Seed role_profiles -- Science & Research (11 roles, gap closed)
+
+- **Science & Research was the final gap sector -- all 269 role_profiles now seeded.** 11 roles inserted: AI Drug Discovery Scientist, AI Safety Researcher (Science), Bioinformatics Specialist, Clinical Researcher, Computational Scientist, Data Scientist (Science), Environmental Scientist, Laboratory Technician, Laboratory Automation Specialist, Research Scientist, Robotics Integration Engineer. Gap query returns 0.
+
+- **MCP-only seeds produce no local diff -- no file to commit.** The SQL was provided inline in the session prompt and applied directly via Supabase MCP. Working tree stays clean; the commit step is a no-op. If a local seed file is needed for traceability, write it before applying.
+
+- **Pre-flight count check (expect N, got N) is the fastest sanity gate for seed sessions.** Confirming 258 before INSERT and 269 after with zero-gap query gives full confidence without additional STOP gates. One gate pattern is correct for pure-INSERT sessions with no UPDATE/DELETE.
+
 ## 2026-04-25 Seed role_profiles -- Armed Forces (final sector)
 
 - **"ALL SECTORS COMPLETE" claim requires a gap query before asserting it.** After seeding Armed Forces (15 roles), total role_profiles was 258 not 269. The 11-role gap was the entire Science & Research sector -- never seeded, not an Armed Forces omission. Always run `SELECT cr.id, cr.title FROM career_roles cr WHERE cr.id NOT IN (SELECT career_role_id FROM role_profiles)` before claiming all sectors complete.
