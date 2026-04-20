@@ -7,6 +7,22 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-26 Homepage rebuild -- Stage 1
+
+- **Files changed:** `app/page.tsx` (full rewrite, 955 -> 378 lines), new `app/actions/homepage-teaser.ts`, new `components/PostcodeTeaser.tsx`, new `lib/supabase-public.ts` (shared anon client utility).
+
+- **Schema columns differed from the session spec in three places.** (1) Table is `simd_postcodes`, not `scottish_postcodes`. (2) Bursary SIMD eligibility column is `simd_quintile_max` (quintile, not decile) -- had to convert user decile to quintile via `CEIL(decile/2)` before filtering. (3) Course widening access column is `widening_access_requirements` (not `widening_access`) and is a JSONB object with `simd20_offer` / `simd40_offer` keys. Updated the server action to match the real schema and counted courses per decile band: SIMD 1-2 counts both simd20_offer and simd40_offer (209 courses), SIMD 3-4 counts simd40_offer only, SIMD 5-10 counts 0 (with a different UX line "widening access offers vary by course -- sign up to see your personalised list").
+
+- **All 410 courses have non-null `widening_access_requirements`, but only 209 have non-empty JSONB content.** A naive "non-null" filter would show "410 widening access courses available" to every postcode which is misleading. The right approach was to fetch the JSONB column and filter in JS by actual key presence (`simd40_offer`, `simd20_offer`). Supabase JS doesn't offer a clean way to filter JSONB for empty-object exclusion -- fetch and filter in app code instead.
+
+- **`lib/supabase-public.ts` now exists as a shared anon client utility.** Previously the anon client pattern was duplicated inline on the role detail page. Extracted to a shared helper so the homepage and any future SSG/ISR page can call `getAnonSupabase()` without duplicating the env-var guard. The inline definition on `app/careers/[sectorId]/[roleId]/page.tsx` still works and wasn't touched this session -- follow-up task would be to consolidate.
+
+- **Homepage is now SSG with 1h revalidation.** Build output confirms `/` shows as `○ (Static)` with `1h` revalidate. Previously `ƒ (Dynamic)` because `getHomepageStats()` called `createServerSupabaseClient()` (which invokes `cookies()`). Switching to the anon client gives free static prerender + ISR for marketing content.
+
+- **Mobile check via curl of the live dev HTML + grep of static HTML is a fast first-line smoke test.** All nine homepage sections were confirmed present in the generated HTML without needing a browser screenshot. The single `undefined` grep hit in the static HTML was `$undefined` inside Next.js React Flight internal markers (not a user-visible interpolation bug) -- expected.
+
+- **Follow-up (Stage 2/3):** (a) Add a results-panel sector filter so the "Careers you could explore" picks sectors relevant to the year group (S2/S3 users may not want to see advanced professional sectors). (b) Consider a postcode validator that checks format before the DB round-trip (current validation is length-only, 5-8 chars). (c) Remove the inline `getAnonSupabase` on `app/careers/[sectorId]/[roleId]/page.tsx` and import from `lib/supabase-public.ts` instead. (d) Add a `/api/homepage-teaser` public REST endpoint if we want non-authenticated external partners to consume this matching logic.
+
 ## 2026-04-26 Housekeeping -- types sync and static rendering fix
 
 - **`types/database.ts` had 13 tables and 8 functions missing vs the live schema.** A Python diffing script (comparing Row column sets) is the reliable way to find drift -- the raw line-count difference (2264 vs 2927 lines) is a useful signal but needs decomposition to identify which tables/functions are absent. Tables missing: `bursaries`, `offer_categories`, `offer_clicks`, `offer_support_groups`, `offers`, `partners`, `quiz_questions`, `quiz_results`, `riasec_career_mapping`, `saved_offers`, `starting_uni_checklist_items`, `student_bursary_matches`, `student_checklist_progress`. All added manually (never regenerate wholesale per `feedback_types_regen.md`).

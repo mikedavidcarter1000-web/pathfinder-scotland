@@ -1,8 +1,7 @@
 import Link from 'next/link'
 import { FaqAccordion, type FaqItem } from '@/components/ui/faq-accordion'
-import { SearchBar } from '@/components/ui/search-bar'
-import { createServerSupabaseClient } from '@/lib/supabase-server'
-import { getArticles, categoryColour, formatDisplayDate, type BlogArticle } from '@/lib/blog'
+import { PostcodeTeaser } from '@/components/PostcodeTeaser'
+import { getAnonSupabase } from '@/lib/supabase-public'
 
 function buildFaqItems(universityCount: number): FaqItem[] {
   const uniPhrase =
@@ -11,7 +10,7 @@ function buildFaqItems(universityCount: number): FaqItem[] {
     {
       question: 'Is Pathfinder free?',
       answer:
-        'Yes — the core features are completely free. You can explore subjects, plan your choices, check university entry requirements, and see if you qualify for widening access support at no cost.',
+        'Yes. The core features are completely free. You can explore subjects, plan your choices, check university entry requirements, and see if you qualify for widening access support at no cost.',
     },
     {
       question: "How does Pathfinder know which courses I'm eligible for?",
@@ -20,12 +19,12 @@ function buildFaqItems(universityCount: number): FaqItem[] {
     {
       question: 'What is widening access?',
       answer:
-        'Scottish universities offer lower entry grades to students from certain backgrounds — for example, if you live in a disadvantaged area (SIMD20/40), have care experience, are a young carer, or are the first in your family to go to university. Pathfinder checks your eligibility automatically based on your postcode and profile.',
+        'Scottish universities offer lower entry grades to students from certain backgrounds. For example, if you live in a disadvantaged area (SIMD20/40), have care experience, are a young carer, or are the first in your family to go to university. Pathfinder checks your eligibility automatically based on your postcode and profile.',
     },
     {
       question: "Can I use Pathfinder if I don't know what I want to study at university?",
       answer:
-        "Absolutely. Our subject explorer and pathway planner help you see where different subject choices lead — which careers they connect to and which university courses they open up. You don't need to have decided anything yet.",
+        "Absolutely. Our subject explorer and pathway planner help you see where different subject choices lead, which careers they connect to, and which university courses they open up. You don't need to have decided anything yet.",
     },
     {
       question: 'Is my data safe?',
@@ -45,111 +44,42 @@ function buildFaqItems(universityCount: number): FaqItem[] {
   ]
 }
 
-// Short display name for the homepage university grid so long institution names
-// don't wrap awkwardly in the 5-column tile layout.
-function shortUniversityName(name: string): string {
-  const map: Record<string, string> = {
-    'University of Edinburgh': 'Edinburgh',
-    'University of Glasgow': 'Glasgow',
-    'University of St Andrews': 'St Andrews',
-    'University of Aberdeen': 'Aberdeen',
-    'University of Dundee': 'Dundee',
-    'University of Stirling': 'Stirling',
-    'University of Strathclyde': 'Strathclyde',
-    'Heriot-Watt University': 'Heriot-Watt',
-    'Glasgow Caledonian University': 'GCU',
-    'Edinburgh Napier University': 'Napier',
-    'Robert Gordon University': 'RGU',
-    'University of the West of Scotland': 'UWS',
-    'Queen Margaret University': 'QMU',
-    'University of the Highlands and Islands': 'UHI',
-    'Royal Conservatoire of Scotland': 'RCS',
-    'Abertay University': 'Abertay',
-    'University of Abertay Dundee': 'Abertay',
-  }
-  return map[name] ?? name
-}
-
 async function getHomepageStats() {
   try {
-    const supabase = await createServerSupabaseClient()
+    const supabase = getAnonSupabase()
+    if (!supabase) return { universityCount: 0, courseCount: 0 }
+
     const [universitiesRes, coursesRes] = await Promise.all([
-      supabase
-        .from('universities')
-        .select('id, name')
-        .order('name'),
-      supabase
-        .from('courses')
-        .select('id', { count: 'exact', head: true }),
+      supabase.from('universities').select('id', { count: 'exact', head: true }),
+      supabase.from('courses').select('id', { count: 'exact', head: true }),
     ])
 
     return {
-      universities: universitiesRes.data ?? [],
+      universityCount: universitiesRes.count ?? 0,
       courseCount: coursesRes.count ?? 0,
     }
   } catch {
-    // Homepage must always render — fall back to an empty stats object if the
-    // DB is unreachable. The page will show generic copy instead of live counts.
-    return { universities: [], courseCount: 0 }
+    return { universityCount: 0, courseCount: 0 }
   }
 }
 
-export default async function HomePage() {
-  const { universities, courseCount } = await getHomepageStats()
-  const featuredArticles = getArticles().filter((a) => a.featured).slice(0, 3)
-  const universityCount = universities.length
-  const unisLabel = universityCount > 0 ? `All ${universityCount} Scottish universities` : 'Scottish universities'
-  const unisTrustLabel =
-    universityCount > 0 ? `${universityCount} Scottish universities` : 'Scottish universities'
-  const coursesLabel = courseCount > 0 ? `${courseCount}+ courses` : '100+ courses'
-  const coursesStatNumber = courseCount > 0 ? `${courseCount}+` : '100+'
+export const revalidate = 3600
 
-  const faqItems = buildFaqItems(universityCount)
+export default async function HomePage() {
+  const { universityCount, courseCount } = await getHomepageStats()
+  const universitiesLabel = universityCount > 0 ? `${universityCount} Scottish universities` : '18 Scottish universities'
+  const coursesLabel = courseCount > 0 ? `${courseCount}+ courses` : '410+ courses'
+
+  const faqItems = buildFaqItems(universityCount > 0 ? universityCount : 18)
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: faqItems.map((item) => ({
       '@type': 'Question',
       name: item.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answer,
-      },
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
     })),
   }
-
-  const features = [
-    {
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-      ),
-      title: 'Plan Your Subjects',
-      description:
-        'See how your S3 choices connect to Highers, Advanced Highers, and university entry. Our pathway planner shows you the full picture.',
-    },
-    {
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
-      title: 'Check Eligibility',
-      description:
-        'Enter your grades and instantly see which courses you qualify for. We factor in widening access schemes automatically.',
-    },
-    {
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-        </svg>
-      ),
-      title: 'Build Your Shortlist',
-      description:
-        'Save courses, compare options, and build your UCAS shortlist with confidence.',
-    },
-  ]
 
   return (
     <div>
@@ -158,7 +88,7 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      {/* Results Day Banner */}
+      {/* Results Day banner */}
       <div
         style={{
           backgroundColor: 'var(--pf-blue-900)',
@@ -187,6 +117,7 @@ export default async function HomePage() {
               stroke="currentColor"
               strokeWidth={2.5}
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
@@ -194,7 +125,7 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* Hero Section -- blue-50 */}
+      {/* 1. Hero */}
       <section
         className="py-12 sm:py-16"
         style={{
@@ -203,115 +134,92 @@ export default async function HomePage() {
           overflow: 'hidden',
         }}
       >
-        <div className="pf-container relative" style={{ zIndex: 1 }}>
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Copy */}
-            <div>
-              <span
-                className="pf-badge-blue mb-4 inline-flex"
-                style={{ marginBottom: '20px' }}
+        <div className="pf-container">
+          <div style={{ maxWidth: '820px', margin: '0 auto', textAlign: 'center' }}>
+            <span
+              className="pf-badge-blue inline-flex"
+              style={{ marginBottom: '20px' }}
+            >
+              Built for Scottish students
+            </span>
+            <h1
+              style={{
+                fontSize: 'clamp(1.875rem, 5.5vw, 3.25rem)',
+                lineHeight: 1.1,
+                marginBottom: '20px',
+                color: 'var(--pf-grey-900)',
+              }}
+            >
+              Scottish students: subjects, bursaries, courses, careers - personalised
+            </h1>
+            <p
+              style={{
+                fontSize: '1.0625rem',
+                color: 'var(--pf-grey-600)',
+                lineHeight: 1.6,
+                marginBottom: '32px',
+                maxWidth: '640px',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+              }}
+            >
+              From S2 subject choices to university offers. Widening access and bursary matching built in. Free to use.
+            </p>
+            <div
+              className="flex flex-col sm:flex-row items-center justify-center"
+              style={{ gap: '12px' }}
+            >
+              <Link
+                href="/auth/sign-up"
+                className="pf-btn-primary w-full sm:w-auto justify-center"
+                style={{ minHeight: '48px' }}
               >
-                Built for Scottish students
-              </span>
-              <h1
+                Start free - takes 60 seconds
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+              <a
+                href="#try-it"
+                className="no-underline"
                 style={{
-                  fontSize: 'clamp(1.875rem, 5vw, 3rem)',
-                  lineHeight: 1.1,
-                  marginBottom: '20px',
-                  color: 'var(--pf-grey-900)',
+                  color: 'var(--pf-blue-700)',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.9375rem',
+                  minHeight: '44px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
                 }}
               >
-                Find your path to Scottish universities.
-              </h1>
-              <p
-                style={{
-                  fontSize: '1.0625rem',
-                  color: 'var(--pf-grey-600)',
-                  lineHeight: 1.6,
-                  marginBottom: '32px',
-                  maxWidth: '520px',
-                }}
-              >
-                Clear, free guidance for Scottish students and their families — from S3 subject
-                choices through to university offers.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Link
-                  href="/pathways"
-                  className="pf-btn-primary w-full sm:w-auto justify-center"
-                >
-                  Start planning free
-                </Link>
-                <Link
-                  href="/discover"
-                  className="pf-btn-secondary w-full sm:w-auto justify-center"
-                >
-                  Discover your path
-                </Link>
-              </div>
-
-              {/* Or search */}
-              <div style={{ marginTop: '24px', maxWidth: '520px' }}>
-                <p
-                  style={{
-                    fontSize: '0.8125rem',
-                    color: 'var(--pf-grey-600)',
-                    marginBottom: '8px',
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontWeight: 500,
-                  }}
-                >
-                  Or search for anything...
-                </p>
-                <SearchBar placeholder="Try 'Chemistry', 'Edinburgh' or 'Medicine'" />
-              </div>
-
-              {/* Trust bar */}
-              <div
-                className="flex flex-wrap items-center gap-x-6 gap-y-2"
-                style={{ marginTop: '32px' }}
-              >
-                <TrustItem label={unisTrustLabel} />
-                <TrustItem label={coursesLabel} />
-                <TrustItem label="Widening access built in" />
-              </div>
-
-              {/* Schools / funders link */}
-              <p
-                style={{
-                  marginTop: '20px',
-                  fontSize: '0.8125rem',
-                  color: 'var(--pf-grey-600)',
-                }}
-              >
-                Are you a school or funder?{' '}
-                <Link
-                  href="/demo"
-                  style={{
-                    color: 'var(--pf-blue-500)',
-                    fontWeight: 600,
-                    fontFamily: "'Space Grotesk', sans-serif",
-                  }}
-                >
-                  See Pathfinder in action →
-                </Link>
-              </p>
-            </div>
-
-            {/* Pathway illustration — below text on mobile, right on desktop */}
-            <div className="flex items-center justify-center">
-              <PathwayIllustration />
+                Or try it without signing up
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How Pathfinder helps -- white */}
+      {/* 2. Sample personalisation */}
       <section className="pf-section pf-section-white">
+        <div className="pf-container">
+          <div style={{ maxWidth: '680px', margin: '0 auto' }}>
+            <PostcodeTeaser />
+          </div>
+        </div>
+      </section>
+
+      {/* 3. How it works */}
+      <section className="pf-section pf-section-grey">
         <div className="pf-container">
           <div className="text-center" style={{ marginBottom: '48px' }}>
             <h2 style={{ marginBottom: '12px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
-              How Pathfinder helps
+              How it works
             </h2>
             <p
               style={{
@@ -321,45 +229,110 @@ export default async function HomePage() {
                 margin: '0 auto',
               }}
             >
-              From discovering courses to checking entry requirements, Pathfinder guides you every step of the way.
+              Three steps from curious to confident.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, i) => (
-              <div key={i} className="pf-card">
-                <div
-                  className="flex items-center justify-center mb-4"
-                  style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '10px',
-                    backgroundColor: 'var(--pf-blue-100)',
-                    color: 'var(--pf-blue-700)',
-                  }}
-                >
-                  {feature.icon}
-                </div>
-                <h3 style={{ marginBottom: '8px' }}>{feature.title}</h3>
-                <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
-                  {feature.description}
-                </p>
-              </div>
-            ))}
+          <div className="grid gap-6 md:grid-cols-3">
+            <HowStep
+              number="1"
+              title="Tell us about you"
+              description="Postcode, year group, predicted or actual grades. Takes under a minute."
+            />
+            <HowStep
+              number="2"
+              title="We match you"
+              description="Widening access adjustments, eligible courses, named bursaries, and career sectors that fit."
+            />
+            <HowStep
+              number="3"
+              title="Plan with confidence"
+              description="Save courses, compare options, track deadlines, and explore alternatives."
+            />
           </div>
         </div>
       </section>
 
-      {/* Widening Access Section -- dark blue-900 */}
+      {/* 4. Segmented entry */}
+      <section className="pf-section pf-section-white">
+        <div className="pf-container">
+          <div className="text-center" style={{ marginBottom: '40px' }}>
+            <h2 style={{ marginBottom: '12px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
+              Where are you starting from?
+            </h2>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem' }}>
+              Jump to the guidance that fits your stage.
+            </p>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            <SegmentCard
+              eyebrow="Student"
+              heading="I'm in S2 or S3"
+              subhead="Choosing subjects for S3 or S4"
+              cta="Explore subject choices"
+              href="/pathways"
+            />
+            <SegmentCard
+              eyebrow="Student"
+              heading="I'm in S4, S5 or S6"
+              subhead="Highers, university, careers"
+              cta="See what matches me"
+              href="#try-it"
+            />
+            <SegmentCard
+              eyebrow="Parent or carer"
+              heading="I'm a parent or carer"
+              subhead="Supporting your young person"
+              cta="Read the parent guide"
+              href="/parents"
+            />
+            <SegmentCard
+              eyebrow="School or funder"
+              heading="I'm a teacher or funder"
+              subhead="See Pathfinder in action"
+              cta="Take the 3-minute tour"
+              href="/demo"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Credibility strip */}
       <section
         className="pf-section"
         style={{ backgroundColor: 'var(--pf-blue-900)' }}
       >
         <div className="pf-container">
+          <div
+            className="grid grid-cols-2 md:grid-cols-4 gap-6"
+            style={{ marginBottom: '32px' }}
+          >
+            <CredStat number={universityCount > 0 ? String(universityCount) : '18'} label="Scottish universities" />
+            <CredStat number={courseCount > 0 ? `${courseCount}+` : '410+'} label="Courses" />
+            <CredStat number="81" label="Qualifications Scotland subjects" />
+            <CredStat number="227,000+" label="Postcodes checked" />
+          </div>
+          <p
+            style={{
+              textAlign: 'center',
+              color: 'rgba(255,255,255,0.8)',
+              fontSize: '0.9375rem',
+              margin: 0,
+            }}
+          >
+            Built in Scotland, for Scottish students. Free for individuals. Widening access at the core.
+          </p>
+        </div>
+      </section>
+
+      {/* 6. Widening access explainer */}
+      <section className="pf-section pf-section-grey">
+        <div className="pf-container">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
             <div>
               <span
-                className="pf-badge inline-flex mb-4"
+                className="pf-badge inline-flex"
                 style={{
                   marginBottom: '16px',
                   backgroundColor: 'rgba(245, 158, 11, 0.18)',
@@ -371,7 +344,6 @@ export default async function HomePage() {
               <h2
                 style={{
                   marginBottom: '16px',
-                  color: '#fff',
                   fontSize: 'clamp(1.5rem, 4vw, 2rem)',
                 }}
               >
@@ -379,17 +351,17 @@ export default async function HomePage() {
               </h2>
               <p
                 style={{
-                  color: 'rgba(255,255,255,0.8)',
+                  color: 'var(--pf-grey-600)',
                   fontSize: '1.0625rem',
                   marginBottom: '24px',
                   lineHeight: 1.6,
                 }}
               >
-                If you live in an SIMD20 or SIMD40 area, have care experience, are a young carer, or
-                are the first in your family to attend university, you may qualify for reduced entry
-                requirements at many Scottish universities.
+                If you live in an SIMD20 or SIMD40 area, have care experience, are a young carer,
+                or are the first in your family to attend university, you may qualify for reduced
+                entry requirements at many Scottish universities.
               </p>
-              <ul className="space-y-3" style={{ marginBottom: '28px' }}>
+              <ul className="space-y-3" style={{ marginBottom: '28px', listStyle: 'none', padding: 0 }}>
                 {[
                   'Automatic SIMD lookup from your postcode',
                   'See adjusted offers based on your circumstances',
@@ -397,55 +369,43 @@ export default async function HomePage() {
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <span
+                      aria-hidden="true"
                       className="flex-shrink-0"
                       style={{
-                        width: '20px',
-                        height: '20px',
+                        width: '22px',
+                        height: '22px',
                         borderRadius: '9999px',
-                        backgroundColor: 'rgba(255,255,255,0.15)',
+                        backgroundColor: 'var(--pf-green-500)',
                         color: '#fff',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        marginTop: '2px',
+                        marginTop: '1px',
                       }}
                     >
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </span>
-                    <span style={{ color: 'rgba(255,255,255,0.9)' }}>{item}</span>
+                    <span style={{ color: 'var(--pf-grey-900)' }}>{item}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 href="/widening-access"
-                className="inline-flex items-center justify-center gap-2 no-underline hover:no-underline w-full sm:w-auto"
-                style={{
-                  backgroundColor: '#fff',
-                  color: 'var(--pf-blue-900)',
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 600,
-                  fontSize: '0.9375rem',
-                  minHeight: '48px',
-                }}
+                className="pf-btn-secondary w-full sm:w-auto justify-center"
+                style={{ minHeight: '48px' }}
               >
                 Check your eligibility
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
             </div>
 
             <div
-              className="p-6 sm:p-7"
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                borderRadius: '12px',
-              }}
+              className="pf-card"
+              style={{ padding: '24px' }}
             >
               <div style={{ marginBottom: '20px' }}>
                 <span
@@ -453,187 +413,53 @@ export default async function HomePage() {
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 600,
                     fontSize: '0.75rem',
-                    color: 'rgba(255,255,255,0.6)',
+                    color: 'var(--pf-grey-600)',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
                   }}
                 >
                   Example
                 </span>
-                <h3
-                  style={{
-                    color: '#fff',
-                    marginTop: '6px',
-                    marginBottom: 0,
-                  }}
-                >
+                <h3 style={{ marginTop: '6px', marginBottom: 0 }}>
                   Computer Science at Edinburgh
                 </h3>
               </div>
               <div className="space-y-3">
-                <DarkOfferRow label="Standard offer" value="AAAA" />
-                <DarkOfferRow label="SIMD40 offer" value="AAAB" highlight />
-                <DarkOfferRow label="SIMD20 offer" value="AABB" highlight />
-                <DarkOfferRow label="Care experienced" value="AABB" highlight last />
+                <OfferRow label="Standard offer" value="AAAA" />
+                <OfferRow label="SIMD40 offer" value="AAAB" highlight />
+                <OfferRow label="SIMD20 offer" value="AABB" highlight />
+                <OfferRow label="Care experienced" value="AABB" highlight last />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Universities Section -- white */}
+      {/* 7. Secondary exploration strip */}
       <section className="pf-section pf-section-white">
         <div className="pf-container">
-          <div className="text-center" style={{ marginBottom: '40px' }}>
-            <h2 style={{ marginBottom: '12px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>{unisLabel}</h2>
-            <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem' }}>
-              From ancient institutions to modern universities, explore them all.
+          <div className="text-center" style={{ marginBottom: '32px' }}>
+            <h2 style={{ marginBottom: '8px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
+              Explore without signing up
+            </h2>
+            <p style={{ color: 'var(--pf-grey-600)', fontSize: '1rem', margin: 0 }}>
+              Browse our content and directories openly.
             </p>
           </div>
 
-          {universities.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-              {universities.map((uni) => (
-                <Link
-                  key={uni.id}
-                  href={`/universities/${uni.id}`}
-                  className="pf-card-hover flex flex-col items-center justify-center gap-3 text-center no-underline hover:no-underline"
-                  style={{ padding: '20px' }}
-                >
-                  <div
-                    aria-hidden="true"
-                    className="flex items-center justify-center"
-                    style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '10px',
-                      backgroundColor: 'var(--pf-blue-100)',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontWeight: 700,
-                        fontSize: '1.25rem',
-                        color: 'var(--pf-blue-700)',
-                      }}
-                    >
-                      {uni.name.charAt(0)}
-                    </span>
-                  </div>
-                  <p
-                    style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontWeight: 600,
-                      fontSize: '0.875rem',
-                      color: 'var(--pf-grey-900)',
-                    }}
-                  >
-                    {shortUniversityName(uni.name)}
-                  </p>
-                </Link>
-              ))}
-            </div>
-          )}
-
-          <div className="text-center" style={{ marginTop: '40px' }}>
-            <Link href="/universities" className="pf-btn-secondary">
-              Explore all universities
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <ExploreTile href="/blog" label="Guides and articles" />
+            <ExploreTile href="/careers" label="Browse careers" />
+            <ExploreTile href="/universities" label="Browse universities" />
+            <ExploreTile href="/colleges" label="Browse colleges" />
           </div>
         </div>
       </section>
 
-      {/* Credibility Section -- grey */}
+      {/* 8. FAQ */}
       <section className="pf-section pf-section-grey">
         <div className="pf-container">
-          <div style={{ maxWidth: '760px', margin: '0 auto', textAlign: 'center' }}>
-            <h2 style={{ marginBottom: '16px', fontSize: '2rem' }}>
-              Built for Scottish students, by people who understand the system
-            </h2>
-            <p
-              style={{
-                color: 'var(--pf-grey-600)',
-                fontSize: '1.0625rem',
-                lineHeight: 1.6,
-                marginBottom: '40px',
-              }}
-            >
-              There&apos;s a gap between the subjects pupils pick in S2 and the university pathways
-              those choices actually open up. Pathfinder closes that gap with clear, honest
-              guidance — grounded in the Scottish curriculum and the real entry requirements
-              universities publish.
-            </p>
-
-            <div
-              className="grid grid-cols-2 md:grid-cols-4 gap-6"
-              style={{ marginTop: '8px' }}
-            >
-              <Stat number="81" label="Qualifications Scotland subjects" />
-              <Stat number={universityCount > 0 ? String(universityCount) : '15'} label="Scottish universities" />
-              <Stat number={coursesStatNumber} label="Courses" />
-              <Stat number="All" label="Scottish postcodes checked" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Latest from the blog -- blue-50 */}
-      {featuredArticles.length > 0 && (
-        <section className="pf-section pf-section-blue">
-          <div className="pf-container">
-            <div
-              className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
-              style={{ marginBottom: '40px' }}
-            >
-              <div>
-                <span className="pf-badge-blue inline-flex" style={{ marginBottom: '12px' }}>
-                  Guides &amp; Articles
-                </span>
-                <h2 style={{ marginBottom: '8px', fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
-                  Latest from the blog
-                </h2>
-                <p style={{ color: 'var(--pf-grey-600)', fontSize: '1.0625rem', maxWidth: '560px', margin: 0 }}>
-                  Expert guidance on subject choices, university pathways, and careers in Scotland.
-                </p>
-              </div>
-              <Link
-                href="/blog"
-                style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 600,
-                  color: 'var(--pf-blue-700)',
-                  fontSize: '0.9375rem',
-                }}
-              >
-                Read more articles →
-              </Link>
-            </div>
-
-            <div
-              className="grid gap-6"
-              style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}
-            >
-              {featuredArticles.map((article) => (
-                <FeaturedBlogCard key={article.slug} article={article} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* FAQ Section -- white */}
-      <section className="pf-section pf-section-white">
-        <div className="pf-container">
-          <div
-            style={{
-              maxWidth: '760px',
-              margin: '0 auto',
-            }}
-          >
+          <div style={{ maxWidth: '760px', margin: '0 auto' }}>
             <div className="text-center" style={{ marginBottom: '40px' }}>
               <span
                 className="pf-badge-blue inline-flex"
@@ -675,7 +501,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Final CTA -- dark blue */}
+      {/* 9. Final CTA */}
       <section
         className="pf-section"
         style={{ backgroundColor: 'var(--pf-blue-900)' }}
@@ -687,25 +513,38 @@ export default async function HomePage() {
           <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.0625rem', marginBottom: '32px' }}>
             Create your free account and start planning in minutes.
           </p>
-          <Link
-            href="/auth/sign-up"
-            className="inline-flex items-center justify-center gap-2 no-underline hover:no-underline w-full sm:w-auto"
-            style={{
-              backgroundColor: '#fff',
-              color: 'var(--pf-blue-900)',
-              padding: '14px 28px',
-              borderRadius: '8px',
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 600,
-              fontSize: '1rem',
-              minHeight: '48px',
-            }}
+          <div
+            className="flex flex-col sm:flex-row items-center justify-center"
+            style={{ gap: '12px' }}
           >
-            Get started for free
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </Link>
+            <Link
+              href="/auth/sign-up"
+              className="inline-flex items-center justify-center gap-2 no-underline hover:no-underline w-full sm:w-auto"
+              style={{
+                backgroundColor: '#fff',
+                color: 'var(--pf-blue-900)',
+                padding: '14px 28px',
+                borderRadius: '8px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '1rem',
+                minHeight: '48px',
+              }}
+            >
+              Get started for free
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+            <span
+              style={{
+                color: 'rgba(255,255,255,0.6)',
+                fontSize: '0.875rem',
+              }}
+            >
+              {universitiesLabel} - {coursesLabel}
+            </span>
+          </div>
         </div>
       </section>
     </div>
@@ -714,27 +553,136 @@ export default async function HomePage() {
 
 /* -------------------------------------------------------------- */
 
-function TrustItem({ label }: { label: string }) {
+function HowStep({
+  number,
+  title,
+  description,
+}: {
+  number: string
+  title: string
+  description: string
+}) {
   return (
-    <div className="flex items-center gap-2">
-      <svg
-        className="w-4 h-4"
-        style={{ color: 'var(--pf-green-500)' }}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={3}
-        viewBox="0 0 24 24"
+    <div className="pf-card" style={{ padding: '24px' }}>
+      <div
+        aria-hidden="true"
+        className="flex items-center justify-center"
+        style={{
+          width: '44px',
+          height: '44px',
+          borderRadius: '9999px',
+          backgroundColor: 'var(--pf-blue-100)',
+          color: 'var(--pf-blue-700)',
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 700,
+          fontSize: '1.125rem',
+          marginBottom: '16px',
+        }}
       >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-      </svg>
-      <span style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)', fontWeight: 500 }}>
-        {label}
-      </span>
+        {number}
+      </div>
+      <h3 style={{ marginBottom: '8px', fontSize: '1.125rem' }}>{title}</h3>
+      <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, margin: 0 }}>
+        {description}
+      </p>
     </div>
   )
 }
 
-function DarkOfferRow({
+function SegmentCard({
+  eyebrow,
+  heading,
+  subhead,
+  cta,
+  href,
+}: {
+  eyebrow: string
+  heading: string
+  subhead: string
+  cta: string
+  href: string
+}) {
+  return (
+    <Link
+      href={href}
+      className="pf-card-hover flex flex-col h-full no-underline hover:no-underline"
+      style={{ padding: '24px', minHeight: '180px' }}
+    >
+      <span
+        style={{
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          fontSize: '0.75rem',
+          color: 'var(--pf-blue-700)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+          marginBottom: '8px',
+        }}
+      >
+        {eyebrow}
+      </span>
+      <h3 style={{ marginBottom: '6px', fontSize: '1.1875rem' }}>{heading}</h3>
+      <p
+        style={{
+          color: 'var(--pf-grey-600)',
+          fontSize: '0.9375rem',
+          marginBottom: '16px',
+          flex: 1,
+          margin: '0 0 16px',
+        }}
+      >
+        {subhead}
+      </p>
+      <span
+        className="inline-flex items-center"
+        style={{
+          color: 'var(--pf-blue-700)',
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          fontSize: '0.9375rem',
+          gap: '6px',
+        }}
+      >
+        {cta}
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </span>
+    </Link>
+  )
+}
+
+function CredStat({ number, label }: { number: string; label: string }) {
+  return (
+    <div style={{ textAlign: 'center' }}>
+      <div
+        className="pf-data-number"
+        style={{
+          fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
+          fontWeight: 700,
+          color: '#fff',
+          lineHeight: 1.1,
+          marginBottom: '6px',
+        }}
+      >
+        {number}
+      </div>
+      <div
+        style={{
+          fontSize: '0.875rem',
+          color: 'rgba(255,255,255,0.75)',
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 500,
+          lineHeight: 1.3,
+        }}
+      >
+        {label}
+      </div>
+    </div>
+  )
+}
+
+function OfferRow({
   label,
   value,
   highlight,
@@ -750,15 +698,15 @@ function DarkOfferRow({
       className="flex justify-between items-center"
       style={{
         paddingBottom: last ? 0 : '12px',
-        borderBottom: last ? 'none' : '1px solid rgba(255,255,255,0.1)',
+        borderBottom: last ? 'none' : '1px solid var(--pf-grey-200)',
       }}
     >
-      <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9375rem' }}>{label}</span>
+      <span style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>{label}</span>
       <span
         className="pf-data-number"
         style={{
           fontSize: '1rem',
-          color: highlight ? 'var(--pf-green-500)' : '#fff',
+          color: highlight ? 'var(--pf-green-500)' : 'var(--pf-grey-900)',
           fontWeight: 600,
         }}
       >
@@ -768,168 +716,21 @@ function DarkOfferRow({
   )
 }
 
-function Stat({ number, label }: { number: string; label: string }) {
-  return (
-    <div>
-      <div
-        className="pf-data-number"
-        style={{
-          fontSize: '2rem',
-          fontWeight: 700,
-          color: 'var(--pf-blue-700)',
-          lineHeight: 1.1,
-          marginBottom: '6px',
-        }}
-      >
-        {number}
-      </div>
-      <div
-        style={{
-          fontSize: '0.875rem',
-          color: 'var(--pf-grey-600)',
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontWeight: 500,
-        }}
-      >
-        {label}
-      </div>
-    </div>
-  )
-}
-
-function PathwayIllustration() {
-  return (
-    <svg
-      viewBox="0 0 440 400"
-      width="100%"
-      style={{ maxWidth: '440px', height: 'auto' }}
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="pf-line" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#0072CE" />
-          <stop offset="100%" stopColor="#005EB8" />
-        </linearGradient>
-      </defs>
-
-      {/* Background shape */}
-      <circle cx="220" cy="200" r="180" fill="#E0EDF7" opacity="0.5" />
-      <circle cx="220" cy="200" r="130" fill="#E0EDF7" opacity="0.6" />
-
-      {/* Connecting lines (pathways) */}
-      <path d="M 60 200 Q 140 80, 220 200 T 380 200" stroke="url(#pf-line)" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.7" />
-      <path d="M 60 200 Q 140 320, 220 200 T 380 200" stroke="url(#pf-line)" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.7" />
-      <path d="M 60 200 L 220 200 L 380 200" stroke="#0072CE" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.4" strokeDasharray="4 6" />
-
-      {/* Nodes -- S2 -> S6 -> University */}
-      <g>
-        {/* Start (S2) */}
-        <circle cx="60" cy="200" r="22" fill="#005EB8" />
-        <circle cx="60" cy="200" r="26" fill="none" stroke="#005EB8" strokeWidth="2" opacity="0.25" />
-        <text x="60" y="205" textAnchor="middle" fill="#fff" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="13">
-          S2
-        </text>
-
-        {/* Middle (S4) */}
-        <circle cx="220" cy="80" r="18" fill="#0072CE" />
-        <text x="220" y="85" textAnchor="middle" fill="#fff" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="11">
-          S4
-        </text>
-
-        <circle cx="220" cy="200" r="22" fill="#0072CE" />
-        <text x="220" y="205" textAnchor="middle" fill="#fff" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="13">
-          S5
-        </text>
-
-        <circle cx="220" cy="320" r="18" fill="#0072CE" />
-        <text x="220" y="325" textAnchor="middle" fill="#fff" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="11">
-          S6
-        </text>
-
-        {/* End (University) */}
-        <circle cx="380" cy="200" r="28" fill="#002D72" />
-        <circle cx="380" cy="200" r="34" fill="none" stroke="#002D72" strokeWidth="2" opacity="0.25" />
-        <g transform="translate(380 200)">
-          <path
-            d="M -12 4 L 0 -4 L 12 4 L 12 10 L 0 14 L -12 10 Z"
-            fill="#fff"
-          />
-          <path d="M -12 4 L 12 4" stroke="#fff" strokeWidth="1" />
-        </g>
-      </g>
-
-      {/* Subject dots floating */}
-      <g opacity="0.7">
-        <circle cx="130" cy="140" r="6" fill="#3B82F6" />
-        <circle cx="150" cy="270" r="6" fill="#10B981" />
-        <circle cx="300" cy="135" r="6" fill="#6366F1" />
-        <circle cx="310" cy="265" r="6" fill="#F59E0B" />
-      </g>
-    </svg>
-  )
-}
-
-function FeaturedBlogCard({ article }: { article: BlogArticle }) {
-  const { bg, fg } = categoryColour(article.category)
+function ExploreTile({ href, label }: { href: string; label: string }) {
   return (
     <Link
-      href={`/blog/${article.slug}`}
-      className="pf-card-hover no-underline hover:no-underline flex flex-col h-full"
-      style={{ padding: '24px' }}
-      aria-label={`${article.title} — read article`}
+      href={href}
+      className="pf-card-hover no-underline hover:no-underline flex items-center justify-center text-center"
+      style={{
+        padding: '20px 16px',
+        minHeight: '80px',
+        fontFamily: "'Space Grotesk', sans-serif",
+        fontWeight: 600,
+        fontSize: '0.9375rem',
+        color: 'var(--pf-grey-900)',
+      }}
     >
-      <span
-        className="inline-flex items-center"
-        style={{
-          alignSelf: 'flex-start',
-          backgroundColor: bg,
-          color: fg,
-          borderRadius: '9999px',
-          padding: '4px 12px',
-          fontSize: '0.75rem',
-          fontWeight: 600,
-          fontFamily: "'Space Grotesk', sans-serif",
-          marginBottom: '16px',
-        }}
-      >
-        {article.category}
-      </span>
-      <h3
-        style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontWeight: 600,
-          fontSize: '1.1875rem',
-          color: 'var(--pf-grey-900)',
-          marginBottom: '12px',
-          lineHeight: 1.3,
-        }}
-      >
-        {article.title}
-      </h3>
-      <p
-        style={{
-          color: 'var(--pf-grey-600)',
-          fontSize: '0.9375rem',
-          lineHeight: 1.6,
-          marginBottom: '20px',
-          flex: 1,
-          display: '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical',
-          overflow: 'hidden',
-        }}
-      >
-        {article.description}
-      </p>
-      <div
-        className="flex items-center gap-3"
-        style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}
-      >
-        <time dateTime={article.date}>{formatDisplayDate(article.date)}</time>
-        <span aria-hidden="true">•</span>
-        <span>{article.readingTime} min read</span>
-      </div>
+      {label}
     </Link>
   )
 }
