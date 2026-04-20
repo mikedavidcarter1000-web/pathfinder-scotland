@@ -7,6 +7,35 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-26 Postcode lookup UX fallback (Stage 1.5a)
+
+- **Files changed:** new `lib/postcode-validation.ts` (three shared utilities: `isValidUkPostcodeFormat`, `normalisePostcode`, `checkPostcodeExists`); new `app/actions/onboarding-postcode-lookup.ts` (server-action mirror of the homepage action for the onboarding step); refactored `app/actions/homepage-teaser.ts` (status-discriminated union: `ok | invalid_format | missing_simd | not_scottish | not_found | server_error`); refactored `components/PostcodeTeaser.tsx` (5 panels, dedicated `MissingSimdPanel` + inline `StatusMessage`); refactored `components/onboarding/postcode-step.tsx` (swapped `useSIMDLookup` for the new server action, blue-tone neutral panel for `missing_simd`, yellow only for `not_found` / `invalid_format` / `server_error`); new migration `20260426000001_create_missing_postcodes_log.sql` with `log_missing_postcode(text, text)` SECURITY DEFINER function.
+
+- **Spec said `src/lib/...` / `src/app/...` but this project has no `src/` directory.** All top-level folders are at repo root (`lib/`, `app/`, `components/`). Placed the utility at `lib/postcode-validation.ts` and applied the same relative mapping for the new action. Future spec authors: check the project tree before prescribing paths.
+
+- **postcodes.io test-postcode reality differed from the spec assumptions.** (1) `M1 1AA` (spec: `not_scottish` case) was terminated in April 2009 -- postcodes.io returns 404 with a `terminated` payload, so our flow classifies it as `not_found`, not `not_scottish`. For a true `not_scottish` test use `M1 4ET` or `M2 5WD` (live Manchester postcodes; country=England). (2) `EH7 7DX` (spec: `missing_simd` case) returns 404 on postcodes.io -- it isn't a live postcode either. The Clermiston user's real postcode is `EH4 7DX`, which IS present in our `simd_postcodes` seed (decile 7). The original "missing SIMD" incident was likely a typo (EH7 vs EH4). For a live `missing_simd` test we'd need a Scottish postcode created post-2020; none found during this session. Takeaway: validate spec-level test data against the upstream API before writing the test plan.
+
+- **postcodes.io `validate` endpoint is unnecessary -- the detail endpoint alone distinguishes all three non-OK states.** Spec suggested calling `/validate` then `/` if valid. In practice `/postcodes/{pc}` returns 404 for missing/invalid, 200 with `country` for live, so a single call decides `exists` + `scottish`. Kept it to one fetch per lookup for speed and reliability. Timeout set to 3s with `AbortController`; any error is swallowed and classified as `not_found` (fail closed).
+
+- **`supabase.rpc('log_missing_postcode', ...)` needed an `as any` cast because the function isn't in `types/database.ts`.** Matches the existing pattern in `hooks/use-parent-link.ts` and `app/api/parent-link/revoke/route.ts` for untyped RPCs. Adding the function to the generated types would require regenerating `types/supabase.ts` (safe on new functions) or adding a hand-written stub to `types/database.ts`. Deferred -- the `as any` cast is a known-tolerated shortcut in this codebase.
+
+- **`useSIMDLookup` in `hooks/use-student.ts` is now dead code but was left in place.** It's a named export; removing it is a refactor beyond session scope. Its prefix-fallback behaviour (return first matching postcode when exact match fails) is also suspect -- it can return a wrong SIMD decile for a neighbouring postcode that happens to share a prefix. Flagging for Phase 2 cleanup.
+
+- **Onboarding yellow-warning fix:** the `missing_simd` state now uses a blue informational panel (matching the "What is SIMD?" box styling) and explicitly tells the user they can continue. Yellow is reserved for `invalid_format`, `not_found`, and `server_error`. This directly addresses the user-testing feedback from the Clermiston incident.
+
+- **Postcodes tested and observed states (live verification via postcodes.io + DB):**
+  - `G34 9AJ` -> `ok` (DB hit, SIMD 1)
+  - `EH10 6AA` -> `ok` (DB hit, SIMD 10)
+  - `EH4 7DX` -> `ok` (DB hit, SIMD 7 -- the real Clermiston postcode)
+  - `M1 4ET` -> `not_scottish` (not in DB, postcodes.io = England)
+  - `ZZ99 9ZZ` -> `not_found` (not in DB, postcodes.io 404)
+  - `M1 1AA` -> `not_found` (terminated postcode, postcodes.io 404 -- NOT `not_scottish` as spec expected)
+  - `EH7 7DX` -> `not_found` (not in DB, postcodes.io 404 -- NOT `missing_simd` as spec expected)
+  - `hello`, `12345`, `EH`, `EH1` -> `invalid_format` (fail regex / length gate)
+  - `eh114bn`, `  eh11   4bn  ` -> normalise to `EH11 4BN` (regex collapses internal whitespace).
+
+- **Follow-up (Stage 1.5b and Phase 2):** (a) Refresh `simd_postcodes` from the latest SIMD 2020v2 lookup including post-2020 new postcodes -- primary blocker for the original user-reported bug. (b) Remove `useSIMDLookup` from `hooks/use-student.ts`. (c) Add `missing_postcodes_log` and `log_missing_postcode` to `types/database.ts` manually (follow `feedback_types_regen.md`). (d) Review the `missing_postcodes_log` table periodically (weekly cron or admin dashboard) to source additions for the SIMD seed.
+
 ## 2026-04-26 Homepage rebuild -- Stage 1
 
 - **Files changed:** `app/page.tsx` (full rewrite, 955 -> 378 lines), new `app/actions/homepage-teaser.ts`, new `components/PostcodeTeaser.tsx`, new `lib/supabase-public.ts` (shared anon client utility).

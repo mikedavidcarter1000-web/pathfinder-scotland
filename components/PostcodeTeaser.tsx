@@ -42,8 +42,12 @@ export function PostcodeTeaser() {
     setInlineError(null)
   }
 
-  if (result && result.ok) {
+  if (result && result.status === 'ok') {
     return <TeaserResultPanel result={result} onReset={reset} />
+  }
+
+  if (result && result.status === 'missing_simd') {
+    return <MissingSimdPanel postcode={result.postcode} yearGroup={result.yearGroup} onReset={reset} />
   }
 
   return (
@@ -172,39 +176,7 @@ export function PostcodeTeaser() {
           </p>
         )}
 
-        {result && !result.ok && result.error === 'not_found' && (
-          <div
-            role="alert"
-            style={{
-              backgroundColor: 'rgba(239, 68, 68, 0.08)',
-              border: '1px solid rgba(239, 68, 68, 0.25)',
-              borderRadius: '8px',
-              padding: '12px 16px',
-              marginBottom: '12px',
-              color: 'var(--pf-red-500)',
-              fontSize: '0.9375rem',
-            }}
-          >
-            {result.message}
-          </div>
-        )}
-
-        {result && !result.ok && result.error !== 'not_found' && (
-          <div
-            role="alert"
-            style={{
-              backgroundColor: 'rgba(239, 68, 68, 0.08)',
-              border: '1px solid rgba(239, 68, 68, 0.25)',
-              borderRadius: '8px',
-              padding: '12px 16px',
-              marginBottom: '12px',
-              color: 'var(--pf-red-500)',
-              fontSize: '0.9375rem',
-            }}
-          >
-            {result.message}
-          </div>
-        )}
+        {result && <StatusMessage result={result} onReset={reset} />}
 
         <button
           type="submit"
@@ -248,11 +220,167 @@ export function PostcodeTeaser() {
   )
 }
 
+function StatusMessage({
+  result,
+  onReset,
+}: {
+  result: Exclude<HomepageTeaserResult, { status: 'ok' } | { status: 'missing_simd' }>
+  onReset: () => void
+}) {
+  let message: string
+  let isNonScottishInfo = false
+
+  switch (result.status) {
+    case 'invalid_format':
+      message = "That doesn't look like a UK postcode. Double-check and try again."
+      break
+    case 'not_found':
+      message = "We couldn't find that postcode. Double-check and try again."
+      break
+    case 'not_scottish':
+      message =
+        "Pathfinder is built for Scottish students. If you're planning to study in Scotland from elsewhere in the UK, you can still explore courses without a postcode."
+      isNonScottishInfo = true
+      break
+    case 'server_error':
+    default:
+      message = result.status === 'server_error' ? result.message : 'Something went wrong. Please try again.'
+  }
+
+  const bg = isNonScottishInfo ? 'rgba(59, 130, 246, 0.08)' : 'rgba(239, 68, 68, 0.08)'
+  const border = isNonScottishInfo ? 'rgba(59, 130, 246, 0.25)' : 'rgba(239, 68, 68, 0.25)'
+  const color = isNonScottishInfo ? 'var(--pf-blue-900)' : 'var(--pf-red-500)'
+
+  return (
+    <div
+      role="alert"
+      style={{
+        backgroundColor: bg,
+        border: `1px solid ${border}`,
+        borderRadius: '8px',
+        padding: '12px 16px',
+        marginBottom: '12px',
+        color,
+        fontSize: '0.9375rem',
+      }}
+    >
+      <p style={{ margin: 0 }}>{message}</p>
+      <button
+        type="button"
+        onClick={onReset}
+        style={{
+          background: 'none',
+          border: 'none',
+          padding: 0,
+          marginTop: '8px',
+          color: 'var(--pf-blue-700)',
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          fontSize: '0.875rem',
+          cursor: 'pointer',
+          textDecoration: 'underline',
+        }}
+      >
+        Try a different postcode
+      </button>
+    </div>
+  )
+}
+
+function MissingSimdPanel({
+  postcode,
+  yearGroup,
+  onReset,
+}: {
+  postcode: string
+  yearGroup: string
+  onReset: () => void
+}) {
+  return (
+    <section
+      id="try-it"
+      aria-live="polite"
+      className="pf-card"
+      style={{
+        padding: '28px 24px',
+        scrollMarginTop: '80px',
+        borderColor: 'var(--pf-blue-500)',
+      }}
+    >
+      <div style={{ marginBottom: '20px' }}>
+        <span className="pf-badge-blue inline-flex" style={{ marginBottom: '12px' }}>
+          Postcode recognised
+        </span>
+        <h2 style={{ fontSize: 'clamp(1.125rem, 3vw, 1.375rem)', marginBottom: '10px' }}>
+          {postcode} is a valid Scottish postcode.
+        </h2>
+        <p
+          style={{
+            color: 'var(--pf-grey-900)',
+            fontSize: '1rem',
+            lineHeight: 1.55,
+            margin: 0,
+          }}
+        >
+          We don&apos;t currently have SIMD data for this postcode, but it&apos;s a valid Scottish
+          address. You can sign up and we&apos;ll check widening access eligibility based on other
+          details (care experience, young carer status, first-generation university, etc.).
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <Link
+          href={`/auth/sign-up?postcode=${encodeURIComponent(postcode)}&yearGroup=${encodeURIComponent(yearGroup)}`}
+          className="pf-btn-primary w-full sm:w-auto justify-center"
+          style={{ minHeight: '48px' }}
+        >
+          Sign up
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </Link>
+        <Link
+          href="#stories"
+          className="pf-btn pf-btn-secondary w-full sm:w-auto justify-center"
+          style={{ minHeight: '48px' }}
+        >
+          Continue exploring
+        </Link>
+      </div>
+
+      <button
+        type="button"
+        onClick={onReset}
+        style={{
+          marginTop: '18px',
+          background: 'none',
+          border: 'none',
+          padding: 0,
+          color: 'var(--pf-blue-700)',
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          fontSize: '0.875rem',
+          cursor: 'pointer',
+          minHeight: '44px',
+        }}
+      >
+        Try a different postcode
+      </button>
+    </section>
+  )
+}
+
 function TeaserResultPanel({
   result,
   onReset,
 }: {
-  result: Extract<HomepageTeaserResult, { ok: true }>
+  result: Extract<HomepageTeaserResult, { status: 'ok' }>
   onReset: () => void
 }) {
   const { simdDecile, bursaryCount, wideningAccessCourseCount, sectorSamples } = result

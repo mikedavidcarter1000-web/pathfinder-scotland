@@ -1,10 +1,16 @@
 'use server'
 
 import { getAnonSupabase } from '@/lib/supabase-public'
+import {
+  checkPostcodeExists,
+  isValidUkPostcodeFormat,
+  normalisePostcode,
+  stripPostcode,
+} from '@/lib/postcode-validation'
 
 export type HomepageTeaserResult =
   | {
-      ok: true
+      status: 'ok'
       postcode: string
       yearGroup: string
       simdDecile: number
@@ -13,17 +19,13 @@ export type HomepageTeaserResult =
       wideningAccessCourseCount: number
       sectorSamples: Array<{ id: string; name: string }>
     }
-  | {
-      ok: false
-      error: 'invalid_postcode' | 'not_found' | 'server_error'
-      message: string
-    }
+  | { status: 'invalid_format' }
+  | { status: 'missing_simd'; postcode: string; yearGroup: string }
+  | { status: 'not_scottish' }
+  | { status: 'not_found' }
+  | { status: 'server_error'; message: string }
 
 const VALID_YEAR_GROUPS = new Set(['S2', 'S3', 'S4', 'S5', 'S6'])
-
-function normalisePostcode(raw: string): string {
-  return raw.trim().replace(/\s+/g, '').toUpperCase()
-}
 
 function decileToQuintile(decile: number): number {
   return Math.ceil(decile / 2)
@@ -62,22 +64,24 @@ export async function homepageTeaserAction(input: {
   postcode: string
   yearGroup: string
 }): Promise<HomepageTeaserResult> {
-  const postcode = normalisePostcode(input.postcode ?? '')
   const yearGroup = (input.yearGroup ?? '').trim().toUpperCase()
+  const rawPostcode = input.postcode ?? ''
 
-  if (postcode.length < 5 || postcode.length > 8 || !VALID_YEAR_GROUPS.has(yearGroup)) {
-    return {
-      ok: false,
-      error: 'invalid_postcode',
-      message: 'Please enter a valid UK postcode and year group.',
-    }
+  if (!VALID_YEAR_GROUPS.has(yearGroup)) {
+    return { status: 'invalid_format' }
   }
+
+  if (!isValidUkPostcodeFormat(rawPostcode)) {
+    return { status: 'invalid_format' }
+  }
+
+  const spaced = normalisePostcode(rawPostcode)
+  const stripped = stripPostcode(rawPostcode)
 
   const supabase = getAnonSupabase()
   if (!supabase) {
     return {
-      ok: false,
-      error: 'server_error',
+      status: 'server_error',
       message: 'We could not reach our database. Please try again in a moment.',
     }
   }
@@ -86,23 +90,32 @@ export async function homepageTeaserAction(input: {
     const { data: postcodeRow, error: postcodeError } = await supabase
       .from('simd_postcodes')
       .select('postcode, simd_decile')
-      .eq('postcode', postcode)
+      .eq('postcode', stripped)
       .maybeSingle()
 
     if (postcodeError) {
       return {
-        ok: false,
-        error: 'server_error',
+        status: 'server_error',
         message: 'Something went wrong. Please try again.',
       }
     }
 
     if (!postcodeRow) {
-      return {
-        ok: false,
-        error: 'not_found',
-        message: "We couldn't find that postcode. Please double-check and try again.",
+      const existsRes = await checkPostcodeExists(spaced)
+      if (existsRes.exists && existsRes.scottish) {
+        // Valid Scottish postcode, just missing from our SIMD seed.
+        // Fire-and-forget log; ignore errors so the UX flow never blocks.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        void (supabase as any).rpc('log_missing_postcode', {
+          p_postcode: stripped,
+          p_source: 'homepage_teaser',
+        })
+        return { status: 'missing_simd', postcode: spaced, yearGroup }
       }
+      if (existsRes.exists && !existsRes.scottish) {
+        return { status: 'not_scottish' }
+      }
+      return { status: 'not_found' }
     }
 
     const simdDecile = postcodeRow.simd_decile
@@ -133,8 +146,8 @@ export async function homepageTeaserAction(input: {
     const sectorSamples = pickRandom(sectorsRes.data ?? [], 3)
 
     return {
-      ok: true,
-      postcode,
+      status: 'ok',
+      postcode: spaced,
       yearGroup,
       simdDecile,
       simdQuintile,
@@ -144,8 +157,7 @@ export async function homepageTeaserAction(input: {
     }
   } catch {
     return {
-      ok: false,
-      error: 'server_error',
+      status: 'server_error',
       message: 'Something went wrong. Please try again.',
     }
   }
