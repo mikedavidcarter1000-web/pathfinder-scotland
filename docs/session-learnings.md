@@ -7,6 +7,32 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-20 Stale postcode banner + role maturity tiers (Stage 1.5e)
+
+- **Files changed (Task A):** new `components/StalePostcodeBanner.tsx` (banner + inline modal reusing `onboardingPostcodeLookupAction`, session-only dismissal state, query invalidation on save); mounted in `app/(main)/dashboard/page.tsx`, `app/courses/page.tsx`, and `app/bursaries/bursaries-client.tsx`. Banner renders only when `student.postcode != null AND student.simd_decile == null` -- silent no-op for null-postcode (mid-onboarding) or healthy-decile students.
+
+- **Files changed (Task B):** new `supabase/migrations/20260420000005_add_role_maturity_tier.sql` (enum `role_maturity_tier` + `career_roles.maturity_tier` column + partial index on non-null values); new `scripts/assign-role-maturity-tiers.mjs` (v2.1 ruleset as labelled constant at top of file -- documented pattern set with per-pattern rationale); `types/database.ts` patched manually to add the new column (Row/Insert/Update); `app/actions/homepage-teaser.ts` added an S2/S3 sector filter that treats NULL tier as "not specialised". Live DB: all 269 roles classified per v2.1 rules.
+
+- **Banner surfaces chosen: dashboard, courses, bursaries.** Skipped `/widening-access` -- despite the page discussing SIMD, it's a marketing/educational surface with no personalised SIMD-derived content. A banner there would feel disconnected. The rule is: banner goes on pages that silently degrade when `simd_decile IS NULL`, not on pages that talk about SIMD in the abstract.
+
+- **Path 1 auto-assignment has a data wall.** Of 269 `role_profiles.description` bodies: only 24 mention "degree" anywhere, only 4 mention "apprentice" anywhere, only 2 mention "Higher". The descriptions are written as day-in-the-life narrative, not entry-route metadata. Result: v2.1 ruleset produced 2 foundational / 18 intermediate / 29 specialised / 220 NULL. The NULL bucket isn't a pattern-tightening issue -- it's a data issue. Phase-2 task: hand-curated tier completion for the 220 unrated rows; descriptions should be enriched with a structured `min_entry_qualification` field or equivalent.
+
+- **Gate A revealed two classes of pattern bug.** (1) False-positive chartered: the literal string "Chartered" appears in professional-body names (e.g. "Chartered Institute of Public Relations" for Communications Officer) but the role doesn't require chartership. Fix: require `chartered` to be followed by a named profession (status, engineer, surveyor, etc.) or combine with post-nominal letters (CEng, MRICS, etc.) -- the professional-body-name mentions don't have those qualifiers. (2) Registered-with pattern missed all regulated professions because descriptions use the full council name ("registered with the General Medical Council") rather than the abbreviation ("registered with the GMC"). Fix: both forms must be in the pattern set.
+
+- **Postgres POSIX ARE uses `\y` for word boundary, NOT `\b`.** Initial v2 rules used `\b` inconsistently -- classification silently collapsed to 1 foundational / 0 intermediate / 6 specialised / 262 NULL. Corrected to `\y` throughout in v2.1. Lesson: when porting JS regex to Postgres, run a smoke test (count of any-hit vs total rows) on each pattern before trusting CASE output. `\b` is backspace in Postgres POSIX.
+
+- **Sector-level filter is effectively a no-op with v2.1 data.** The homepage filter `EXISTS role with maturity_tier != 'specialised' OR tier IS NULL` passes virtually every sector (since every sector has at least one NULL role). Structure is in place for when curation closes the NULL bucket; until then S2/S3 and S4-S6 see the same pool. Documented with inline comment in `app/actions/homepage-teaser.ts`.
+
+- **False-positive bound (≤5 clear specialised FPs) was the right stop gate but doesn't cover under-match.** v2.1 had 3 borderline-specialised rows (Nursery Practitioner, Youth Worker, Addiction Counsellor -- SSSC-registered roles with less-restricted entry paths than the pattern implies). Under the FP bound. But under-match of foundational (2 vs ~30 expected) was a separate failure mode the bound didn't catch. Next time: add an under-match bound too (e.g. "at least 50% of sectors should have at least one foundational match").
+
+- **Tier enum values confirmed correct in `types/database.ts`:** `'foundational' | 'intermediate' | 'specialised' | null`. Hand-edited per `feedback_types_regen.md`; do NOT regenerate `database.ts` wholesale.
+
+- **Modal + banner composition pattern.** The `StalePostcodeBanner` is one component that renders both the banner and (when active) the update modal. Dismissal state (`useState<boolean>`) lives in the banner; the modal receives `onUpdated` and `onClose` callbacks that toggle it. No separate modal context/provider needed because the modal is always scoped to the banner's lifetime.
+
+- **The `auto_lookup_simd` trigger (from Stage 1.5d) is load-bearing for this session.** When the modal calls `useUpdateStudent().mutateAsync({ postcode: ... })`, only the `postcode` field is updated explicitly -- the trigger populates `simd_decile` automatically. Without the trigger, saving a postcode would leave stale decile data unchanged. Verified: test with a known-live postcode (e.g. G34 9AJ) in the modal should update decile to 1.
+
+- **Phase-2 follow-ups logged:** (a) Hand-curate `maturity_tier` for the 220 NULL rows, or add a typed `min_entry_qualification` column to `role_profiles` and populate via a structured pass. (b) Review the 3 borderline specialised assignments (Nursery Practitioner, Youth Worker, Addiction Counsellor) for possible downgrade to intermediate. (c) Tighten the homepage sector filter once NULL bucket is <50 rows -- the current permissive rule is a no-op by design but will start filtering once data quality improves. (d) Consider persistent dismissal state for the stale-postcode banner if user testing shows the session-only approach is too aggressive.
+
 ## 2026-04-20 Post-Task-B cleanup (Stage 1.5d)
 
 - **Files changed:** new `supabase/migrations/20260420000004_restore_auto_lookup_simd_trigger.sql`; `app/careers/[sectorId]/[roleId]/page.tsx` (dropped the inline `getAnonSupabase` + `createClient` import, now imports from `@/lib/supabase-public`); `docs/phase-2-backlog.md` (marked the orphan-trigger item resolved). Live DB changed: `public.lookup_simd_for_student()` function created and `auto_lookup_simd` trigger attached to `public.students`.

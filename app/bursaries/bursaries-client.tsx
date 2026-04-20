@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { BursaryCard } from './bursary-card'
 import { BursaryFilters } from './bursary-filters'
+import { StalePostcodeBanner } from '@/components/StalePostcodeBanner'
 import {
   type Bursary,
   type BursaryMatch,
@@ -543,6 +544,7 @@ export function BursariesClient({
       <Hero loggedIn={true} />
       <section style={{ paddingTop: '32px', paddingBottom: '64px' }}>
         <div className="pf-container">
+          <StalePostcodeBanner />
           <div className="flex flex-col gap-8">
             {matchError && (
               <div

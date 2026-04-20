@@ -119,7 +119,14 @@ export async function homepageTeaserAction(input: {
     const simdDecile = postcodeRow.simd_decile
     const simdQuintile = decileToQuintile(simdDecile)
 
-    const [bursariesRes, coursesRes, sectorsRes] = await Promise.all([
+    const youngerStage = yearGroup === 'S2' || yearGroup === 'S3'
+
+    // For S2/S3 we also pull role tiers so we can filter out sectors where
+    // every role is 'specialised'. NULL maturity_tier is treated as "not
+    // specialised" -- 220/269 roles are currently unrated, so a strict
+    // filter would collapse the pool. Curating those rows is a phase-2
+    // task; see docs/phase-2-backlog.md.
+    const [bursariesRes, coursesRes, sectorsRes, rolesRes] = await Promise.all([
       supabase
         .from('bursaries')
         .select('id', { count: 'exact', head: true })
@@ -134,13 +141,27 @@ export async function homepageTeaserAction(input: {
         .select('id, name')
         .order('display_order', { ascending: true, nullsFirst: false })
         .limit(20),
+      youngerStage
+        ? supabase.from('career_roles').select('career_sector_id, maturity_tier')
+        : Promise.resolve({ data: null, error: null }),
     ])
+
+    let sectorsForPool = sectorsRes.data ?? []
+    if (youngerStage && rolesRes.data) {
+      const accessible = new Set<string>()
+      for (const role of rolesRes.data) {
+        if (role.maturity_tier !== 'specialised') {
+          accessible.add(role.career_sector_id)
+        }
+      }
+      sectorsForPool = sectorsForPool.filter((s) => accessible.has(s.id))
+    }
 
     const { simd20CourseCount, simd40CourseCount } = countWaCourses(
       coursesRes.data ?? [],
     )
 
-    const sectorSamples = pickRandom(sectorsRes.data ?? [], 3)
+    const sectorSamples = pickRandom(sectorsForPool, 3)
 
     return {
       status: 'ok',

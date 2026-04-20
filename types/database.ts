@@ -497,6 +497,7 @@ export type Database = {
           growth_outlook: string | null
           id: string
           is_new_ai_role: boolean | null
+          maturity_tier: 'foundational' | 'intermediate' | 'specialised' | null
           robotics_description: string | null
           robotics_rating_2030_2035: number | null
           robotics_rating_2040_2045: number | null
@@ -522,6 +523,7 @@ export type Database = {
           growth_outlook?: string | null
           id?: string
           is_new_ai_role?: boolean | null
+          maturity_tier?: 'foundational' | 'intermediate' | 'specialised' | null
           robotics_description?: string | null
           robotics_rating_2030_2035?: number | null
           robotics_rating_2040_2045?: number | null
@@ -547,6 +549,7 @@ export type Database = {
           growth_outlook?: string | null
           id?: string
           is_new_ai_role?: boolean | null
+          maturity_tier?: 'foundational' | 'intermediate' | 'specialised' | null
           robotics_description?: string | null
           robotics_rating_2030_2035?: number | null
           robotics_rating_2040_2045?: number | null

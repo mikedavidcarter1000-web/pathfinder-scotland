@@ -267,6 +267,17 @@ Option (a) implemented in migration `20260420000004_restore_auto_lookup_simd_tri
 
 The column is named `datazone` but stores DZ2011 codes (e.g. `S01008517`). As of Stage 1.5b the refresh writes these same values, but a rename to `data_zone_2011` would be clearer, future-proof when DZ2022 codes become the primary unit, and match the column naming used elsewhere (SIMD lookup's `DZ`, SPD's `DataZone2011Code`). Defer until a session is touching this table anyway -- a straight rename is fine; app code only reads `datazone` via `select('*')` on the public anon client and `types/database.ts`.
 
+### Role maturity tier curation (Stage 1.5e)
+
+The Path 1 auto-assignment via `scripts/assign-role-maturity-tiers.mjs` (v2.1 ruleset) populated 49 of 269 roles -- the remaining 220 are NULL because `role_profiles.description` is written as day-in-the-life narrative without entry-route metadata (only 24/269 mention "degree", only 4/269 mention "apprentice"). Two follow-ups:
+
+1. **Hand-curate the 220 NULL rows.** Roughly: most trades (Bricklayer, Joiner, Plasterer, Electrician, Painter, Hairdresser) should be `foundational`; most degree-only roles (Software Developer, Data Analyst, Marketing Manager) should be `intermediate`; most regulated professions missed by the regex (GP, Vet, Solicitor, Architect-via-ARB) should be `specialised`. A focused 1-hour Opus session reading title + sector + first 200 chars of description and tagging tier should resolve it.
+2. **Or add a typed `min_entry_qualification` column to `role_profiles`** with values like `n4_n5`, `higher`, `hnc_hnd`, `degree`, `chartered`, `professional_register` -- then the tier becomes a derived calculation. Cleaner long-term but expands the data model.
+
+Also re-review the 3 borderline `specialised` assignments from Stage 1.5e: Nursery Practitioner, Youth Worker, Addiction Counsellor. SSSC registration is required but entry routes are typically more accessible than the regex implies (HNC / Modern Apprenticeship rather than degree+chartership). Likely should be `intermediate`.
+
+When the NULL bucket drops below ~50 rows, tighten the homepage S2/S3 sector filter in `app/actions/homepage-teaser.ts`. Currently it treats NULL as "not specialised" (permissive no-op); it should instead require `EXISTS role with maturity_tier = 'foundational'` per the original spec.
+
 ### Tier threshold re-evaluation after full horizon retrofit
 
 Current tier thresholds (resilient ≤3, transforming ≥7) were calibrated against the old `ai_rating` column and carried forward to `ai_rating_2030_2035` unchanged. This is probably correct for the 2030-2035 column. For `ai_rating_2040_2045`, the drift guidance in `docs/ai-horizon-rubric.md` pushes many knowledge-work roles 2-3 points higher — which means more roles will land at 6-8 under the mid-career horizon.

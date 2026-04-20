@@ -19,6 +19,7 @@ import { useToast } from '@/components/ui/toast'
 import { ParentNotice } from '@/components/ui/parent-notice'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
+import { StalePostcodeBanner } from '@/components/StalePostcodeBanner'
 
 type EligibilityFilter = 'all' | 'eligible' | 'eligible_via_wa' | 'possible' | 'missing_subjects' | 'ineligible'
 
@@ -146,6 +147,7 @@ function CoursesPageContent() {
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
+          <StalePostcodeBanner />
           <div className="mb-5 sm:mb-6">
             <h1 style={{ marginBottom: '4px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>Courses</h1>
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
