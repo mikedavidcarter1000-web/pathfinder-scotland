@@ -16,7 +16,8 @@ export type HomepageTeaserResult =
       simdDecile: number
       simdQuintile: number
       bursaryCount: number
-      wideningAccessCourseCount: number
+      simd20CourseCount: number
+      simd40CourseCount: number
       sectorSamples: Array<{ id: string; name: string }>
     }
   | { status: 'invalid_format' }
@@ -42,22 +43,19 @@ function pickRandom<T>(items: T[], count: number): T[] {
   return out
 }
 
-function countWaCoursesForDecile(
+function countWaCourses(
   waRows: Array<{ widening_access_requirements: unknown }>,
-  decile: number,
-): number {
-  if (decile > 4) return 0
-  let count = 0
+): { simd20CourseCount: number; simd40CourseCount: number } {
+  let simd20CourseCount = 0
+  let simd40CourseCount = 0
   for (const row of waRows) {
     const wa = row.widening_access_requirements
     if (wa == null || typeof wa !== 'object' || Array.isArray(wa)) continue
     const obj = wa as Record<string, unknown>
-    const hasSimd40 = typeof obj.simd40_offer === 'string' && obj.simd40_offer.length > 0
-    const hasSimd20 = typeof obj.simd20_offer === 'string' && obj.simd20_offer.length > 0
-    if (decile <= 2 && (hasSimd20 || hasSimd40)) count += 1
-    else if (decile <= 4 && hasSimd40) count += 1
+    if (obj.simd20_offer != null && obj.simd20_offer !== '') simd20CourseCount += 1
+    if (obj.simd40_offer != null && obj.simd40_offer !== '') simd40CourseCount += 1
   }
-  return count
+  return { simd20CourseCount, simd40CourseCount }
 }
 
 export async function homepageTeaserAction(input: {
@@ -138,9 +136,8 @@ export async function homepageTeaserAction(input: {
         .limit(20),
     ])
 
-    const wideningAccessCourseCount = countWaCoursesForDecile(
+    const { simd20CourseCount, simd40CourseCount } = countWaCourses(
       coursesRes.data ?? [],
-      simdDecile,
     )
 
     const sectorSamples = pickRandom(sectorsRes.data ?? [], 3)
@@ -152,7 +149,8 @@ export async function homepageTeaserAction(input: {
       simdDecile,
       simdQuintile,
       bursaryCount: bursariesRes.count ?? 0,
-      wideningAccessCourseCount,
+      simd20CourseCount,
+      simd40CourseCount,
       sectorSamples,
     }
   } catch {

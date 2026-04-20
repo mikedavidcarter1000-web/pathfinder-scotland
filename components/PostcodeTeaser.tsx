@@ -6,6 +6,11 @@ import {
   homepageTeaserAction,
   type HomepageTeaserResult,
 } from '@/app/actions/homepage-teaser'
+import {
+  getSimdBand,
+  getSimdLine1Copy,
+  getSimdLine2Copy,
+} from '@/lib/simd-bands'
 
 const YEAR_GROUPS = ['S2', 'S3', 'S4', 'S5', 'S6'] as const
 type YearGroup = (typeof YEAR_GROUPS)[number]
@@ -383,12 +388,9 @@ function TeaserResultPanel({
   result: Extract<HomepageTeaserResult, { status: 'ok' }>
   onReset: () => void
 }) {
-  const { simdDecile, bursaryCount, wideningAccessCourseCount, sectorSamples } = result
-  const lowSimd = simdDecile <= 8
-
-  const simdLine = lowSimd
-    ? `You live in a SIMD ${simdDecile} area. This may unlock reduced entry requirements at all 18 Scottish universities.`
-    : `You live in a SIMD ${simdDecile} area. You may still qualify for support based on other circumstances.`
+  const { simdDecile, bursaryCount, simd20CourseCount, simd40CourseCount, sectorSamples } = result
+  const simdLine = getSimdLine1Copy(simdDecile)
+  const wideningAccessLine = getSimdLine2Copy(simdDecile, simd20CourseCount, simd40CourseCount)
 
   return (
     <section
@@ -430,13 +432,7 @@ function TeaserResultPanel({
         className="space-y-3"
         style={{ marginBottom: '24px', listStyle: 'none', padding: 0 }}
       >
-        <ResultLine
-          text={
-            wideningAccessCourseCount > 0
-              ? `${wideningAccessCourseCount} widening access courses available for your area`
-              : 'Widening access offers vary by course - sign up to see your personalised list'
-          }
-        />
+        <ResultLine text={wideningAccessLine} />
         <ResultLine text={`${bursaryCount} bursaries may be available to you`} />
         {sectorSamples.length > 0 && (
           <li className="flex items-start gap-3">

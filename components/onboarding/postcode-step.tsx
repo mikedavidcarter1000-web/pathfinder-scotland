@@ -6,6 +6,7 @@ import {
   onboardingPostcodeLookupAction,
   type OnboardingPostcodeResult,
 } from '@/app/actions/onboarding-postcode-lookup'
+import { getSimdBand } from '@/lib/simd-bands'
 
 interface PostcodeData {
   postcode: string
@@ -69,18 +70,19 @@ export function PostcodeStep({
   }
 
   const decileBadge = (decile: number) => {
-    if (decile <= 2) {
+    const band = getSimdBand(decile)
+    if (band === 'simd20') {
       return {
         label: 'SIMD20',
         bg: 'rgba(16, 185, 129, 0.1)',
         text: 'var(--pf-green-500)',
       }
     }
-    if (decile <= 4) {
+    if (band === 'simd40') {
       return {
         label: 'SIMD40',
-        bg: 'rgba(245, 158, 11, 0.1)',
-        text: 'var(--pf-amber-500)',
+        bg: 'rgba(16, 185, 129, 0.1)',
+        text: 'var(--pf-green-500)',
       }
     }
     return null
