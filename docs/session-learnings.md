@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-26 Housekeeping -- types sync and static rendering fix
+
+- **`types/database.ts` had 13 tables and 8 functions missing vs the live schema.** A Python diffing script (comparing Row column sets) is the reliable way to find drift -- the raw line-count difference (2264 vs 2927 lines) is a useful signal but needs decomposition to identify which tables/functions are absent. Tables missing: `bursaries`, `offer_categories`, `offer_clicks`, `offer_support_groups`, `offers`, `partners`, `quiz_questions`, `quiz_results`, `riasec_career_mapping`, `saved_offers`, `starting_uni_checklist_items`, `student_bursary_matches`, `student_checklist_progress`. All added manually (never regenerate wholesale per `feedback_types_regen.md`).
+
+- **Phantom columns in `database.ts` (not in live schema) should be KEPT if app code uses them.** `colleges.image_url`, `universities.image_url`, and the `students` demographic columns (`household_income_band`, `parental_education`, `local_authority`, etc.) appear in app code but not in `types/supabase.ts`. Removing them from `database.ts` would cause type errors. The right action is to keep them and note the pending migrations. The reconciliation rule "update to match" applies to adding missing columns, not to removing app-used phantom columns.
+
+- **`/careers/[sectorId]/[roleId]` was rendering dynamically despite `generateStaticParams` because `fetchRoleAndProfile` called `createServerSupabaseClient()`, which calls `cookies()`.** The page already had `getAnonSupabase()` defined and used it in `generateStaticParams` -- only the data fetch function needed updating. Fix: replace `const supabase = await createServerSupabaseClient()` with `const supabase = getAnonSupabase(); if (!supabase) return { role: null, profile: null }`. After fix, build output shows `●` (SSG) with 269 prerendered paths and `1h` revalidation.
+
+- **Confirm RLS public SELECT policies exist before switching to anon client on a data-fetch function.** All three tables (`career_roles`, `career_sectors`, `role_profiles`) had `Public read access` policies with `qual: true`. A missing policy would have caused silent empty results at build time, not a type error. Always run the policy check query before the switch.
+
+- **The Python extraction-and-insertion pattern for large type-file reconciliation works well.** Extract each missing table block with a regex anchored to the table name with 6-space indent, insert after a named anchor table. Running insertions sequentially (each `insert_after_table` call searches the already-modified string) is correct and avoids position-shift bugs. A verification step counting occurrences in the result catches failures before writing to disk.
+
 ## 2026-04-25 Role detail pages -- /careers/[sectorId]/[roleId]
 
 - **Next.js requires a single dynamic-segment name per depth, so adding `[sectorId]/[roleId]` forced a rename of the existing `[id]` folder.** Tried naively creating `app/careers/[sectorId]/[roleId]/page.tsx` alongside `app/careers/[id]/page.tsx` would produce "different slug names for the same dynamic path" error. Renamed `[id]` -> `[sectorId]` via `git mv` and updated only the param destructuring (`{ id }` -> `{ sectorId }`) in the one page. External URLs `/careers/{uuid}` continue to work because internal Links target the URL shape, not the param name. No other code changed.

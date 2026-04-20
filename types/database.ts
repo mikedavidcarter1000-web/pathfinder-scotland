@@ -173,6 +173,147 @@ export type Database = {
           },
         ]
       }
+      bursaries: {
+        Row: {
+          academic_year: string | null
+          administering_body: string
+          amount_description: string | null
+          amount_frequency: string | null
+          amount_max: number | null
+          amount_min: number | null
+          application_deadline: string | null
+          application_process: string | null
+          award_type: string
+          created_at: string | null
+          description: string | null
+          id: string
+          income_threshold_max: number | null
+          is_active: boolean | null
+          is_charitable_trust: boolean | null
+          is_competitive: boolean | null
+          is_government_scheme: boolean | null
+          is_means_tested: boolean | null
+          is_repayable: boolean | null
+          is_universal: boolean | null
+          last_verified_date: string | null
+          max_age: number | null
+          min_age: number | null
+          name: string
+          needs_verification: boolean | null
+          not_eligible_for_saas: boolean | null
+          notes: string | null
+          priority_score: number | null
+          requires_care_experience: boolean | null
+          requires_carer: boolean | null
+          requires_disability: boolean | null
+          requires_estranged: boolean | null
+          requires_lone_parent: boolean | null
+          requires_nomination: boolean | null
+          requires_refugee_or_asylum: boolean | null
+          requires_scottish_residency: boolean | null
+          requires_young_carer: boolean | null
+          requires_young_parent: boolean | null
+          simd_quintile_max: number | null
+          slug: string
+          specific_courses: string[] | null
+          student_stages: string[]
+          updated_at: string | null
+          url: string | null
+        }
+        Insert: {
+          academic_year?: string | null
+          administering_body: string
+          amount_description?: string | null
+          amount_frequency?: string | null
+          amount_max?: number | null
+          amount_min?: number | null
+          application_deadline?: string | null
+          application_process?: string | null
+          award_type: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          income_threshold_max?: number | null
+          is_active?: boolean | null
+          is_charitable_trust?: boolean | null
+          is_competitive?: boolean | null
+          is_government_scheme?: boolean | null
+          is_means_tested?: boolean | null
+          is_repayable?: boolean | null
+          is_universal?: boolean | null
+          last_verified_date?: string | null
+          max_age?: number | null
+          min_age?: number | null
+          name: string
+          needs_verification?: boolean | null
+          not_eligible_for_saas?: boolean | null
+          notes?: string | null
+          priority_score?: number | null
+          requires_care_experience?: boolean | null
+          requires_carer?: boolean | null
+          requires_disability?: boolean | null
+          requires_estranged?: boolean | null
+          requires_lone_parent?: boolean | null
+          requires_nomination?: boolean | null
+          requires_refugee_or_asylum?: boolean | null
+          requires_scottish_residency?: boolean | null
+          requires_young_carer?: boolean | null
+          requires_young_parent?: boolean | null
+          simd_quintile_max?: number | null
+          slug: string
+          specific_courses?: string[] | null
+          student_stages: string[]
+          updated_at?: string | null
+          url?: string | null
+        }
+        Update: {
+          academic_year?: string | null
+          administering_body?: string
+          amount_description?: string | null
+          amount_frequency?: string | null
+          amount_max?: number | null
+          amount_min?: number | null
+          application_deadline?: string | null
+          application_process?: string | null
+          award_type?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          income_threshold_max?: number | null
+          is_active?: boolean | null
+          is_charitable_trust?: boolean | null
+          is_competitive?: boolean | null
+          is_government_scheme?: boolean | null
+          is_means_tested?: boolean | null
+          is_repayable?: boolean | null
+          is_universal?: boolean | null
+          last_verified_date?: string | null
+          max_age?: number | null
+          min_age?: number | null
+          name?: string
+          needs_verification?: boolean | null
+          not_eligible_for_saas?: boolean | null
+          notes?: string | null
+          priority_score?: number | null
+          requires_care_experience?: boolean | null
+          requires_carer?: boolean | null
+          requires_disability?: boolean | null
+          requires_estranged?: boolean | null
+          requires_lone_parent?: boolean | null
+          requires_nomination?: boolean | null
+          requires_refugee_or_asylum?: boolean | null
+          requires_scottish_residency?: boolean | null
+          requires_young_carer?: boolean | null
+          requires_young_parent?: boolean | null
+          simd_quintile_max?: number | null
+          slug?: string
+          specific_courses?: string[] | null
+          student_stages?: string[]
+          updated_at?: string | null
+          url?: string | null
+        }
+        Relationships: []
+      }
       student_benefits: {
         Row: {
           access_method: string | null
@@ -836,6 +977,251 @@ export type Database = {
         }
         Relationships: []
       }
+      offer_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      offer_clicks: {
+        Row: {
+          click_type: string
+          created_at: string
+          id: string
+          offer_id: string
+          referrer_page: string | null
+          session_id: string | null
+          student_id: string | null
+        }
+        Insert: {
+          click_type: string
+          created_at?: string
+          id?: string
+          offer_id: string
+          referrer_page?: string | null
+          session_id?: string | null
+          student_id?: string | null
+        }
+        Update: {
+          click_type?: string
+          created_at?: string
+          id?: string
+          offer_id?: string
+          referrer_page?: string | null
+          session_id?: string | null
+          student_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_clicks_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_clicks_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offer_support_groups: {
+        Row: {
+          offer_id: string
+          support_group: string
+        }
+        Insert: {
+          offer_id: string
+          support_group: string
+        }
+        Update: {
+          offer_id?: string
+          support_group?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_support_groups_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offers: {
+        Row: {
+          active_from: string | null
+          active_until: string | null
+          affiliate_network: string | null
+          affiliate_url: string | null
+          brand: string | null
+          category_id: string
+          commission_type: string | null
+          commission_value: number | null
+          cookie_days: number | null
+          created_at: string
+          description: string | null
+          discount_text: string | null
+          display_order: number
+          eligible_stages: string[]
+          featured_until: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          is_featured: boolean
+          last_verified_at: string | null
+          locations: string[]
+          max_age: number | null
+          min_age: number | null
+          needs_review: boolean
+          offer_type: string
+          partner_id: string | null
+          promo_code: string | null
+          requires_student_beans: boolean
+          requires_totum: boolean
+          requires_unidays: boolean
+          requires_young_scot: boolean
+          scotland_only: boolean
+          seasonal_tags: string[]
+          slug: string
+          summary: string | null
+          title: string
+          university_specific: string[]
+          updated_at: string
+          url: string | null
+          verification_method: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          active_from?: string | null
+          active_until?: string | null
+          affiliate_network?: string | null
+          affiliate_url?: string | null
+          brand?: string | null
+          category_id: string
+          commission_type?: string | null
+          commission_value?: number | null
+          cookie_days?: number | null
+          created_at?: string
+          description?: string | null
+          discount_text?: string | null
+          display_order?: number
+          eligible_stages?: string[]
+          featured_until?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_featured?: boolean
+          last_verified_at?: string | null
+          locations?: string[]
+          max_age?: number | null
+          min_age?: number | null
+          needs_review?: boolean
+          offer_type?: string
+          partner_id?: string | null
+          promo_code?: string | null
+          requires_student_beans?: boolean
+          requires_totum?: boolean
+          requires_unidays?: boolean
+          requires_young_scot?: boolean
+          scotland_only?: boolean
+          seasonal_tags?: string[]
+          slug: string
+          summary?: string | null
+          title: string
+          university_specific?: string[]
+          updated_at?: string
+          url?: string | null
+          verification_method?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          active_from?: string | null
+          active_until?: string | null
+          affiliate_network?: string | null
+          affiliate_url?: string | null
+          brand?: string | null
+          category_id?: string
+          commission_type?: string | null
+          commission_value?: number | null
+          cookie_days?: number | null
+          created_at?: string
+          description?: string | null
+          discount_text?: string | null
+          display_order?: number
+          eligible_stages?: string[]
+          featured_until?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_featured?: boolean
+          last_verified_at?: string | null
+          locations?: string[]
+          max_age?: number | null
+          min_age?: number | null
+          needs_review?: boolean
+          offer_type?: string
+          partner_id?: string | null
+          promo_code?: string | null
+          requires_student_beans?: boolean
+          requires_totum?: boolean
+          requires_unidays?: boolean
+          requires_young_scot?: boolean
+          scotland_only?: boolean
+          seasonal_tags?: string[]
+          slug?: string
+          summary?: string | null
+          title?: string
+          university_specific?: string[]
+          updated_at?: string
+          url?: string | null
+          verification_method?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "offer_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       promo_code_redemptions: {
         Row: {
           discount_applied: number
@@ -934,6 +1320,155 @@ export type Database = {
           updated_at?: string | null
           valid_from?: string | null
           valid_until?: string | null
+        }
+        Relationships: []
+      }
+      partners: {
+        Row: {
+          account_id: string | null
+          affiliate_network: string | null
+          contact_email: string | null
+          contact_name: string | null
+          contract_end: string | null
+          contract_start: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          partner_type: string
+        }
+        Insert: {
+          account_id?: string | null
+          affiliate_network?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contract_end?: string | null
+          contract_start?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          partner_type: string
+        }
+        Update: {
+          account_id?: string | null
+          affiliate_network?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contract_end?: string | null
+          contract_start?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          partner_type?: string
+        }
+        Relationships: []
+      }
+      quiz_questions: {
+        Row: {
+          created_at: string | null
+          display_order: number
+          id: string
+          is_active: boolean | null
+          question_text: string
+          riasec_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          display_order: number
+          id?: string
+          is_active?: boolean | null
+          question_text: string
+          riasec_type: string
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean | null
+          question_text?: string
+          riasec_type?: string
+        }
+        Relationships: []
+      }
+      quiz_results: {
+        Row: {
+          artistic_score: number
+          completed_at: string | null
+          conventional_score: number
+          enterprising_score: number
+          id: string
+          investigative_score: number
+          realistic_score: number
+          social_score: number
+          student_id: string | null
+          top_types: string[]
+        }
+        Insert: {
+          artistic_score: number
+          completed_at?: string | null
+          conventional_score: number
+          enterprising_score: number
+          id?: string
+          investigative_score: number
+          realistic_score: number
+          social_score: number
+          student_id?: string | null
+          top_types: string[]
+        }
+        Update: {
+          artistic_score?: number
+          completed_at?: string | null
+          conventional_score?: number
+          enterprising_score?: number
+          id?: string
+          investigative_score?: number
+          realistic_score?: number
+          social_score?: number
+          student_id?: string | null
+          top_types?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_results_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      riasec_career_mapping: {
+        Row: {
+          career_area: string
+          description: string | null
+          display_order: number | null
+          example_careers: string[]
+          id: string
+          recommended_highers: string[] | null
+          riasec_type: string
+        }
+        Insert: {
+          career_area: string
+          description?: string | null
+          display_order?: number | null
+          example_careers: string[]
+          id?: string
+          recommended_highers?: string[] | null
+          riasec_type: string
+        }
+        Update: {
+          career_area?: string
+          description?: string | null
+          display_order?: number | null
+          example_careers?: string[]
+          id?: string
+          recommended_highers?: string[] | null
+          riasec_type?: string
         }
         Relationships: []
       }
@@ -1128,6 +1663,39 @@ export type Database = {
           },
         ]
       }
+      saved_offers: {
+        Row: {
+          created_at: string
+          offer_id: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          offer_id: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          offer_id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_offers_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_offers_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       simd_postcodes: {
         Row: {
           council_area: string | null
@@ -1154,6 +1722,47 @@ export type Database = {
           simd_decile?: number
         }
         Relationships: []
+      }
+      starting_uni_checklist_items: {
+        Row: {
+          category: string
+          description: string | null
+          display_order: number
+          id: string
+          is_active: boolean
+          linked_offer_id: string | null
+          title: string
+          url: string | null
+        }
+        Insert: {
+          category: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          linked_offer_id?: string | null
+          title: string
+          url?: string | null
+        }
+        Update: {
+          category?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          linked_offer_id?: string | null
+          title?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "starting_uni_checklist_items_linked_offer_id_fkey"
+            columns: ["linked_offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stripe_customers: {
         Row: {
@@ -1408,6 +2017,78 @@ export type Database = {
             columns: ["subject_id"]
             isOneToOne: false
             referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_bursary_matches: {
+        Row: {
+          bursary_id: string | null
+          id: string
+          match_status: string | null
+          matched_at: string | null
+          student_id: string | null
+        }
+        Insert: {
+          bursary_id?: string | null
+          id?: string
+          match_status?: string | null
+          matched_at?: string | null
+          student_id?: string | null
+        }
+        Update: {
+          bursary_id?: string | null
+          id?: string
+          match_status?: string | null
+          matched_at?: string | null
+          student_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_bursary_matches_bursary_id_fkey"
+            columns: ["bursary_id"]
+            isOneToOne: false
+            referencedRelation: "bursaries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_bursary_matches_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_checklist_progress: {
+        Row: {
+          checklist_item_id: string
+          completed_at: string
+          student_id: string
+        }
+        Insert: {
+          checklist_item_id: string
+          completed_at?: string
+          student_id: string
+        }
+        Update: {
+          checklist_item_id?: string
+          completed_at?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_checklist_progress_checklist_item_id_fkey"
+            columns: ["checklist_item_id"]
+            isOneToOne: false
+            referencedRelation: "starting_uni_checklist_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_checklist_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
             referencedColumns: ["id"]
           },
         ]
@@ -2046,16 +2727,62 @@ export type Database = {
       }
       delete_user_data: { Args: { target_user_id?: string }; Returns: Json }
       export_user_data: { Args: { target_user_id?: string }; Returns: Json }
+      flag_stale_offers: { Args: never; Returns: number }
+      generate_parent_invite_code: { Args: never; Returns: string }
+      get_linked_children: {
+        Args: never
+        Returns: {
+          email: string
+          first_name: string
+          last_name: string
+          link_id: string
+          linked_at: string
+          postcode: string
+          school_name: string
+          school_stage: string
+          simd_decile: number
+          student_id: string
+        }[]
+      }
+      get_linked_parents: {
+        Args: never
+        Returns: {
+          email: string
+          full_name: string
+          link_id: string
+          linked_at: string
+          parent_id: string
+          status: string
+        }[]
+      }
       get_promo_code_stats: { Args: { p_code_id: string }; Returns: Json }
       get_user_subscription: { Args: { p_user_id?: string }; Returns: Json }
       has_active_subscription: {
         Args: { p_user_id?: string }
         Returns: boolean
       }
+      is_linked_parent: { Args: { p_student_id: string }; Returns: boolean }
+      match_bursaries_for_student: {
+        Args: { target_student_id: string }
+        Returns: {
+          administering_body: string
+          amount_description: string
+          amount_max: number
+          application_deadline: string
+          award_type: string
+          bursary_id: string
+          description: string
+          match_confidence: string
+          name: string
+          url: string
+        }[]
+      }
+      redeem_parent_invite_code: { Args: { p_code: string }; Returns: Json }
       redeem_promo_code: {
         Args: { p_amount: number; p_code: string; p_order_id?: string }
         Returns: Json
       }
+      revoke_parent_link: { Args: { p_link_id: string }; Returns: undefined }
       validate_promo_code: {
         Args: { p_amount?: number; p_code: string; p_user_id?: string }
         Returns: Json

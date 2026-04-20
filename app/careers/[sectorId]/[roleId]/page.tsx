@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import type { Metadata } from 'next'
-import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { HorizonRatings } from '@/components/careers/HorizonRatings'
 import type { Database } from '@/types/database'
 
@@ -40,7 +39,8 @@ export async function generateStaticParams() {
 }
 
 async function fetchRoleAndProfile(sectorId: string, roleId: string) {
-  const supabase = await createServerSupabaseClient()
+  const supabase = getAnonSupabase()
+  if (!supabase) return { role: null, profile: null }
 
   const [roleRes, profileRes] = await Promise.all([
     supabase
