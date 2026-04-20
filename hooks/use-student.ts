@@ -347,7 +347,7 @@ export function useSIMDLookup() {
       const { data: exactMatch, error: exactError } = await (supabase as any)
         .from('simd_postcodes')
         .select('*')
-        .eq('postcode', normalised)
+        .eq('postcode_normalised', normalised)
         .single()
 
       if (exactMatch) {
@@ -360,7 +360,7 @@ export function useSIMDLookup() {
         const { data: prefixMatch, error: prefixError } = await (supabase as any)
           .from('simd_postcodes')
           .select('*')
-          .ilike('postcode', `${normalised}%`)
+          .ilike('postcode_normalised', `${normalised}%`)
           .limit(1)
           .single()
 

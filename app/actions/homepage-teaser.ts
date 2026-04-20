@@ -88,7 +88,7 @@ export async function homepageTeaserAction(input: {
     const { data: postcodeRow, error: postcodeError } = await supabase
       .from('simd_postcodes')
       .select('postcode, simd_decile')
-      .eq('postcode', stripped)
+      .eq('postcode_normalised', stripped)
       .maybeSingle()
 
     if (postcodeError) {

@@ -43,7 +43,7 @@ export async function onboardingPostcodeLookupAction(
     const { data: row, error } = await supabase
       .from('simd_postcodes')
       .select('postcode, simd_decile, council_area')
-      .eq('postcode', stripped)
+      .eq('postcode_normalised', stripped)
       .maybeSingle()
 
     if (error) {

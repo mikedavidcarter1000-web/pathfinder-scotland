@@ -255,6 +255,18 @@ The ai-horizon-rubric.md states regulated professions cap at 5-6 for 2040-2045. 
 
 The robotics jump from 3 (2030-2035) to 5 (2040-2045) is the largest single-horizon jump in the Healthcare sector. It reflects humanoid deployment in care settings driven by Scottish demographic pressures (ageing population, rural labour shortages, Free Personal Care funding). The description makes this explicit. When the robotics rubric is re-reviewed or if credible evidence of slower-than-expected care-home humanoid deployment emerges, revisit this rating. The 5 is the key signal for students: "this role changes materially if you're mid-career in 2040."
 
+### Terminated-postcode user handling
+
+When `students.postcode` holds a postcode that is no longer live (e.g. a student's test account with `EH12 8TS`, terminated 16/1/2008), the Stage 1.5b refresh NULLs the cached `simd_decile` but leaves the terminated postcode string in place. This means the user can re-trigger the same dead-end lookup later. Options for the follow-up session: (a) null the `postcode` field in the same sweep with an advisory flag so the user is prompted for a current postcode on next login; (b) auto-migrate to the recoded successor using the SPD `LinkedSmallUserPostcode` column where one exists; (c) surface the terminated-postcode set in an admin view and email users manually. Captured in `missing_postcodes_log` with `source = 'student_decile_refresh'` for the audit trail.
+
+### Orphan auto_lookup_simd trigger reference
+
+`prevent_restricted_student_column_update()` (BEFORE UPDATE on `students`) blocks direct `simd_decile` writes and refers in a comment to `auto_lookup_simd` running before it to populate the decile from `simd_postcodes`. No such trigger or function exists. The workaround during Stage 1.5b was to run the sync as postgres with `SET LOCAL ROLE postgres` inside a pg-client transaction. Permanent fixes: (a) implement `auto_lookup_simd` so a `postcode` change auto-refreshes `simd_decile` (matches the comment and is the lowest-surprise option); (b) extend the guard allowlist to include a "data-admin" role granted only during scheduled sync jobs; (c) drop the guard entirely and rely on RLS / admin-only updates. Option (a) is preferred because it fixes the surprise where an app update to `students.postcode` leaves the cached decile stale.
+
+### Canonical `simd_postcodes.datazone` column rename
+
+The column is named `datazone` but stores DZ2011 codes (e.g. `S01008517`). As of Stage 1.5b the refresh writes these same values, but a rename to `data_zone_2011` would be clearer, future-proof when DZ2022 codes become the primary unit, and match the column naming used elsewhere (SIMD lookup's `DZ`, SPD's `DataZone2011Code`). Defer until a session is touching this table anyway -- a straight rename is fine; app code only reads `datazone` via `select('*')` on the public anon client and `types/database.ts`.
+
 ### Tier threshold re-evaluation after full horizon retrofit
 
 Current tier thresholds (resilient ≤3, transforming ≥7) were calibrated against the old `ai_rating` column and carried forward to `ai_rating_2030_2035` unchanged. This is probably correct for the 2030-2035 column. For `ai_rating_2040_2045`, the drift guidance in `docs/ai-horizon-rubric.md` pushes many knowledge-work roles 2-3 points higher — which means more roles will land at 6-8 under the mid-career horizon.

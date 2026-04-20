@@ -1702,24 +1702,37 @@ export type Database = {
           created_at: string | null
           datazone: string | null
           id: string
+          imported_at: string | null
           postcode: string
+          postcode_normalised: string | null
           simd_decile: number
+          simd_quintile: number | null
+          simd_rank: number | null
+          source: string | null
         }
         Insert: {
           council_area?: string | null
           created_at?: string | null
           datazone?: string | null
           id?: string
+          imported_at?: string | null
           postcode: string
           simd_decile: number
+          simd_quintile?: number | null
+          simd_rank?: number | null
+          source?: string | null
         }
         Update: {
           council_area?: string | null
           created_at?: string | null
           datazone?: string | null
           id?: string
+          imported_at?: string | null
           postcode?: string
           simd_decile?: number
+          simd_quintile?: number | null
+          simd_rank?: number | null
+          source?: string | null
         }
         Relationships: []
       }
