@@ -752,3 +752,16 @@
     page-break-after: always;
   }
 }
+
+/* Comparison grid responsive rules: at <768px stack the field-name column
+   above the values/chart, and collapse the 3-column label row into a single
+   stack so each career's value is read vertically. */
+@media (max-width: 767px) {
+  .pf-comparison-grid > section > div > div[role='group'],
+  .pf-comparison-grid > section > div > div[role='img'] {
+    grid-template-columns: 1fr !important;
+  }
+  .pf-comparison-grid .pf-labelrow-values {
+    grid-template-columns: 1fr !important;
+  }
+}

@@ -15,6 +15,7 @@ import {
 import { useAiCareersHubData } from '@/hooks/use-subjects'
 import { CareerSelectorModal } from './career-selector-modal'
 import { CareerSlot } from './career-slot'
+import { ComparisonGrid } from './ComparisonGrid'
 
 export interface CompareShellProps {
   exampleRoleIds: string[]
@@ -350,7 +351,7 @@ export function CompareShell({ exampleRoleIds }: CompareShellProps) {
           Add at least 2 careers to see a comparison.
         </div>
       ) : (
-        <div>Comparison grid placeholder &mdash; Session 4 renders this.</div>
+        <ComparisonGrid roleIds={activeTab.roleIds} />
       )}
 
       {hub && selectorTarget !== null ? (
