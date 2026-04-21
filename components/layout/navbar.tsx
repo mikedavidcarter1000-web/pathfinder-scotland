@@ -30,6 +30,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { name: 'Discover', href: '/discover' },
       { name: 'Careers', href: '/careers' },
+      { name: 'Compare careers', href: '/careers/compare' },
       { name: 'AI & Careers', href: '/ai-careers' },
       { name: 'Subjects', href: '/subjects' },
     ],
@@ -97,6 +98,11 @@ export function Navbar() {
 
   const isActive = (href: string) => {
     if (href === '/pathways') return pathname === href
+    // /careers is a sector listing; /careers/compare is a sibling surface.
+    // Don't let the listing "win" the active state on the compare page.
+    if (href === '/careers') {
+      return pathname === href || (pathname.startsWith('/careers/') && pathname !== '/careers/compare')
+    }
     return pathname === href || pathname.startsWith(href + '/')
   }
 

@@ -173,6 +173,87 @@ export default function CareersIndexPage() {
             </span>
           </Link>
 
+          {/* Compare careers banner */}
+          <Link
+            href="/careers/compare"
+            className="no-underline hover:no-underline"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '14px',
+              padding: '14px 18px',
+              borderRadius: '8px',
+              backgroundColor: 'rgba(232, 89, 60, 0.10)',
+              borderLeft: '4px solid #E8593C',
+              color: 'var(--pf-grey-900)',
+              marginBottom: '20px',
+            }}
+          >
+            <span
+              aria-hidden="true"
+              className="inline-flex items-center justify-center"
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                backgroundColor: '#E8593C',
+                color: '#fff',
+                flexShrink: 0,
+              }}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M3 3v18h18" />
+                <path d="M7 14v4" />
+                <path d="M12 9v9" />
+                <path d="M17 4v14" />
+              </svg>
+            </span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.9375rem',
+                  color: 'var(--pf-grey-900)',
+                  margin: 0,
+                  marginBottom: '2px',
+                }}
+              >
+                Compare careers side by side
+              </p>
+              <p
+                style={{
+                  fontSize: '0.8125rem',
+                  color: 'var(--pf-grey-700)',
+                  margin: 0,
+                }}
+              >
+                Pick up to three careers and see them compared across pay, hours, progression, and
+                more.
+              </p>
+            </div>
+            <span
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                color: '#E8593C',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Compare →
+            </span>
+          </Link>
+
           {/* Search */}
           <label htmlFor="careers-search" className="sr-only">
             Search career sectors
