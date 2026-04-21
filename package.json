@@ -9,7 +9,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "type-check": "tsc --noEmit",
-    "test": "tsx --test lib/earnings/__tests__/*.test.ts",
+    "test": "tsx --test lib/earnings/__tests__/*.test.ts lib/compare/__tests__/*.test.ts",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset",
     "db:types": "supabase gen types typescript --local > types/database.ts",
