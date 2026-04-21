@@ -54,11 +54,22 @@ export async function onboardingPostcodeLookupAction(
     }
 
     if (row) {
+      // simd_postcodes.council_area is currently NULL for all rows in the
+      // live DB (data refresh gap -- see Phase 2 backlog). Fall back to
+      // postcodes.io admin_district when the stored value is missing. Names
+      // match the FSM-pilot council list verbatim, so no normalisation needed.
+      let councilArea = row.council_area ?? null
+      if (!councilArea) {
+        const existsRes = await checkPostcodeExists(spaced)
+        if (existsRes.exists && existsRes.scottish) {
+          councilArea = existsRes.adminDistrict
+        }
+      }
       return {
         status: 'ok',
         postcode: spaced,
         simdDecile: row.simd_decile,
-        councilArea: row.council_area ?? null,
+        councilArea,
       }
     }
 

@@ -28,16 +28,6 @@ const EDUCATION_LABELS: Record<string, string> = {
   unknown: "Don't know",
 }
 
-const SCOTTISH_LOCAL_AUTHORITIES = [
-  'Aberdeen City', 'Aberdeenshire', 'Angus', 'Argyll and Bute', 'City of Edinburgh',
-  'Clackmannanshire', 'Comhairle nan Eilean Siar', 'Dumfries and Galloway', 'Dundee City',
-  'East Ayrshire', 'East Dunbartonshire', 'East Lothian', 'East Renfrewshire', 'Falkirk',
-  'Fife', 'Glasgow City', 'Highland', 'Inverclyde', 'Midlothian', 'Moray', 'North Ayrshire',
-  'North Lanarkshire', 'Orkney Islands', 'Perth and Kinross', 'Renfrewshire',
-  'Scottish Borders', 'Shetland Islands', 'South Ayrshire', 'South Lanarkshire', 'Stirling',
-  'West Dunbartonshire', 'West Lothian',
-]
-
 export default function SettingsPage() {
   const router = useRouter()
   const toast = useToast()
@@ -290,7 +280,6 @@ function FundingProfileSection({ student, updateStudent, toast }: FundingProfile
   // Form state initialised from current student data
   const [income, setIncome] = useState(student.household_income_band ?? '')
   const [parentalEd, setParentalEd] = useState(student.parental_education ?? '')
-  const [localAuth, setLocalAuth] = useState(student.local_authority ?? '')
   const [singleParent, setSingleParent] = useState(!!student.is_single_parent_household)
   const [estranged, setEstranged] = useState(!!student.is_estranged)
   const [youngParent, setYoungParent] = useState(!!student.is_young_parent)
@@ -312,7 +301,6 @@ function FundingProfileSection({ student, updateStudent, toast }: FundingProfile
       await updateStudent.mutateAsync({
         household_income_band: income || null,
         parental_education: parentalEd || null,
-        local_authority: localAuth || null,
         is_single_parent_household: singleParent,
         is_estranged: estranged,
         is_young_parent: youngParent,
@@ -376,7 +364,10 @@ function FundingProfileSection({ student, updateStudent, toast }: FundingProfile
                 />
               )}
               {student.local_authority && (
-                <ProfileRow label="Council area" value={student.local_authority} />
+                <ProfileRow
+                  label="Council (from postcode)"
+                  value={student.local_authority}
+                />
               )}
               {(student.is_estranged || student.is_young_parent || student.is_refugee_or_asylum_seeker ||
                 student.has_disability || student.receives_free_school_meals || student.receives_ema ||
@@ -475,16 +466,25 @@ function FundingProfileSection({ student, updateStudent, toast }: FundingProfile
           </select>
         </label>
 
-        {/* Council area */}
-        <label className="block">
-          <span className="pf-label">Council area</span>
-          <select className="pf-input w-full mt-1" value={localAuth} onChange={(e) => setLocalAuth(e.target.value)}>
-            <option value="">Select...</option>
-            {SCOTTISH_LOCAL_AUTHORITIES.map((la) => (
-              <option key={la} value={la}>{la}</option>
-            ))}
-          </select>
-        </label>
+        {/* Council area (read-only — derived from postcode) */}
+        {student.local_authority && (
+          <div>
+            <span className="pf-label">Council (derived from your postcode)</span>
+            <p
+              className="mt-1"
+              style={{
+                fontSize: '0.9375rem',
+                color: 'var(--pf-grey-700)',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                backgroundColor: 'var(--pf-grey-100)',
+                border: '1px solid var(--pf-grey-300)',
+              }}
+            >
+              {student.local_authority}
+            </p>
+          </div>
+        )}
 
         {/* Status checkboxes */}
         <fieldset>

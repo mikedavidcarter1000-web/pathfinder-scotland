@@ -34,6 +34,23 @@ export function stripPostcode(input: string): string {
 export interface PostcodeExistsResult {
   exists: boolean
   scottish: boolean
+  // ONS admin_district normalised to the council-naming convention used
+  // elsewhere in the app (FSM pilot list, SHEP lookup, settings display).
+  // 31 of 32 Scottish councils map 1:1 from postcodes.io; only the Outer
+  // Hebrides needs rewriting from the ONS short form to the Gaelic full name.
+  adminDistrict: string | null
+}
+
+// Postcodes.io returns "Na h-Eileanan Siar" for the Outer Hebrides (the ONS
+// short form). Everywhere else in the app uses "Comhairle nan Eilean Siar"
+// (the council's own Gaelic name, as published on mygov.scot).
+const ADMIN_DISTRICT_ALIASES: Record<string, string> = {
+  'Na h-Eileanan Siar': 'Comhairle nan Eilean Siar',
+}
+
+function normaliseAdminDistrict(raw: string | null | undefined): string | null {
+  if (!raw) return null
+  return ADMIN_DISTRICT_ALIASES[raw] ?? raw
 }
 
 export async function checkPostcodeExists(
@@ -50,7 +67,7 @@ export async function checkPostcodeExists(
     )
 
     if (detailRes.status === 404) {
-      return { exists: false, scottish: false }
+      return { exists: false, scottish: false, adminDistrict: null }
     }
 
     if (!detailRes.ok) {
@@ -58,21 +75,26 @@ export async function checkPostcodeExists(
       console.warn(
         `[postcode-validation] postcodes.io unexpected status ${detailRes.status} for ${normalised}`,
       )
-      return { exists: false, scottish: false }
+      return { exists: false, scottish: false, adminDistrict: null }
     }
 
     const body = (await detailRes.json()) as {
-      result?: { country?: string | null }
+      result?: { country?: string | null; admin_district?: string | null }
     }
 
     const country = body.result?.country ?? ''
-    return { exists: true, scottish: country === 'Scotland' }
+    const adminDistrict = normaliseAdminDistrict(body.result?.admin_district)
+    return {
+      exists: true,
+      scottish: country === 'Scotland',
+      adminDistrict,
+    }
   } catch (err) {
     console.warn(
       `[postcode-validation] postcodes.io fetch failed for ${normalised}:`,
       err instanceof Error ? err.message : err,
     )
-    return { exists: false, scottish: false }
+    return { exists: false, scottish: false, adminDistrict: null }
   } finally {
     clearTimeout(timer)
   }

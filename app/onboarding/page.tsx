@@ -111,7 +111,6 @@ const EMPTY_DEMOGRAPHICS: DemographicData = {
   isYoungCarer: false,
   receivesFreeSchoolMeals: false,
   receivesEma: false,
-  localAuthority: '',
 }
 
 function loadPersisted(userId: string): PersistedState | null {
@@ -289,8 +288,7 @@ function OnboardingContent() {
         demographics.isYoungParent ||
         demographics.isYoungCarer ||
         demographics.receivesFreeSchoolMeals ||
-        demographics.receivesEma ||
-        !!demographics.localAuthority
+        demographics.receivesEma
 
       await createStudent.mutateAsync({
         email: user.email || '',
@@ -324,7 +322,10 @@ function OnboardingContent() {
         is_young_carer: demographics.isYoungCarer,
         receives_free_school_meals: demographics.receivesFreeSchoolMeals,
         receives_ema: demographics.receivesEma,
-        local_authority: demographics.localAuthority || postcodeData.councilArea || null,
+        // Council is no longer asked in onboarding; it is derived entirely from
+        // the postcode via simd_postcodes.council_area. Settings page renders
+        // it read-only from this stored value.
+        local_authority: postcodeData.councilArea || null,
         demographic_completed: demographicCompleted,
       })
 
@@ -477,7 +478,6 @@ function OnboardingContent() {
                 setCurrentStep(5)
               }}
               onBack={() => setCurrentStep(3)}
-              prefilledCouncilArea={postcodeData.councilArea}
             />
           )}
 

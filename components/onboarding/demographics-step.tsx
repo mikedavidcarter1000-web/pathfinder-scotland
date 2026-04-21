@@ -1,43 +1,5 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-
-// All 32 Scottish local authorities
-const SCOTTISH_LOCAL_AUTHORITIES = [
-  'Aberdeen City',
-  'Aberdeenshire',
-  'Angus',
-  'Argyll and Bute',
-  'City of Edinburgh',
-  'Clackmannanshire',
-  'Comhairle nan Eilean Siar',
-  'Dumfries and Galloway',
-  'Dundee City',
-  'East Ayrshire',
-  'East Dunbartonshire',
-  'East Lothian',
-  'East Renfrewshire',
-  'Falkirk',
-  'Fife',
-  'Glasgow City',
-  'Highland',
-  'Inverclyde',
-  'Midlothian',
-  'Moray',
-  'North Ayrshire',
-  'North Lanarkshire',
-  'Orkney Islands',
-  'Perth and Kinross',
-  'Renfrewshire',
-  'Scottish Borders',
-  'Shetland Islands',
-  'South Ayrshire',
-  'South Lanarkshire',
-  'Stirling',
-  'West Dunbartonshire',
-  'West Lothian',
-] as const
-
 export interface DemographicData {
   householdIncomeBand: string
   isSingleParentHousehold: boolean
@@ -50,7 +12,6 @@ export interface DemographicData {
   isYoungCarer: boolean
   receivesFreeSchoolMeals: boolean
   receivesEma: boolean
-  localAuthority: string
 }
 
 interface DemographicsStepProps {
@@ -58,7 +19,6 @@ interface DemographicsStepProps {
   onChange: (data: DemographicData) => void
   onNext: (skipped: boolean) => void
   onBack: () => void
-  prefilledCouncilArea: string | null
 }
 
 export function DemographicsStep({
@@ -66,19 +26,7 @@ export function DemographicsStep({
   onChange,
   onNext,
   onBack,
-  prefilledCouncilArea,
 }: DemographicsStepProps) {
-  const [councilSearch, setCouncilSearch] = useState('')
-  const [councilDropdownOpen, setCouncilDropdownOpen] = useState(false)
-
-  // Pre-populate council area from postcode lookup if not yet set
-  const effectiveLocalAuthority = data.localAuthority || prefilledCouncilArea || ''
-
-  const filteredAuthorities = useMemo(() => {
-    if (!councilSearch.trim()) return [...SCOTTISH_LOCAL_AUTHORITIES]
-    const q = councilSearch.toLowerCase()
-    return SCOTTISH_LOCAL_AUTHORITIES.filter((la) => la.toLowerCase().includes(q))
-  }, [councilSearch])
 
   // "None of these" deselects all status checkboxes
   const statusCheckboxes = [
@@ -453,122 +401,6 @@ export function DemographicsStep({
           <option value="postgraduate">Postgraduate degree</option>
           <option value="unknown">I don&apos;t know</option>
         </select>
-      </div>
-
-      {/* e) Local authority */}
-      <div
-        className="rounded-lg"
-        style={{
-          padding: '20px',
-          backgroundColor: 'var(--pf-white)',
-          border: '1px solid var(--pf-grey-300)',
-        }}
-      >
-        <label htmlFor="local-authority" className="pf-label" style={{ marginBottom: '4px' }}>
-          Which council area do you live in?
-        </label>
-        <p
-          style={{
-            fontSize: '0.8125rem',
-            color: 'var(--pf-grey-600)',
-            marginBottom: '12px',
-          }}
-        >
-          Some grants like School Clothing Grant vary by council area.
-        </p>
-        <div className="relative">
-          <input
-            id="local-authority"
-            type="text"
-            className="pf-input w-full"
-            placeholder="Search or select your council..."
-            value={councilDropdownOpen ? councilSearch : effectiveLocalAuthority}
-            onChange={(e) => {
-              setCouncilSearch(e.target.value)
-              if (!councilDropdownOpen) setCouncilDropdownOpen(true)
-              // Clear selection if the user is typing over it
-              if (data.localAuthority) {
-                onChange({ ...data, localAuthority: '' })
-              }
-            }}
-            onFocus={() => {
-              setCouncilDropdownOpen(true)
-              setCouncilSearch('')
-            }}
-            onBlur={() => {
-              // Delay to allow click on dropdown item
-              setTimeout(() => setCouncilDropdownOpen(false), 200)
-            }}
-          />
-          {councilDropdownOpen && (
-            <ul
-              className="absolute z-20 w-full mt-1 rounded-lg overflow-auto"
-              style={{
-                maxHeight: '200px',
-                backgroundColor: 'var(--pf-white)',
-                border: '1px solid var(--pf-grey-300)',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              }}
-            >
-              {filteredAuthorities.length === 0 ? (
-                <li
-                  style={{
-                    padding: '10px 14px',
-                    fontSize: '0.875rem',
-                    color: 'var(--pf-grey-600)',
-                  }}
-                >
-                  No matching council areas
-                </li>
-              ) : (
-                filteredAuthorities.map((la) => (
-                  <li key={la}>
-                    <button
-                      type="button"
-                      className="w-full text-left transition-colors"
-                      style={{
-                        padding: '10px 14px',
-                        fontSize: '0.875rem',
-                        color: 'var(--pf-grey-900)',
-                        backgroundColor:
-                          la === effectiveLocalAuthority ? 'var(--pf-blue-50)' : 'transparent',
-                      }}
-                      onMouseDown={(e) => {
-                        // Prevent blur from firing before click
-                        e.preventDefault()
-                      }}
-                      onClick={() => {
-                        onChange({ ...data, localAuthority: la })
-                        setCouncilSearch('')
-                        setCouncilDropdownOpen(false)
-                      }}
-                      onMouseEnter={(e) => {
-                        ;(e.target as HTMLElement).style.backgroundColor = 'var(--pf-blue-50)'
-                      }}
-                      onMouseLeave={(e) => {
-                        ;(e.target as HTMLElement).style.backgroundColor =
-                          la === effectiveLocalAuthority ? 'var(--pf-blue-50)' : 'transparent'
-                      }}
-                    >
-                      {la}
-                    </button>
-                  </li>
-                ))
-              )}
-            </ul>
-          )}
-        </div>
-        {prefilledCouncilArea && !data.localAuthority && (
-          <p
-            style={{
-              fontSize: '0.75rem',
-              color: 'var(--pf-green-500)',
-              marginTop: '6px',
-            }}
-          >
-            Pre-filled from your postcode
-          </p>
-        )}
       </div>
 
       {/* Actions */}
