@@ -121,11 +121,11 @@ export async function homepageTeaserAction(input: {
 
     const youngerStage = yearGroup === 'S2' || yearGroup === 'S3'
 
-    // For S2/S3 we also pull role tiers so we can filter out sectors where
-    // every role is 'specialised'. NULL maturity_tier is treated as "not
-    // specialised" -- 220/269 roles are currently unrated, so a strict
-    // filter would collapse the pool. Curating those rows is a phase-2
-    // task; see docs/phase-2-backlog.md.
+    // S2/S3 see only sectors that contain at least one 'foundational' role --
+    // roles reachable straight from school without Highers or a degree.
+    // S4-S6 (and NULL/invalid year_group, which is already rejected above) see
+    // all 19 sectors. Every role has a non-NULL maturity_tier after Stage 1.5f
+    // part 2, so this is a hard filter, not the permissive Stage 1.5e version.
     const [bursariesRes, coursesRes, sectorsRes, rolesRes] = await Promise.all([
       supabase
         .from('bursaries')
@@ -142,7 +142,10 @@ export async function homepageTeaserAction(input: {
         .order('display_order', { ascending: true, nullsFirst: false })
         .limit(20),
       youngerStage
-        ? supabase.from('career_roles').select('career_sector_id, maturity_tier')
+        ? supabase
+            .from('career_roles')
+            .select('career_sector_id, maturity_tier')
+            .eq('maturity_tier', 'foundational')
         : Promise.resolve({ data: null, error: null }),
     ])
 
@@ -150,9 +153,7 @@ export async function homepageTeaserAction(input: {
     if (youngerStage && rolesRes.data) {
       const accessible = new Set<string>()
       for (const role of rolesRes.data) {
-        if (role.maturity_tier !== 'specialised') {
-          accessible.add(role.career_sector_id)
-        }
+        accessible.add(role.career_sector_id)
       }
       sectorsForPool = sectorsForPool.filter((s) => accessible.has(s.id))
     }

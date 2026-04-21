@@ -94,9 +94,9 @@ export default async function RoleDetailPage({
 
   const careerProgression = parseCareerProgression(rp?.career_progression)
 
-  const salaryEntry = role.salary_entry ?? role.salary_entry_uk ?? null
-  const salaryExperienced = role.salary_experienced ?? role.salary_experienced_uk ?? null
-  const hasSalary = salaryEntry != null || salaryExperienced != null
+  const startingSalary = rp?.typical_starting_salary_gbp ?? null
+  const experiencedSalary = rp?.typical_experienced_salary_gbp ?? null
+  const hasSalary = startingSalary != null && experiencedSalary != null
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
@@ -174,43 +174,89 @@ export default async function RoleDetailPage({
           </div>
 
           {hasSalary && (
-            <div>
+            <div
+              style={{
+                marginTop: '4px',
+                padding: '16px 18px',
+                borderRadius: '12px',
+                backgroundColor: 'var(--pf-blue-50)',
+                border: '1px solid var(--pf-blue-100)',
+              }}
+            >
               <p
                 style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: '1rem',
-                  color: 'var(--pf-grey-900)',
+                  fontSize: '0.6875rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  color: 'var(--pf-grey-600)',
+                  fontWeight: 600,
+                  margin: 0,
+                  marginBottom: '8px',
+                }}
+              >
+                Typical salary (UK, today&rsquo;s rates)
+              </p>
+              <div
+                className="flex flex-wrap"
+                style={{ gap: '20px 28px', marginBottom: '10px' }}
+              >
+                <div>
+                  <span
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8125rem',
+                      color: 'var(--pf-grey-600)',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    Starting
+                  </span>
+                  <strong
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontSize: '1.375rem',
+                      color: 'var(--pf-grey-900)',
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    around £{startingSalary!.toLocaleString('en-GB')}
+                  </strong>
+                </div>
+                <div>
+                  <span
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8125rem',
+                      color: 'var(--pf-grey-600)',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    Experienced
+                  </span>
+                  <strong
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontSize: '1.375rem',
+                      color: 'var(--pf-grey-900)',
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    around £{experiencedSalary!.toLocaleString('en-GB')}
+                  </strong>
+                </div>
+              </div>
+              <p
+                style={{
+                  fontSize: '0.75rem',
+                  color: 'var(--pf-grey-600)',
+                  lineHeight: 1.5,
                   margin: 0,
                 }}
               >
-                {salaryEntry != null && (
-                  <>
-                    <span style={{ color: 'var(--pf-grey-600)' }}>Entry: </span>
-                    <strong>£{salaryEntry.toLocaleString('en-GB')}</strong>
-                  </>
-                )}
-                {salaryEntry != null && salaryExperienced != null && (
-                  <span style={{ color: 'var(--pf-grey-400)' }}> · </span>
-                )}
-                {salaryExperienced != null && (
-                  <>
-                    <span style={{ color: 'var(--pf-grey-600)' }}>Experienced: </span>
-                    <strong>£{salaryExperienced.toLocaleString('en-GB')}</strong>
-                  </>
-                )}
+                These are UK-wide typical figures from public sources, rounded to
+                the nearest £1,000. Individual earnings vary by employer, region,
+                progression, and pattern of work.
               </p>
-              {role.salary_needs_verification === true && (
-                <p
-                  style={{
-                    fontSize: '0.75rem',
-                    color: 'var(--pf-amber-500)',
-                    marginTop: '4px',
-                    fontStyle: 'italic',
-                  }}
-                >
-                  Salary figures are indicative — verify with current sources.
-                </p>
-              )}
             </div>
           )}
         </div>

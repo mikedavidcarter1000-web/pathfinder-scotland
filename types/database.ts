@@ -1502,6 +1502,16 @@ export type Database = {
           hours_pattern: string | null
           id: string
           job_security: string | null
+          min_entry_qualification:
+            | 'none'
+            | 'national_4'
+            | 'national_5'
+            | 'highers'
+            | 'hnc'
+            | 'hnd'
+            | 'degree'
+            | 'degree_plus_professional'
+            | null
           minimum_age: number | null
           on_call: string | null
           pension_quality: string | null
@@ -1514,6 +1524,18 @@ export type Database = {
           team_vs_solo: string | null
           tips_or_commission: string | null
           travel_requirement: string | null
+          typical_entry_qualification:
+            | 'none'
+            | 'national_4'
+            | 'national_5'
+            | 'highers'
+            | 'hnc'
+            | 'hnd'
+            | 'degree'
+            | 'degree_plus_professional'
+            | null
+          typical_experienced_salary_gbp: number | null
+          typical_starting_salary_gbp: number | null
           union_presence: string | null
           unpaid_overtime: string | null
           updated_at: string | null
@@ -1548,6 +1570,16 @@ export type Database = {
           hours_pattern?: string | null
           id?: string
           job_security?: string | null
+          min_entry_qualification?:
+            | 'none'
+            | 'national_4'
+            | 'national_5'
+            | 'highers'
+            | 'hnc'
+            | 'hnd'
+            | 'degree'
+            | 'degree_plus_professional'
+            | null
           minimum_age?: number | null
           on_call?: string | null
           pension_quality?: string | null
@@ -1560,6 +1592,18 @@ export type Database = {
           team_vs_solo?: string | null
           tips_or_commission?: string | null
           travel_requirement?: string | null
+          typical_entry_qualification?:
+            | 'none'
+            | 'national_4'
+            | 'national_5'
+            | 'highers'
+            | 'hnc'
+            | 'hnd'
+            | 'degree'
+            | 'degree_plus_professional'
+            | null
+          typical_experienced_salary_gbp?: number | null
+          typical_starting_salary_gbp?: number | null
           union_presence?: string | null
           unpaid_overtime?: string | null
           updated_at?: string | null
@@ -1594,6 +1638,16 @@ export type Database = {
           hours_pattern?: string | null
           id?: string
           job_security?: string | null
+          min_entry_qualification?:
+            | 'none'
+            | 'national_4'
+            | 'national_5'
+            | 'highers'
+            | 'hnc'
+            | 'hnd'
+            | 'degree'
+            | 'degree_plus_professional'
+            | null
           minimum_age?: number | null
           on_call?: string | null
           pension_quality?: string | null
@@ -1606,6 +1660,18 @@ export type Database = {
           team_vs_solo?: string | null
           tips_or_commission?: string | null
           travel_requirement?: string | null
+          typical_entry_qualification?:
+            | 'none'
+            | 'national_4'
+            | 'national_5'
+            | 'highers'
+            | 'hnc'
+            | 'hnd'
+            | 'degree'
+            | 'degree_plus_professional'
+            | null
+          typical_experienced_salary_gbp?: number | null
+          typical_starting_salary_gbp?: number | null
           union_presence?: string | null
           unpaid_overtime?: string | null
           updated_at?: string | null
