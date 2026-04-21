@@ -1524,6 +1524,7 @@ export type Database = {
           team_vs_solo: string | null
           tips_or_commission: string | null
           travel_requirement: string | null
+          typical_entry_age: number
           typical_entry_qualification:
             | 'none'
             | 'national_4'
@@ -1535,6 +1536,7 @@ export type Database = {
             | 'degree_plus_professional'
             | null
           typical_experienced_salary_gbp: number | null
+          typical_hours_per_week: number
           typical_starting_salary_gbp: number | null
           union_presence: string | null
           unpaid_overtime: string | null
@@ -1592,6 +1594,7 @@ export type Database = {
           team_vs_solo?: string | null
           tips_or_commission?: string | null
           travel_requirement?: string | null
+          typical_entry_age: number
           typical_entry_qualification?:
             | 'none'
             | 'national_4'
@@ -1603,6 +1606,7 @@ export type Database = {
             | 'degree_plus_professional'
             | null
           typical_experienced_salary_gbp?: number | null
+          typical_hours_per_week: number
           typical_starting_salary_gbp?: number | null
           union_presence?: string | null
           unpaid_overtime?: string | null
@@ -1660,6 +1664,7 @@ export type Database = {
           team_vs_solo?: string | null
           tips_or_commission?: string | null
           travel_requirement?: string | null
+          typical_entry_age?: number
           typical_entry_qualification?:
             | 'none'
             | 'national_4'
@@ -1671,6 +1676,7 @@ export type Database = {
             | 'degree_plus_professional'
             | null
           typical_experienced_salary_gbp?: number | null
+          typical_hours_per_week?: number
           typical_starting_salary_gbp?: number | null
           union_presence?: string | null
           unpaid_overtime?: string | null
@@ -1689,6 +1695,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      saved_comparisons: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          role_ids: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          role_ids: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          role_ids?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       saved_courses: {
         Row: {

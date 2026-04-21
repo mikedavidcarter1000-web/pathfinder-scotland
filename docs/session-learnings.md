@@ -7,6 +7,30 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-21 Career Comparison Session 1 -- entry_age + hours_per_week + saved_comparisons
+
+- **Files changed:** new `supabase/migrations/20260421000002_add_comparison_fields.sql` (adds `typical_entry_age` + `typical_hours_per_week` integer columns to `role_profiles` with CHECK ranges 14-40 and 10-80, populates all 269 rows via CASE expressions); new `supabase/migrations/20260421000003_comparison_fields_not_null.sql` (SET NOT NULL on both columns); new `supabase/migrations/20260421000004_create_saved_comparisons.sql` (new user-scoped table with 4 RLS policies, FK cascade on `auth.users`, CHECK `array_length(role_ids, 1) BETWEEN 2 AND 3`, btree index on `user_id`, updated_at trigger). Hand-edited `types/database.ts` to add the two role_profiles columns (Row/Insert/Update) and the full `saved_comparisons` Tables entry.
+
+- **Entry_qualification enum does NOT contain `apprenticeship` or `advanced_higher`.** Spec mapping listed both (-> 20 and -> 18 respectively) but the enum values are only `none, national_4, national_5, highers, hnc, hnd, degree, degree_plus_professional`. Both branches were written into the CASE expression as safety but never fire. If future sessions re-spec entry ages with new qualification tiers, check the enum first: `SELECT enumlabel FROM pg_enum JOIN pg_type ON pg_enum.enumtypid=pg_type.oid WHERE typname='entry_qualification';`
+
+- **Hours_pattern is `text`, not an enum.** Only four distinct values exist in data (Standard/Shifts/Irregular/Seasonal = 182/34/51/2), matching the spec's four-way default, but the column is not typed as an enum. CASE with string literals works; no ordering guarantees.
+
+- **Name-based overrides that found no matching role (did not fire):** `Junior Doctor`, medical `Consultant`, medical `Surgeon` (Veterinary Surgeon is handled separately at 45), `Barrister` (Scotland uses Advocate), `Corporate Finance`, `Farmer`/`Farm Manager`, `Bartender` (handled via Waiter/Waitress/Bar Staff), `Home Care Worker`/`Domiciliary Care`, `Clinical Psychologist`. Only `Educational Psychologist` exists (default 23). The spec's 4 "Consultant" hits match non-medical consulting roles (Management Consultant etc.) which default correctly by hours_pattern rather than the 48h medical override -- so using `cr.title = 'Doctor / GP'` (exact equality) rather than `ILIKE '%consultant%'` was necessary to avoid false positives.
+
+- **`Architect` override uses exact-equality to avoid matching `Marine / Naval Architecture Engineer`.** `ILIKE '%architect%'` would match both; the naval architect role is a separate engineering profession whose hours should stay at the default 37 (Standard pattern), not 42. Same trade-off applies when adding future name-based overrides -- exact match when the target is a single role, ILIKE only when the family is intentional (e.g. `ILIKE '%solicitor%'` catches both Junior/Trainee and Senior/Partner variants, which are both genuinely 45h).
+
+- **Post-apply distribution (age / hours):** typical_entry_age 16:4, 17:23, 18:13, 19:19, 20:35, 22:129, 23:43, 24:2, 25:1 (total 269). typical_hours_per_week 25:1, 30:1, 37:180, 40:79, 42:1, 45:4, 48:2, 50:1 (total 269). NULL count pre-NOT-NULL: 0.
+
+- **`update_updated_at_column` is the repo's updated_at trigger function, not `handle_updated_at`.** First draft of the saved_comparisons migration used the wrong function name; caught via a `pg_get_functiondef` query before apply. Lesson: when writing a new trigger, grep live pg_proc for the convention in use on adjacent tables rather than assuming a Supabase-starter-template name. The function is declared with `SET search_path TO ''` and uses `NEW.updated_at = NOW()`.
+
+- **`saved_comparisons.role_ids uuid[]` with CHECK `array_length(role_ids, 1) BETWEEN 2 AND 3`.** Postgres reports `array_length(array_of_n, 1) = n`; `array_length(NULL, 1)` is NULL and `array_length('{}', 1)` is NULL (both fail the BETWEEN). So the constraint also implicitly rejects empty arrays -- good. NOT NULL on the column rejects SQL NULL. Array elements are NOT FK-enforced to `career_roles.id`; join correctness is application-layer. Phase-2 follow-up: consider a trigger that validates every element exists in `career_roles`, or convert to a junction table `saved_comparison_roles(comparison_id, role_id, position)` if comparison UI grows beyond a flat list.
+
+- **RLS policies: `TO authenticated` rather than `TO public`.** Anon callers are blocked at the role level before policy evaluation. Matches the pattern used by `saved_courses` / `student_grades`. Four policies (select/insert/update/delete) all keyed on `auth.uid() = user_id`; UPDATE uses both USING and WITH CHECK clauses so users can neither read nor reassign rows they don't own.
+
+- **types/database.ts hand-edits:** three insertion points for `typical_entry_age` (Row: NOT NULL `number`; Insert: required `number`; Update: optional `number`) + three for `typical_hours_per_week`; plus a full new `saved_comparisons` block placed before `saved_courses` (alphabetical: comparisons < courses). The `feedback_types_regen.md` memory still applies -- do not regenerate.
+
+- **Phase-2 follow-ups logged:** (a) Retail Assistant / Shop Worker, Bartender, Home Care / Domiciliary, Junior Doctor, medical Consultant, medical Surgeon, Farmer / Farm Manager, Clinical Psychologist, Corporate Finance -- none of these role concepts exist in the current 269-row dataset. If any are added later, typical_entry_age and typical_hours_per_week must be set explicitly per the original spec rather than relying on the default fallback. (b) Consider adding a junction table `saved_comparison_roles` if comparison UI grows ordered/positional. (c) Consider FK enforcement on `role_ids` elements via a trigger.
+
 ## 2026-04-21 Downgrade 8 roles to foundational (Stage 1.5g)
 
 - **Files changed:** DB-only. No code, migration, or type changes. Applied a single transaction via Supabase MCP touching 8 `career_roles` rows (`maturity_tier` -> `foundational`) and 8 matching `role_profiles` rows (`min_entry_qualification` / `typical_entry_qualification` realigned per Stage 1.5g spec table).
