@@ -2,14 +2,10 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
-// Imported now to confirm resolution; wired into the Earnings section in Session 5.
-import { UK_MEDIAN_SALARY_GBP as _UK_MEDIAN } from '@/lib/earnings/lifetime-calculator'
 import { LabelRow } from './LabelRow'
 import { NumericBar } from './NumericBar'
 import { TierBar } from './TierBar'
 import { EarningsSection } from './EarningsSection'
-
-void _UK_MEDIAN
 
 type EntryQualification =
   | 'none'
