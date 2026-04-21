@@ -7,6 +7,22 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-21 Export roles for salary + tier classification (Stage 1.5f)
+
+- **Files changed:** new `scripts/export-roles-for-classification.mjs` (read-only exporter; pg client via Supabase session pooler; ASCII-safe UTF-8 output; `description` truncated to 400 chars, `day_in_the_life` to 300 chars, LEFT JOIN on `role_profiles` with `(no profile)` fallback). Output artefact (gitignored): `data/role-classification-input/roles-to-classify.md` -- 269 role sections, 2451 lines, 229KB, alphabetised by sector then role title, with a header block listing total + per-sector counts + a JSON-response instruction for the classification chat.
+
+- **`/data/*` on `.gitignore:49` already covered the new subdirectory, so no .gitignore edit was needed this session.** The commit-step assumption in the task spec ("only gitignore changes should be tracked") was a prediction that didn't match reality. Verified via `git check-ignore -v data/role-classification-input/` -> `.gitignore:49:/data/*`. Artefact never appeared in `git status`. The committable artefact from this session is the exporter script itself, following the `refresh-simd-postcodes.mjs` / `apply-simd-refresh-pg.mjs` pattern of keeping repeatable data-operations scripts in `scripts/`.
+
+- **Query output via Supabase MCP `execute_sql` exceeded the 255KB token cap.** First attempt returned a spill-to-file warning (result saved to tool-results cache). Switched to the established pg-client pattern (Stage 1.5b) rather than chunking the MCP call or reading the cached JSON into context: script is repeatable, generates the file end-to-end in one pass, and avoids the token-budget hit on context. When an MCP SELECT produces >255KB of row data and the downstream need is a local file, prefer the pg-client script.
+
+- **All 269 career_roles have a role_profiles row** (verified by this session's query + previous session's gap query). The `(no profile)` fallback branch in the script is defensive and currently unreached. Left in place because future Phase 2 work may widen `career_roles` without seeding `role_profiles` atomically.
+
+- **career_roles FK column is `career_sector_id`, not `sector_id`.** First join attempt returned a 42703 column-not-exist error. Live schema confirmed: `career_roles` has `career_sector_id uuid REFERENCES career_sectors(id)`. Flagged here because the column name in the Stage 1.5e script and in several other places in the repo uses the full `career_sector_id` form -- any future cross-table query against roles must use this exact name.
+
+- **Per-sector counts from the export (matches live distribution):** Agriculture & Environment 12, Armed Forces 15, Business & Finance 20, Computing & Digital Technology 12, Construction & Trades 20, Creative Arts & Design 14, Education & Teaching 14, Engineering & Manufacturing 23, Healthcare & Medicine 22, Hospitality & Tourism 10, Law & Justice 14, Media & Communications 10, Performing Arts & Entertainment 11, Public Services & Government 10, Retail & Customer Service 10, Science & Research 11, Social Work & Community 15, Sport & Fitness 11, Transport & Logistics 15. Total 269 across 19 sectors.
+
+- **Next session handoff:** Mike classifies the 269 roles in a separate Claude.ai chat and returns a single JSON array; the applying session reads the JSON, validates against enums (`min_entry_qualification`, `typical_entry_qualification`, `maturity_tier`) and integer ranges (two salary fields), runs a Gate A pre-apply diff for the 49 already-assigned `maturity_tier` rows before UPDATE. The enums for entry qualification do not yet exist -- creation is part of the applying session, not this one.
+
 ## 2026-04-20 Stale postcode banner + role maturity tiers (Stage 1.5e)
 
 - **Files changed (Task A):** new `components/StalePostcodeBanner.tsx` (banner + inline modal reusing `onboardingPostcodeLookupAction`, session-only dismissal state, query invalidation on save); mounted in `app/(main)/dashboard/page.tsx`, `app/courses/page.tsx`, and `app/bursaries/bursaries-client.tsx`. Banner renders only when `student.postcode != null AND student.simd_decile == null` -- silent no-op for null-postcode (mid-onboarding) or healthy-decile students.
