@@ -235,7 +235,6 @@ export function CompareShell({ exampleRoleIds }: CompareShellProps) {
         }}
       >
       <div
-        role="tablist"
         aria-label="Comparison tabs"
         style={{
           display: 'flex',
@@ -251,8 +250,6 @@ export function CompareShell({ exampleRoleIds }: CompareShellProps) {
           return (
             <div
               key={i}
-              role="tab"
-              aria-selected={active}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -271,6 +268,8 @@ export function CompareShell({ exampleRoleIds }: CompareShellProps) {
               <button
                 type="button"
                 onClick={() => setActiveTabIndex(i)}
+                aria-current={active ? 'page' : undefined}
+                aria-label={`Open comparison ${i + 1}${active ? ' (current)' : ''}`}
                 style={{
                   background: 'transparent',
                   border: 'none',

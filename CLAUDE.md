@@ -174,6 +174,99 @@ All admin routes go through `requireAdminApi()` in `lib/admin-auth.ts`, which fa
 
 Existing `benefit_*` tables (`student_benefits`, `benefit_categories`, `benefit_clicks`, `benefit_reminders`) and the `/benefits` page + `/api/benefits/click` + `/admin/revenue` dashboard are unchanged.
 
+### Career Comparison (COMPLETE — 7-session build, 21/04/2026)
+
+A side-by-side comparison tool for up to 3 Scottish careers, with saveable
+comparisons for authenticated users and deep-link round-tripping via URL
+state and a 24h cookie.
+
+**Public routes:**
+- `/careers/compare` — main comparison page (static SSG, 1h revalidate).
+  Example seed on first visit: Electrician / Primary Teacher / Nurse.
+  URL state lives in `?t=<tab1>|<tab2>|<tab3>` where each tab is a
+  pipe-separated list of role UUIDs; 1-3 tabs, 2-3 roles each.
+- `/account/saved-comparisons` — authenticated user's saved comparisons
+  list (dynamic; redirects to `/auth/sign-in?redirect=/account/saved-comparisons`
+  when unauthenticated).
+
+**API routes:**
+- `GET /api/saved-comparisons` — list the current user's saved rows
+- `POST /api/saved-comparisons` — insert (validates name ≤60 chars,
+  2-3 UUID role ids, user auth)
+- `DELETE /api/saved-comparisons/[id]` — delete scoped by `user_id`
+
+**Database:**
+- `saved_comparisons` table — `(id, user_id, name, role_ids uuid[], created_at, updated_at)`
+  with CHECK `array_length(role_ids, 1) BETWEEN 2 AND 3`, FK cascade on
+  `auth.users`, btree index on `user_id`, RLS scoped to `auth.uid() = user_id`
+  (all four verbs `TO authenticated`).
+- `role_profiles` — gained `typical_entry_age`, `typical_hours_per_week`,
+  `min_entry_qualification`, `typical_entry_qualification`,
+  `typical_starting_salary_gbp`, `typical_experienced_salary_gbp` in the
+  earlier Stage 1.5f migrations; the compare tool reads these directly.
+
+**Library modules:**
+- `lib/compare/url-state.ts` — typed parser + serialiser for `?t=` URL
+  state; `MAX_TABS=3`, `MIN_SLOTS_PER_TAB=2`, `MAX_SLOTS_PER_TAB=3`
+  constants live here and are imported everywhere else.
+- `lib/compare/active-compare-cookie.ts` — `ACTIVE_COMPARE_COOKIE` name
+  + `buildCompareHrefForRole` pure helper used by the "Compare this
+  career" button on role pages to prepend the visiting role to an
+  existing comparison.
+- `lib/earnings/tax-ni.ts` — Scottish income tax 2025-26 bands (6 rates,
+  starter / basic / intermediate / higher / advanced / top), personal
+  allowance taper £100-125k, NI Class 1 employee primary / UEL bands.
+- `lib/earnings/training-phases.ts` — slug-keyed lookup of pre-entry
+  training salaries for ~14 roles (doctor FY1, dentist DFT, vet new-grad,
+  pharmacist pre-reg, 4 teacher variants, 4 apprentice-trade stepped
+  wages, clinical-psychologist DClinPsy stipend).
+- `lib/earnings/role-slug.ts` — title → training-phase slug mapping
+  (hand-curated switch; see Known limitations below).
+- `lib/earnings/lifetime-calculator.ts` — `calculateLifetimeEarnings`
+  main entry; exports `UK_MEDIAN_SALARY_GBP = 37430`.
+
+**Components:**
+- `components/compare/compare-shell.tsx` — top-level client component;
+  owns tab state, URL sync, cookie sync, example-dismiss logic
+- `components/compare/ComparisonGrid.tsx` — 6 `<details>` accordion
+  sections (Headline / Earnings / Daily work / Wellbeing / Progression
+  / Assumptions) fed by a React-Query fetch
+- `components/compare/EarningsSection.tsx` — Net/Gross + pension toggles,
+  Starting / Experienced / Lifetime NumericBars, expandable lifetime
+  projection chart with training-phase opacity styling, hidden sr-only
+  `<table>` mirror of the chart
+- `components/compare/TierBar.tsx`, `NumericBar.tsx`, `LabelRow.tsx` —
+  field-row primitives
+- `components/compare/save-comparison-control.tsx` — Save button + modal
+  (signed-in) / Sign-in link (unauthenticated) with return-to wiring
+- `components/careers/compare-career-button.tsx` — role-page CTA that
+  reads the active-compare cookie and computes a `/careers/compare?t=…`
+  href in `useMemo` so the role page stays statically generated
+
+**Known limitations (address in Phase 2 if the tool ships):**
+- Two-phase pay model only — starting salary at `typical_entry_age`,
+  linear ramp to experienced salary over 14 years, flat thereafter.
+  No mid-career bump, no role-dependent promotion step.
+- Training-phase coverage is sparse — only ~14 of 269 roles have a
+  training segment defined (doctor, dentist, vet, pharmacist, advocate,
+  solicitor, clinical psychologist, 4 teacher variants, 4 apprentice
+  trades). All other roles use `typical_entry_age` with zero earnings
+  before it; that's correct for most but understates apprentice-like
+  starts for unmapped trades. The role → slug lookup is a hand-curated
+  title switch in `lib/earnings/role-slug.ts`; promote to a
+  `role_profiles.training_slug` column if the map grows past ~30 slugs.
+- Tax model is Scottish-only (2025-26 bands). No UK RoW fallback, no
+  student-loan Plan 4 repayment line (annual refresh every 6 April;
+  re-verify against gov.scot budget publication).
+- Employer-pension percentage is a blended 15% default that spans
+  NHS (~20.5%), STPS (~26%), LGPS (~19%), and auto-enrolment minimum
+  (3%). Not role-specific; the toggle is a single boolean, not a
+  per-role knob.
+- No in-browser visual QA has been run on the compare flow end-to-end.
+  Typecheck + lint + unit tests + Next build are all clean; see
+  `docs/qa-screenshots/README.md` for the QA gap and the Playwright
+  recipe to close it.
+
 ## Important Commands
 
 ```bash

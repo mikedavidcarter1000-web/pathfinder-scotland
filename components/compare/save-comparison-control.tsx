@@ -35,6 +35,15 @@ export function SaveComparisonControl({
   }, [open])
 
   useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !submitting) setOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, submitting])
+
+  useEffect(() => {
     if (!savedName) return
     const id = setTimeout(() => setSavedName(null), 2800)
     return () => clearTimeout(id)
@@ -236,6 +245,8 @@ export function SaveComparisonControl({
               maxLength={MAX_NAME_LENGTH}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Nursing vs Medicine"
+              aria-describedby={error ? 'saved-comparison-name-error' : undefined}
+              aria-invalid={error ? true : undefined}
               style={{
                 width: '100%',
                 padding: '10px 12px',
@@ -247,6 +258,8 @@ export function SaveComparisonControl({
             />
             {error ? (
               <p
+                id="saved-comparison-name-error"
+                role="alert"
                 style={{
                   color: 'var(--pf-red-500)',
                   fontSize: '0.8125rem',
