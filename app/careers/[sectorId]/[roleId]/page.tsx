@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { CompareCareerButton } from '@/components/careers/compare-career-button'
 import { HorizonRatings } from '@/components/careers/HorizonRatings'
 import { getAnonSupabase } from '@/lib/supabase-public'
 import type { Database } from '@/types/database'
@@ -171,6 +172,10 @@ export default async function RoleDetailPage({
                 {role.growth_outlook}
               </span>
             )}
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <CompareCareerButton roleId={role.id} />
           </div>
 
           {hasSalary && (

@@ -17,6 +17,7 @@ import {
   BenefitsCard,
   ApplicationsSection,
   PrepHubCard,
+  SavedComparisonsCard,
 } from '@/components/dashboard'
 import { StalePostcodeBanner } from '@/components/StalePostcodeBanner'
 import { ParentDashboardV2 } from '@/components/dashboard/parent-dashboard-v2'
@@ -369,6 +370,9 @@ export default function DashboardPage() {
 
           {/* Benefits you might be missing */}
           <BenefitsCard />
+
+          {/* Recent saved career comparisons */}
+          <SavedComparisonsCard />
 
           {/* Quick Actions */}
           <div className="pf-card">

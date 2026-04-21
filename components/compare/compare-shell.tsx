@@ -12,10 +12,13 @@ import {
   serializeCompareState,
   type CompareState,
 } from '@/lib/compare/url-state'
+import { ACTIVE_COMPARE_COOKIE } from '@/lib/compare/active-compare-cookie'
+import { useAuth } from '@/hooks/use-auth'
 import { useAiCareersHubData } from '@/hooks/use-subjects'
 import { CareerSelectorModal } from './career-selector-modal'
 import { CareerSlot } from './career-slot'
 import { ComparisonGrid } from './ComparisonGrid'
+import { SaveComparisonControl } from './save-comparison-control'
 
 export interface CompareShellProps {
   exampleRoleIds: string[]
@@ -57,6 +60,9 @@ export function CompareShell({ exampleRoleIds }: CompareShellProps) {
   const isExampleSession = useRef(bannerVisible)
 
   // Sync state -> URL (replace, no history push) whenever state changes.
+  // Also mirror the current ?t= value into a 24h cookie so other pages
+  // (e.g. the "Compare this career" button on role pages) can resume the
+  // active comparison.
   useEffect(() => {
     const serialised = serializeCompareState(state)
     const params = new URLSearchParams(searchParams?.toString() ?? '')
@@ -64,6 +70,18 @@ export function CompareShell({ exampleRoleIds }: CompareShellProps) {
     else params.delete('t')
     const qs = params.toString()
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+
+    if (typeof document !== 'undefined') {
+      const cookieValue = serialised ?? ''
+      // max-age 86400s = 24h. SameSite=Lax lets cross-page GETs read the cookie.
+      if (cookieValue) {
+        document.cookie = `${ACTIVE_COMPARE_COOKIE}=${encodeURIComponent(
+          cookieValue,
+        )}; path=/; max-age=86400; samesite=lax`
+      } else {
+        document.cookie = `${ACTIVE_COMPARE_COOKIE}=; path=/; max-age=0; samesite=lax`
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state])
 
@@ -150,6 +168,8 @@ export function CompareShell({ exampleRoleIds }: CompareShellProps) {
     })
   }
 
+  const { user, isLoading: authLoading } = useAuth()
+
   const activeTab = state.tabs[activeTabIndex] ?? { roleIds: [] }
   const populatedCount = activeTab.roleIds.length
   const slotsToRender = Math.min(
@@ -205,15 +225,25 @@ export function CompareShell({ exampleRoleIds }: CompareShellProps) {
       ) : null}
 
       <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'space-between',
+          gap: '12px',
+          borderBottom: '1px solid var(--pf-grey-300)',
+          marginBottom: '20px',
+        }}
+      >
+      <div
         role="tablist"
         aria-label="Comparison tabs"
         style={{
           display: 'flex',
           gap: '6px',
-          borderBottom: '1px solid var(--pf-grey-300)',
-          marginBottom: '20px',
           overflowX: 'auto',
           paddingBottom: '0',
+          flex: 1,
+          minWidth: 0,
         }}
       >
         {state.tabs.map((_, i) => {
@@ -293,6 +323,12 @@ export function CompareShell({ exampleRoleIds }: CompareShellProps) {
             + New comparison
           </button>
         ) : null}
+      </div>
+      <SaveComparisonControl
+        isAuthenticated={!authLoading && !!user}
+        canSave={populatedCount >= MIN_SLOTS_PER_TAB}
+        roleIds={activeTab.roleIds}
+      />
       </div>
 
       <div
