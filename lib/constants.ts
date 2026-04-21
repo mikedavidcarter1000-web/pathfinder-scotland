@@ -514,6 +514,9 @@ export const AI_IMPACT_DEFAULT_SOURCE =
 export const AI_ROLE_SOURCE =
   'AI impact ratings based on research by Anthropic (2024), OpenAI/University of Pennsylvania (2023), McKinsey Global Institute (2023-2025), World Economic Forum Future of Jobs Report 2025, and Oxford Martin School. Last updated April 2026.'
 
+export const ROBOTICS_ROLE_SOURCE =
+  'Robotics impact ratings based on International Federation of Robotics (2024) density data, American Enterprise Institute automation research, and World Economic Forum Future of Jobs Report 2025. UK robot density lag factored in. Last updated April 2026.'
+
 export function isAiImpactRating(value: string | null | undefined): value is AiImpactRating {
   return value === 'human-centric' || value === 'ai-augmented' || value === 'ai-exposed'
 }

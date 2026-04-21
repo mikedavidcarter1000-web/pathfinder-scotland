@@ -10,6 +10,7 @@ import {
 import {
   AI_ROLE_SOURCE,
   AI_ROLE_TIER_META,
+  ROBOTICS_ROLE_SOURCE,
   getAiRoleTier,
   type AiRoleTier,
 } from '@/lib/constants'
@@ -19,34 +20,56 @@ import { ErrorState } from '@/components/ui/error-state'
 import { classifyError } from '@/lib/errors'
 
 type TierFilter = 'all' | 'resilient' | 'evolving' | 'transforming' | 'new'
+type Horizon = 'near' | 'long'
+type Metric = 'ai' | 'robotics'
+
+function pickRating(role: CareerRole, metric: Metric, horizon: Horizon): number | null {
+  if (metric === 'ai') {
+    return horizon === 'near' ? role.ai_rating_2030_2035 : role.ai_rating_2040_2045
+  }
+  return horizon === 'near' ? role.robotics_rating_2030_2035 : role.robotics_rating_2040_2045
+}
 
 export default function AiCareersPage() {
   const { data, isLoading, error, refetch } = useAiCareersHubData()
   const [search, setSearch] = useState('')
   const [tierFilter, setTierFilter] = useState<TierFilter>('all')
+  const [horizon, setHorizon] = useState<Horizon>('near')
   const [expandedSectorIds, setExpandedSectorIds] = useState<Set<string>>(new Set())
 
   const sectors = data?.sectors ?? []
   const allRoles = data?.allRoles ?? []
   const rolesBySector = data?.rolesBySector ?? new Map<string, CareerRole[]>()
 
-  // Sectors with roles, plus the per-sector average rating used for the
-  // explorer card surface.
-  const sectorsWithRoles = useMemo(() => {
-    return sectors
+  // Per-metric sector lists with horizon-aware averages. Both panels read
+  // from the same sector pool; the metric and horizon determine which rating
+  // column drives the average and the badges inside.
+  const buildSectorsWithRoles = (metric: Metric) =>
+    sectors
       .map((sector) => {
         const sectorRoles = rolesBySector.get(sector.id) ?? []
-        const ratedInSector = sectorRoles.filter((r) => r.ai_rating_2030_2035 != null)
-        const avg =
-          ratedInSector.length > 0
-            ? ratedInSector.reduce((acc, r) => acc + (r.ai_rating_2030_2035 as number), 0) / ratedInSector.length
-            : null
+        const rated = sectorRoles
+          .map((r) => pickRating(r, metric, horizon))
+          .filter((v): v is number => v != null)
+        const avg = rated.length > 0 ? rated.reduce((a, b) => a + b, 0) / rated.length : null
         return { sector, roles: sectorRoles, avg }
       })
       .filter((s) => s.roles.length > 0)
-  }, [sectors, rolesBySector])
 
-  // Search/filter the flat role list (used for the role search panel).
+  const aiSectorsWithRoles = useMemo(
+    () => buildSectorsWithRoles('ai'),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sectors, rolesBySector, horizon],
+  )
+  const roboticsSectorsWithRoles = useMemo(
+    () => buildSectorsWithRoles('robotics'),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sectors, rolesBySector, horizon],
+  )
+
+  // Search/filter operates on AI ratings at the selected horizon. The
+  // "New AI roles" chip remains AI-only (there is no is_new_robotics_role
+  // column in the schema).
   const filteredRoles = useMemo(() => {
     const needle = search.trim().toLowerCase()
     return allRoles.filter((role) => {
@@ -54,14 +77,15 @@ export default function AiCareersPage() {
         const haystack = `${role.title} ${role.sector_name}`.toLowerCase()
         if (!haystack.includes(needle)) return false
       }
+      const rating = pickRating(role, 'ai', horizon)
       if (tierFilter === 'new') return role.is_new_ai_role === true
-      if (tierFilter === 'resilient') return role.ai_rating_2030_2035 != null && role.ai_rating_2030_2035 <= 3 && !role.is_new_ai_role
+      if (tierFilter === 'resilient') return rating != null && rating <= 3 && !role.is_new_ai_role
       if (tierFilter === 'evolving')
-        return role.ai_rating_2030_2035 != null && role.ai_rating_2030_2035 >= 4 && role.ai_rating_2030_2035 <= 6 && !role.is_new_ai_role
-      if (tierFilter === 'transforming') return role.ai_rating_2030_2035 != null && role.ai_rating_2030_2035 >= 7
+        return rating != null && rating >= 4 && rating <= 6 && !role.is_new_ai_role
+      if (tierFilter === 'transforming') return rating != null && rating >= 7
       return true
     })
-  }, [allRoles, search, tierFilter])
+  }, [allRoles, search, tierFilter, horizon])
 
   const toggleSector = (id: string) => {
     setExpandedSectorIds((prev) => {
@@ -152,7 +176,7 @@ export default function AiCareersPage() {
                   marginBottom: '20px',
                 }}
               >
-                AI &amp; Careers
+                AI, Robotics &amp; Careers
               </span>
               <h1
                 style={{
@@ -162,7 +186,7 @@ export default function AiCareersPage() {
                   marginBottom: '16px',
                 }}
               >
-                AI and the future of careers
+                AI, robotics, and the future of careers
               </h1>
               <p
                 style={{
@@ -173,8 +197,9 @@ export default function AiCareersPage() {
                   maxWidth: '640px',
                 }}
               >
-                Every career will involve working alongside AI. Here&apos;s what that means
-                for your subject choices — broken down job by job, sector by sector.
+                Every career will involve working alongside AI — and some will be reshaped by
+                robotics. Explore how both forces change work across two horizons: early career
+                (2030–2035) and mid-career (2040–2045).
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link
@@ -303,12 +328,33 @@ export default function AiCareersPage() {
               color: 'var(--pf-grey-600)',
               fontSize: '0.9375rem',
               maxWidth: '720px',
-              marginBottom: '24px',
+              marginBottom: '20px',
             }}
           >
             Search for any job title across all {allRoles.length} roles, or filter to focus on
-            resilient, evolving, transforming, or brand-new AI careers.
+            resilient, evolving, transforming, or brand-new AI careers. The AI panel reflects
+            cognitive and software automation; the Robotics panel reflects embodied and physical
+            automation. Switch the horizon below to compare early-career vs mid-career impact.
           </p>
+
+          {/* Horizon toggle — applies to both AI and Robotics panels */}
+          <div
+            className="flex"
+            role="group"
+            aria-label="Select time horizon"
+            style={{ gap: '8px', marginBottom: '24px' }}
+          >
+            <HorizonToggle
+              label="Near-term (2030–2035)"
+              active={horizon === 'near'}
+              onClick={() => setHorizon('near')}
+            />
+            <HorizonToggle
+              label="Long-term (2040–2045)"
+              active={horizon === 'long'}
+              onClick={() => setHorizon('long')}
+            />
+          </div>
 
           {/* Search + filter chips */}
           <div className="space-y-4" style={{ marginBottom: '24px' }}>
@@ -419,7 +465,9 @@ export default function AiCareersPage() {
                           {role.sector_name}
                         </p>
                       </div>
-                      {role.ai_rating_2030_2035 != null && <AiRoleBadge rating={role.ai_rating_2030_2035} size="sm" />}
+                      {pickRating(role, 'ai', horizon) != null && (
+                        <AiRoleBadge rating={pickRating(role, 'ai', horizon) as number} size="sm" />
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -442,16 +490,54 @@ export default function AiCareersPage() {
             </div>
           )}
 
-          {/* Sector cards */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {sectorsWithRoles.map(({ sector, roles, avg }) => (
+          {/* AI panel */}
+          <h3 style={{ marginTop: '8px', marginBottom: '6px' }}>AI impact by sector</h3>
+          <p
+            style={{
+              color: 'var(--pf-grey-600)',
+              fontSize: '0.875rem',
+              marginBottom: '16px',
+            }}
+          >
+            Cognitive and software automation. {horizon === 'near' ? '2030–2035.' : '2040–2045.'}
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ marginBottom: '40px' }}>
+            {aiSectorsWithRoles.map(({ sector, roles, avg }) => (
               <SectorCard
-                key={sector.id}
+                key={`ai-${sector.id}`}
                 sector={sector}
                 roles={roles}
                 avg={avg}
-                expanded={expandedSectorIds.has(sector.id)}
-                onToggle={() => toggleSector(sector.id)}
+                metric="ai"
+                horizon={horizon}
+                expanded={expandedSectorIds.has(`ai-${sector.id}`)}
+                onToggle={() => toggleSector(`ai-${sector.id}`)}
+              />
+            ))}
+          </div>
+
+          {/* Robotics panel */}
+          <h3 style={{ marginTop: '8px', marginBottom: '6px' }}>Robotics impact by sector</h3>
+          <p
+            style={{
+              color: 'var(--pf-grey-600)',
+              fontSize: '0.875rem',
+              marginBottom: '16px',
+            }}
+          >
+            Embodied and physical automation. {horizon === 'near' ? '2030–2035.' : '2040–2045.'}
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {roboticsSectorsWithRoles.map(({ sector, roles, avg }) => (
+              <SectorCard
+                key={`robotics-${sector.id}`}
+                sector={sector}
+                roles={roles}
+                avg={avg}
+                metric="robotics"
+                horizon={horizon}
+                expanded={expandedSectorIds.has(`robotics-${sector.id}`)}
+                onToggle={() => toggleSector(`robotics-${sector.id}`)}
               />
             ))}
           </div>
@@ -592,9 +678,20 @@ export default function AiCareersPage() {
               color: 'var(--pf-grey-600)',
               lineHeight: 1.65,
               maxWidth: '820px',
+              marginBottom: '8px',
             }}
           >
             {AI_ROLE_SOURCE}
+          </p>
+          <p
+            style={{
+              fontSize: '0.75rem',
+              color: 'var(--pf-grey-600)',
+              lineHeight: 1.65,
+              maxWidth: '820px',
+            }}
+          >
+            {ROBOTICS_ROLE_SOURCE}
           </p>
         </div>
       </section>
@@ -660,6 +757,40 @@ function LegendCard({ tier, example }: { tier: AiRoleTier; example: string }) {
   )
 }
 
+function HorizonToggle({
+  label,
+  active,
+  onClick,
+}: {
+  label: string
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      style={{
+        flex: 1,
+        padding: '10px 16px',
+        borderRadius: '8px',
+        fontFamily: "'Space Grotesk', sans-serif",
+        fontWeight: 600,
+        fontSize: '0.875rem',
+        border: active
+          ? '1px solid var(--pf-blue-700)'
+          : '1px solid var(--pf-grey-300)',
+        backgroundColor: active ? 'var(--pf-blue-700)' : 'var(--pf-white)',
+        color: active ? '#fff' : 'var(--pf-grey-700)',
+        cursor: 'pointer',
+      }}
+    >
+      {label}
+    </button>
+  )
+}
+
 function FilterChip({
   label,
   active,
@@ -698,12 +829,16 @@ function SectorCard({
   sector,
   roles,
   avg,
+  metric,
+  horizon,
   expanded,
   onToggle,
 }: {
   sector: CareerSector
   roles: CareerRole[]
   avg: number | null
+  metric: Metric
+  horizon: Horizon
   expanded: boolean
   onToggle: () => void
 }) {
@@ -803,7 +938,7 @@ function SectorCard({
                 }}
               >
                 {role.title}
-                {role.is_new_ai_role && (
+                {metric === 'ai' && role.is_new_ai_role && (
                   <span
                     style={{
                       marginLeft: '6px',
@@ -816,8 +951,13 @@ function SectorCard({
                   </span>
                 )}
               </span>
-              {role.ai_rating_2030_2035 != null && (
-                <AiRoleBadge rating={role.ai_rating_2030_2035} size="sm" showLabel={false} />
+              {pickRating(role, metric, horizon) != null && (
+                <AiRoleBadge
+                  rating={pickRating(role, metric, horizon) as number}
+                  size="sm"
+                  showLabel={false}
+                  metric={metric === 'ai' ? 'AI' : 'Robotics'}
+                />
               )}
             </li>
           ))}

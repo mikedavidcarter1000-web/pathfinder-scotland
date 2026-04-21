@@ -15,10 +15,12 @@ export function AiRoleBadge({
   rating,
   size = 'md',
   showLabel = true,
+  metric = 'AI',
 }: {
   rating: number
   size?: BadgeSize
   showLabel?: boolean
+  metric?: 'AI' | 'Robotics'
 }) {
   const tier = getAiRoleTier(rating)
   const meta = AI_ROLE_TIER_META[tier]
@@ -36,7 +38,7 @@ export function AiRoleBadge({
         backgroundColor: meta.bg,
         color: meta.text,
       }}
-      title={`AI rating ${rating}/10 — ${meta.label}: ${meta.description}`}
+      title={`${metric} rating ${rating}/10 — ${meta.label}: ${meta.description}`}
     >
       <span
         style={{
