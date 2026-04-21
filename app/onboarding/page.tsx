@@ -456,7 +456,14 @@ function OnboardingContent() {
             <WideningAccessStep
               data={wideningAccess}
               onChange={setWideningAccess}
-              onNext={() => setCurrentStep(4)}
+              onNext={(skipFollowUps) => {
+                if (skipFollowUps) {
+                  setDemographics(EMPTY_DEMOGRAPHICS)
+                  setCurrentStep(5)
+                } else {
+                  setCurrentStep(4)
+                }
+              }}
               onBack={() => setCurrentStep(2)}
             />
           )}

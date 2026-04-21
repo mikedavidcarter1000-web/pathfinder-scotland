@@ -9,14 +9,14 @@ interface WideningAccessData {
 interface WideningAccessStepProps {
   data: WideningAccessData
   onChange: (data: WideningAccessData) => void
-  onNext: () => void
+  onNext: (skipFollowUps: boolean) => void
   onBack: () => void
 }
 
 export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningAccessStepProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onNext()
+    onNext(false)
   }
 
   const criteria = [
@@ -52,9 +52,9 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
     onChange({ careExperienced: false, isCarer: false, firstGeneration: false })
   }
 
-  const skipStep = () => {
+  const skipFollowUps = () => {
     clearSelections()
-    onNext()
+    onNext(true)
   }
 
   return (
@@ -185,9 +185,8 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
       )}
 
       <div className="pt-2 space-y-3">
-        {/* Two equal-weight buttons: skip / clear vs continue — primary on top on mobile */}
-        <div className="flex flex-col-reverse sm:flex-row gap-3">
-          {hasAnySelected ? (
+        {hasAnySelected ? (
+          <div className="flex flex-col-reverse sm:flex-row gap-3">
             <button
               type="button"
               onClick={clearSelections}
@@ -196,24 +195,34 @@ export function WideningAccessStep({ data, onChange, onNext, onBack }: WideningA
             >
               Clear selections
             </button>
-          ) : (
+            <button
+              type="submit"
+              className="pf-btn pf-btn-primary justify-center"
+              style={{ flex: 1, minHeight: '48px' }}
+            >
+              Continue ({selectedCount})
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col-reverse sm:flex-row gap-3">
             <button
               type="button"
-              onClick={skipStep}
+              onClick={skipFollowUps}
               className="pf-btn pf-btn-secondary justify-center"
+              style={{ flex: 1, minHeight: '48px' }}
+            >
+              Prefer not to say
+            </button>
+            <button
+              type="button"
+              onClick={skipFollowUps}
+              className="pf-btn pf-btn-primary justify-center"
               style={{ flex: 1, minHeight: '48px' }}
             >
               None of these apply to me
             </button>
-          )}
-          <button
-            type="submit"
-            className="pf-btn pf-btn-primary justify-center"
-            style={{ flex: 1, minHeight: '48px' }}
-          >
-            Continue{hasAnySelected ? ` (${selectedCount})` : ''}
-          </button>
-        </div>
+          </div>
+        )}
         <button
           type="button"
           onClick={onBack}
