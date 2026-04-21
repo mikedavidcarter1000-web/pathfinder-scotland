@@ -7,6 +7,24 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-21 Downgrade 8 roles to foundational (Stage 1.5g)
+
+- **Files changed:** DB-only. No code, migration, or type changes. Applied a single transaction via Supabase MCP touching 8 `career_roles` rows (`maturity_tier` -> `foundational`) and 8 matching `role_profiles` rows (`min_entry_qualification` / `typical_entry_qualification` realigned per Stage 1.5g spec table).
+
+- **Rows updated:** Creative Arts & Design -- Graphic Designer (min hnc->n5, typical degree->hnd), Illustrator (min hnc->n5, typical degree->hnc), Photographer (tier only; min/typical already n5/hnd). Media & Communications -- Broadcast Technician (tier only), Copywriter (min highers->n5, typical degree->highers). Performing Arts & Entertainment -- Sound Technician (tier only), Stage Manager (min hnc->n5, typical hnd->hnc). Science & Research -- Lab Technician (tier only). Four of the eight already had `min_entry_qualification = national_5` from Stage 1.5f; only the tier changed. The other four had their min and typical tightened in line with the reclassification rationale.
+
+- **Post-apply distribution confirmed:** foundational 63 / intermediate 154 / specialised 52 (delta +8 / -8 / 0, exactly matches spec).
+
+- **Sector-level foundational coverage now complete for all 19 sectors.** Previously-excluded sectors after Stage 1.5f now carry: Creative Arts & Design 3 (was 0), Media & Communications 2 (was 0), Performing Arts & Entertainment 2 (was 0), Science & Research 1 (was 0). Full distribution (ascending): Computing & Digital Technology 1, Healthcare & Medicine 1, Science & Research 1, Education & Teaching 2, Law & Justice 2, Media & Communications 2, Performing Arts & Entertainment 2, Retail & Customer Service 2, Sport & Fitness 2, Business & Finance 3, Creative Arts & Design 3, Engineering & Manufacturing 3, Hospitality & Tourism 3, Public Services & Government 3, Social Work & Community 3, Agriculture & Environment 4, Transport & Logistics 5, Construction & Trades 10, Armed Forces 11.
+
+- **Closes the widening-access equity gap from Stage 1.5f.** The S2/S3 filter in `app/actions/homepage-teaser.ts` (`career_roles.maturity_tier = 'foundational'`) was correctly excluding sectors with zero foundational roles, but that excluded genuinely-accessible 16+ entry routes in arts, media, performing arts, and science. A 13-year-old interested in photography, sound engineering, copywriting, or lab work is no longer told none of their sector applies. The homepage teaser server-action pool for year_group='S2' now samples across all 19 sectors instead of the 15-sector pool that Stage 1.5f shipped with.
+
+- **No UI / action / type changes required.** The Stage 1.5f hard filter (`=== 'foundational'`) already does the right thing when the dataset contains foundational roles in every sector -- this session only needed to fix the data shape. Build + tsc --noEmit clean; 269 role SSG pages still prerender.
+
+- **STOP-gate test: pure DB reclassification with no UI consequence passes the "irreversible / user-facing / branched decision" test only weakly.** The change is fully reversible via the inverse UPDATE (pre-apply values captured in this entry). No new user-facing copy; no new sectors; no downstream code surface. Phase 0 report was the only pre-apply pause -- no mid-session gate needed. This matches the STOP-gate principle in CLAUDE.md: routine reclassifications of pre-reviewed data don't warrant a gate.
+
+- **Phase-2 follow-ups:** none surfaced by this session. The 8-role spec list was curated in advance, enum values were already valid, and the existing filter required no edit. If future audits surface other role-level misclassifications in the same four sectors, apply via the same single-transaction pattern.
+
 ## 2026-04-21 Apply role classifications + re-enable teaser filter (Stage 1.5f part 2)
 
 - **Files changed:** new `supabase/migrations/20260421000001_add_role_classification_fields.sql` (creates `public.entry_qualification` enum; adds `role_profiles.min_entry_qualification`, `typical_entry_qualification`, `typical_starting_salary_gbp`, `typical_experienced_salary_gbp` with CHECK range 10000-500000); new `scripts/generate-classification-sql.mjs` (validates JSON + emits the two UPDATE statements as a single atomic SQL file); new `scripts/apply-role-classifications-pg.mjs` (pg-client transactional apply with post-apply NULL assertions, matches Stage 1.5b pattern). Modified `app/actions/homepage-teaser.ts` (S2/S3 filter switched from `!== 'specialised'` to `=== 'foundational'`), `app/careers/[sectorId]/[roleId]/page.tsx` (replaced legacy `salary_entry`/`salary_experienced` hero block with authoritative `typical_starting_salary_gbp`/`typical_experienced_salary_gbp` block + caveat copy visually adjacent to the numbers), `types/database.ts` (hand-added 4 new columns to role_profiles Row/Insert/Update).
