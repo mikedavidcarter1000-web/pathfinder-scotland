@@ -14,6 +14,13 @@ export default defineConfig({
     baseURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    // Pathfinder's CSP does not include `unsafe-eval`, which React requires
+    // in development mode under WebKit's JavaScriptCore. Without this flag,
+    // WebKit aborts React on the auth pages and form submissions never
+    // trigger the Supabase fetch. Chromium's V8 does not need eval so the
+    // flag is a no-op there, but leaving it enabled project-wide keeps the
+    // two browsers symmetric.
+    bypassCSP: true,
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
