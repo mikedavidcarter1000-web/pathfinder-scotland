@@ -45,7 +45,7 @@ export function SaveComparisonControl({
 
   useEffect(() => {
     if (!savedName) return
-    const id = setTimeout(() => setSavedName(null), 2800)
+    const id = setTimeout(() => setSavedName(null), 5000)
     return () => clearTimeout(id)
   }, [savedName])
 
@@ -158,20 +158,78 @@ export function SaveComparisonControl({
       </button>
 
       {savedName ? (
-        <p
+        <div
           role="status"
+          aria-live="polite"
           style={{
-            position: 'absolute',
-            right: 0,
-            top: 'calc(100% + 4px)',
-            fontSize: '0.75rem',
-            color: 'var(--pf-green-500)',
-            whiteSpace: 'nowrap',
-            margin: 0,
+            position: 'fixed',
+            right: '20px',
+            bottom: '20px',
+            zIndex: 90,
+            background: 'var(--pf-white)',
+            border: '1px solid var(--pf-green-500)',
+            borderRadius: '10px',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.18)',
+            padding: '14px 16px',
+            maxWidth: '360px',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '10px',
           }}
         >
-          Saved &ldquo;{savedName}&rdquo;
-        </p>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p
+              style={{
+                margin: '0 0 4px',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                color: 'var(--pf-grey-900)',
+                fontFamily: "'Space Grotesk', sans-serif",
+              }}
+            >
+              Comparison &ldquo;{savedName}&rdquo; saved.
+            </p>
+            <p
+              style={{
+                margin: '0 0 6px',
+                fontSize: '0.8125rem',
+                color: 'var(--pf-grey-600)',
+              }}
+            >
+              Find it on your dashboard or Saved Comparisons.
+            </p>
+            <Link
+              href="/account/saved-comparisons"
+              style={{
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+                color: 'var(--pf-blue-700)',
+                fontFamily: "'Space Grotesk', sans-serif",
+              }}
+            >
+              View saved comparisons &rarr;
+            </Link>
+          </div>
+          <button
+            type="button"
+            onClick={() => setSavedName(null)}
+            aria-label="Dismiss notification"
+            style={{
+              flexShrink: 0,
+              width: '28px',
+              height: '28px',
+              borderRadius: '6px',
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--pf-grey-600)',
+              cursor: 'pointer',
+              fontSize: '1.125rem',
+              lineHeight: 1,
+            }}
+          >
+            &times;
+          </button>
+        </div>
       ) : null}
 
       {open ? (
