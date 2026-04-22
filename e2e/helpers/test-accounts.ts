@@ -16,11 +16,8 @@ export function generateTestEmail(): string {
 // database exists. Until then, tests must not create real accounts
 // against production Supabase. Calling this in Session 11a is a no-op
 // that logs a warning so future-session refactors surface the gap.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function cleanupTestAccount(email: string): Promise<void> {
-  // Deliberately unimplemented -- see comment above.
   if (process.env.DEBUG_E2E) {
-    // eslint-disable-next-line no-console
     console.warn(
       `[e2e] cleanupTestAccount(${email}) is a stub; implementation lands in Session 11c`,
     )
