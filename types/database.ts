@@ -1326,6 +1326,39 @@ export type Database = {
         }
         Relationships: []
       }
+      pilot_interest: {
+        Row: {
+          id: string
+          role: string
+          name: string
+          email: string
+          organisation: string | null
+          postcode: string | null
+          message: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          role: string
+          name: string
+          email: string
+          organisation?: string | null
+          postcode?: string | null
+          message?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          role?: string
+          name?: string
+          email?: string
+          organisation?: string | null
+          postcode?: string | null
+          message?: string | null
+          created_at?: string | null
+        }
+        Relationships: []
+      }
       partners: {
         Row: {
           account_id: string | null
