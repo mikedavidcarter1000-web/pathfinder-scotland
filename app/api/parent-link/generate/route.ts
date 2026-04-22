@@ -61,7 +61,7 @@ export async function POST() {
 
     return NextResponse.json({
       code,
-      expires_in_hours: 48,
+      expires_in_hours: 168,
     })
   } catch (err) {
     console.error('[parent-link/generate] unexpected:', err)

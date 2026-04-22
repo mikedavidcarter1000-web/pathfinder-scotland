@@ -90,11 +90,18 @@ export function Navbar() {
 
   const isParent = !!parent || student?.user_type === 'parent'
   const { hasAccepted } = useHasAcceptedOffer()
+  const dashboardHref = isParent ? '/parent/dashboard' : '/dashboard'
 
-  const filteredGroups = NAV_GROUPS.map((group) => ({
-    ...group,
-    items: group.items.filter((item) => !(item.hideForParents && isParent)),
-  })).filter((group) => group.items.length > 0)
+  // Parents see a stripped-down nav: Dashboard, Help, Contact, plus the logo
+  // and sign-out. Student-side Explore/Plan/Browse/Tools/Support groups are
+  // hidden because parent accounts are intentionally scoped to a read-only
+  // view of their linked child's progress.
+  const filteredGroups = isParent
+    ? []
+    : NAV_GROUPS.map((group) => ({
+        ...group,
+        items: group.items.filter((item) => !(item.hideForParents && isParent)),
+      })).filter((group) => group.items.length > 0)
 
   const isActive = (href: string) => {
     if (href === '/pathways') return pathname === href
@@ -179,7 +186,7 @@ export function Navbar() {
           >
             {/* Logo */}
             <Link
-              href={user ? '/dashboard' : '/'}
+              href={user ? dashboardHref : '/'}
               className="flex items-center no-underline hover:no-underline"
               style={{ flexShrink: 0, color: '#1B3A5C' }}
               aria-label="Pathfinder Scotland — home"
@@ -208,18 +215,47 @@ export function Navbar() {
             <div className="hidden lg:flex items-center gap-1 flex-1 justify-center min-w-0">
               {user && (
                 <Link
-                  href="/dashboard"
+                  href={dashboardHref}
                   className="px-3 py-2 text-sm no-underline hover:no-underline"
                   style={{
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 600,
                     color: '#1B3A5C',
-                    opacity: pathname === '/dashboard' ? 1 : 0.82,
-                    borderBottom: pathname === '/dashboard' ? '2px solid #1B3A5C' : '2px solid transparent',
+                    opacity: pathname === dashboardHref ? 1 : 0.82,
+                    borderBottom: pathname === dashboardHref ? '2px solid #1B3A5C' : '2px solid transparent',
                   }}
                 >
                   Dashboard
                 </Link>
+              )}
+
+              {user && isParent && (
+                <>
+                  <Link
+                    href="/for-parents"
+                    className="px-3 py-2 text-sm no-underline hover:no-underline"
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 600,
+                      color: '#1B3A5C',
+                      opacity: pathname === '/for-parents' ? 1 : 0.82,
+                    }}
+                  >
+                    Help
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="px-3 py-2 text-sm no-underline hover:no-underline"
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 600,
+                      color: '#1B3A5C',
+                      opacity: pathname === '/contact' ? 1 : 0.82,
+                    }}
+                  >
+                    Contact
+                  </Link>
+                </>
               )}
 
               {user && !isParent && hasAccepted && (
@@ -476,7 +512,7 @@ export function Navbar() {
               <nav className="flex flex-col gap-1">
                 {user && (
                   <Link
-                    href="/dashboard"
+                    href={dashboardHref}
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center px-4 rounded-lg text-white no-underline hover:no-underline"
                     style={{
@@ -484,11 +520,41 @@ export function Navbar() {
                       fontFamily: "'Space Grotesk', sans-serif",
                       fontWeight: 600,
                       fontSize: '1rem',
-                      backgroundColor: pathname === '/dashboard' ? 'rgba(255,255,255,0.12)' : 'transparent',
+                      backgroundColor: pathname === dashboardHref ? 'rgba(255,255,255,0.12)' : 'transparent',
                     }}
                   >
                     Dashboard
                   </Link>
+                )}
+                {user && isParent && (
+                  <>
+                    <Link
+                      href="/for-parents"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center px-4 rounded-lg text-white no-underline hover:no-underline"
+                      style={{
+                        minHeight: '48px',
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontWeight: 600,
+                        fontSize: '1rem',
+                      }}
+                    >
+                      Help
+                    </Link>
+                    <Link
+                      href="/contact"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center px-4 rounded-lg text-white no-underline hover:no-underline"
+                      style={{
+                        minHeight: '48px',
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontWeight: 600,
+                        fontSize: '1rem',
+                      }}
+                    >
+                      Contact
+                    </Link>
+                  </>
                 )}
                 {user && !isParent && hasAccepted && (
                   <Link

@@ -5,40 +5,91 @@ import {
   useLinkedParents,
   useGenerateParentInviteCode,
   useRevokeParentLink,
+  useSendParentInviteEmail,
   type LinkedParent,
 } from '@/hooks/use-parent-link'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { useToast } from '@/components/ui/toast'
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 export function ParentAccessSection() {
   const { data: links, isLoading } = useLinkedParents()
   const generate = useGenerateParentInviteCode()
   const revoke = useRevokeParentLink()
+  const sendEmail = useSendParentInviteEmail()
   const toast = useToast()
 
   const [code, setCode] = useState<string | null>(null)
   const [codeExpiresAt, setCodeExpiresAt] = useState<Date | null>(null)
   const [revokeTarget, setRevokeTarget] = useState<LinkedParent | null>(null)
+  const [parentEmail, setParentEmail] = useState('')
+  const [emailError, setEmailError] = useState<string | null>(null)
+
+  const activeLinks = (links ?? []).filter(
+    (l) => l.status === 'active' || l.status === 'pending'
+  )
+  const atLimit = activeLinks.length >= 2
+
+  const siteOrigin =
+    typeof window !== 'undefined'
+      ? window.location.origin
+      : 'https://pathfinderscot.co.uk'
+  const inviteUrl = code ? `${siteOrigin}/parent/join?code=${encodeURIComponent(code)}` : null
 
   const handleGenerate = async () => {
     try {
       const result = await generate.mutateAsync()
       setCode(result.code)
       setCodeExpiresAt(new Date(Date.now() + result.expires_in_hours * 3600_000))
-      toast.success('Invite code ready', 'Share it with your parent or guardian.')
+      setParentEmail('')
+      setEmailError(null)
+      toast.success('Invite ready', 'Share the link or send it by email.')
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Could not generate code.'
-      toast.error("Couldn't generate code", msg)
+      toast.error("Couldn't generate invite", msg)
     }
   }
 
-  const handleCopy = async () => {
+  const handleCopyLink = async () => {
+    if (!inviteUrl) return
+    try {
+      await navigator.clipboard.writeText(inviteUrl)
+      toast.success('Link copied', 'Paste it into a message to your parent or guardian.')
+    } catch {
+      toast.info('Copy this link', inviteUrl)
+    }
+  }
+
+  const handleCopyCode = async () => {
     if (!code) return
     try {
       await navigator.clipboard.writeText(code)
-      toast.success('Copied', 'Invite code copied to your clipboard.')
+      toast.success('Code copied', 'Paste it on the parent join page.')
     } catch {
       toast.info('Copy this code', code)
+    }
+  }
+
+  const handleSendEmail = async () => {
+    if (!code) return
+    setEmailError(null)
+    const trimmed = parentEmail.trim()
+    if (!EMAIL_RE.test(trimmed)) {
+      setEmailError('Enter a valid email address.')
+      return
+    }
+    try {
+      const result = await sendEmail.mutateAsync({ code, email: trimmed })
+      if (result.sent) {
+        toast.success('Email sent', `Invite sent to ${trimmed}.`)
+      } else {
+        toast.info('Email not sent', 'Email delivery is not configured. Share the link instead.')
+      }
+      setParentEmail('')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Could not send invite email.'
+      setEmailError(msg)
     }
   }
 
@@ -74,19 +125,19 @@ export function ParentAccessSection() {
             color: 'var(--pf-grey-900)',
           }}
         >
-          Parent / guardian access
+          Invite a parent or guardian
         </h2>
         <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', marginTop: '4px' }}>
-          Let a parent or guardian view your saved courses, grades, and progress. They
-          cannot edit anything. You can revoke access at any time.
+          Share a link with a parent or guardian so they can see your saved courses,
+          predicted grades, and funding options. They can&apos;t edit anything, and you can
+          revoke access at any time. Maximum 2 parents or guardians.
         </p>
       </div>
 
-      {/* Currently linked parents */}
       <div style={{ marginBottom: '16px' }}>
         {isLoading ? (
-          <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>Loading…</p>
-        ) : !links || links.length === 0 ? (
+          <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>Loading...</p>
+        ) : activeLinks.length === 0 ? (
           <p
             className="rounded-lg"
             style={{
@@ -101,7 +152,7 @@ export function ParentAccessSection() {
           </p>
         ) : (
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {links.map((l) => (
+            {activeLinks.map((l) => (
               <li
                 key={l.link_id}
                 className="flex items-start justify-between gap-3"
@@ -120,11 +171,25 @@ export function ParentAccessSection() {
                       margin: 0,
                     }}
                   >
-                    {l.full_name}
+                    {l.full_name || 'Pending invite'}
+                    {l.status === 'pending' && (
+                      <span
+                        style={{
+                          marginLeft: '8px',
+                          fontSize: '0.75rem',
+                          color: 'var(--pf-amber-600, #b45309)',
+                          fontWeight: 500,
+                        }}
+                      >
+                        Pending
+                      </span>
+                    )}
                   </p>
-                  <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}>
-                    {l.email}
-                  </p>
+                  {l.email && (
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)' }}>
+                      {l.email}
+                    </p>
+                  )}
                   {l.linked_at && (
                     <p
                       style={{
@@ -151,9 +216,8 @@ export function ParentAccessSection() {
         )}
       </div>
 
-      {/* Generate new code */}
       <div>
-        {code ? (
+        {code && inviteUrl ? (
           <div
             className="rounded-lg"
             style={{
@@ -166,61 +230,103 @@ export function ParentAccessSection() {
               style={{
                 fontSize: '0.8125rem',
                 color: 'var(--pf-grey-600)',
-                marginBottom: '6px',
+                marginBottom: '10px',
               }}
             >
-              Share this invite code with your parent or guardian. They enter it on their
-              dashboard to link to your account. Valid for 48 hours.
+              Your invite is ready. Share the link below or send it by email. Valid for 7 days.
             </p>
-            <div className="flex items-center gap-3" style={{ marginBottom: '10px' }}>
-              <span
-                style={{
-                  fontFamily: 'monospace',
-                  fontSize: '1.5rem',
-                  fontWeight: 700,
-                  color: 'var(--pf-blue-900)',
-                  letterSpacing: '0.08em',
-                }}
-              >
-                {code}
-              </span>
-              <button
-                type="button"
-                onClick={handleCopy}
-                className="pf-btn pf-btn-secondary pf-btn-sm"
-              >
-                Copy
+
+            <div
+              style={{
+                padding: '10px 12px',
+                backgroundColor: 'var(--pf-white)',
+                border: '1px solid var(--pf-grey-200)',
+                borderRadius: '8px',
+                marginBottom: '10px',
+                fontSize: '0.8125rem',
+                color: 'var(--pf-grey-900)',
+                wordBreak: 'break-all',
+              }}
+            >
+              {inviteUrl}
+            </div>
+
+            <div className="flex flex-wrap gap-2" style={{ marginBottom: '12px' }}>
+              <button type="button" onClick={handleCopyLink} className="pf-btn pf-btn-primary pf-btn-sm">
+                Copy link
+              </button>
+              <button type="button" onClick={handleCopyCode} className="pf-btn pf-btn-secondary pf-btn-sm">
+                Copy code ({code})
               </button>
             </div>
+
+            <div style={{ marginTop: '4px' }}>
+              <label htmlFor="parent-email" className="pf-label" style={{ fontSize: '0.8125rem' }}>
+                Send invite by email
+              </label>
+              <div className="flex gap-2 mt-1 flex-wrap">
+                <input
+                  id="parent-email"
+                  type="email"
+                  value={parentEmail}
+                  onChange={(e) => setParentEmail(e.target.value)}
+                  placeholder="parent@example.com"
+                  className="pf-input"
+                  style={{ flex: '1 1 220px', minWidth: 0 }}
+                  autoComplete="email"
+                />
+                <SubmitButton
+                  onClick={handleSendEmail}
+                  isLoading={sendEmail.isPending}
+                  loadingText="Sending..."
+                  variant="secondary"
+                  disabled={!parentEmail}
+                >
+                  Send email
+                </SubmitButton>
+              </div>
+              {emailError && (
+                <p
+                  role="alert"
+                  style={{ fontSize: '0.75rem', color: 'var(--pf-red-500)', marginTop: '4px' }}
+                >
+                  {emailError}
+                </p>
+              )}
+            </div>
+
             {codeExpiresAt && (
-              <p style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)', marginTop: '10px' }}>
                 Expires {codeExpiresAt.toLocaleString('en-GB')}
               </p>
             )}
-            <p
-              style={{
-                fontSize: '0.75rem',
-                color: 'var(--pf-grey-600)',
-                marginTop: '8px',
-              }}
-            >
-              Want a different code? Click &ldquo;Generate invite code&rdquo; again to
-              create a fresh one.
-            </p>
           </div>
+        ) : atLimit ? (
+          <p
+            className="rounded-lg"
+            style={{
+              padding: '12px 14px',
+              backgroundColor: 'rgba(180, 83, 9, 0.08)',
+              fontSize: '0.875rem',
+              color: 'var(--pf-grey-900)',
+              margin: 0,
+            }}
+          >
+            You have reached the limit of 2 parent or guardian links. Revoke an existing one
+            before generating a new invite.
+          </p>
         ) : (
           <SubmitButton
             onClick={handleGenerate}
             isLoading={generate.isPending}
             loadingText="Generating..."
-            variant="secondary"
+            variant="primary"
           >
-            Generate invite code
+            Generate invite link
           </SubmitButton>
         )}
       </div>
 
-      {/* Revoke confirmation dialog */}
       {revokeTarget && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -240,11 +346,12 @@ export function ParentAccessSection() {
                 marginBottom: '10px',
               }}
             >
-              Revoke access for {revokeTarget.full_name}?
+              Revoke access for {revokeTarget.full_name || 'this invite'}?
             </h3>
             <p style={{ fontSize: '0.9375rem', color: 'var(--pf-grey-600)', marginBottom: '20px' }}>
-              {revokeTarget.full_name} will no longer be able to see your saved courses and
-              progress. You can re-invite them later with a new code.
+              {revokeTarget.status === 'pending'
+                ? 'This invite will be cancelled. Generate a new one to invite a different parent.'
+                : `${revokeTarget.full_name || 'They'} will no longer be able to see your saved courses and progress. You can re-invite them later with a new code.`}
             </p>
             <div className="flex gap-3">
               <button

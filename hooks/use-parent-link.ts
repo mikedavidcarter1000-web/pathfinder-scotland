@@ -17,11 +17,13 @@ export interface LinkedChild {
 
 export interface LinkedParent {
   link_id: string
-  parent_id: string
-  full_name: string
-  email: string
+  parent_id: string | null
+  full_name: string | null
+  email: string | null
   linked_at: string | null
   status: 'pending' | 'active' | 'revoked'
+  invite_code: string | null
+  expires_at: string | null
 }
 
 // Parents view: list of linked children
@@ -98,6 +100,24 @@ export function useRedeemParentInviteCode() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['linked-children'] })
+    },
+  })
+}
+
+// Student: send the invite code to a parent's email address via Resend
+export function useSendParentInviteEmail() {
+  return useMutation({
+    mutationFn: async ({ code, email }: { code: string; email: string }) => {
+      const res = await fetch('/api/parent-link/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, email }),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        throw new Error(json.error || 'Failed to send invite email')
+      }
+      return json as { sent: boolean; skipped?: string }
     },
   })
 }
