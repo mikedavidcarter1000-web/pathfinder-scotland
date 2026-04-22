@@ -334,6 +334,8 @@ npx supabase migration repair --status applied [migration_name]
 - The Supabase MCP `apply_migration` tool wraps its own transaction, and Supabase CLI's `db push` also wraps transactions. Explicit `BEGIN` / `COMMIT` in the file causes nested-transaction errors on re-apply.
 - Convention: transaction boundary is owned by the applying tool, not the file.
 - When writing multi-statement cleanup migrations, sequence statements assuming they will execute within an outer transaction.
+- **All schema changes MUST go through a migration file**, generated with `npx supabase migration new <name>`, committed to git, and applied via `npx supabase db push` or the Supabase MCP `apply_migration` tool. Do NOT make schema changes via raw SQL through MCP `execute_sql` or Supabase Studio's SQL editor. (Data-level changes -- seed data, one-off corrections -- can still go through `execute_sql`; this rule applies to DDL only.)
+- The migration history was reset on **22 April 2026 (Session 11b)**. The previous 94 files are archived under `supabase/migrations/_archived_pre_11b_reset/` and superseded by `20260422143617_baseline_production_schema.sql`. See `docs/migration-reset-11b.md` for the workflow.
 
 ### AI horizon ratings (`career_roles.ai_rating_2030_2035`, `career_roles.ai_rating_2040_2045`)
 - Range: 1-10 integer (nullable), `CHECK` constraints enforce bounds on each column. `NULL` = not yet rated.
