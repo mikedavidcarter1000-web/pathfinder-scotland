@@ -7,6 +7,7 @@ import { NumericBar } from './NumericBar'
 import { TierBar } from './TierBar'
 import { EarningsSection } from './EarningsSection'
 import { RoiSection } from './RoiSection'
+import { FutureOutlookSection } from './FutureOutlookSection'
 
 type EntryQualification =
   | 'none'
@@ -38,6 +39,11 @@ export interface RoleComparisonData {
   salaryProgressionSpeed: string | null
   competitionLevel: string | null
   selfEmploymentViability: string | null
+  aiRating2030: number | null
+  aiRating2040: number | null
+  roboticsRating2030: number | null
+  roboticsRating2040: number | null
+  isNewAiRole: boolean
 }
 
 export interface ComparisonGridProps {
@@ -76,6 +82,9 @@ async function fetchRoles(roleIds: string[]): Promise<RoleComparisonData[]> {
     .from('career_roles')
     .select(
       `id, title,
+       ai_rating_2030_2035, ai_rating_2040_2045,
+       robotics_rating_2030_2035, robotics_rating_2040_2045,
+       is_new_ai_role,
        career_sectors(name),
        role_profiles(
          min_entry_qualification, typical_entry_qualification,
@@ -119,6 +128,11 @@ async function fetchRoles(roleIds: string[]): Promise<RoleComparisonData[]> {
       salaryProgressionSpeed: profile.salary_progression_speed,
       competitionLevel: profile.competition_level,
       selfEmploymentViability: profile.self_employment_viability,
+      aiRating2030: row.ai_rating_2030_2035 ?? null,
+      aiRating2040: row.ai_rating_2040_2045 ?? null,
+      roboticsRating2030: row.robotics_rating_2030_2035 ?? null,
+      roboticsRating2040: row.robotics_rating_2040_2045 ?? null,
+      isNewAiRole: row.is_new_ai_role === true,
     })
   }
   return roleIds.map((id) => byId.get(id)).filter((r): r is RoleComparisonData => Boolean(r))
@@ -219,7 +233,10 @@ export function ComparisonGrid({ roleIds }: ComparisonGridProps) {
       <Section title="Headline summary" defaultOpen>
         <LabelRow
           fieldName="Role"
-          entries={roles.map((r) => ({ careerName: r.title, value: r.title }))}
+          entries={roles.map((r) => ({
+            careerName: r.title,
+            value: r.isNewAiRole ? `${r.title}  • New AI role` : r.title,
+          }))}
         />
         <LabelRow
           fieldName="Sector"
@@ -370,6 +387,10 @@ export function ComparisonGrid({ roleIds }: ComparisonGridProps) {
             tierLabel: r.selfEmploymentViability,
           }))}
         />
+      </Section>
+
+      <Section title="Future outlook">
+        <FutureOutlookSection roles={roles} />
       </Section>
 
       <Section title="Assumptions and caveats">
