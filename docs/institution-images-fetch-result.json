@@ -1,0 +1,254 @@
+[
+  {
+    "slug": "abertay",
+    "name": "Abertay University",
+    "kind": "university",
+    "status": "both"
+  },
+  {
+    "slug": "edinburgh-napier",
+    "name": "Edinburgh Napier University",
+    "kind": "university",
+    "status": "both"
+  },
+  {
+    "slug": "glasgow-caledonian",
+    "name": "Glasgow Caledonian University",
+    "kind": "university",
+    "status": "wiki-only"
+  },
+  {
+    "slug": "glasgow-school-of-art",
+    "name": "Glasgow School of Art",
+    "kind": "university",
+    "status": "og-only"
+  },
+  {
+    "slug": "heriot-watt",
+    "name": "Heriot-Watt University",
+    "kind": "university",
+    "status": "wiki-only"
+  },
+  {
+    "slug": "queen-margaret",
+    "name": "Queen Margaret University",
+    "kind": "university",
+    "status": "og-only"
+  },
+  {
+    "slug": "robert-gordon",
+    "name": "Robert Gordon University",
+    "kind": "university",
+    "status": "wiki-only"
+  },
+  {
+    "slug": "royal-conservatoire",
+    "name": "Royal Conservatoire of Scotland",
+    "kind": "university",
+    "status": "both"
+  },
+  {
+    "slug": "sruc",
+    "name": "Scotland's Rural College",
+    "kind": "university",
+    "status": "og-only"
+  },
+  {
+    "slug": "aberdeen",
+    "name": "University of Aberdeen",
+    "kind": "university",
+    "status": "wiki-only"
+  },
+  {
+    "slug": "dundee",
+    "name": "University of Dundee",
+    "kind": "university",
+    "status": "wiki-only"
+  },
+  {
+    "slug": "edinburgh",
+    "name": "University of Edinburgh",
+    "kind": "university",
+    "status": "og-only"
+  },
+  {
+    "slug": "glasgow",
+    "name": "University of Glasgow",
+    "kind": "university",
+    "status": "wiki-only"
+  },
+  {
+    "slug": "st-andrews",
+    "name": "University of St Andrews",
+    "kind": "university",
+    "status": "wiki-only"
+  },
+  {
+    "slug": "stirling",
+    "name": "University of Stirling",
+    "kind": "university",
+    "status": "wiki-only"
+  },
+  {
+    "slug": "strathclyde",
+    "name": "University of Strathclyde",
+    "kind": "university",
+    "status": "wiki-only"
+  },
+  {
+    "slug": "uhi",
+    "name": "University of the Highlands and Islands",
+    "kind": "university",
+    "status": "og-only"
+  },
+  {
+    "slug": "uws",
+    "name": "University of the West of Scotland",
+    "kind": "university",
+    "status": "wiki-only"
+  },
+  {
+    "slug": "ayrshire",
+    "name": "Ayrshire College",
+    "kind": "college",
+    "status": "manual"
+  },
+  {
+    "slug": "borders",
+    "name": "Borders College",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "city-of-glasgow",
+    "name": "City of Glasgow College",
+    "kind": "college",
+    "status": "MISSING"
+  },
+  {
+    "slug": "dumfries-galloway",
+    "name": "Dumfries and Galloway College",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "dundee-angus",
+    "name": "Dundee and Angus College",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "edinburgh-college",
+    "name": "Edinburgh College",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "fife",
+    "name": "Fife College",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "forth-valley",
+    "name": "Forth Valley College",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "glasgow-clyde",
+    "name": "Glasgow Clyde College",
+    "kind": "college",
+    "status": "MISSING"
+  },
+  {
+    "slug": "glasgow-kelvin",
+    "name": "Glasgow Kelvin College",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "new-college-lanarkshire",
+    "name": "New College Lanarkshire",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "nescol",
+    "name": "North East Scotland College",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "sabhal-mor-ostaig",
+    "name": "Sabhal Mor Ostaig UHI",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "south-lanarkshire",
+    "name": "South Lanarkshire College",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "sruc-college",
+    "name": "SRUC (Scotland's Rural College)",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "uhi-argyll",
+    "name": "UHI Argyll",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "uhi-inverness",
+    "name": "UHI Inverness",
+    "kind": "college",
+    "status": "manual"
+  },
+  {
+    "slug": "uhi-moray",
+    "name": "UHI Moray",
+    "kind": "college",
+    "status": "wiki-only"
+  },
+  {
+    "slug": "uhi-nwh",
+    "name": "UHI North, West and Hebrides",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "uhi-orkney",
+    "name": "UHI Orkney",
+    "kind": "college",
+    "status": "MISSING"
+  },
+  {
+    "slug": "uhi-perth",
+    "name": "UHI Perth",
+    "kind": "college",
+    "status": "MISSING"
+  },
+  {
+    "slug": "uhi-shetland",
+    "name": "UHI Shetland",
+    "kind": "college",
+    "status": "MISSING"
+  },
+  {
+    "slug": "west-college-scotland",
+    "name": "West College Scotland",
+    "kind": "college",
+    "status": "og-only"
+  },
+  {
+    "slug": "west-lothian",
+    "name": "West Lothian College",
+    "kind": "college",
+    "status": "wiki-only"
+  }
+]

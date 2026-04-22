@@ -14,6 +14,7 @@ import { CourseCardSkeleton } from '@/components/ui/loading-skeletons'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
 import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
+import { InstitutionHero } from '@/components/ui/institution-hero'
 import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
@@ -210,6 +211,12 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="min-h-screen bg-[var(--pf-blue-50)]">
+      {/* Hero banner */}
+      <InstitutionHero
+        imageUrl={university.hero_image_url}
+        alt={`${university.name} campus`}
+      />
+
       {/* Header */}
       <div className="bg-[var(--pf-white)]">
         <div className="max-w-4xl mx-auto px-4 py-8">

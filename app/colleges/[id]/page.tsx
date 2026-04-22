@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useCollege, useCollegeArticulation, type ArticulationWithUniversity } from '@/hooks/use-colleges'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
+import { InstitutionHero } from '@/components/ui/institution-hero'
 import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
@@ -94,6 +95,12 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
+      {/* Hero banner */}
+      <InstitutionHero
+        imageUrl={college.hero_image_url}
+        alt={`${college.name} campus`}
+      />
+
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className="max-w-4xl mx-auto px-4 py-8">

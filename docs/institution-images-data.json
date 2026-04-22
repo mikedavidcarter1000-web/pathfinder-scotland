@@ -1,0 +1,318 @@
+{
+  "universities": [
+    {
+      "id": "5bfcbe33-3b8a-4860-987d-d59e2e3f0f4e",
+      "name": "Abertay University",
+      "slug": "abertay",
+      "website": "https://www.abertay.ac.uk",
+      "wikipedia": "Abertay_University",
+      "known_image": "Bell Street campus / Bernard King Library"
+    },
+    {
+      "id": "fe29b5f9-cbaa-49c5-9532-51cebdbefadb",
+      "name": "Edinburgh Napier University",
+      "slug": "edinburgh-napier",
+      "website": "https://www.napier.ac.uk",
+      "wikipedia": "Edinburgh_Napier_University",
+      "known_image": "Craiglockhart Campus curved building"
+    },
+    {
+      "id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+      "name": "Glasgow Caledonian University",
+      "slug": "glasgow-caledonian",
+      "website": "https://www.gcu.ac.uk",
+      "wikipedia": "Glasgow_Caledonian_University",
+      "known_image": "Front entrance concourse"
+    },
+    {
+      "id": "68a776ca-c13d-4fe8-a391-5b7b90aa3353",
+      "name": "Glasgow School of Art",
+      "slug": "glasgow-school-of-art",
+      "website": "https://www.gsa.ac.uk",
+      "wikipedia": "Glasgow_School_of_Art",
+      "known_image": "Mackintosh Building facade"
+    },
+    {
+      "id": "c303cfbb-d936-40d8-aa10-e8308b9871de",
+      "name": "Heriot-Watt University",
+      "slug": "heriot-watt",
+      "website": "https://www.hw.ac.uk",
+      "wikipedia": "Heriot-Watt_University",
+      "known_image": "Riccarton campus / Cameron Smail Library"
+    },
+    {
+      "id": "258362ad-ecc9-47c7-97a9-2ba8d4800bb8",
+      "name": "Queen Margaret University",
+      "slug": "queen-margaret",
+      "website": "https://www.qmu.ac.uk",
+      "wikipedia": "Queen_Margaret_University",
+      "known_image": "Musselburgh campus main building"
+    },
+    {
+      "id": "30b5a864-7750-4fe8-ab17-153b37e70100",
+      "name": "Robert Gordon University",
+      "slug": "robert-gordon",
+      "website": "https://www.rgu.ac.uk",
+      "wikipedia": "Robert_Gordon_University",
+      "known_image": "Garthdee campus / Sir Ian Wood Building"
+    },
+    {
+      "id": "200a3874-68ad-44df-9924-513041fee634",
+      "name": "Royal Conservatoire of Scotland",
+      "slug": "royal-conservatoire",
+      "website": "https://www.rcs.ac.uk",
+      "wikipedia": "Royal_Conservatoire_of_Scotland",
+      "known_image": "Renfrew Street facade"
+    },
+    {
+      "id": "0ed68062-4ef6-419a-827d-cfdbc09b2c9d",
+      "name": "Scotland's Rural College",
+      "slug": "sruc",
+      "website": "https://www.sruc.ac.uk",
+      "wikipedia": "Scotland%27s_Rural_College",
+      "known_image": "King's Buildings Edinburgh campus"
+    },
+    {
+      "id": "c86def8d-a03b-40d8-9b82-00faa77b0302",
+      "name": "University of Aberdeen",
+      "slug": "aberdeen",
+      "website": "https://www.abdn.ac.uk",
+      "wikipedia": "University_of_Aberdeen",
+      "known_image": "King's College Chapel / Marischal College"
+    },
+    {
+      "id": "02362909-4ff2-41d5-99a9-9f179f57c8b8",
+      "name": "University of Dundee",
+      "slug": "dundee",
+      "website": "https://www.dundee.ac.uk",
+      "wikipedia": "University_of_Dundee",
+      "known_image": "Tower Building on Perth Road"
+    },
+    {
+      "id": "68365bd6-7529-4de7-bc78-d9a9e5753d62",
+      "name": "University of Edinburgh",
+      "slug": "edinburgh",
+      "website": "https://www.ed.ac.uk",
+      "wikipedia": "University_of_Edinburgh",
+      "known_image": "Old College / McEwan Hall"
+    },
+    {
+      "id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+      "name": "University of Glasgow",
+      "slug": "glasgow",
+      "website": "https://www.gla.ac.uk",
+      "wikipedia": "University_of_Glasgow",
+      "known_image": "Main Gothic building / Gilbert Scott Building"
+    },
+    {
+      "id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+      "name": "University of St Andrews",
+      "slug": "st-andrews",
+      "website": "https://www.st-andrews.ac.uk",
+      "wikipedia": "University_of_St_Andrews",
+      "known_image": "St Salvator's Quad / College Gate"
+    },
+    {
+      "id": "a9c693ec-bc56-44ef-9c52-e26ca447f6ee",
+      "name": "University of Stirling",
+      "slug": "stirling",
+      "website": "https://www.stir.ac.uk",
+      "wikipedia": "University_of_Stirling",
+      "known_image": "Pathfoot Building / loch and Wallace Monument view"
+    },
+    {
+      "id": "429f13e5-4500-4b90-9690-c89765632653",
+      "name": "University of Strathclyde",
+      "slug": "strathclyde",
+      "website": "https://www.strath.ac.uk",
+      "wikipedia": "University_of_Strathclyde",
+      "known_image": "Livingstone Tower / Royal College Building"
+    },
+    {
+      "id": "939894a6-f553-4250-b1d1-4f9cae1cfa21",
+      "name": "University of the Highlands and Islands",
+      "slug": "uhi",
+      "website": "https://www.uhi.ac.uk",
+      "wikipedia": "University_of_the_Highlands_and_Islands",
+      "known_image": "Inverness campus / Executive Office"
+    },
+    {
+      "id": "8f039a85-07be-4b42-b631-130ffe3c038e",
+      "name": "University of the West of Scotland",
+      "slug": "uws",
+      "website": "https://www.uws.ac.uk",
+      "wikipedia": "University_of_the_West_of_Scotland",
+      "known_image": "Paisley campus / Caird Building"
+    }
+  ],
+  "colleges": [
+    {
+      "id": "687e870b-f110-4379-8c4d-a595d252e9a1",
+      "name": "Ayrshire College",
+      "slug": "ayrshire",
+      "website": "https://www1.ayrshire.ac.uk",
+      "wikipedia": "Ayrshire_College"
+    },
+    {
+      "id": "a2c0dc45-e304-4206-a98d-82a7719dd7b9",
+      "name": "Borders College",
+      "slug": "borders",
+      "website": "https://www.borderscollege.ac.uk",
+      "wikipedia": "Borders_College"
+    },
+    {
+      "id": "76a20fdf-0c64-462e-aec0-38d2bb6a7fd2",
+      "name": "City of Glasgow College",
+      "slug": "city-of-glasgow",
+      "website": "https://www.cityofglasgowcollege.ac.uk",
+      "wikipedia": "City_of_Glasgow_College"
+    },
+    {
+      "id": "bd9f68d3-91eb-4bbe-af09-3c5ea65e96c6",
+      "name": "Dumfries and Galloway College",
+      "slug": "dumfries-galloway",
+      "website": "https://www.dumgal.ac.uk",
+      "wikipedia": "Dumfries_and_Galloway_College"
+    },
+    {
+      "id": "add719dd-345f-4449-9ba7-958f1ef16e5c",
+      "name": "Dundee and Angus College",
+      "slug": "dundee-angus",
+      "website": "https://dundeeandangus.ac.uk",
+      "wikipedia": "Dundee_and_Angus_College"
+    },
+    {
+      "id": "09d8d31f-35db-4725-9f01-6d5646ab8f70",
+      "name": "Edinburgh College",
+      "slug": "edinburgh-college",
+      "website": "https://www.edinburghcollege.ac.uk",
+      "wikipedia": "Edinburgh_College"
+    },
+    {
+      "id": "23f79e4d-4eb7-4669-9bbd-305f59199b53",
+      "name": "Fife College",
+      "slug": "fife",
+      "website": "https://www.fife.ac.uk",
+      "wikipedia": "Fife_College"
+    },
+    {
+      "id": "91be4a97-9655-4db1-807d-c4886b15b6ad",
+      "name": "Forth Valley College",
+      "slug": "forth-valley",
+      "website": "https://www.forthvalley.ac.uk",
+      "wikipedia": "Forth_Valley_College"
+    },
+    {
+      "id": "f7ed49f1-aae8-4bb9-a9e2-7ab45b1704d0",
+      "name": "Glasgow Clyde College",
+      "slug": "glasgow-clyde",
+      "website": "https://www.glasgowclyde.ac.uk",
+      "wikipedia": "Glasgow_Clyde_College"
+    },
+    {
+      "id": "5cacb70e-5b5e-4f07-b851-d31cef4e62be",
+      "name": "Glasgow Kelvin College",
+      "slug": "glasgow-kelvin",
+      "website": "https://www.glasgowkelvin.ac.uk",
+      "wikipedia": "Glasgow_Kelvin_College"
+    },
+    {
+      "id": "47649814-ea35-4e01-b1c7-e6298336facb",
+      "name": "New College Lanarkshire",
+      "slug": "new-college-lanarkshire",
+      "website": "https://www.nclanarkshire.ac.uk",
+      "wikipedia": "New_College_Lanarkshire"
+    },
+    {
+      "id": "d12718fa-ecae-4e17-8447-9a6b8df58f08",
+      "name": "North East Scotland College",
+      "slug": "nescol",
+      "website": "https://www.nescol.ac.uk",
+      "wikipedia": "North_East_Scotland_College"
+    },
+    {
+      "id": "fac2b5a4-8685-429b-b8fc-347cdb317a72",
+      "name": "Sabhal Mor Ostaig UHI",
+      "slug": "sabhal-mor-ostaig",
+      "website": "https://www.smo.uhi.ac.uk",
+      "wikipedia": "Sabhal_M%C3%B2r_Ostaig"
+    },
+    {
+      "id": "e191b495-80ed-4d03-a46b-0bae5666631b",
+      "name": "South Lanarkshire College",
+      "slug": "south-lanarkshire",
+      "website": "https://www.slc.ac.uk",
+      "wikipedia": "South_Lanarkshire_College"
+    },
+    {
+      "id": "b6714b3e-e935-4d23-9b71-23518696c709",
+      "name": "SRUC (Scotland's Rural College)",
+      "slug": "sruc-college",
+      "website": "https://www.sruc.ac.uk",
+      "wikipedia": "Scotland%27s_Rural_College"
+    },
+    {
+      "id": "6650a04b-8bdb-4c73-b601-66a7b2db3fb6",
+      "name": "UHI Argyll",
+      "slug": "uhi-argyll",
+      "website": "https://www.argyll.uhi.ac.uk",
+      "wikipedia": null
+    },
+    {
+      "id": "72e554ec-1b90-4743-b280-98485904f9a0",
+      "name": "UHI Inverness",
+      "slug": "uhi-inverness",
+      "website": "https://www.inverness.uhi.ac.uk",
+      "wikipedia": "Inverness_College"
+    },
+    {
+      "id": "d56454a6-9fc9-4c98-832a-f33d52aee1fa",
+      "name": "UHI Moray",
+      "slug": "uhi-moray",
+      "website": "https://www.moray.uhi.ac.uk",
+      "wikipedia": "Moray_College"
+    },
+    {
+      "id": "5deb57b2-2500-4af9-8fd0-14c6e6fa0ae3",
+      "name": "UHI North, West and Hebrides",
+      "slug": "uhi-nwh",
+      "website": "https://www.nwh.uhi.ac.uk",
+      "wikipedia": null
+    },
+    {
+      "id": "887e460b-7eca-4aa6-a680-7c069b648b72",
+      "name": "UHI Orkney",
+      "slug": "uhi-orkney",
+      "website": "https://www.orkney.uhi.ac.uk",
+      "wikipedia": "Orkney_College"
+    },
+    {
+      "id": "27d18140-3db0-40de-b840-5d80e3faa7b5",
+      "name": "UHI Perth",
+      "slug": "uhi-perth",
+      "website": "https://www.perth.uhi.ac.uk",
+      "wikipedia": "Perth_College_UHI"
+    },
+    {
+      "id": "030b67ac-c1f6-49d9-b251-fd9803c1a325",
+      "name": "UHI Shetland",
+      "slug": "uhi-shetland",
+      "website": "https://www.shetland.uhi.ac.uk",
+      "wikipedia": "Shetland_College"
+    },
+    {
+      "id": "4bd7df7c-4ea9-473a-9ba8-d4faa0b12992",
+      "name": "West College Scotland",
+      "slug": "west-college-scotland",
+      "website": "https://www.westcollegescotland.ac.uk",
+      "wikipedia": "West_College_Scotland"
+    },
+    {
+      "id": "2039e403-592b-4f5a-a15a-3e7ea5da0850",
+      "name": "West Lothian College",
+      "slug": "west-lothian",
+      "website": "https://www.west-lothian.ac.uk",
+      "wikipedia": "West_Lothian_College"
+    }
+  ]
+}

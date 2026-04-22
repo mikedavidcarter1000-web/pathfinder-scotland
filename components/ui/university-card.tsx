@@ -26,20 +26,26 @@ export function UniversityCard({ university, compact = false }: UniversityCardPr
         className="pf-card-hover"
         style={{ padding: 0, overflow: 'hidden', height: '100%' }}
       >
-        {/* Image / Placeholder */}
+        {/* Campus image / gradient placeholder */}
         <div
           className="relative"
           style={{
-            height: '128px',
-            backgroundColor: 'var(--pf-blue-50)',
+            height: '160px',
+            background:
+              'linear-gradient(135deg, var(--pf-blue-100) 0%, var(--pf-blue-50) 100%)',
+            borderTopLeftRadius: '8px',
+            borderTopRightRadius: '8px',
+            overflow: 'hidden',
           }}
         >
-          {university.logo_url ? (
+          {university.card_image_url ? (
             <Image
-              src={university.logo_url}
-              alt={university.name}
-              fill
-              className="object-contain p-4"
+              src={university.card_image_url}
+              alt={`${university.name} campus`}
+              width={640}
+              height={400}
+              className="w-full h-full"
+              style={{ objectFit: 'cover' }}
             />
           ) : (
             <div aria-hidden="true" className="absolute inset-0 flex items-center justify-center">

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useColleges } from '@/hooks/use-colleges'
 import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
@@ -285,6 +286,53 @@ function CollegeCard({ college }: { college: College }) {
       style={{ padding: 0, overflow: 'hidden' }}
       aria-label={`View ${college.name}`}
     >
+      {/* Campus image / gradient placeholder */}
+      <div
+        className="relative"
+        style={{
+          height: '160px',
+          background:
+            'linear-gradient(135deg, var(--pf-blue-100) 0%, var(--pf-blue-50) 100%)',
+          overflow: 'hidden',
+        }}
+      >
+        {college.card_image_url ? (
+          <Image
+            src={college.card_image_url}
+            alt={`${college.name} campus`}
+            width={640}
+            height={400}
+            className="w-full h-full"
+            style={{ objectFit: 'cover' }}
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <div
+              className="rounded-lg flex items-center justify-center"
+              style={{
+                width: '64px',
+                height: '64px',
+                backgroundColor: 'var(--pf-white)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700,
+                  fontSize: '1.75rem',
+                  color: 'var(--pf-blue-700)',
+                }}
+              >
+                {college.name.charAt(0)}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
       <div style={{ padding: '24px' }} className="flex-1 flex flex-col">
         {/* Header */}
         <div className="mb-3">

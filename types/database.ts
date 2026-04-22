@@ -722,6 +722,8 @@ export type Database = {
           is_active: boolean | null
           created_at: string | null
           image_url: string | null
+          card_image_url: string | null
+          hero_image_url: string | null
         }
         Insert: {
           id?: string
@@ -748,6 +750,8 @@ export type Database = {
           is_active?: boolean | null
           created_at?: string | null
           image_url?: string | null
+          card_image_url?: string | null
+          hero_image_url?: string | null
         }
         Update: {
           id?: string
@@ -774,6 +778,8 @@ export type Database = {
           is_active?: boolean | null
           created_at?: string | null
           image_url?: string | null
+          card_image_url?: string | null
+          hero_image_url?: string | null
         }
         Relationships: []
       }
@@ -2727,6 +2733,8 @@ export type Database = {
           widening_access_info: Json | null
           widening_access_url: string | null
           image_url: string | null
+          card_image_url: string | null
+          hero_image_url: string | null
         }
         Insert: {
           articulation_info?: string | null
@@ -2758,6 +2766,8 @@ export type Database = {
           widening_access_info?: Json | null
           widening_access_url?: string | null
           image_url?: string | null
+          card_image_url?: string | null
+          hero_image_url?: string | null
         }
         Update: {
           articulation_info?: string | null
@@ -2789,6 +2799,8 @@ export type Database = {
           widening_access_info?: Json | null
           widening_access_url?: string | null
           image_url?: string | null
+          card_image_url?: string | null
+          hero_image_url?: string | null
         }
         Relationships: []
       }
