@@ -3,13 +3,15 @@
 import { Suspense, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useSignUp } from '@/hooks/use-auth'
 import { SocialLoginButtons, SocialLoginDivider } from '@/components/auth/social-login-buttons'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { useToast } from '@/components/ui/toast'
 
-type AccountType = 'student' | 'parent'
+// NOTE: the students.user_type column is retained (values: 'student', 'parent')
+// as a reserved discriminator for future role expansion. The MVP sign-up only
+// creates 'student' rows -- parent/carer sign-up was dropped 2026-04-25.
 
 export default function SignUpPage() {
   return (
@@ -21,12 +23,7 @@ export default function SignUpPage() {
 
 function SignUpContent() {
   const router = useRouter()
-  const searchParams = useSearchParams()
 
-  const initialType: AccountType =
-    searchParams.get('type') === 'parent' ? 'parent' : 'student'
-
-  const [accountType, setAccountType] = useState<AccountType>(initialType)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -37,8 +34,7 @@ function SignUpContent() {
   const signUp = useSignUp()
   const toast = useToast()
 
-  const onboardingHref =
-    accountType === 'parent' ? '/onboarding?type=parent' : '/onboarding'
+  const onboardingHref = '/onboarding'
 
   const validatePassword = (password: string) => {
     if (password.length < 8) return 'Password must be at least 8 characters'
@@ -135,30 +131,8 @@ function SignUpContent() {
           <div className="text-center mb-3">
             <h1 style={{ marginBottom: '2px' }}>Create your account</h1>
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem' }}>
-              {accountType === 'parent'
-                ? 'Support your child through their subject choices.'
-                : 'Start your university journey today.'}
+              Start your university journey today.
             </p>
-          </div>
-
-          {/* Account type toggle */}
-          <div
-            role="radiogroup"
-            aria-label="Account type"
-            className="grid grid-cols-2 gap-3 mb-3"
-          >
-            <AccountTypeCard
-              label="I'm a student"
-              description="Build your pathway"
-              active={accountType === 'student'}
-              onClick={() => setAccountType('student')}
-            />
-            <AccountTypeCard
-              label="I'm a parent or carer"
-              description="Support your child"
-              active={accountType === 'parent'}
-              onClick={() => setAccountType('parent')}
-            />
           </div>
 
           {/* Social Login */}
@@ -339,50 +313,3 @@ function SignUpContent() {
   )
 }
 
-function AccountTypeCard({
-  label,
-  description,
-  active,
-  onClick,
-}: {
-  label: string
-  description: string
-  active: boolean
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      role="radio"
-      aria-checked={active}
-      aria-pressed={active}
-      onClick={onClick}
-      className="text-left transition-all"
-      style={{
-        padding: '10px 14px',
-        borderRadius: '8px',
-        backgroundColor: active ? 'var(--pf-blue-50)' : 'var(--pf-white)',
-        border: active
-          ? '2px solid var(--pf-blue-700)'
-          : '2px solid var(--pf-grey-300)',
-        cursor: 'pointer',
-      }}
-    >
-      <div
-        style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontWeight: 600,
-          fontSize: '0.9375rem',
-          color: active ? 'var(--pf-blue-700)' : 'var(--pf-grey-900)',
-          lineHeight: 1.2,
-          marginBottom: '2px',
-        }}
-      >
-        {label}
-      </div>
-      <div style={{ fontSize: '0.75rem', color: 'var(--pf-grey-600)' }}>
-        {description}
-      </div>
-    </button>
-  )
-}
