@@ -32,6 +32,47 @@ UI is ready. To enable providers, configure in Supabase Dashboard > Authenticati
 
 Callback URL for all providers: `https://qexfszbhmdducszupyzi.supabase.co/auth/v1/callback`
 
+### Auth Email -> Resend SMTP (PILOT CONFIGURATION CHECKLIST)
+
+Pathfinder routes Supabase Auth transactional email (sign-up confirmation,
+password reset, magic link) through Resend SMTP rather than Supabase's
+default sender. This keeps all transactional email on a single provider
+with consistent deliverability and analytics.
+
+**Manual setup steps (Supabase MCP cannot configure SMTP directly):**
+
+1. Verify the sending domain in Resend has SPF, DKIM, and Return-Path
+   records green (`pathfinderscot.co.uk` or whatever DNS-verified domain
+   the account holds). If not green, STOP -- routing auth email through an
+   unverified domain will silently bounce sign-ups.
+2. Supabase Dashboard > Project Settings > Authentication > SMTP Settings:
+   - Enable Custom SMTP
+   - Host: `smtp.resend.com`
+   - Port: `465`
+   - Username: `resend`
+   - Password: Resend API key (paste in dashboard; do NOT commit)
+   - Sender email: `noreply@pathfinderscot.co.uk`
+   - Sender name: `Pathfinder Scotland`
+3. Trigger a password reset for a test account; confirm the email arrives
+   from the Pathfinder sender and the Resend dashboard logs the delivery.
+
+### Auth rate limits (raised for pilot)
+
+Pathfinder raises Supabase Auth rate limits above defaults to accommodate
+school-IP burst behaviour during pilot rollouts. Configure these in
+Supabase Dashboard > Authentication > Rate Limits:
+
+| Limit | Default | Pathfinder pilot |
+|-------|---------|------------------|
+| Email sends per hour (SMTP) | 4 | 30 |
+| Sign-up attempts per hour per IP | 30 | 100 |
+| Token refresh requests per 5 min | 150 | 150 (default) |
+
+The client surfaces 429 responses via `friendlySignInMessage` /
+`isRateLimitError` in `hooks/use-auth.tsx`. Sign-in / sign-up / reset
+flows all emit a non-alarming "wait a moment" message; reset specifically
+suggests waiting ~60 minutes before retrying.
+
 ### Stripe Integration (REQUIRES CONFIGURATION)
 
 Tables: `stripe_customers`, `stripe_products`, `stripe_prices`, `stripe_subscriptions`, `stripe_payments`

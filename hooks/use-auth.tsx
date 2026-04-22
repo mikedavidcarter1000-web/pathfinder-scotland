@@ -97,6 +97,22 @@ export function useAuth() {
   return useContext(AuthContext)
 }
 
+// Detect Supabase Auth rate-limit responses across all flows. Status 429 is
+// the canonical signal; some Supabase Gateway errors include "rate"/"too many"
+// in the message instead of a status.
+function isRateLimitError(err: unknown): boolean {
+  const e = err as { status?: number; message?: string }
+  const status = e?.status ?? 0
+  const msg = (e?.message || '').toLowerCase()
+  return status === 429 || msg.includes('rate') || msg.includes('too many')
+}
+
+const RATE_LIMIT_MESSAGE =
+  "You've tried a few times in a short window. Please wait a moment and try again. If this keeps happening, try a password reset or contact support."
+
+const RESET_RATE_LIMIT_MESSAGE =
+  "We've already sent a few reset emails to this address. Please wait around 60 minutes before requesting another, and check your spam folder in the meantime."
+
 // Sign Up
 export function useSignUp() {
   const supabase = getSupabaseClient()
@@ -107,7 +123,10 @@ export function useSignUp() {
         email,
         password,
       })
-      if (error) throw error
+      if (error) {
+        if (isRateLimitError(error)) throw new Error(RATE_LIMIT_MESSAGE)
+        throw error
+      }
       return data
     },
   })
@@ -125,7 +144,7 @@ function friendlySignInMessage(err: unknown): string {
     return 'Something went wrong. Please try again.'
   }
   if (status === 429 || msg.includes('rate limit') || msg.includes('too many')) {
-    return 'Too many attempts. Please wait a moment.'
+    return RATE_LIMIT_MESSAGE
   }
   if (
     status === 400 ||
@@ -217,7 +236,10 @@ export function useResetPassword() {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/reset-password`,
       })
-      if (error) throw error
+      if (error) {
+        if (isRateLimitError(error)) throw new Error(RESET_RATE_LIMIT_MESSAGE)
+        throw error
+      }
     },
   })
 }
