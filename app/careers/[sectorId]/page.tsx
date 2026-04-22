@@ -2,6 +2,7 @@
 
 import { use, useMemo, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   useCareerSectorPageData,
   type CareerSubjectRow,
@@ -310,6 +311,36 @@ export default function CareerSectorDetailPage({
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
+      {/* Hero banner */}
+      {sector.hero_image_url ? (
+        <div
+          className="relative w-full"
+          style={{
+            height: 'clamp(180px, 26vw, 280px)',
+            backgroundColor: 'var(--pf-blue-100)',
+            overflow: 'hidden',
+          }}
+        >
+          <Image
+            src={sector.hero_image_url}
+            alt={`${sector.name} careers`}
+            fill
+            priority
+            sizes="100vw"
+            style={{ objectFit: 'cover' }}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 bottom-0"
+            style={{
+              height: '50%',
+              background:
+                'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 100%)',
+            }}
+          />
+        </div>
+      ) : null}
+
       {/* Header */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">

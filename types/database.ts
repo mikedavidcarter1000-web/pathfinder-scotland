@@ -583,12 +583,14 @@ export type Database = {
           ai_impact_source: string | null
           ai_sector_narrative: string | null
           apprenticeships_text: string | null
+          card_image_url: string | null
           course_subject_areas: string[] | null
           description: string | null
           display_order: number | null
           example_jobs: string[] | null
           external_links: Json | null
           growth_outlook: string | null
+          hero_image_url: string | null
           id: string
           name: string
           salary_range_entry: string | null
@@ -602,12 +604,14 @@ export type Database = {
           ai_impact_source?: string | null
           ai_sector_narrative?: string | null
           apprenticeships_text?: string | null
+          card_image_url?: string | null
           course_subject_areas?: string[] | null
           description?: string | null
           display_order?: number | null
           example_jobs?: string[] | null
           external_links?: Json | null
           growth_outlook?: string | null
+          hero_image_url?: string | null
           id?: string
           name: string
           salary_range_entry?: string | null
@@ -621,12 +625,14 @@ export type Database = {
           ai_impact_source?: string | null
           ai_sector_narrative?: string | null
           apprenticeships_text?: string | null
+          card_image_url?: string | null
           course_subject_areas?: string[] | null
           description?: string | null
           display_order?: number | null
           example_jobs?: string[] | null
           external_links?: Json | null
           growth_outlook?: string | null
+          hero_image_url?: string | null
           id?: string
           name?: string
           salary_range_entry?: string | null

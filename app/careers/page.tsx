@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useCareerSectors, type CareerSectorWithCount } from '@/hooks/use-subjects'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
@@ -416,24 +417,44 @@ function SectorCard({ sector }: { sector: CareerSectorWithCount }) {
     <Link
       href={`/careers/${sector.id}`}
       className="pf-card-hover no-underline hover:no-underline flex flex-col h-full"
-      style={{ padding: '24px' }}
+      style={{ padding: 0, overflow: 'hidden' }}
       aria-label={`View ${sector.name}`}
     >
       <div
-        className="flex items-center justify-center"
+        className="relative"
         style={{
-          width: '48px',
-          height: '48px',
-          borderRadius: '10px',
-          backgroundColor: 'var(--pf-blue-100)',
-          color: 'var(--pf-blue-700)',
-          marginBottom: '16px',
+          width: '100%',
+          height: '160px',
+          background:
+            'linear-gradient(135deg, var(--pf-blue-100) 0%, var(--pf-blue-50) 100%)',
+          overflow: 'hidden',
         }}
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
+        {sector.card_image_url ? (
+          <Image
+            src={sector.card_image_url}
+            alt={`${sector.name} careers`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            style={{ objectFit: 'cover' }}
+          />
+        ) : (
+          <div aria-hidden="true" className="absolute inset-0 flex items-center justify-center">
+            <svg
+              className="w-10 h-10"
+              style={{ color: 'var(--pf-blue-700)' }}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+        )}
       </div>
+
+      <div className="flex flex-col flex-1" style={{ padding: '20px 24px 24px' }}>
 
       <h3
         style={{
@@ -519,6 +540,7 @@ function SectorCard({ sector }: { sector: CareerSectorWithCount }) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
         </span>
+      </div>
       </div>
     </Link>
   )
