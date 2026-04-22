@@ -9,6 +9,7 @@ import { useGenerateReminders } from '@/hooks/use-reminders'
 import { useAuth, useUpdatePassword } from '@/hooks/use-auth'
 import { getSupabaseClient } from '@/lib/supabase'
 import { ParentAccessSection } from '@/components/dashboard/parent-access-section'
+import { LinkToSchool } from '@/components/student/link-to-school'
 
 const INCOME_LABELS: Record<string, string> = {
   under_21000: 'Under £21,000',
@@ -132,6 +133,9 @@ export default function SettingsPage() {
 
       {/* Parent / guardian access — only shown for student accounts */}
       {student && <ParentAccessSection />}
+
+      {/* School link -- student can link themselves to a Pathfinder school */}
+      {student && <LinkToSchool />}
 
       {/* Change Password section */}
       <ChangePasswordSection />

@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useAuth, useSignOut } from '@/hooks/use-auth'
 import { useHasAcceptedOffer } from '@/hooks/use-offers'
 import { UserMenu } from '@/components/auth/user-menu'
+import { useIsSchoolStaff } from '@/hooks/use-school-staff'
 import { getInitials } from '@/lib/utils'
 
 const SearchBar = lazy(() =>
@@ -89,14 +90,15 @@ export function Navbar() {
   const navRef = useRef<HTMLDivElement>(null)
 
   const isParent = !!parent || student?.user_type === 'parent'
+  const { isStaff, membership } = useIsSchoolStaff()
   const { hasAccepted } = useHasAcceptedOffer()
-  const dashboardHref = isParent ? '/parent/dashboard' : '/dashboard'
+  const dashboardHref = isStaff ? '/school/dashboard' : isParent ? '/parent/dashboard' : '/dashboard'
 
   // Parents see a stripped-down nav: Dashboard, Help, Contact, plus the logo
   // and sign-out. Student-side Explore/Plan/Browse/Tools/Support groups are
   // hidden because parent accounts are intentionally scoped to a read-only
   // view of their linked child's progress.
-  const filteredGroups = isParent
+  const filteredGroups = isParent || isStaff
     ? []
     : NAV_GROUPS.map((group) => ({
         ...group,
@@ -252,6 +254,34 @@ export function Navbar() {
                       color: '#1B3A5C',
                       opacity: pathname === '/contact' ? 1 : 0.82,
                     }}
+                  >
+                    Contact
+                  </Link>
+                </>
+              )}
+
+              {user && isStaff && (
+                <>
+                  {membership?.isAdmin && (
+                    <Link
+                      href="/school/settings"
+                      className="px-3 py-2 text-sm no-underline hover:no-underline"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, color: '#1B3A5C', opacity: pathname.startsWith('/school/settings') ? 1 : 0.82 }}
+                    >
+                      Settings
+                    </Link>
+                  )}
+                  <Link
+                    href="/help"
+                    className="px-3 py-2 text-sm no-underline hover:no-underline"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, color: '#1B3A5C', opacity: pathname === '/help' ? 1 : 0.82 }}
+                  >
+                    Help
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="px-3 py-2 text-sm no-underline hover:no-underline"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, color: '#1B3A5C', opacity: pathname === '/contact' ? 1 : 0.82 }}
                   >
                     Contact
                   </Link>

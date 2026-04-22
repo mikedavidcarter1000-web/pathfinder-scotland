@@ -25,6 +25,8 @@ export function Footer() {
       { label: 'Guides & Articles', href: '/blog' },
     ],
     schools: [
+      { label: 'For Schools', href: '/for-schools' },
+      { label: 'Register your school', href: '/school/register' },
       { label: 'Demo', href: '/demo' },
       { label: 'Pilot programme', href: 'mailto:hello@pathfinderscot.co.uk?subject=Pilot%20school%20interest', external: true },
       { label: 'Funding enquiries', href: 'mailto:hello@pathfinderscot.co.uk?subject=Funding%20enquiry', external: true },

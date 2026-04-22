@@ -73,6 +73,9 @@ export async function middleware(request: NextRequest) {
     '/onboarding',
     '/admin',
     '/parent/dashboard',
+    '/school/dashboard',
+    '/school/settings',
+    '/school/subscribe',
   ]
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
 
@@ -90,19 +93,33 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
-  // Routing by account type (student vs parent). /parent/join is an onboarding
-  // surface and must stay accessible regardless of account state.
+  // Routing by account type (student vs parent vs school staff). /parent/join
+  // and /school/register / /school/join are onboarding surfaces and must stay
+  // accessible regardless of account state.
   if (session && !pathname.startsWith('/onboarding') && !pathname.startsWith('/auth')) {
-    const [{ data: student }, { data: parent }] = await Promise.all([
+    const [{ data: student }, { data: parent }, { data: staff }] = await Promise.all([
       supabase.from('students').select('id').eq('id', session.user.id).maybeSingle(),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (supabase as any).from('parents').select('id').eq('user_id', session.user.id).maybeSingle(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any).from('school_staff').select('user_id').eq('user_id', session.user.id).maybeSingle(),
     ])
 
-    // Parents must not access the student dashboard and student-only surfaces
+    // School staff must not access student or parent dashboards; land on /school/dashboard instead
     const studentOnlyPrefixes = ['/dashboard', '/saved', '/grades', '/quiz', '/prep']
+    if (staff && (pathname === '/dashboard' || studentOnlyPrefixes.some((p) => pathname === p || pathname.startsWith(p + '/')) || pathname.startsWith('/parent/dashboard'))) {
+      return NextResponse.redirect(new URL('/school/dashboard', request.url))
+    }
+
+    // Parents must not access the student dashboard and student-only surfaces
     if (parent && studentOnlyPrefixes.some((p) => pathname === p || pathname.startsWith(p + '/'))) {
       return NextResponse.redirect(new URL('/parent/dashboard', request.url))
+    }
+
+    // Students and parents must not access the school dashboard
+    if (!staff && (pathname.startsWith('/school/dashboard') || pathname.startsWith('/school/settings'))) {
+      if (parent) return NextResponse.redirect(new URL('/parent/dashboard', request.url))
+      if (student) return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
     // Students must not access parent dashboard pages (join flow stays open)
@@ -110,10 +127,16 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
-    // If signed in but neither profile exists, send to onboarding. Exception:
-    // /parent/join is where unlinked parent-shaped accounts complete their
-    // setup, so don't bounce them back to the student onboarding flow.
-    if (!student && !parent && !pathname.startsWith('/parent/join')) {
+    // If signed in but no profile exists, send to onboarding. Exceptions for
+    // in-flight onboarding surfaces: parent/join and school/register+join.
+    if (
+      !student &&
+      !parent &&
+      !staff &&
+      !pathname.startsWith('/parent/join') &&
+      !pathname.startsWith('/school/register') &&
+      !pathname.startsWith('/school/join')
+    ) {
       return NextResponse.redirect(new URL('/onboarding', request.url))
     }
   }
