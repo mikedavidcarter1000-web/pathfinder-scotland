@@ -6,6 +6,7 @@ import { LabelRow } from './LabelRow'
 import { NumericBar } from './NumericBar'
 import { TierBar } from './TierBar'
 import { EarningsSection } from './EarningsSection'
+import { RoiSection } from './RoiSection'
 
 type EntryQualification =
   | 'none'
@@ -246,6 +247,10 @@ export function ComparisonGrid({ roleIds }: ComparisonGridProps) {
 
       <Section title="Earnings" defaultOpen>
         <EarningsSection roles={roles} />
+      </Section>
+
+      <Section title="Return on investment">
+        <RoiSection roles={roles} />
       </Section>
 
       <Section title="Daily work">
