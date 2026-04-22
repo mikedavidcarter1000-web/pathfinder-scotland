@@ -9,6 +9,7 @@ import { ParentCoursesCard } from '@/components/parent-dashboard/courses-card'
 import { ParentFundingCard } from '@/components/parent-dashboard/funding-card'
 import { ParentKeyDatesCard } from '@/components/parent-dashboard/key-dates-card'
 import { ParentBenchmarksCard } from '@/components/parent-dashboard/benchmarks-card'
+import { GoogleTranslate } from '@/components/parent/google-translate'
 
 export default function ParentDashboardPage() {
   const router = useRouter()
@@ -65,6 +66,7 @@ export default function ParentDashboardPage() {
   if (!children || children.length === 0) {
     return (
       <div className="pf-container pt-8 pb-12 max-w-2xl">
+        <GoogleTranslate />
         <h1 style={{ marginBottom: '8px' }}>Welcome, {firstName}</h1>
         <p style={{ color: 'var(--pf-grey-600)', marginBottom: '20px' }}>
           You don&apos;t have any linked children yet. Ask your child to generate an invite
@@ -89,6 +91,7 @@ export default function ParentDashboardPage() {
 
   return (
     <div className="pf-container pt-8 pb-12">
+      <GoogleTranslate />
       <div className="mb-6">
         <span className="pf-badge-blue inline-flex" style={{ marginBottom: '10px' }}>
           Parent / guardian dashboard

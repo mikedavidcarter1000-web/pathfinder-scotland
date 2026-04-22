@@ -134,6 +134,7 @@ export async function middleware(request: NextRequest) {
       !parent &&
       !staff &&
       !pathname.startsWith('/parent/join') &&
+      !pathname.startsWith('/parent/welcome') &&
       !pathname.startsWith('/school/register') &&
       !pathname.startsWith('/school/join')
     ) {

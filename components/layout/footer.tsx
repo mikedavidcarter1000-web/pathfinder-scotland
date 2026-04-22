@@ -22,6 +22,7 @@ export function Footer() {
       { label: 'Bursaries & Funding', href: '/bursaries' },
       { label: 'Student Benefits', href: '/benefits' },
       { label: 'For Parents', href: '/parents' },
+      { label: 'For parents — information in your language', href: '/parent/welcome' },
       { label: 'Guides & Articles', href: '/blog' },
     ],
     schools: [

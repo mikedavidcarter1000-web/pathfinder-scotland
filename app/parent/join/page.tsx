@@ -488,6 +488,11 @@ function ParentJoinContent() {
               parent and guardian guide
             </Link>
             .
+            <div style={{ marginTop: '8px' }}>
+              <Link href="/parent/welcome" style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}>
+                Information available in other languages
+              </Link>
+            </div>
           </div>
         </div>
       </div>
