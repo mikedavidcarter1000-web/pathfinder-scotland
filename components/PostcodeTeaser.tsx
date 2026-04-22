@@ -245,6 +245,20 @@ export function PostcodeTeaser() {
         >
           We use your postcode to check SIMD eligibility. Nothing is saved.
         </p>
+
+        <p style={{ margin: '10px 0 0', fontSize: '0.8125rem' }}>
+          <Link
+            href="/careers"
+            style={{
+              color: 'var(--pf-blue-700)',
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 600,
+              textDecoration: 'underline',
+            }}
+          >
+            Skip for now &mdash; browse the site
+          </Link>
+        </p>
       </form>
     </section>
   )
@@ -503,22 +517,31 @@ function TeaserResultPanel({
         >
           See your matched courses, named bursaries and deadlines
         </p>
-        <Link
-          href={`/auth/sign-up?postcode=${encodeURIComponent(result.postcode)}&yearGroup=${encodeURIComponent(result.yearGroup)}`}
-          className="pf-btn-primary w-full sm:w-auto justify-center"
-          style={{ minHeight: '48px' }}
-        >
-          Sign up free
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <Link
+            href={`/auth/sign-up?postcode=${encodeURIComponent(result.postcode)}&yearGroup=${encodeURIComponent(result.yearGroup)}`}
+            className="pf-btn-primary w-full sm:w-auto justify-center"
+            style={{ minHeight: '48px' }}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-          </svg>
-        </Link>
+            Sign up free
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </Link>
+          <Link
+            href="/careers"
+            className="pf-btn pf-btn-secondary w-full sm:w-auto justify-center"
+            style={{ minHeight: '48px' }}
+          >
+            Browse without signing up
+          </Link>
+        </div>
       </div>
 
       <button
