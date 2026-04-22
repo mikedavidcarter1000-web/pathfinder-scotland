@@ -1,0 +1,197 @@
+[
+  {
+    "id": "09a13240-bb0a-41df-ab61-81465cfa39f1",
+    "name": "University of Glasgow",
+    "slug": "glasgow",
+    "table": "universities",
+    "typeDir": "universities",
+    "commonsCategories": [
+      "Main_building_of_the_University_of_Glasgow",
+      "University_of_Glasgow"
+    ],
+    "wikipediaArticle": "University_of_Glasgow",
+    "website": "https://www.gla.ac.uk",
+    "status": "OK",
+    "source": "commons",
+    "cardFile": "Early morning sun on Glasgow University Tower - geograph.org.uk - 3762871.jpg",
+    "heroFile": "Gilbert Scott Building, University of Glasgow - geograph.org.uk - 5802276.jpg"
+  },
+  {
+    "id": "b46b546a-6283-4a50-9960-f3daa88deae1",
+    "name": "University of St Andrews",
+    "slug": "st-andrews",
+    "table": "universities",
+    "typeDir": "universities",
+    "commonsCategories": [
+      "St_Salvator's_Quad,_St_Andrews",
+      "Buildings_of_the_University_of_St_Andrews",
+      "University_of_St_Andrews"
+    ],
+    "wikipediaArticle": "University_of_St_Andrews",
+    "website": "https://www.st-andrews.ac.uk",
+    "status": "OK",
+    "source": "commons",
+    "cardFile": "Feeding the doves of St. Mary's College, South Street, St. Andrews - geograph.org.uk - 2522059.jpg",
+    "heroFile": "United College University of St Andrews.jpg"
+  },
+  {
+    "id": "02362909-4ff2-41d5-99a9-9f179f57c8b8",
+    "name": "University of Dundee",
+    "slug": "dundee",
+    "table": "universities",
+    "typeDir": "universities",
+    "commonsCategories": [
+      "Tower_Building,_University_of_Dundee",
+      "University_of_Dundee"
+    ],
+    "wikipediaArticle": "University_of_Dundee",
+    "website": "https://www.dundee.ac.uk",
+    "status": "OK",
+    "source": "commons",
+    "cardFile": "Duncan of Jordanstone College of Art and Design.jpg",
+    "heroFile": "University of Dundee - Tower Building.jpg"
+  },
+  {
+    "id": "a9c693ec-bc56-44ef-9c52-e26ca447f6ee",
+    "name": "University of Stirling",
+    "slug": "stirling",
+    "table": "universities",
+    "typeDir": "universities",
+    "commonsCategories": [],
+    "commonsSearch": [
+      "\"University of Stirling campus\" geograph",
+      "University of Stirling geograph colour"
+    ],
+    "wikipediaArticle": "University_of_Stirling",
+    "website": "https://www.stir.ac.uk",
+    "status": "OK",
+    "source": "commons",
+    "cardFile": "E Link Road, University of Stirling campus - geograph.org.uk - 3258310.jpg",
+    "heroFile": "A pond, University of Stirling campus - geograph.org.uk - 3258322.jpg"
+  },
+  {
+    "id": "429f13e5-4500-4b90-9690-c89765632653",
+    "name": "University of Strathclyde",
+    "slug": "strathclyde",
+    "table": "universities",
+    "typeDir": "universities",
+    "commonsCategories": [
+      "University_of_Strathclyde",
+      "Royal_College_Building"
+    ],
+    "wikipediaArticle": "University_of_Strathclyde",
+    "website": "https://www.strath.ac.uk",
+    "status": "OK",
+    "source": "commons",
+    "cardFile": "Curran Building, University of Strathclyde - geograph.org.uk - 6075099.jpg",
+    "heroFile": "James goold hall.jpg"
+  },
+  {
+    "id": "c303cfbb-d936-40d8-aa10-e8308b9871de",
+    "name": "Heriot-Watt University",
+    "slug": "heriot-watt",
+    "table": "universities",
+    "typeDir": "universities",
+    "commonsCategories": [
+      "Heriot-Watt_University",
+      "Riccarton_Campus"
+    ],
+    "wikipediaArticle": "Heriot-Watt_University",
+    "website": "https://www.hw.ac.uk",
+    "status": "OK",
+    "source": "commons",
+    "cardFile": "Cameron Smail Library, Heriot-Watt University - geograph.org.uk - 3450367.jpg",
+    "heroFile": "Heriot-Watt University, Edinburgh Campus - geograph.org.uk - 3450763.jpg"
+  },
+  {
+    "id": "30b5a864-7750-4fe8-ab17-153b37e70100",
+    "name": "Robert Gordon University",
+    "slug": "robert-gordon",
+    "table": "universities",
+    "typeDir": "universities",
+    "commonsCategories": [
+      "Robert_Gordon_University",
+      "Garthdee"
+    ],
+    "wikipediaArticle": "Robert_Gordon_University",
+    "website": "https://www.rgu.ac.uk",
+    "status": "OK",
+    "source": "commons",
+    "cardFile": "Garthdee retail park from Queen's View - geograph.org.uk - 1709911.jpg",
+    "heroFile": "RGU entrance on Schoolhill.JPG"
+  },
+  {
+    "id": "8f039a85-07be-4b42-b631-130ffe3c038e",
+    "name": "University of the West of Scotland",
+    "slug": "uws",
+    "table": "universities",
+    "typeDir": "universities",
+    "commonsCategories": [
+      "University_of_the_West_of_Scotland",
+      "University_of_Paisley"
+    ],
+    "wikipediaArticle": "University_of_the_West_of_Scotland",
+    "website": "https://www.uws.ac.uk",
+    "status": "OK",
+    "source": "commons",
+    "cardFile": "University of the West of Scotland engineering building - geograph.org.uk - 3080469.jpg",
+    "heroFile": "Caird Building - geograph.org.uk - 3080507.jpg"
+  },
+  {
+    "id": "7d24935a-6e6b-4e50-941c-7d89b1e019be",
+    "name": "Glasgow Caledonian University",
+    "slug": "glasgow-caledonian",
+    "table": "universities",
+    "typeDir": "universities",
+    "commonsCategories": [
+      "Glasgow_Caledonian_University"
+    ],
+    "wikipediaArticle": "Glasgow_Caledonian_University",
+    "website": "https://www.gcu.ac.uk",
+    "status": "OK",
+    "source": "commons",
+    "cardFile": "Annie Lennox Building - geograph.org.uk - 7651429.jpg",
+    "heroFile": "DSCN3182 View from roof of Glasgow College of Building and Printing.jpg"
+  },
+  {
+    "id": "76a20fdf-0c64-462e-aec0-38d2bb6a7fd2",
+    "name": "City of Glasgow College",
+    "slug": "city-of-glasgow",
+    "table": "colleges",
+    "typeDir": "colleges",
+    "commonsCategories": [
+      "City_of_Glasgow_College_City_Campus",
+      "City_of_Glasgow_College"
+    ],
+    "wikipediaArticle": "City_of_Glasgow_College",
+    "website": "https://www.cityofglasgowcollege.ac.uk",
+    "status": "OK",
+    "source": "commons",
+    "cardFile": "City of Glasgow College (geograph 6228694).jpg",
+    "heroFile": "Redeveloped area at City of Glasgow College - geograph.org.uk - 6124941.jpg"
+  },
+  {
+    "id": "f7ed49f1-aae8-4bb9-a9e2-7ab45b1704d0",
+    "name": "Glasgow Clyde College",
+    "slug": "glasgow-clyde",
+    "table": "colleges",
+    "typeDir": "colleges",
+    "commonsCategories": [
+      "Glasgow_Clyde_College",
+      "Anniesland_College",
+      "Cardonald_College",
+      "Langside_College"
+    ],
+    "commonsSearch": [
+      "\"Anniesland College\"",
+      "\"Cardonald College\"",
+      "\"Langside College\" Glasgow"
+    ],
+    "wikipediaArticle": "Glasgow_Clyde_College",
+    "website": "https://www.glasgowclyde.ac.uk",
+    "status": "OK",
+    "source": "commons",
+    "cardFile": "Skills Centre, Cardonald College, Glasgow - geograph.org.uk - 3522900.jpg",
+    "heroFile": "Glasgow Clyde College - geograph.org.uk - 4561883.jpg"
+  }
+]
