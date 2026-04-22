@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Blog batch 2 -- 6 SEO-priority articles deployed
+
+- **Attached file not transmitted.** The task prompt said "the content is in the attached file `pathfinder-blog-articles-batch2.md`" but the file was not present anywhere on the filesystem. The session was interrupted mid-execution after two placeholder articles had been written. Once the user re-sent the content inline, the placeholders were overwritten and all 6 articles were written using the supplied content. **Rule: when a task prompt references an attached file that is not found at the project root, stop immediately and ask the user to supply the content before writing any placeholder files. Writing placeholder files wastes context and creates stale artefacts that need overwriting.**
+
+- **Internal link `/tools/simulator` does not exist; correct path is `/simulator`.** The supplied content file referenced `/tools/simulator` in several articles. Checking `app/` confirmed the simulator lives at `/simulator` (there is no `app/tools/simulator/` directory). Similarly, `/blog/is-advanced-higher-worth-it` was referenced in the pass rates article but no such article exists; substituted `/blog/choosing-your-highers`. **Rule: before writing blog content that contains internal links, verify each `href` against the `app/` directory tree. The cost of a 30-second `ls` is negligible; a 404 in published content damages SEO and user trust.**
+
+- **Heading level `####` is invisible to the TOC extractor.** The supplied content used `####` for all section headings. The `extractToc` function in `lib/blog.ts` matches only `#{2,3}` (H2 and H3). Articles with only `####` headings would render with no sidebar TOC at all. Converted all `####` to `##` or `###` before writing the files. **Rule: blog content headings must be H2 (`##`) for main sections and H3 (`###`) for sub-sections. H4 and deeper are invisible to the TOC and should not be the primary section marker in a Pathfinder blog article.**
+
+- **Blog system is file-based with zero code changes for new articles.** Adding articles requires only dropping `.md` files into `content/blog/`. The `getArticleSlugs()` function reads the directory at build time; `generateStaticParams` picks up all slugs automatically. There is no index file, no data array, and no component to update. **Rule: for blog content additions, the only deliverable is the `.md` file in `content/blog/`. Verify via `npm run build` that the new slugs appear in the `/blog/[slug]` route list -- this is the fastest end-to-end confirmation.**
+
+- **Build confirmed clean.** `npx tsc --noEmit`: 0 errors. `npm run build`: 392 static pages generated, all 6 new slugs present in the `/blog/[slug]` SSG list. Commit: ce4e81c.
+
 ## 2026-04-22 Migration tracking reset Session 11b -- baseline production schema; archive prior 94 migrations
 
 - **Files added:** `supabase/migrations/20260422143617_baseline_production_schema.sql` (2320 lines, 123KB single canonical baseline -- 53 tables, 8 enums, 23 functions, 25 triggers, 92 indexes, 97 RLS policies, ~190 constraints); `supabase/migrations/_archived_pre_11b_reset/` directory containing the 94 superseded migration files plus a README explaining provenance; `docs/migration-reset-11b.md` (workflow doc covering what the reset did, why it was necessary, and how to add migrations going forward); CLAUDE.md update under `### Migration file conventions` adding (a) the rule that all schema changes must go through migration files (not raw `execute_sql` for DDL) and (b) a pointer to the reset and the archive directory. `supabase_migrations.schema_migrations` reduced from 83 rows to 1 row. Commit: 2bde287.
