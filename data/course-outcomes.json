@@ -1,0 +1,34 @@
+[
+  {
+    "ucas_code": "A100",
+    "university_slug": "edinburgh",
+    "course_name": "Medicine",
+    "employment_rate_15m": null,
+    "highly_skilled_employment_pct": null,
+    "salary_median_1yr": 26000,
+    "salary_median_3yr": null,
+    "salary_median_5yr": null,
+    "student_satisfaction_pct": 79,
+    "continuation_rate_pct": null,
+    "subject_ranking_cug": null,
+    "outcomes_data_year": "2022-23",
+    "needs_verification": true,
+    "source": "Discover Uni course page - https://www.discoveruni.gov.uk/course-details/10007790/UTMBCHBMDP1F/FullTime/"
+  },
+  {
+    "ucas_code": "G400",
+    "university_slug": "glasgow",
+    "course_name": "Computing Science",
+    "employment_rate_15m": null,
+    "highly_skilled_employment_pct": null,
+    "salary_median_1yr": null,
+    "salary_median_3yr": null,
+    "salary_median_5yr": null,
+    "student_satisfaction_pct": null,
+    "continuation_rate_pct": null,
+    "subject_ranking_cug": null,
+    "outcomes_data_year": "2022-23",
+    "needs_verification": true,
+    "source": "Discover Uni course page - https://discoveruni.gov.uk/course-details/10007794/G400-2208/FullTime/ (exact figures to be verified)"
+  }
+]

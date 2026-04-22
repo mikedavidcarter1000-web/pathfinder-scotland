@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import type { LinkedChild } from '@/hooks/use-parent-link'
 import { Skeleton } from '@/components/ui/loading-skeleton'
+import { getSupabaseClient } from '@/lib/supabase'
 
 interface BursaryMatch {
   id: string
@@ -46,6 +47,7 @@ const SAAS_COPY: Record<string, { bursary: string; loan: string }> = {
 }
 
 export function ParentFundingCard({ child }: { child: LinkedChild }) {
+  const supabase = getSupabaseClient()
   const { data, isLoading } = useQuery({
     queryKey: ['parent-bursary-match', child.student_id],
     queryFn: async (): Promise<MatchResponse> => {
@@ -54,6 +56,25 @@ export function ParentFundingCard({ child }: { child: LinkedChild }) {
       )
       if (!res.ok) throw new Error('Failed to load funding information')
       return res.json()
+    },
+  })
+
+  // Pull salary_median_3yr off the child's saved courses so the ROI callout
+  // can quote a real range instead of a generic national figure.
+  const { data: savedSalaryRange } = useQuery({
+    queryKey: ['parent-saved-salary-range', child.student_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('saved_courses')
+        .select('course:courses(salary_median_3yr)')
+        .eq('student_id', child.student_id)
+      if (error) throw error
+      type Row = { course: { salary_median_3yr: number | null } | null }
+      const values = ((data as unknown as Row[]) || [])
+        .map((r) => r.course?.salary_median_3yr ?? null)
+        .filter((v): v is number => typeof v === 'number')
+      if (values.length === 0) return null
+      return { min: Math.min(...values), max: Math.max(...values) }
     },
   })
 
@@ -191,6 +212,50 @@ export function ParentFundingCard({ child }: { child: LinkedChild }) {
               Estimated annual named support: £{estimatedMin.toLocaleString('en-GB')}+
             </p>
           )}
+
+          {(() => {
+            let roiText: string
+            if (savedSalaryRange) {
+              const minK = Math.round(savedSalaryRange.min / 1000)
+              const maxK = Math.round(savedSalaryRange.max / 1000)
+              roiText =
+                minK === maxK
+                  ? `Graduates from Scottish universities have among the highest employment rates in the UK, and your child's tuition is free. The typical graduate salary 3 years after finishing one of their saved courses is around £${minK},000.`
+                  : `Graduates from Scottish universities have among the highest employment rates in the UK, and your child's tuition is free. The typical graduate salary 3 years after finishing is £${minK},000 to £${maxK},000 across their saved courses.`
+            } else {
+              roiText =
+                "Graduates from Scottish universities have among the highest employment rates in the UK, and your child's tuition is free. The median graduate salary in Scotland is around £28,000 three years after graduation."
+            }
+            return (
+              <div
+                className="rounded-lg"
+                style={{
+                  padding: '12px 14px',
+                  backgroundColor: 'var(--pf-blue-50)',
+                  border: '1px solid var(--pf-blue-100)',
+                  marginTop: '14px',
+                }}
+              >
+                <p
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 600,
+                    fontSize: '0.8125rem',
+                    color: 'var(--pf-blue-700)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    margin: 0,
+                    marginBottom: '4px',
+                  }}
+                >
+                  Return on investment
+                </p>
+                <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-900)', margin: 0 }}>
+                  {roiText}
+                </p>
+              </div>
+            )
+          })()}
 
           <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', marginTop: '12px' }}>
             <Link href="/blog/saas-funding-application-guide-scotland" style={{ color: 'var(--pf-blue-700)' }}>

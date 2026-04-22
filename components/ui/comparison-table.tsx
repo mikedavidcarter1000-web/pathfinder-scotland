@@ -5,6 +5,7 @@ import { EligibilityBadge } from './eligibility-badge'
 import type { Tables } from '@/types/database'
 import type { EligibilityDetail } from '@/hooks/use-course-matching'
 import { formatDegreeType } from '@/lib/utils'
+import { formatApproxSalary, pickCourseOutcomes } from '@/lib/outcomes'
 
 interface ComparisonTableProps {
   courses: (Tables<'courses'> & {
@@ -36,6 +37,61 @@ export function ComparisonTable({ courses, onRemove }: ComparisonTableProps) {
       </div>
     )
   }
+
+  // "Best" semantics for highlighting a winner in each outcome row.
+  // higher = more of this value is better (employment rate, salary, satisfaction).
+  // lower = a lower number is better (ranking: 1st > 2nd).
+  type OutcomeRow = {
+    label: string
+    get: (course: typeof courses[0]) => number | null
+    format: (n: number) => string
+    direction: 'higher' | 'lower'
+  }
+
+  const outcomeRows: OutcomeRow[] = [
+    {
+      label: 'Graduate employment rate',
+      get: (c) => pickCourseOutcomes(c).employment_rate_15m,
+      format: (n) => `${n}%`,
+      direction: 'higher',
+    },
+    {
+      label: 'Highly skilled employment',
+      get: (c) => pickCourseOutcomes(c).highly_skilled_employment_pct,
+      format: (n) => `${n}%`,
+      direction: 'higher',
+    },
+    {
+      label: 'Median salary (15 months)',
+      get: (c) => pickCourseOutcomes(c).salary_median_1yr,
+      format: (n) => formatApproxSalary(n),
+      direction: 'higher',
+    },
+    {
+      label: 'Median salary (3 years)',
+      get: (c) => pickCourseOutcomes(c).salary_median_3yr,
+      format: (n) => formatApproxSalary(n),
+      direction: 'higher',
+    },
+    {
+      label: 'Student satisfaction',
+      get: (c) => pickCourseOutcomes(c).student_satisfaction_pct,
+      format: (n) => `${n}%`,
+      direction: 'higher',
+    },
+    {
+      label: 'Continuation rate',
+      get: (c) => pickCourseOutcomes(c).continuation_rate_pct,
+      format: (n) => `${n}%`,
+      direction: 'higher',
+    },
+    {
+      label: 'Subject ranking (UK)',
+      get: (c) => pickCourseOutcomes(c).subject_ranking_cug,
+      format: (n) => `#${n}`,
+      direction: 'lower',
+    },
+  ]
 
   const rows = [
     {
@@ -88,6 +144,27 @@ export function ComparisonTable({ courses, onRemove }: ComparisonTableProps) {
     },
   ]
 
+  // Compute the winning course id per outcome row so the cell can carry a
+  // subtle green background. A row with zero non-null values has no winner.
+  const outcomeWinnerByLabel = new Map<string, string | null>()
+  for (const row of outcomeRows) {
+    const pairs = courses
+      .map((c) => ({ id: c.id, value: row.get(c) }))
+      .filter((p): p is { id: string; value: number } => p.value !== null)
+    if (pairs.length === 0) {
+      outcomeWinnerByLabel.set(row.label, null)
+      continue
+    }
+    const best = pairs.reduce((acc, p) =>
+      row.direction === 'higher'
+        ? (p.value > acc.value ? p : acc)
+        : (p.value < acc.value ? p : acc)
+    )
+    // If all remaining courses are tied, no single winner.
+    const allTied = pairs.every((p) => p.value === best.value)
+    outcomeWinnerByLabel.set(row.label, allTied ? null : best.id)
+  }
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
@@ -131,6 +208,33 @@ export function ComparisonTable({ courses, onRemove }: ComparisonTableProps) {
               ))}
             </tr>
           ))}
+          {outcomeRows.map((row) => {
+            const winnerId = outcomeWinnerByLabel.get(row.label) ?? null
+            const anyValue = courses.some((c) => row.get(c) !== null)
+            if (!anyValue) return null
+            return (
+              <tr key={`outcome-${row.label}`}>
+                <td className="p-4 text-sm font-medium text-gray-500">{row.label}</td>
+                {courses.map((course) => {
+                  const value = row.get(course)
+                  const isWinner = winnerId === course.id
+                  return (
+                    <td
+                      key={course.id}
+                      className="p-4 text-sm text-gray-900"
+                      style={
+                        isWinner
+                          ? { backgroundColor: 'rgba(16, 185, 129, 0.08)', fontWeight: 600 }
+                          : undefined
+                      }
+                    >
+                      {value === null ? '--' : row.format(value)}
+                    </td>
+                  )
+                })}
+              </tr>
+            )
+          })}
           <tr>
             <td className="p-4 text-sm font-medium text-gray-500">Actions</td>
             {courses.map((course) => (

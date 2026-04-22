@@ -19,6 +19,7 @@ import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import { UNIVERSITY_TYPES } from '@/lib/constants'
+import { UniversityRankingsSection } from '@/components/universities/rankings-section'
 import type { Tables } from '@/types/database'
 
 type University = Tables<'universities'>
@@ -301,6 +302,9 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
                 <p className="text-gray-600 leading-relaxed">{university.description}</p>
               </section>
             )}
+
+            {/* Rankings and institutional outcomes */}
+            <UniversityRankingsSection university={university} />
 
             {/* Widening Access — comprehensive section */}
             {hasAnyWaData && (

@@ -17,6 +17,7 @@ import { getSupabaseClient } from '@/lib/supabase'
 import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
 import { ParentNotice } from '@/components/ui/parent-notice'
+import { formatApproxSalary, pickCourseOutcomes } from '@/lib/outcomes'
 import { useToast } from '@/components/ui/toast'
 import type { Tables } from '@/types/database'
 
@@ -739,6 +740,30 @@ type TableProps = {
   savePending: boolean
 }
 
+// Best-value id helpers for outcome columns. Highlights the single row that
+// leads on a column; ties yield no highlight (the user shouldn't be told
+// "this is better" when the numbers are identical).
+function winningIdForOutcome(
+  courses: CourseWithEligibility[],
+  get: (c: CourseWithEligibility) => number | null,
+  direction: 'higher' | 'lower'
+): string | null {
+  const pairs = courses
+    .map((c) => ({ id: c.id, value: get(c) }))
+    .filter((p): p is { id: string; value: number } => p.value !== null)
+  if (pairs.length === 0) return null
+  const best = pairs.reduce((acc, p) =>
+    direction === 'higher' ? (p.value > acc.value ? p : acc) : (p.value < acc.value ? p : acc)
+  )
+  const allTied = pairs.every((p) => p.value === best.value)
+  return allTied ? null : best.id
+}
+
+const OUTCOME_HIGHLIGHT_STYLE: React.CSSProperties = {
+  backgroundColor: 'rgba(16, 185, 129, 0.08)',
+  fontWeight: 600,
+}
+
 function DesktopTable({
   courses,
   sortKey,
@@ -749,6 +774,20 @@ function DesktopTable({
   isSaved,
   savePending,
 }: TableProps) {
+  const anyEmployment = courses.some((c) => pickCourseOutcomes(c).employment_rate_15m !== null)
+  const anySalary = courses.some((c) => pickCourseOutcomes(c).salary_median_3yr !== null)
+  const anyRank = courses.some((c) => pickCourseOutcomes(c).subject_ranking_cug !== null)
+
+  const employmentWinnerId = anyEmployment
+    ? winningIdForOutcome(courses, (c) => pickCourseOutcomes(c).employment_rate_15m, 'higher')
+    : null
+  const salaryWinnerId = anySalary
+    ? winningIdForOutcome(courses, (c) => pickCourseOutcomes(c).salary_median_3yr, 'higher')
+    : null
+  const rankWinnerId = anyRank
+    ? winningIdForOutcome(courses, (c) => pickCourseOutcomes(c).subject_ranking_cug, 'lower')
+    : null
+
   return (
     <div
       className="hidden md:block bg-white border rounded-xl overflow-hidden"
@@ -763,6 +802,9 @@ function DesktopTable({
               <SortableHeader label="Duration" active={sortKey === 'duration'} dir={sortDir} onClick={() => onSort('duration')} />
               <SortableHeader label="Standard entry" active={sortKey === 'entry'} dir={sortDir} onClick={() => onSort('entry')} />
               <th style={thStyle}>Your entry</th>
+              {anyEmployment && <th style={thStyle}>Employment 15m</th>}
+              {anySalary && <th style={thStyle}>Median salary 3yr</th>}
+              {anyRank && <th style={thStyle}>Subject rank</th>}
               <th style={thStyle}>Required subjects</th>
               <th style={{ ...thStyle, textAlign: 'right' }} aria-label="Save" />
             </tr>
@@ -773,6 +815,7 @@ function DesktopTable({
                 (course.entry_requirements as { highers?: string } | null)?.highers ?? '—'
               const yourEntry = resolveYourEntry(course, waEligible)
               const indicator = gradeMatchIndicator(course.eligibility)
+              const outcomes = pickCourseOutcomes(course)
               return (
                 <tr key={course.id} style={{ borderTop: '1px solid var(--pf-grey-200)' }}>
                   <td style={tdStyle}>
@@ -790,6 +833,42 @@ function DesktopTable({
                   <td style={tdStyle}>
                     <YourEntryCell standard={standard} your={yourEntry} isWa={yourEntry.isWa} />
                   </td>
+                  {anyEmployment && (
+                    <td
+                      style={{
+                        ...tdStyle,
+                        ...(employmentWinnerId === course.id ? OUTCOME_HIGHLIGHT_STYLE : {}),
+                      }}
+                    >
+                      {outcomes.employment_rate_15m !== null
+                        ? `${outcomes.employment_rate_15m}%`
+                        : '—'}
+                    </td>
+                  )}
+                  {anySalary && (
+                    <td
+                      style={{
+                        ...tdStyle,
+                        ...(salaryWinnerId === course.id ? OUTCOME_HIGHLIGHT_STYLE : {}),
+                      }}
+                    >
+                      {outcomes.salary_median_3yr !== null
+                        ? formatApproxSalary(outcomes.salary_median_3yr)
+                        : '—'}
+                    </td>
+                  )}
+                  {anyRank && (
+                    <td
+                      style={{
+                        ...tdStyle,
+                        ...(rankWinnerId === course.id ? OUTCOME_HIGHLIGHT_STYLE : {}),
+                      }}
+                    >
+                      {outcomes.subject_ranking_cug !== null
+                        ? `#${outcomes.subject_ranking_cug}`
+                        : '—'}
+                    </td>
+                  )}
                   <td style={tdStyle}>
                     <RequiredSubjectsCell items={course.requiredSubjectsForDisplay} />
                   </td>
@@ -936,6 +1015,35 @@ function MobileCardList({
                   <YourEntryCell standard={standard} your={yourEntry} isWa={yourEntry.isWa} />
                 </dd>
               </div>
+              {(() => {
+                const outcomes = pickCourseOutcomes(course)
+                const nodes: React.ReactNode[] = []
+                if (outcomes.employment_rate_15m !== null) {
+                  nodes.push(
+                    <div key="emp">
+                      <dt style={mobileLabel}>Employment 15m</dt>
+                      <dd style={mobileValue}>{outcomes.employment_rate_15m}%</dd>
+                    </div>
+                  )
+                }
+                if (outcomes.salary_median_3yr !== null) {
+                  nodes.push(
+                    <div key="sal">
+                      <dt style={mobileLabel}>Median salary 3yr</dt>
+                      <dd style={mobileValue}>{formatApproxSalary(outcomes.salary_median_3yr)}</dd>
+                    </div>
+                  )
+                }
+                if (outcomes.subject_ranking_cug !== null) {
+                  nodes.push(
+                    <div key="rnk">
+                      <dt style={mobileLabel}>Subject rank (UK)</dt>
+                      <dd style={mobileValue}>#{outcomes.subject_ranking_cug}</dd>
+                    </div>
+                  )
+                }
+                return nodes
+              })()}
               {course.requiredSubjectsForDisplay.length > 0 && (
                 <div className="col-span-2">
                   <dt style={mobileLabel}>Required subjects</dt>

@@ -142,10 +142,33 @@ export const SUMMER_WORK_INCOME = 3500
  * Sources: HESA Graduate Outcomes, ONS Annual Survey of Hours and Earnings,
  * Universities Scotland bite-size briefings.
  * Individual earnings vary significantly by subject and career.
+ *
+ * When a specific course is in scope (e.g. the `?courseId=` URL param supplied
+ * by /courses/[id]), callers should prefer `courses.salary_median_3yr` over
+ * `GRADUATE_SALARY` in the break-even calculation -- see
+ * `computeGraduatePremium` below.
  */
 export const GRADUATE_SALARY = 28000
 export const NON_GRADUATE_SALARY = 22000
 export const GRADUATE_PREMIUM = GRADUATE_SALARY - NON_GRADUATE_SALARY // £6,000
+
+/**
+ * Compute a graduate premium for break-even: per-course salary if supplied,
+ * otherwise the national average. A value of null / undefined / <= non-grad
+ * salary falls back to the default premium so the calculator never yields a
+ * zero-or-negative denominator.
+ */
+export function computeGraduatePremium(
+  courseSalaryMedian3yr: number | null | undefined
+): number {
+  if (
+    typeof courseSalaryMedian3yr === 'number' &&
+    courseSalaryMedian3yr > NON_GRADUATE_SALARY
+  ) {
+    return courseSalaryMedian3yr - NON_GRADUATE_SALARY
+  }
+  return GRADUATE_PREMIUM
+}
 
 /**
  * Typical working years over which the graduate premium is realised.

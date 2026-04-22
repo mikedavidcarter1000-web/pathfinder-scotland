@@ -13,6 +13,8 @@ import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import { OfferTracker } from '@/components/ui/offer-tracker'
+import { GraduateOutcomes } from '@/components/courses/graduate-outcomes'
+import { RankingBadges } from '@/components/courses/ranking-badges'
 import type { Tables } from '@/types/database'
 
 type Course = Tables<'courses'> & { university?: Tables<'universities'> }
@@ -194,6 +196,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
                   {university.city && ` - ${university.city}`}
                 </p>
               )}
+              <RankingBadges course={course} university={university} />
             </div>
             <Link
               href="/courses"
@@ -330,6 +333,9 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
               </div>
             </section>
 
+            {/* Graduate Outcomes Section */}
+            <GraduateOutcomes course={course} />
+
             {/* Widening Access Section */}
             <WideningAccessSection
               student={student ?? null}
@@ -389,6 +395,13 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
                     Visit University Website
                   </a>
                 )}
+                <Link
+                  href={`/tools/roi-calculator?courseId=${course.id}`}
+                  className="flex items-center justify-center w-full border border-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-center"
+                  style={{ minHeight: '44px', padding: '12px 16px' }}
+                >
+                  Calculate the cost + return
+                </Link>
               </div>
             </div>
 

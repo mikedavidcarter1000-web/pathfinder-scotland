@@ -14,6 +14,9 @@ interface SavedCourseRow {
     entry_requirements: Record<string, unknown> | null
     widening_access_requirements: Record<string, unknown> | null
     course_url: string | null
+    employment_rate_15m: number | null
+    salary_median_1yr: number | null
+    salary_median_3yr: number | null
     university: { name: string } | null
   } | null
 }
@@ -102,6 +105,7 @@ export function ParentCoursesCard({ child }: { child: LinkedChild }) {
             id, course_id,
             course:courses(
               id, name, entry_requirements, widening_access_requirements, course_url,
+              employment_rate_15m, salary_median_1yr, salary_median_3yr,
               university:universities(name)
             )
             `
@@ -248,6 +252,34 @@ export function ParentCoursesCard({ child }: { child: LinkedChild }) {
                       Entry requirements not available for this course.
                     </p>
                   )}
+                  {sc.course?.employment_rate_15m !== null &&
+                    sc.course?.employment_rate_15m !== undefined && (
+                      <p
+                        className="flex items-start gap-2"
+                        style={{ margin: '6px 0 0', color: 'var(--pf-grey-700)' }}
+                      >
+                        <svg
+                          className="w-4 h-4 flex-shrink-0"
+                          style={{ marginTop: '2px', color: 'var(--pf-blue-700)' }}
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 8h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <span>
+                          {sc.course.employment_rate_15m}% of graduates in work within 15 months
+                          {sc.course.salary_median_1yr
+                            ? `. Typical starting salary around £${Math.round(sc.course.salary_median_1yr / 1000).toLocaleString('en-GB')},000.`
+                            : '.'}
+                        </span>
+                      </p>
+                    )}
                 </div>
               </li>
             )

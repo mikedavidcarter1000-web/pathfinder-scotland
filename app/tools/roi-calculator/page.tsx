@@ -2,21 +2,23 @@
 
 import { useMemo, useState, useId } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import { useWideningAccessEligibility } from '@/hooks/use-student'
+import { useCourse } from '@/hooks/use-courses'
+import { pickCourseOutcomes } from '@/lib/outcomes'
 import {
   CITIES,
   DURATION_OPTIONS,
   ENGLAND_TUITION_PER_YEAR,
-  GRADUATE_PREMIUM,
   GRADUATE_SALARY,
   HOUSEHOLD_OPTIONS,
-  LIFETIME_PREMIUM,
   NON_GRADUATE_SALARY,
   PART_TIME_OPTIONS,
   WAGE_18_20,
   WORKING_YEARS,
   calculateAnnualBreakdown,
+  computeGraduatePremium,
   formatGBP,
   getCityById,
   getMonthlyRent,
@@ -47,6 +49,16 @@ export default function RoiCalculatorPage() {
   const [inputs, setInputs] = useState<Inputs>(DEFAULTS)
   const [showComparison, setShowComparison] = useState(false)
 
+  // Optional ?courseId=<uuid> URL param -- when present, the break-even
+  // calculation uses that course's salary_median_3yr instead of the national
+  // default, and the results card surfaces a "Based on <course>" hint.
+  const searchParams = useSearchParams()
+  const courseIdParam = searchParams?.get('courseId') ?? null
+  const { data: courseForRoi } = useCourse(courseIdParam)
+  const courseOutcomes = courseForRoi ? pickCourseOutcomes(courseForRoi) : null
+  const courseSalary3yr = courseOutcomes?.salary_median_3yr ?? null
+  const courseName = (courseForRoi as { name?: string } | null)?.name ?? null
+
   // Force living-at-home accommodation when the "at home" city is picked.
   const effectiveAccommodation: AccommodationType =
     inputs.city === 'at-home' ? 'at-home' : inputs.accommodation
@@ -67,13 +79,16 @@ export default function RoiCalculatorPage() {
   const degreeTotalNetCost = annual.netCost * inputs.duration
   const englandTuitionTotal = ENGLAND_TUITION_PER_YEAR * inputs.duration
 
+  // Prefer the per-course graduate premium when a courseId is supplied.
+  const effectivePremium = computeGraduatePremium(courseSalary3yr)
+
   /**
    * Break-even years: how long after graduation the graduate premium repays
    * the net out-of-pocket cost of the degree. If the student is already in
    * surplus (netCost <= 0) there is no break-even — they finish debt-free.
    */
   const breakEvenYears =
-    degreeTotalNetCost <= 0 ? 0 : degreeTotalNetCost / GRADUATE_PREMIUM
+    degreeTotalNetCost <= 0 ? 0 : degreeTotalNetCost / effectivePremium
 
   return (
     <div style={{ backgroundColor: 'var(--pf-blue-50)' }}>
@@ -87,6 +102,8 @@ export default function RoiCalculatorPage() {
         degreeTotalNetCost={degreeTotalNetCost}
         englandTuitionTotal={englandTuitionTotal}
         breakEvenYears={breakEvenYears}
+        courseSalary3yr={courseSalary3yr}
+        courseName={courseName}
       />
       <ComparisonSection
         show={showComparison}
@@ -288,6 +305,8 @@ function CalculatorSection({
   degreeTotalNetCost,
   englandTuitionTotal,
   breakEvenYears,
+  courseSalary3yr,
+  courseName,
 }: {
   inputs: Inputs
   effectiveAccommodation: AccommodationType
@@ -297,6 +316,8 @@ function CalculatorSection({
   degreeTotalNetCost: number
   englandTuitionTotal: number
   breakEvenYears: number
+  courseSalary3yr: number | null
+  courseName: string | null
 }) {
   return (
     <section
@@ -315,6 +336,8 @@ function CalculatorSection({
             degreeTotalNetCost={degreeTotalNetCost}
             englandTuitionTotal={englandTuitionTotal}
             breakEvenYears={breakEvenYears}
+            courseSalary3yr={courseSalary3yr}
+            courseName={courseName}
           />
         </div>
       </div>
@@ -556,12 +579,16 @@ function ResultsCard({
   degreeTotalNetCost,
   englandTuitionTotal,
   breakEvenYears,
+  courseSalary3yr,
+  courseName,
 }: {
   annual: ReturnType<typeof calculateAnnualBreakdown>
   duration: Duration
   degreeTotalNetCost: number
   englandTuitionTotal: number
   breakEvenYears: number
+  courseSalary3yr: number | null
+  courseName: string | null
 }) {
   const isSurplus = annual.netCost <= 0
 
@@ -604,6 +631,8 @@ function ResultsCard({
       <GraduateReturnCard
         breakEvenYears={breakEvenYears}
         degreeTotalNetCost={degreeTotalNetCost}
+        courseSalary3yr={courseSalary3yr}
+        courseName={courseName}
       />
     </div>
   )
@@ -877,10 +906,19 @@ function DegreeTotalCard({
 function GraduateReturnCard({
   breakEvenYears,
   degreeTotalNetCost,
+  courseSalary3yr,
+  courseName,
 }: {
   breakEvenYears: number
   degreeTotalNetCost: number
+  courseSalary3yr: number | null
+  courseName: string | null
 }) {
+  const hasCourseSalary = courseSalary3yr !== null && courseSalary3yr > NON_GRADUATE_SALARY
+  const effectiveGradSalary = hasCourseSalary ? courseSalary3yr : GRADUATE_SALARY
+  const effectivePremium = effectiveGradSalary - NON_GRADUATE_SALARY
+  const effectiveLifetime = effectivePremium * WORKING_YEARS
+
   const yearsLabel = breakEvenYears <= 0
     ? 'immediately — your income already covers your costs'
     : breakEvenYears < 1
@@ -892,6 +930,21 @@ function GraduateReturnCard({
       <h3 style={{ fontSize: '1.0625rem', marginBottom: '12px', fontWeight: 600 }}>
         The graduate return
       </h3>
+      {hasCourseSalary && courseName && (
+        <p
+          style={{
+            fontSize: '0.75rem',
+            color: 'var(--pf-blue-700)',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.04em',
+            marginBottom: '10px',
+          }}
+        >
+          Based on {courseName}
+        </p>
+      )}
       <div
         style={{
           display: 'grid',
@@ -900,20 +953,24 @@ function GraduateReturnCard({
           marginBottom: '16px',
         }}
       >
-        <StatBlock label="Avg. graduate salary" value={formatGBP(GRADUATE_SALARY)} suffix="/year" />
+        <StatBlock
+          label={hasCourseSalary ? 'Graduate salary (3yr)' : 'Avg. graduate salary'}
+          value={formatGBP(effectiveGradSalary)}
+          suffix="/year"
+        />
         <StatBlock label="Avg. non-graduate" value={formatGBP(NON_GRADUATE_SALARY)} suffix="/year" />
-        <StatBlock label="Graduate premium" value={formatGBP(GRADUATE_PREMIUM)} suffix="/year" emphasis />
+        <StatBlock label="Graduate premium" value={formatGBP(effectivePremium)} suffix="/year" emphasis />
       </div>
       <p style={{ color: 'var(--pf-grey-900)', fontSize: '0.9375rem', lineHeight: 1.5, marginBottom: '10px' }}>
-        Based on average salaries, your investment could pay for itself in{' '}
-        <strong>{yearsLabel}</strong>
+        Based on {hasCourseSalary ? 'this course’s' : 'average'} salaries, your investment could pay
+        for itself in <strong>{yearsLabel}</strong>
         {degreeTotalNetCost > 0
-          ? ` (${formatGBP(degreeTotalNetCost)} net cost ÷ ${formatGBP(GRADUATE_PREMIUM)} premium).`
+          ? ` (${formatGBP(degreeTotalNetCost)} net cost ÷ ${formatGBP(effectivePremium)} premium).`
           : '.'}
       </p>
       <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.8125rem', lineHeight: 1.5, margin: 0 }}>
         Over a {WORKING_YEARS}-year career, the graduate premium adds up to
-        roughly <strong>{formatGBP(LIFETIME_PREMIUM)}</strong> — a rough
+        roughly <strong>{formatGBP(effectiveLifetime)}</strong> — a rough
         estimate; earnings vary significantly by subject and sector.
       </p>
     </div>
