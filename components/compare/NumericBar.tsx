@@ -133,6 +133,30 @@ export function NumericBar({
                 dataKey="label"
                 position="right"
                 style={{ fontSize: 12, fill: '#1A1A2E', fontWeight: 500 }}
+                offset={8}
+                content={(props: {
+                  x?: number | string
+                  y?: number | string
+                  width?: number | string
+                  height?: number | string
+                  value?: number | string
+                }) => {
+                  const x = Number(props.x ?? 0)
+                  const y = Number(props.y ?? 0)
+                  const width = Number(props.width ?? 0)
+                  const height = Number(props.height ?? 0)
+                  const text = String(props.value ?? '')
+                  return (
+                    <text
+                      x={x + Math.max(width, 2) + 6}
+                      y={y + height / 2}
+                      dominantBaseline="middle"
+                      style={{ fontSize: 12, fill: '#1A1A2E', fontWeight: 500 }}
+                    >
+                      {text}
+                    </text>
+                  )
+                }}
               />
             </Bar>
           </BarChart>

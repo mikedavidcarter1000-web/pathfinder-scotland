@@ -66,13 +66,15 @@ export interface RoiRoleInput {
 export interface RoiResult {
   /** Study duration in years (0 for non-study routes). */
   studyYears: number
-  /** Total out-of-pocket study cost across all study years (outgoings minus SAAS support and part-time income). */
+  /** Total cost of studying across all study years (rent + living costs × years). */
   studyCostTotal: number
   /** Total SAAS non-repayable support across all study years. */
   saasSupportTotal: number
+  /** Net out-of-pocket cost after SAAS and part-time income (>=0). Used for break-even math. */
+  netStudyCost: number
   /** Projected net lifetime earnings (post-tax, post-NI; no pension contribution added). */
   netLifetimeValue: number
-  /** Years after entry for net lifetime value to exceed study cost. `null` if no study cost or never. */
+  /** Years after entry for net lifetime value to exceed net study cost. `null` if no study cost or never. */
   breakevenYears: number | null
   /** True if the role requires structured study (degree / HND / HNC). */
   requiresStudy: boolean
@@ -102,6 +104,7 @@ export function calculateROI(params: {
 
   let studyCostTotal = 0
   let saasSupportTotal = 0
+  let netStudyCost = 0
   if (studyYears > 0) {
     const city = getCityById(context.city)
     const annual = calculateAnnualBreakdown({
@@ -110,8 +113,9 @@ export function calculateROI(params: {
       household: context.household,
       work: context.work,
     })
-    studyCostTotal = Math.max(0, annual.netCost) * studyYears
+    studyCostTotal = annual.totalOutgoings * studyYears
     saasSupportTotal = annual.saasSupport * studyYears
+    netStudyCost = Math.max(0, annual.netCost) * studyYears
   }
 
   const slug = trainingSlugForTitle(params.role.title)
@@ -125,16 +129,14 @@ export function calculateROI(params: {
   const netLifetimeValue = lifetime.lifetimeTotal
 
   let breakevenYears: number | null = null
-  if (studyCostTotal > 0) {
-    // Cumulative net earnings by age, post-study. Break-even when cumulative
-    // exceeds studyCostTotal.
+  if (netStudyCost > 0) {
     let cumulative = 0
     const postStudyYearly = lifetime.yearly.filter(
       (y) => y.age >= params.role.typicalEntryAge,
     )
     for (let i = 0; i < postStudyYearly.length; i += 1) {
       cumulative += postStudyYearly[i].value
-      if (cumulative >= studyCostTotal) {
+      if (cumulative >= netStudyCost) {
         breakevenYears = i + 1
         break
       }
@@ -145,6 +147,7 @@ export function calculateROI(params: {
     studyYears,
     studyCostTotal,
     saasSupportTotal,
+    netStudyCost,
     netLifetimeValue,
     breakevenYears,
     requiresStudy: studyYears > 0,

@@ -51,6 +51,10 @@ export function RoiSection({ roles }: RoiSectionProps) {
     Math.max(...roiByRole.map((r) => r.saasSupportTotal), 0),
     5000,
   )
+  const netPocketMax = roundUpTo(
+    Math.max(...roiByRole.map((r) => r.netStudyCost), 0),
+    5000,
+  )
   const netMax = roundUpTo(
     Math.max(...roiByRole.map((r) => r.netLifetimeValue), 0),
     100_000,
@@ -67,7 +71,7 @@ export function RoiSection({ roles }: RoiSectionProps) {
             value: roi.requiresStudy ? Math.round(roi.studyCostTotal) : 0,
             displayLabel: roi.requiresStudy
               ? `${formatGbpShort(roi.studyCostTotal)} over ${roi.studyYears} yr`
-              : 'No study cost',
+              : 'No formal study',
           }
         })}
         maxForScale={Math.max(studyCostMax, 1000)}
@@ -87,6 +91,29 @@ export function RoiSection({ roles }: RoiSectionProps) {
         })}
         maxForScale={Math.max(saasMax, 1000)}
         direction="positive"
+      />
+      <NumericBar
+        fieldName="Out-of-pocket cost"
+        entries={roles.map((r, i) => {
+          const roi = roiByRole[i]
+          if (!roi.requiresStudy) {
+            return {
+              careerName: r.title,
+              value: 0,
+              displayLabel: 'No study cost',
+            }
+          }
+          return {
+            careerName: r.title,
+            value: Math.round(roi.netStudyCost),
+            displayLabel:
+              roi.netStudyCost > 0
+                ? `${formatGbpShort(roi.netStudyCost)} after support`
+                : 'Covered by SAAS + part-time',
+          }
+        })}
+        maxForScale={Math.max(netPocketMax, 1000)}
+        direction="negative"
       />
       <NumericBar
         fieldName="Net lifetime value"
