@@ -228,14 +228,18 @@ export function ComparisonGrid({ roleIds }: ComparisonGridProps) {
           fieldName="Minimum entry"
           entries={roles.map((r) => ({
             careerName: r.title,
-            value: formatQualification(r.minEntryQualification),
+            value: formatQualification(r.minEntryQualification)
+              ? `Minimum: ${formatQualification(r.minEntryQualification)}`
+              : null,
           }))}
         />
         <LabelRow
           fieldName="Typical entry"
           entries={roles.map((r) => ({
             careerName: r.title,
-            value: formatQualification(r.typicalEntryQualification),
+            value: formatQualification(r.typicalEntryQualification)
+              ? `Typical: ${formatQualification(r.typicalEntryQualification)}`
+              : null,
           }))}
         />
       </Section>
@@ -250,12 +254,12 @@ export function ComparisonGrid({ roleIds }: ComparisonGridProps) {
           entries={roles.map((r) => ({
             careerName: r.title,
             value: r.typicalHoursPerWeek,
-            displayLabel: `${r.typicalHoursPerWeek} h`,
+            displayLabel: `${r.typicalHoursPerWeek} hours/week typical`,
           }))}
           maxForScale={60}
           referenceValue={37}
-          referenceLabel="UK avg full-time (37h)"
-          unitSuffix=" h"
+          referenceLabel="UK avg full-time (37 h)"
+          unitSuffix=" hours/week"
         />
         <LabelRow
           fieldName="Hours pattern"

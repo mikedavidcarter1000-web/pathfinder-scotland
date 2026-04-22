@@ -195,8 +195,8 @@ export function EarningsSection({ roles }: EarningsSectionProps) {
 
   const referenceLabel =
     mode === 'net'
-      ? `UK median net (~${formatGbpShort(series[0]?.netUkMedian ?? 0)})`
-      : `UK median (${formatGbpShort(UK_MEDIAN_SALARY_GBP)})`
+      ? `UK median net (~${formatGbpFull(series[0]?.netUkMedian ?? 0)})`
+      : `UK median (${formatGbpFull(UK_MEDIAN_SALARY_GBP)})`
   const referenceValue =
     mode === 'net' ? series[0]?.netUkMedian ?? UK_MEDIAN_SALARY_GBP : UK_MEDIAN_SALARY_GBP
 

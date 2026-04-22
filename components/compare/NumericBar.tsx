@@ -112,7 +112,7 @@ export function NumericBar({
               <ReferenceLine
                 x={referenceValue}
                 stroke="#4A4A5A"
-                strokeDasharray="3 3"
+                strokeDasharray="4 4"
                 label={
                   referenceLabel
                     ? {
