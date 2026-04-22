@@ -10,6 +10,9 @@
     "lint:fix": "eslint --fix",
     "type-check": "tsc --noEmit",
     "test": "tsx --test lib/earnings/__tests__/*.test.ts lib/compare/__tests__/*.test.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "PWDEBUG=1 playwright test",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset",
     "db:types": "supabase gen types typescript --local > types/database.ts",
@@ -47,6 +50,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.10",
     "@types/node": "^20.10.0",
