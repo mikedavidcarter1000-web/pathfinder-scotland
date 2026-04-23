@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
+import { FeedbackWidget } from '@/components/ui/feedback-widget'
 import {
   ANSWER_OPTIONS,
   RIASEC_COLOURS,
@@ -513,6 +514,7 @@ function ResultsScreen({
   }, [mappings])
 
   return (
+    <>
     <section className="pf-container" style={{ paddingTop: '48px', paddingBottom: '72px' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto' }}>
         <div style={{ marginBottom: '32px' }}>
@@ -631,6 +633,8 @@ function ResultsScreen({
         </div>
       </div>
     </section>
+    <FeedbackWidget />
+    </>
   )
 }
 

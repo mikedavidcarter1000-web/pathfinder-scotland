@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react'
 import Link from 'next/link'
+import { FeedbackWidget } from '@/components/ui/feedback-widget'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   applySimulatorPreset,
@@ -76,9 +77,12 @@ function getCompulsoryIds(data: SimulatorData, stage: SimulatorStage): Set<strin
 
 export default function SimulatorPage() {
   return (
-    <Suspense fallback={<SimulatorLoading />}>
-      <SimulatorContent />
-    </Suspense>
+    <>
+      <Suspense fallback={<SimulatorLoading />}>
+        <SimulatorContent />
+      </Suspense>
+      <FeedbackWidget />
+    </>
   )
 }
 

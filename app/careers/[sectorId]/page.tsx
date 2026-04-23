@@ -22,6 +22,7 @@ import { CareerRealities } from '@/components/careers/CareerRealities'
 import { HorizonRatings } from '@/components/careers/HorizonRatings'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
+import { FeedbackWidget } from '@/components/ui/feedback-widget'
 import type { CareerSector } from '@/hooks/use-subjects'
 
 type GrowthTone = 'growing' | 'stable' | 'variable'
@@ -679,6 +680,7 @@ export default function CareerSectorDetailPage({
           </div>
         </section>
       </div>
+      <FeedbackWidget />
     </div>
   )
 }

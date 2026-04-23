@@ -60,6 +60,7 @@ const NAV_GROUPS: NavGroup[] = [
       { name: 'Career Quiz', href: '/quiz' },
       { name: 'Cost Calculator', href: '/tools/roi-calculator' },
       { name: 'Grade Sensitivity', href: '/tools/grade-sensitivity' },
+      { name: 'UCAS Calculator', href: '/tools/ucas-calculator' },
       { name: 'Results Day', href: '/results-day' },
     ],
   },

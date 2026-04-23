@@ -21,13 +21,17 @@ import {
 import { SUBJECTS } from '@/lib/constants'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { useToast } from '@/components/ui/toast'
+import { FeedbackWidget } from '@/components/ui/feedback-widget'
 import type { Tables } from '@/types/database'
 
 export default function GradeSensitivityPage() {
   return (
-    <Suspense fallback={<PageLoading />}>
-      <GradeSensitivityContent />
-    </Suspense>
+    <>
+      <Suspense fallback={<PageLoading />}>
+        <GradeSensitivityContent />
+      </Suspense>
+      <FeedbackWidget />
+    </>
   )
 }
 

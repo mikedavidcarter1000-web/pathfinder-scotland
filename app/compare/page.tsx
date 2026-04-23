@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react'
 import dynamic from 'next/dynamic'
+import { FeedbackWidget } from '@/components/ui/feedback-widget'
 import { useComparisonWithCourses } from '@/hooks/use-comparison'
 import { useCurrentStudent, useStudentGrades, useGradeSummary } from '@/hooks/use-student'
 import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
@@ -145,6 +146,7 @@ export default function ComparePage() {
           <ComparisonTable courses={coursesWithEligibility} onRemove={removeCourse} />
         </div>
       )}
+      <FeedbackWidget />
     </div>
   )
 }

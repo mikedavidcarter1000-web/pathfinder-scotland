@@ -220,7 +220,11 @@ export default function RefugeesAsylumSeekersPage() {
             </table>
           </div>
 
-          <div style={{ marginTop: '40px' }}>
+          <p style={{ marginTop: '32px', fontSize: '0.875rem', color: 'var(--pf-grey-500, #6b7280)' }}>
+            If you need to leave this page quickly, use the &ldquo;Leave this site&rdquo; button at the bottom-left of your screen.
+          </p>
+
+          <div style={{ marginTop: '16px' }}>
             <Link
               href="/support"
               className="inline-flex items-center gap-2"

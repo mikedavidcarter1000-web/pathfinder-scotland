@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+import { FeedbackWidget } from '@/components/ui/feedback-widget'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 
@@ -129,20 +130,23 @@ function useRequirementsForCourses(courseIds: string[]) {
 
 export default function CompareSubjectsPage() {
   return (
-    <Suspense
-      fallback={
-        <div
-          className="min-h-screen flex items-center justify-center"
-          style={{ backgroundColor: 'var(--pf-blue-50)' }}
-        >
-          <div className="animate-pulse" style={{ color: 'var(--pf-grey-600)' }}>
-            Loading...
+    <>
+      <Suspense
+        fallback={
+          <div
+            className="min-h-screen flex items-center justify-center"
+            style={{ backgroundColor: 'var(--pf-blue-50)' }}
+          >
+            <div className="animate-pulse" style={{ color: 'var(--pf-grey-600)' }}>
+              Loading...
+            </div>
           </div>
-        </div>
-      }
-    >
-      <CompareSubjectsContent />
-    </Suspense>
+        }
+      >
+        <CompareSubjectsContent />
+      </Suspense>
+      <FeedbackWidget />
+    </>
   )
 }
 

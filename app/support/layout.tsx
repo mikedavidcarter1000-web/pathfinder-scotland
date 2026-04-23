@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { FeedbackWidget } from '@/components/ui/feedback-widget'
 
 export const metadata: Metadata = {
   title: 'Support – Pathfinder Scotland',
@@ -7,5 +8,10 @@ export const metadata: Metadata = {
 }
 
 export default function SupportLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>
+  return (
+    <>
+      {children}
+      <FeedbackWidget />
+    </>
+  )
 }

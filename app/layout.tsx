@@ -12,6 +12,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Footer } from '@/components/layout/footer'
 import { Navbar } from '@/components/layout/navbar'
 import { CookieConsent } from '@/components/ui/cookie-consent'
+import { QuickExitButton } from '@/components/ui/quick-exit-button'
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -141,6 +142,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <CookieConsent />
+          <QuickExitButton />
         </Providers>
         <Analytics />
         <SpeedInsights />

@@ -270,6 +270,10 @@ export default function YoungCarersPage() {
             unlocks formal support and flexible arrangements.
           </p>
 
+          <p style={{ marginBottom: '16px', fontSize: '0.875rem', color: 'var(--pf-grey-500, #6b7280)' }}>
+            If you need to leave this page quickly, use the &ldquo;Leave this site&rdquo; button at the bottom-left of your screen.
+          </p>
+
           <Link
             href="/support"
             className="inline-flex items-center gap-2"

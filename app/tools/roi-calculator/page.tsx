@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useId } from 'react'
 import Link from 'next/link'
+import { FeedbackWidget } from '@/components/ui/feedback-widget'
 import { useSearchParams } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import { useWideningAccessEligibility } from '@/hooks/use-student'
@@ -114,6 +115,7 @@ export default function RoiCalculatorPage() {
       <AssumptionsPanel />
       <RelatedLinks />
       <BottomCta />
+      <FeedbackWidget />
     </div>
   )
 }
