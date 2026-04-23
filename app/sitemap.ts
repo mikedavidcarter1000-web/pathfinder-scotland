@@ -207,6 +207,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     },
     {
+      url: `${SITE_URL}/privacy/young-persons`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    {
       url: `${SITE_URL}/terms`,
       lastModified: now,
       changeFrequency: 'yearly',

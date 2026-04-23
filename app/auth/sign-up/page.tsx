@@ -282,6 +282,13 @@ function SignUpContent() {
               </label>
             </div>
 
+            <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-500)', margin: 0 }}>
+              <Link href="/privacy/young-persons" style={{ color: 'var(--pf-blue-500)' }}>
+                How we look after your information
+              </Link>{' '}
+              -- a plain-English guide for students.
+            </p>
+
             <SubmitButton
               type="submit"
               isLoading={signUp.isPending}

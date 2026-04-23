@@ -41,6 +41,24 @@ export default function PrivacyPage() {
       {/* Body */}
       <section style={{ paddingTop: '48px', paddingBottom: '80px' }}>
         <div className="pf-container" style={{ maxWidth: '760px' }}>
+          {/* Young person's summary callout */}
+          <div
+            style={{
+              backgroundColor: 'var(--pf-blue-100)',
+              borderLeft: '3px solid var(--pf-blue-700)',
+              padding: '16px 20px',
+              borderRadius: '8px',
+              marginBottom: '24px',
+              color: 'var(--pf-blue-900)',
+            }}
+          >
+            <strong>Under 18?</strong>{' '}
+            <Link href="/privacy/young-persons" style={{ color: 'var(--pf-blue-700)' }}>
+              Read our young person&apos;s privacy summary
+            </Link>{' '}
+            for a plain-language guide to what we collect and how to stay in control.
+          </div>
+
           <div
             className="pf-card"
             style={{ padding: '40px', lineHeight: 1.75, color: 'var(--pf-grey-900)' }}
@@ -252,9 +270,33 @@ export default function PrivacyPage() {
               line with the ICO&apos;s Age Appropriate Design Code.
             </p>
             <p style={{ marginBottom: '24px' }}>
-              If you are under 16, you should have your parent or guardian&apos;s consent before
-              creating an account. Parents and guardians can contact us at any time to review or
-              delete a child&apos;s data.
+              Under the Data Protection Act 2018, young people aged 13 and over in Scotland can
+              consent to online services themselves. We encourage parents and guardians to stay
+              involved and provide parent accounts for this purpose. Parents and guardians can
+              contact us at any time to review or delete a child&apos;s data.
+            </p>
+
+            <h2 style={{ marginTop: '40px', marginBottom: '12px' }}>
+              Information for young people and parents
+            </h2>
+            <p style={{ marginBottom: '16px' }}>
+              Pathfinder Scotland is designed for students aged 13 and over. Under UK data protection
+              law, young people aged 13 and over in Scotland can consent to the processing of their
+              personal data for online services. We encourage parental involvement and provide parent
+              accounts for this purpose, but parental consent is not required for students aged 13
+              and over.
+            </p>
+            <p style={{ marginBottom: '16px' }}>
+              We may use anonymised, aggregated data about how the platform is used to improve our
+              services and for commercial purposes. This data cannot be linked back to any individual
+              student.
+            </p>
+            <p style={{ marginBottom: '24px' }}>
+              If you are a student aged 13 or over,{' '}
+              <Link href="/privacy/young-persons" style={{ color: 'var(--pf-blue-500)' }}>
+                read our young person&apos;s privacy summary
+              </Link>{' '}
+              for a short, plain-English explanation of how we handle your data.
             </p>
 
             <h2 style={{ marginTop: '40px', marginBottom: '12px' }}>Regulatory framework</h2>
