@@ -84,6 +84,56 @@ const nextConfig = {
         destination: '/auth/sign-up',
         permanent: true,
       },
+      {
+        source: '/cost-calculator',
+        destination: '/tools/roi-calculator',
+        permanent: true,
+      },
+      {
+        source: '/tools/cost-calculator',
+        destination: '/tools/roi-calculator',
+        permanent: true,
+      },
+      {
+        source: '/grades',
+        destination: '/dashboard',
+        permanent: true,
+      },
+      {
+        source: '/explore',
+        destination: '/discover',
+        permanent: true,
+      },
+      {
+        source: '/plan',
+        destination: '/pathways',
+        permanent: true,
+      },
+      {
+        source: '/tools/career-quiz',
+        destination: '/quiz',
+        permanent: true,
+      },
+      {
+        source: '/grade-sensitivity',
+        destination: '/tools/grade-sensitivity',
+        permanent: true,
+      },
+      {
+        source: '/support/estranged',
+        destination: '/support/estranged-students',
+        permanent: true,
+      },
+      {
+        source: '/support/mature',
+        destination: '/support/mature-students',
+        permanent: true,
+      },
+      {
+        source: '/support/refugees',
+        destination: '/support/refugees-asylum-seekers',
+        permanent: true,
+      },
     ]
   },
 }

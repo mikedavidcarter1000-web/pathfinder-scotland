@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Your Privacy -- What You Need to Know | Pathfinder Scotland',
+  title: 'Your Privacy -- What You Need to Know',
   description:
     'A plain-language guide for young people explaining what Pathfinder Scotland collects, who can see it, and how to delete your account.',
   alternates: { canonical: '/privacy/young-persons' },

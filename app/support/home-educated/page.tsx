@@ -3,7 +3,8 @@ import type { Metadata } from 'next'
 import { VerificationBanner, VerificationCaveat } from '@/components/ui/VerificationCaveat'
 
 export const metadata: Metadata = {
-  title: 'Home-Educated Student Support – Pathfinder Scotland',
+  title: 'Home-Educated Student Support',
+  alternates: { canonical: '/support/home-educated' },
 }
 
 const orgs = [

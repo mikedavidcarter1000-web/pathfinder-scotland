@@ -2,8 +2,9 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Help & Support - Pathfinder Scotland',
+  title: 'Help & Support',
   description: 'Get help using Pathfinder Scotland. Find answers to frequently asked questions and learn how to make the most of the platform.',
+  alternates: { canonical: '/help' },
 }
 
 export default function HelpPage() {

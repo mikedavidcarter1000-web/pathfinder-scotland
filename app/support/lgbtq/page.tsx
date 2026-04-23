@@ -6,7 +6,8 @@ import { VerificationBanner, VerificationCaveat } from '@/components/ui/Verifica
 import { SupportGroupOffers } from '@/components/offers/support-group-offers'
 
 export const metadata: Metadata = {
-  title: 'LGBTQ+ Student Support – Pathfinder Scotland',
+  title: 'LGBTQ+ Student Support',
+  alternates: { canonical: '/support/lgbtq' },
 }
 
 const orgs = [

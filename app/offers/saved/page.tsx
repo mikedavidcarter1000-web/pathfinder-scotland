@@ -9,7 +9,7 @@ import type {
 import { SavedOffersClient } from './saved-client'
 
 export const metadata: Metadata = {
-  title: 'Saved Offers | Pathfinder Scotland',
+  title: 'Saved Offers',
   description:
     'Your saved student offers and entitlements — everything you bookmarked for later, grouped by category.',
   robots: { index: false, follow: false },

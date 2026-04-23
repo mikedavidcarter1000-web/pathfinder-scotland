@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Scottish Colleges | Pathfinder Scotland',
+  title: 'Scottish Colleges',
   description:
     'Browse all 24 Scottish colleges. Find courses, apprenticeships, and direct routes into university through college.',
   alternates: { canonical: '/colleges' },

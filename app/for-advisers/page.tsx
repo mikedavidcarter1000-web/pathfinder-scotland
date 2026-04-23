@@ -3,9 +3,10 @@ import Link from 'next/link'
 import { PilotInterestForm } from '@/components/pilot-interest-form'
 
 export const metadata: Metadata = {
-  title: 'For careers advisers | Pathfinder Scotland',
+  title: 'For careers advisers',
   description:
     'How SDS and school-based careers advisers can use Pathfinder with the young people they work with — and register interest in a pilot.',
+  alternates: { canonical: '/for-advisers' },
 }
 
 interface InfoCard {

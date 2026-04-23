@@ -5,9 +5,10 @@ import { FOUNDING_SCHOOLS_CAP } from '@/lib/school/constants'
 export const revalidate = 300
 
 export const metadata = {
-  title: 'For Schools - Pathfinder Scotland',
+  title: 'For Schools',
   description:
     'See what your students are exploring. Support their choices with data. SIMD profile, subject-choice analysis, university consequence flags, and CES capacity alignment. Free for 12 months for our first 10 founding schools.',
+  alternates: { canonical: '/for-schools' },
 }
 
 async function getFoundingRemaining(): Promise<number> {

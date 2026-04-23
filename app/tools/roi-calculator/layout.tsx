@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'University Cost Calculator | Pathfinder Scotland',
+  title: 'University Cost Calculator',
   description:
     'Calculate the real cost of studying at a Scottish university. Scottish students pay no tuition fees — see how affordable university can be.',
   alternates: { canonical: '/tools/roi-calculator' },

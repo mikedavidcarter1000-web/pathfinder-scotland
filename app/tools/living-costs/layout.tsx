@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Compare Living Costs at Scottish Universities | Pathfinder Scotland',
+  title: 'Compare Living Costs at Scottish Universities',
   description:
     'Compare accommodation costs, living expenses and SAAS funding at every Scottish university. See what it actually costs to study -- and how much you have left over.',
   keywords: [

@@ -4,10 +4,10 @@ import Image from 'next/image'
 import { GoogleTranslate } from '@/components/parent/google-translate'
 
 export const metadata: Metadata = {
-  title: 'Welcome -- information for parents in your language | Pathfinder Scotland',
+  title: 'Welcome -- information for parents in your language',
   description:
     'A short summary of Pathfinder Scotland for parents and guardians, in 29 languages. University is free for Scottish students; bursaries and grants help with living costs.',
-  alternates: { canonical: 'https://pathfinderscot.co.uk/parent/welcome' },
+  alternates: { canonical: '/parent/welcome' },
 }
 
 // NOTE: All non-English translations below are MACHINE-GENERATED drafts.

@@ -4,7 +4,8 @@ import { VerificationBanner } from '@/components/ui/VerificationCaveat'
 import { SupportGroupOffers } from '@/components/offers/support-group-offers'
 
 export const metadata: Metadata = {
-  title: 'ESOL and EAL Student Support – Pathfinder Scotland',
+  title: 'ESOL and EAL Student Support',
+  alternates: { canonical: '/support/esol-eal' },
 }
 
 const pathway = [

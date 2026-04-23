@@ -60,12 +60,21 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: 'en_GB',
     type: 'website',
+    images: [
+      {
+        url: '/og-default.png',
+        width: 1200,
+        height: 630,
+        alt: 'Pathfinder Scotland -- subject choices to university pathways',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Pathfinder Scotland | Subject Choices to University Pathways',
     description: SITE_DESCRIPTION,
     creator: '@pathfinderscot',
+    images: ['/og-default.png'],
   },
   robots: {
     index: true,

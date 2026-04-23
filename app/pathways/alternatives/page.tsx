@@ -4,7 +4,7 @@ import { LiveArticulationTable } from '@/components/colleges/live-articulation-t
 
 export const metadata: Metadata = {
   title:
-    'Alternative Pathways | Foundation Apprenticeships, College, and More | Pathfinder Scotland',
+    'Alternative Pathways | Foundation Apprenticeships, College, and More',
   description:
     'Explore non-university routes in Scotland — Foundation Apprenticeships, college HNC/HND with articulation, Modern Apprenticeships, and Graduate Apprenticeships. Earn while you learn or take a different route to a degree.',
   alternates: { canonical: '/pathways/alternatives' },

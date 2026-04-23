@@ -4,9 +4,10 @@ import { VerificationCaveat } from '@/components/ui/VerificationCaveat'
 import { SupportGroupOffers } from '@/components/offers/support-group-offers'
 
 export const metadata: Metadata = {
-  title: 'Extenuating Circumstances Support – Pathfinder Scotland',
+  title: 'Extenuating Circumstances Support',
   description:
     'Guidance for Scottish students dealing with illness, bereavement, or other difficult circumstances that have affected their studies or exam results.',
+  alternates: { canonical: '/support/difficult-circumstances' },
 }
 
 const ExternalIcon = () => (

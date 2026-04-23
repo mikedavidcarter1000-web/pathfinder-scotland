@@ -4,7 +4,8 @@ import { VerificationBanner, VerificationCaveat } from '@/components/ui/Verifica
 import { SupportGroupOffers } from '@/components/offers/support-group-offers'
 
 export const metadata: Metadata = {
-  title: 'Mature Student Support – Pathfinder Scotland',
+  title: 'Mature Student Support',
+  alternates: { canonical: '/support/mature-students' },
 }
 
 const orgs = [

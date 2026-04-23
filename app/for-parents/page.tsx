@@ -2,9 +2,10 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'For parents and carers | Pathfinder Scotland',
+  title: 'For parents and carers',
   description:
     'How Pathfinder helps Scottish students, and how you can support your child — whether they’re under 16 or already at university age.',
+  alternates: { canonical: '/for-parents' },
 }
 
 interface InfoCard {

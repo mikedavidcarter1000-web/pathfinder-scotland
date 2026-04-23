@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'UCAS Personal Statement Guide | Pathfinder Scotland',
+  title: 'UCAS Personal Statement Guide',
   description:
     'How to answer the three UCAS personal statement questions for 2026 entry. Annotated examples from real Scottish students, plus a guided writing tool.',
   keywords: [

@@ -11,7 +11,7 @@ import { OffersClient } from './offers-client'
 import { deriveStageFromSchoolStage } from '@/components/offers/offer-filters'
 
 export const metadata: Metadata = {
-  title: 'Student Offers & Entitlements | Pathfinder Scotland',
+  title: 'Student Offers & Entitlements',
   description:
     "Find every discount, freebie, and entitlement available to Scottish students. Filtered by your school stage -- from S1 through to university.",
   openGraph: {

@@ -7,7 +7,7 @@ import type {
 import { StartingUniClient } from './starting-uni-client'
 
 export const metadata: Metadata = {
-  title: 'Starting University Checklist | Pathfinder Scotland',
+  title: 'Starting University Checklist',
   description:
     'Your complete checklist for starting university in Scotland. Bank accounts, GP registration, SAAS funding, free software, and everything else you need to sort.',
   openGraph: {

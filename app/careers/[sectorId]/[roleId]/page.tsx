@@ -65,7 +65,7 @@ export async function generateMetadata({
   const { role, profile } = await fetchRoleAndProfile(sectorId, roleId)
 
   if (!role) {
-    return { title: 'Role not found | Pathfinder Scotland' }
+    return { title: 'Role not found' }
   }
 
   const sector = role.career_sectors
@@ -75,8 +75,9 @@ export async function generateMetadata({
       : `Explore the ${role.title} role in Scotland — typical salary, day-to-day work, and progression.`
 
   return {
-    title: `${role.title} | ${sector.name} | Pathfinder Scotland`,
+    title: `${role.title} | ${sector.name}`,
     description,
+    alternates: { canonical: `/careers/${sectorId}/${roleId}` },
   }
 }
 

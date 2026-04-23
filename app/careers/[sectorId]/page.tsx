@@ -258,12 +258,54 @@ export default function CareerSectorDetailPage({
     [data]
   )
 
-  const roleIdByTitle = useMemo(() => {
-    const map = new Map<string, string>()
-    for (const role of data?.career_roles ?? []) {
-      map.set(role.title.toLowerCase().trim(), role.id)
+  // Match example_jobs (short forms like "Doctor", "Software Developer") to
+  // career_roles (fuller titles like "Doctor / GP", "Junior Software Developer").
+  // Five-pass match: exact, base-name (before "/", "(", "--"), punctuation-free,
+  // punctuation + trailing-'s' per word (plural tolerance), and whole-phrase
+  // containment. First exact match wins when multiple roles share a base name.
+  const findRoleIdForExample = useMemo(() => {
+    const roles = data?.career_roles ?? []
+    const stripPunct = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
+    const stripPunctAndPlural = (s: string) =>
+      s
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .map((w) => w.replace(/s$/, ''))
+        .filter(Boolean)
+        .join('')
+    const baseName = (s: string) =>
+      s.split(/\s*(?:\/|\(|--|—)/)[0].toLowerCase().trim()
+    return (jobTitle: string): string | undefined => {
+      const needle = jobTitle.toLowerCase().trim()
+      for (const r of roles) {
+        if (r.title.toLowerCase().trim() === needle) return r.id
+      }
+      for (const r of roles) {
+        if (baseName(r.title) === needle) return r.id
+      }
+      const strippedNeedle = stripPunct(needle)
+      if (strippedNeedle) {
+        for (const r of roles) {
+          if (stripPunct(r.title) === strippedNeedle) return r.id
+        }
+      }
+      const pluralNeedle = stripPunctAndPlural(needle)
+      if (pluralNeedle) {
+        for (const r of roles) {
+          if (stripPunctAndPlural(r.title) === pluralNeedle) return r.id
+        }
+      }
+      const safeNeedle = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const phrasePattern = new RegExp(
+        `(^|\\s)${safeNeedle}($|\\s|[/(\\-—])`,
+        'i'
+      )
+      for (const r of roles) {
+        if (phrasePattern.test(r.title)) return r.id
+      }
+      return undefined
     }
-    return map
   }, [data])
 
   if (isLoading) {
@@ -426,7 +468,7 @@ export default function CareerSectorDetailPage({
             </p>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {exampleJobs.map((job) => {
-                const matchedRoleId = roleIdByTitle.get(job.toLowerCase().trim())
+                const matchedRoleId = findRoleIdForExample(job)
                 const cardInner = (
                   <>
                     <h3

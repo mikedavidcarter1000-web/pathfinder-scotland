@@ -6,7 +6,7 @@ import { getAnonSupabase } from '@/lib/supabase-public'
 import { SavedComparisonsClient } from './saved-comparisons-client'
 
 export const metadata: Metadata = {
-  title: 'Saved comparisons | Pathfinder Scotland',
+  title: 'Saved comparisons',
   description: 'Your saved career comparisons.',
   robots: { index: false, follow: false },
   alternates: { canonical: '/account/saved-comparisons' },

@@ -3,7 +3,8 @@ import type { Metadata } from 'next'
 import { VerificationBanner } from '@/components/ui/VerificationCaveat'
 
 export const metadata: Metadata = {
-  title: 'Gypsy Roma Traveller Student Support – Pathfinder Scotland',
+  title: 'Gypsy Roma Traveller Student Support',
+  alternates: { canonical: '/support/grt' },
 }
 
 const orgs = [
