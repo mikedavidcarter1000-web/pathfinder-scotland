@@ -7,6 +7,30 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-28 Age-appropriate privacy notices
+
+- **DPA 2018 s.9 sets the Scottish digital consent age at 13, not 16.** The existing Children's data section said "under 16 should have parental consent". This conflicts with UK law: DPA 2018 s.9 and the GDPR Article 8(1) age is 13 in Scotland. The corrected text says students 13+ can consent themselves; parental involvement is encouraged but not required. **Rule: before writing any legal-basis or consent-age text for a UK/Scottish context, verify against DPA 2018 s.9 directly. Do not assume the GDPR default of 16.**
+
+- **Existing privacy page had a conflicting under-16 consent statement.** This session caught and fixed the discrepancy during the update pass. Had the new "Information for young people and parents" section been added without reading the existing Children's data section, the page would have contained two contradictory positions. **Rule: when adding a new privacy section to an existing policy page, read the entire existing policy first to identify conflicts before writing new text.**
+
+- **A word-count check on "plain language" pages pays for itself.** The spec said "no more than 300 words" for the young person's summary. Running a quick word count (`229 words`) before committing confirmed compliance and gave a concrete number for audit evidence. **Rule: for any content deliverable with a word-count or reading-level requirement, compute the count before marking the task done. One `node -e` invocation is enough.**
+
+- **Static export at build time confirms the route exists, even if the build route-table output is truncated.** The monitor only captured the tail of the `npm run build` output; `/privacy/young-persons` was not visible in that window. Checking `.next/server/app/privacy/young-persons.html` confirmed the route compiled as a static page. **Rule: when build output is truncated, verify the route exists in `.next/server/app/` directly rather than declaring success on exit code alone.**
+
+- **The young person's summary uses a data-driven section array to avoid duplication in JSX.** Each section is `{ heading, items[] }` in a const array, rendered with a single `.map()`. Adding or reordering sections requires only updating the array. **Rule: for static content pages with N sections of the same shape (heading + bullet list), prefer a data array + map over copy-pasted JSX blocks -- the diff when updating a section is one item, not 10 lines of markup.**
+
+## 2026-04-27 Printable subject choice worksheet
+
+- **`document.title` swap is the correct cross-browser technique for suggesting a PDF filename.** When using `window.print()` as the PDF export mechanism (no library, no new window), set `document.title` to the desired filename before calling `window.print()`, then restore it in a `setTimeout(..., 1000)`. The browser uses the document title as the suggested filename in the Save As PDF dialog. `setTimeout` rather than immediate restore is needed because on some browsers `window.print()` returns before the dialog closes. **Rule: `window.print()` + `document.title` swap is the zero-dependency PDF filename approach. Always use `setTimeout` to restore the original title.**
+
+- **The `@page` at-rule can be nested inside `@media print` in modern browsers.** Nesting `@page { size: A4 portrait; margin: 15mm; }` inside the `@media print {}` block in globals.css works in Chrome 83+, Firefox 84+, and Safari 14+. It avoids emitting the margin override for the default screen stylesheet. **Rule: for new `@page` rules added to globals.css, nest them inside the `@media print` block for clean organisation; verify target browser support first.**
+
+- **`position: fixed` print footers repeat on every printed page without `@page` margin box support.** Chrome does not support `@page` margin boxes (`@bottom-center { content: ... }`), so per-page running footers must use a `position: fixed; bottom: 0` element with `background: #fff` to cover the last few pt above the bottom margin. This repeats reliably on every page in Chrome and Firefox. **Rule: for per-page print footers, use `position: fixed; bottom: 0` rather than `@page` margin boxes; the latter have no Chrome support.**
+
+- **Verify column names in production tables before writing API queries against them.** The task spec referenced "course title" but the live DB column is `courses.name`. Caught by running a `SELECT column_name FROM information_schema.columns` query before writing any JOIN. Had the query been written from the spec directly, the API would have silently returned nulls. **Rule: for any table first referenced in a new feature, verify column names from `information_schema.columns` before writing SELECT/JOIN statements.**
+
+- **Wrapping `<FeedbackWidget />` in `<div className="no-print">` is the lightest touch to hide it from print without modifying the shared component.** Adding `className="no-print"` to a wrapper div in the consuming page keeps the `FeedbackWidget` component itself print-unaware, which is correct since it's used across many pages where print may or may not be relevant. **Rule: to hide a shared component from print on a specific page, wrap it in `<div className="no-print">` at the call site rather than adding print CSS to the component itself.**
+
 ## 2026-04-26 Quick-exit button, UCAS tariff calculator, feedback micro-surveys
 
 - **`window.location.replace()` is the correct cross-origin exit mechanism; `window.history.replaceState()` cannot change origin.** The task spec mentioned using replaceState to clear history so the back button skips Pathfinder. `replaceState` throws a SecurityError when the target is cross-origin. `window.location.replace(url)` achieves the same history effect (replaces the current entry in the browser history stack) while correctly navigating to an external domain. **Rule: whenever you need a cross-origin "replace the current history entry and navigate away" pattern, use `window.location.replace(url)`, not `replaceState`.**
