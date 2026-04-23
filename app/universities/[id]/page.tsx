@@ -231,17 +231,34 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
 
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-4">
-              {/* Logo / Image Placeholder */}
-              <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden">
-                {university?.image_url || university?.logo_url ? (
+              {/* TODO: all 18 universities currently have logo_url = NULL in DB. Sourcing official crest/logo assets
+                  (with permission) is a separate content task; until then we show a branded initial placeholder. */}
+              <div
+                className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+                style={{
+                  background: 'linear-gradient(135deg, var(--pf-blue-700) 0%, var(--pf-blue-500) 100%)',
+                }}
+              >
+                {university?.logo_url ? (
                   <Image
-                    src={university.image_url || university.logo_url || '/logo-icon.png'}
+                    src={university.logo_url}
                     alt={university.name || 'University Logo'}
                     fill
                     style={{ objectFit: 'cover' }}
                   />
                 ) : (
-                  <span className="text-2xl font-bold text-gray-400">{university?.name?.charAt(0) || 'U'}</span>
+                  <span
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 700,
+                      fontSize: '1.875rem',
+                      color: 'var(--pf-white)',
+                      letterSpacing: '0.02em',
+                    }}
+                    aria-hidden="true"
+                  >
+                    {university?.name?.charAt(0) || 'U'}
+                  </span>
                 )}
               </div>
               <div>
@@ -328,7 +345,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
             <section>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gray-900">
-                  Courses {courses && `(${courses.length})`}
+                  {courses && courses.length > 0 ? `Courses (${courses.length})` : 'Courses'}
                 </h2>
               </div>
 
@@ -351,10 +368,8 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
               ) : (
                 <EmptyState
                   icon={EmptyStateIcons.book}
-                  title="No courses listed yet"
-                  message="We don't have any courses on file for this university yet. Check back soon."
-                  actionLabel="Browse all courses"
-                  actionHref="/courses"
+                  title="Course data coming soon"
+                  message={`Course data for ${university.name} is being researched and will be added shortly. In the meantime, visit the university website for the full prospectus.`}
                   tone="subtle"
                 />
               )}
@@ -454,12 +469,14 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
                     Visit Website
                   </a>
                 )}
-                <Link
-                  href={`/courses?universityId=${university.id}`}
-                  className="pf-btn-secondary w-full"
-                >
-                  Browse All Courses
-                </Link>
+                {courses && courses.length > 0 && (
+                  <Link
+                    href={`/courses?universityId=${university.id}`}
+                    className="pf-btn-secondary w-full"
+                  >
+                    Browse All Courses
+                  </Link>
+                )}
               </div>
             </div>
 
@@ -507,7 +524,7 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
                     <dd className="font-medium text-gray-900">Yes</dd>
                   </div>
                 )}
-                {courses && (
+                {courses && courses.length > 0 && (
                   <div className="flex justify-between">
                     <dt className="text-gray-500">Courses</dt>
                     <dd className="font-medium text-gray-900">{courses.length}</dd>

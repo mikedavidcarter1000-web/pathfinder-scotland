@@ -2,7 +2,6 @@
 
 import { use, useMemo } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useCollege, useCollegeArticulation, type ArticulationWithUniversity } from '@/hooks/use-colleges'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { ErrorState } from '@/components/ui/error-state'
@@ -112,17 +111,26 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
           </nav>
 
           <div className="flex items-start gap-4 mb-2">
-            <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden">
-              {college?.image_url ? (
-                <Image
-                  src={college.image_url || '/logo-icon.png'}
-                  alt={college.name || 'College Logo'}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                />
-              ) : (
-                <span className="text-2xl font-bold text-gray-400">{college?.name?.charAt(0) || 'C'}</span>
-              )}
+            {/* The colleges table has no logo column (by design). Branded initial placeholder stands in.
+                If logo assets become available, add `logo_url TEXT` to the schema rather than widening this component. */}
+            <div
+              className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, var(--pf-blue-700) 0%, var(--pf-blue-500) 100%)',
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700,
+                  fontSize: '1.875rem',
+                  color: 'var(--pf-white)',
+                  letterSpacing: '0.02em',
+                }}
+                aria-hidden="true"
+              >
+                {college?.name?.charAt(0) || 'C'}
+              </span>
             </div>
             <div>
               <h1 style={{ marginBottom: '8px', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>

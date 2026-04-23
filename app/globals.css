@@ -13,6 +13,10 @@
     --pf-blue-100: #E0EDF7;
     --pf-blue-50:  #F0F5FA;
 
+    /* Brand accents -- used in the Pathfinder mark (maze icon) and on widening-access surfaces */
+    --pf-navy-900:  #1B3A5C;
+    --pf-coral-500: #E8593C;
+
     /* Neutral */
     --pf-white:    #FFFFFF;
     --pf-grey-900: #1A1A2E;

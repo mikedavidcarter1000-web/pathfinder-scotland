@@ -284,10 +284,10 @@ export default function ParentWelcomePage() {
           className="inline-flex items-center justify-center no-underline hover:no-underline"
         >
           <Image
-            src="/logo-full.png"
+            src="/logo-full-2x.png"
             alt="Pathfinder Scotland"
-            width={160}
-            height={64}
+            width={320}
+            height={133}
             priority
             style={{ height: '64px', width: 'auto' }}
           />

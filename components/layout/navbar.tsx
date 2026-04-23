@@ -198,19 +198,19 @@ export function Navbar() {
               aria-label="Pathfinder Scotland — home"
             >
               <Image
-                src="/logo-full.png"
+                src="/logo-full-2x.png"
                 alt="Pathfinder Scotland"
-                width={106}
-                height={44}
+                width={320}
+                height={133}
                 priority
                 className="hidden sm:block"
                 style={{ height: '44px', width: 'auto' }}
               />
               <Image
-                src="/logo-icon.png"
+                src="/logo-icon-2x.png"
                 alt="Pathfinder Scotland"
-                width={39}
-                height={36}
+                width={78}
+                height={72}
                 priority
                 className="sm:hidden"
                 style={{ height: '36px', width: 'auto' }}

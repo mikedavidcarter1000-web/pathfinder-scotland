@@ -68,10 +68,10 @@ export default function SignInPage() {
             className="inline-flex items-center justify-center no-underline hover:no-underline"
           >
             <Image
-              src="/logo-full.png"
+              src="/logo-full-2x.png"
               alt="Pathfinder Scotland"
-              width={140}
-              height={58}
+              width={320}
+              height={133}
               priority
               style={{ height: '58px', width: 'auto' }}
             />
