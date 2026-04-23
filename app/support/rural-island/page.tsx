@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const orgs = [
   { name: 'UHI', site: 'uhi.ac.uk', notes: 'University designed for Highland and Island students' },
   { name: 'SAAS', site: 'saas.gov.uk', notes: 'Travel and accommodation support' },
-  { name: 'Open University Scotland', site: 'ou.ac.uk/scotland', notes: 'Distance learning with SAAS funding' },
+  { name: 'Open University Scotland', site: 'www.open.ac.uk/scotland/', notes: 'Distance learning with SAAS funding' },
   { name: 'Highlands and Islands Enterprise', site: 'hie.co.uk', notes: 'Economic and educational support in rural Scotland' },
 ]
 
@@ -116,12 +116,12 @@ export default function RuralIslandPage() {
               Fully distance learning. No campus attendance required. Full SAAS funding available
               for eligible students.{' '}
               <a
-                href="https://www.ou.ac.uk/scotland"
+                href="https://www.open.ac.uk/scotland/"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ color: 'var(--pf-blue-700)' }}
               >
-                ou.ac.uk/scotland
+                open.ac.uk/scotland
               </a>
             </p>
           </div>

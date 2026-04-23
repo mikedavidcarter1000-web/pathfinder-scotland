@@ -780,7 +780,7 @@ function UsefulLinksPanel() {
     {
       label: 'Qualifications Scotland subject choice guidance',
       description: "Scotland's qualifications authority — subject arrangements and guidance.",
-      url: 'https://www.sqa.org.uk/sqa/45625.html',
+      url: 'https://www.qualifications.gov.scot',
     },
     {
       label: 'My World of Work — option choices',

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const orgs = [
   { name: 'Carers Trust Scotland', site: 'carers.org', notes: 'National support and advice' },
-  { name: 'Young Scot', site: 'youngscot.net/info/carers', notes: 'Information for young carers in Scotland' },
+  { name: 'Young Scot', site: 'young.scot', notes: 'Information and opportunities for young people in Scotland, including young carers' },
   { name: 'Social Security Scotland', site: 'socialsecurity.gov.scot', notes: 'Young Carer Grant applications' },
   { name: 'Coalition of Carers', site: 'carersnet.org', notes: 'Local group signposting' },
   { name: 'Carers UK', site: 'carersuk.org', notes: 'UK-wide support and advice' },
@@ -170,13 +170,13 @@ export default function YoungCarersPage() {
                 University of Edinburgh.
               </p>
               <a
-                href="https://www.ed.ac.uk/student-funding/young-carers"
+                href="https://www.ed.ac.uk/student-funding"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1"
                 style={{ color: 'var(--pf-blue-700)', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none' }}
               >
-                ed.ac.uk/student-funding/young-carers
+                ed.ac.uk/student-funding
                 <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>

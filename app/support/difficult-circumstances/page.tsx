@@ -114,7 +114,7 @@ export default function DifficultCircumstancesPage() {
                 recorded, the stronger the submission.
               </p>
               <a
-                href="https://www.sqa.org.uk/sqa/70972.html"
+                href="https://www.qualifications.gov.scot"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1"
@@ -130,7 +130,7 @@ export default function DifficultCircumstancesPage() {
               </a>
               <VerificationCaveat
                 org="SQA"
-                url="https://www.sqa.org.uk/sqa/70972.html"
+                url="https://www.qualifications.gov.scot"
                 year="2025-26"
               />
             </div>
@@ -728,7 +728,7 @@ export default function DifficultCircumstancesPage() {
             </Link>
 
             <a
-              href="https://www.sqa.org.uk/sqa/70972.html"
+              href="https://www.qualifications.gov.scot"
               target="_blank"
               rel="noopener noreferrer"
               className="pf-card-hover no-underline hover:no-underline flex items-start gap-3"

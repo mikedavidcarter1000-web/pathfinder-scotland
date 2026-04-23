@@ -112,7 +112,7 @@ This is not theoretical. It's a real, published, used-every-year part of the sys
 
 **[Pathfinder simulator](/simulator)** — model different grade outcomes to see which courses become available at each level.
 
-**[Qualifications Scotland (formerly SQA) Higher information](https://www.sqa.org.uk/sqa/45625.html)** — official information on Higher courses, assessment, and grade boundaries.
+**[Qualifications Scotland (formerly SQA) Higher information](https://www.qualifications.gov.scot)** — official information on Higher courses, assessment, and grade boundaries.
 
 **[UCAS tariff calculator](https://www.ucas.com/ucas/tariff-calculator)** — useful if you're applying to English universities, which use UCAS tariff points instead of grade letters.
 

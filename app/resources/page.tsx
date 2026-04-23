@@ -22,7 +22,7 @@ const SECTIONS: ResourceSection[] = [
     links: [
       {
         name: 'Qualifications Scotland',
-        url: 'https://www.sqa.org.uk',
+        url: 'https://www.qualifications.gov.scot',
         description: "Scotland's qualifications authority — course information, past papers, results.",
       },
       {
@@ -121,7 +121,7 @@ const SECTIONS: ResourceSection[] = [
       },
       {
         name: 'Carers Trust Scotland',
-        url: 'https://carers.org/about-us/about-carers-trust-scotland',
+        url: 'https://carers.org',
         description: 'Support and resources for young carers.',
       },
     ],
@@ -154,9 +154,9 @@ const SECTIONS: ResourceSection[] = [
       'Guidance and bursary support for students who are permanently estranged from their parents or family.',
     links: [
       {
-        name: 'Stand Alone',
-        url: 'https://www.standalonecharity.org',
-        description: 'UK charity for estranged students; bursary finder and peer support.',
+        name: 'NNECL (National Network for the Education of Care Leavers)',
+        url: 'https://www.nnecl.org',
+        description: 'National network supporting care-experienced and estranged students into and through higher education.',
       },
       {
         name: 'SAAS \u2014 Estranged Students',
@@ -219,11 +219,6 @@ const SECTIONS: ResourceSection[] = [
         url: 'https://www.lgbthealth.org.uk',
         description: 'Wellbeing services and counselling for LGBTQ+ people aged 16+.',
       },
-      {
-        name: 'TransEDU Scotland',
-        url: 'https://www.trans.ac.uk',
-        description: 'Resources on trans and non-binary inclusion in HE and FE.',
-      },
     ],
   },
   {
@@ -247,9 +242,9 @@ const SECTIONS: ResourceSection[] = [
         description: 'Ethnic minority and New Scots support, including education pathways.',
       },
       {
-        name: 'Universities Scotland Sanctuary',
+        name: 'Universities Scotland',
         url: 'https://www.universities-scotland.ac.uk',
-        description: 'Scottish Sanctuary Scholarships and guidance for displaced students.',
+        description: 'Umbrella body for Scottish universities — refer to individual university pages for current sanctuary scholarship details.',
       },
     ],
   },
@@ -258,11 +253,6 @@ const SECTIONS: ResourceSection[] = [
     blurb:
       'Education support and advocacy for Gypsy, Roma and Traveller young people.',
     links: [
-      {
-        name: 'STEP',
-        url: 'https://step.education.ed.ac.uk',
-        description: 'GRT education support programme at the University of Edinburgh.',
-      },
       {
         name: 'Friends, Families and Travellers',
         url: 'https://www.gypsy-traveller.org',
@@ -287,7 +277,7 @@ const SECTIONS: ResourceSection[] = [
     links: [
       {
         name: 'SWAP',
-        url: 'https://www.swap.ac.uk',
+        url: 'https://scottishwideraccess.org',
         description: 'Scottish Wider Access Programme \u2014 access courses with guaranteed university places.',
       },
       {
@@ -309,7 +299,7 @@ const SECTIONS: ResourceSection[] = [
       },
       {
         name: 'Open University Scotland',
-        url: 'https://www.open.ac.uk/scotland',
+        url: 'https://www.open.ac.uk/scotland/',
         description: 'Flexible distance learning with SAAS funding available for Scottish students.',
       },
     ],

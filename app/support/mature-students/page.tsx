@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 }
 
 const orgs = [
-  { name: 'SWAP', site: 'swap.ac.uk', notes: 'Access courses with guaranteed university places' },
+  { name: 'SWAP', site: 'scottishwideraccess.org', notes: 'Access courses with guaranteed university places' },
   { name: 'SAAS', site: 'saas.gov.uk', notes: 'Independent Student and part-time funding' },
-  { name: 'Open University Scotland', site: 'open.ac.uk', notes: 'Part-time degree study, no entry requirements' },
+  { name: 'Open University Scotland', site: 'www.open.ac.uk', notes: 'Part-time degree study, no entry requirements' },
   { name: 'NowrongPath', site: 'nowrongpath.scot', notes: 'Alternative routes into Scottish universities' },
   { name: 'College Development Network', site: 'cdn.ac.uk', notes: 'FE college information' },
 ]
@@ -86,12 +86,12 @@ export default function MatureStudentsPage() {
                 qualifications. Guaranteed university place on completion. Four regions: SWAP East,
                 SWAP West, SWAP North, SWAP South.{' '}
                 <a
-                  href="https://swap.ac.uk"
+                  href="https://scottishwideraccess.org"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
                 >
-                  swap.ac.uk
+                  scottishwideraccess.org
                 </a>
               </p>
             </div>
@@ -127,7 +127,7 @@ export default function MatureStudentsPage() {
                 Part-time degree study with no formal entry requirements. Study while working or
                 caring. Available across all subject areas.{' '}
                 <a
-                  href="https://open.ac.uk"
+                  href="https://www.open.ac.uk"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}

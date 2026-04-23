@@ -89,7 +89,7 @@ export const SHEP_PROGRAMMES: ShepProgramme[] = [
       "University of Dundee's widening access partnership — summer schools, subject tasters, and mentoring across Tayside, Angus, Perth & Kinross, and Fife.",
     offers:
       'LIFT OFF participation counts towards contextual admissions at Dundee, Abertay, St Andrews, and Stirling.',
-    url: 'https://www.dundee.ac.uk/study/undergraduate/widening-access',
+    url: 'https://www.dundee.ac.uk/widening-access',
     councilAreas: [
       'Dundee City',
       'Angus',

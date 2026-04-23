@@ -23,7 +23,7 @@ Subjects with consistently **high pass rates** (above 80 per cent A to C) tend t
 
 Subjects with **lower pass rates** (below 70 per cent A to C in some years) include Mathematics, Physics, Chemistry and some modern languages. Again, this does not mean these subjects are impossible -- it reflects the fact that they have demanding content, many pupils take them because they are required rather than because they enjoy them, and the jump from National 5 to Higher is steep in quantitative subjects.
 
-SQA publishes the full statistical data at [sqa.org.uk](https://www.sqa.org.uk/sqa/48269.html) each autumn. Check there for the most recent figures before making decisions.
+Qualifications Scotland publishes the full statistical data at [qualifications.gov.scot](https://www.qualifications.gov.scot) each autumn. Check there for the most recent figures before making decisions.
 
 ## Why pass rates can be misleading
 

@@ -522,12 +522,12 @@ function OfficialResources({ subjectName }: { subjectName: string }) {
   const links: Array<{ label: string; url: string; description: string }> = [
     {
       label: `Find ${subjectName} on Qualifications Scotland`,
-      url: 'https://www.sqa.org.uk/sqa/45625.html',
+      url: 'https://www.qualifications.gov.scot',
       description: "Official Qualifications Scotland subject pages — arrangements, specifications, and updates.",
     },
     {
       label: 'Past papers and marking instructions',
-      url: 'https://www.sqa.org.uk/pastpapers/findpastpaper.htm',
+      url: 'https://www.qualifications.gov.scot',
       description: 'Download past exam papers from Qualifications Scotland to help with revision.',
     },
     {

@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { useMemo } from 'react'
 import { useAuth } from '@/hooks/use-auth'
 import { useUniversities } from '@/hooks/use-universities'
@@ -227,7 +226,7 @@ const NATIONAL_PROGRAMMES: Array<{
   {
     name: 'Carers Trust Scotland',
     region: 'National — young carers',
-    url: 'https://carers.org/about-us/about-carers-trust-scotland',
+    url: 'https://carers.org',
     description:
       'Support for young carers including Young Carer Statements, respite funding, and transition support.',
   },
@@ -241,7 +240,7 @@ const NATIONAL_PROGRAMMES: Array<{
   {
     name: 'Care Experienced students — UCAS',
     region: 'UK-wide application guidance',
-    url: 'https://www.ucas.com/undergraduate/applying-university/individual-needs/care-experienced-students',
+    url: 'https://www.ucas.com/applying/care-experienced-students',
     description:
       "UCAS's guidance on declaring care experience on your application and the support universities must offer.",
   },
@@ -306,47 +305,32 @@ export default function WideningAccessPage() {
           borderBottom: '1px solid var(--pf-grey-300)',
         }}
       >
-        <div className="pf-container">
-          <div className="grid md:grid-cols-5 gap-10 items-center">
-            <div className="md:col-span-3">
-              <span className="pf-badge-amber" style={{ marginBottom: '20px' }}>
-                Widening Access
-              </span>
-              <h1 style={{ marginTop: '16px', marginBottom: '16px', lineHeight: 1.15 }}>
-                Lower entry requirements for students from every background.
-              </h1>
-              <p
-                style={{
-                  color: 'var(--pf-grey-600)',
-                  fontSize: '1.125rem',
-                  lineHeight: 1.65,
-                  marginBottom: '32px',
-                }}
-              >
-                Scottish universities offer reduced entry requirements, guaranteed interviews, and
-                extra support to students from under-represented backgrounds. We check your
-                eligibility automatically and show adjusted offers on every course you view.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link href={user ? '/dashboard' : '/onboarding'} className="pf-btn-primary">
-                  Check your eligibility
-                </Link>
-                <Link href="/courses" className="pf-btn-secondary">
-                  Browse courses
-                </Link>
-              </div>
-            </div>
-
-            <div className="hidden md:flex justify-center md:col-span-2">
-              <Image
-                src="/widening-access.png"
-                alt="Illustration showing standard university entry requirements of AAAA compared to an adjusted widening access offer of AABB"
-                width={400}
-                height={400}
-                style={{ objectFit: 'contain', width: '100%', height: 'auto', maxWidth: '400px' }}
-                priority
-              />
-            </div>
+        <div className="pf-container" style={{ maxWidth: '820px' }}>
+          <span className="pf-badge-amber" style={{ marginBottom: '20px' }}>
+            Widening Access
+          </span>
+          <h1 style={{ marginTop: '16px', marginBottom: '16px', lineHeight: 1.15 }}>
+            Lower entry requirements for students from every background.
+          </h1>
+          <p
+            style={{
+              color: 'var(--pf-grey-600)',
+              fontSize: '1.125rem',
+              lineHeight: 1.65,
+              marginBottom: '32px',
+            }}
+          >
+            Scottish universities offer reduced entry requirements, guaranteed interviews, and
+            extra support to students from under-represented backgrounds. We check your
+            eligibility automatically and show adjusted offers on every course you view.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link href={user ? '/dashboard' : '/onboarding'} className="pf-btn-primary">
+              Check your eligibility
+            </Link>
+            <Link href="/courses" className="pf-btn-secondary">
+              Browse courses
+            </Link>
           </div>
         </div>
       </section>

@@ -66,7 +66,7 @@ If you want to dig into how Scottish qualifications map onto university entry, o
 ## Who to talk to if you have questions
 
 - **Your school's guidance team** for anything specific to your exams or coursework.
-- **[Qualifications Scotland](https://www.qualifications.gov.scot/)** for official guidance — replaces sqa.org.uk over the course of 2026.
+- **[Qualifications Scotland](https://www.qualifications.gov.scot/)** for official guidance — replaces the former SQA website over the course of 2026.
 - **[SAAS](https://www.saas.gov.uk/)** for student finance once you're applying to university.
 - **[UCAS](https://www.ucas.com/)** for the application process itself.
 

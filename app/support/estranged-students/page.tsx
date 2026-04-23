@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 }
 
 const orgs = [
-  { name: 'Stand Alone', site: 'standalonecharity.org', notes: 'UK charity for estranged students; bursary finder and peer support' },
+  { name: 'NNECL (National Network for the Education of Care Leavers)', site: 'nnecl.org', notes: 'National network supporting care-experienced and estranged students into and through higher education' },
   { name: 'SAAS', site: 'saas.gov.uk', notes: 'Apply for funding; declare estrangement on application' },
   { name: 'NUS Scotland', site: 'nus-scotland.org.uk', notes: 'Student rights and welfare advice' },
   { name: 'Citizens Advice Scotland', site: 'cas.org.uk', notes: 'Free independent advice on benefits and housing' },
@@ -90,18 +90,10 @@ export default function EstrangedStudentsPage() {
             <div className="pf-card" style={{ padding: '20px 24px' }}>
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Stand Alone Pledge bursaries</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '8px' }}>
-                15 of Scotland's 18 universities have signed the Stand Alone Legacy Pledge. They offer
-                bursaries, accommodation guarantees, and dedicated support for estranged students.
-                Check{' '}
-                <a
-                  href="https://standalonecharity.org/pledge"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
-                >
-                  standalonecharity.org/pledge
-                </a>{' '}
-                for the list of signed institutions.
+                15 of Scotland&apos;s 18 universities have signed the Stand Alone Legacy Pledge. They
+                offer bursaries, accommodation guarantees, and dedicated support for estranged
+                students. Ask the admissions team of each university you are considering whether they
+                have signed the pledge and what support is available.
               </p>
             </div>
 
@@ -153,19 +145,20 @@ export default function EstrangedStudentsPage() {
             </div>
 
             <div className="pf-card" style={{ padding: '20px 24px' }}>
-              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Stand Alone</h3>
+              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>NNECL (National Network for the Education of Care Leavers)</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '8px' }}>
-                UK charity for estranged students. Provides a bursary finder, free helpline, and
-                peer network.
+                National network supporting care-experienced and estranged students into and through
+                higher education. Publishes a guide to which universities have signed the
+                estrangement pledge and offer dedicated support.
               </p>
               <a
-                href="https://standalonecharity.org"
+                href="https://www.nnecl.org"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1"
                 style={{ color: 'var(--pf-blue-700)', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none' }}
               >
-                standalonecharity.org
+                nnecl.org
                 <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>

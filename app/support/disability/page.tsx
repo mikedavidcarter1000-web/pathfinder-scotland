@@ -33,7 +33,7 @@ const dsaRows = [
 const orgs = [
   { name: 'SAAS DSA', site: 'saas.gov.uk/guides/disabled-students-allowance', notes: 'Apply for DSA' },
   { name: 'ILF Scotland', site: 'ilf.scot/transition-fund', notes: 'Transition Fund applications' },
-  { name: 'CALL Scotland', site: 'callscotland.org.uk', notes: 'Assistive technology advice and free equipment loan' },
+  { name: 'CALL Scotland', site: 'www.callscotland.org.uk', notes: 'Assistive technology advice and free equipment loan' },
   { name: 'Lead Scotland', site: 'lead.org.uk', notes: 'DSA guidance and disability support advice' },
   { name: 'Equality and Human Rights Commission', site: 'equalityhumanrights.com', notes: 'Your rights under the Equality Act' },
 ]

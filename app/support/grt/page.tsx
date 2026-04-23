@@ -8,7 +8,6 @@ export const metadata: Metadata = {
 }
 
 const orgs = [
-  { name: 'STEP (Scottish Traveller Education Programme)', site: 'step.education.ed.ac.uk', notes: 'Education support for GRT communities; University of Edinburgh based' },
   { name: 'Friends, Families and Travellers', site: 'gypsy-traveller.org', notes: 'UK-wide GRT advice; Scotland services directory' },
   { name: 'MECOPP', site: 'mecopp.org.uk', notes: 'GRT community health and carer support in Scotland' },
   { name: 'Romano Lav', site: 'romanolav.org', notes: 'Roma-led charity in Glasgow; education and employability' },
@@ -118,12 +117,12 @@ export default function GrtPage() {
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
                 Fully distance learning. No attendance required. Full SAAS funding available.{' '}
                 <a
-                  href="https://ou.ac.uk/scotland"
+                  href="https://www.open.ac.uk/scotland/"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
                 >
-                  ou.ac.uk/scotland
+                  open.ac.uk/scotland
                 </a>
               </p>
             </div>
@@ -136,17 +135,10 @@ export default function GrtPage() {
             </div>
 
             <div className="pf-card" style={{ padding: '20px 24px' }}>
-              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Article 12 (STEP) — ATTRAs</h3>
+              <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Article 12 — ATTRAs</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
                 Achievement Awards (ATTRAs) delivered at home sites for young people not in school.{' '}
-                <a
-                  href="https://step.education.ed.ac.uk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
-                >
-                  step.education.ed.ac.uk
-                </a>
+                Contact Article 12 in Scotland directly.
               </p>
             </div>
           </div>
@@ -196,9 +188,9 @@ export default function GrtPage() {
           <div className="pf-card" style={{ padding: '20px 24px' }}>
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
               Dedicated GRT education support workers exist in some councils: confirmed in Fife (GATE
-              team), South Lanarkshire (GTEG), and Edinburgh. STEP provides support and resources to
-              schools and local authorities nationwide. If your school does not know how to support
-              you, they can contact STEP directly.
+              team), South Lanarkshire (GTEG), and Edinburgh. If your school does not know how to
+              support you, ask your local authority&apos;s inclusion or additional support for learning
+              team, or contact Article 12 in Scotland.
             </p>
           </div>
         </div>

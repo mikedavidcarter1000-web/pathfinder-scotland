@@ -12,7 +12,7 @@ const orgs = [
   { name: 'SAAS', site: 'saas.gov.uk', notes: 'Lone Parents Grant and Childcare Grant' },
   { name: 'Social Security Scotland', site: 'socialsecurity.gov.scot', notes: 'Best Start Grant, Scottish Child Payment' },
   { name: 'One Parent Families Scotland', site: 'opfs.org.uk', notes: 'Dedicated advice for lone parents in Scotland' },
-  { name: 'Gingerbread Scotland', site: 'gingerbread.org.uk/scotland', notes: 'Support for single parents' },
+  { name: 'Gingerbread', site: 'www.gingerbread.org.uk', notes: 'UK-wide support and advice for single parents' },
 ]
 
 export default function YoungParentsPage() {

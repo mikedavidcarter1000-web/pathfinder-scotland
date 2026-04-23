@@ -33,7 +33,7 @@ export function Footer() {
       { label: 'Funding enquiries', href: 'mailto:hello@pathfinderscot.co.uk?subject=Funding%20enquiry', external: true },
     ],
     useful: [
-      { label: 'Qualifications Scotland', href: 'https://www.sqa.org.uk', external: true },
+      { label: 'Qualifications Scotland', href: 'https://www.qualifications.gov.scot', external: true },
       { label: 'Education Scotland', href: 'https://education.gov.scot', external: true },
       { label: 'UCAS', href: 'https://www.ucas.com', external: true },
       { label: 'My World of Work', href: 'https://www.myworldofwork.co.uk', external: true },

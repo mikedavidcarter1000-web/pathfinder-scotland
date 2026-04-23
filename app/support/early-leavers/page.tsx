@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const orgs = [
   { name: 'Skills Development Scotland', site: 'myworldofwork.co.uk', notes: 'Free careers advice; your first contact' },
   { name: 'Apprenticeships Scotland', site: 'apprenticeships.scot', notes: 'All apprenticeship types and vacancies' },
-  { name: 'mygov.scot', site: 'mygov.scot/find-your-local-council', notes: 'Find your local NOLB contact' },
+  { name: 'mygov.scot', site: 'www.mygov.scot/contact-local-council', notes: 'Find your local council (and No One Left Behind contact)' },
 ]
 
 export default function EarlyLeaversPage() {

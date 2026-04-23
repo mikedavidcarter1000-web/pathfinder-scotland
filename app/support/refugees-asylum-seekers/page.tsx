@@ -12,8 +12,8 @@ const orgs = [
   { name: 'Scottish Refugee Council', site: 'scottishrefugeecouncil.org.uk', notes: 'Specialist advice; can help check fee eligibility' },
   { name: 'Bridges Programmes', site: 'bridgesprogrammes.org.uk', notes: 'University preparation for refugees in Edinburgh' },
   { name: 'BEMIS Scotland', site: 'bemis.org.uk', notes: 'Ethnic minority and new Scots support' },
-  { name: 'Universities Scotland Sanctuary', site: 'universities-scotland.ac.uk/our-priorities/widening-access/sanctuary-scholarships/', notes: 'Scottish university sanctuary provisions' },
-  { name: 'mygov.scot', site: 'mygov.scot/asylum-seekers-and-refugees', notes: 'Scottish Government information' },
+  { name: 'Universities Scotland', site: 'www.universities-scotland.ac.uk', notes: 'Umbrella body for Scottish universities; refer to individual university pages for current sanctuary scholarship details' },
+  { name: 'mygov.scot', site: 'www.mygov.scot/browse/benefits', notes: 'Scottish Government information on benefits and support' },
 ]
 
 export default function RefugeesAsylumSeekersPage() {
@@ -142,19 +142,21 @@ export default function RefugeesAsylumSeekersPage() {
             Glasgow Caledonian, Robert Gordon, UHI, and others.
           </p>
           <p style={{ color: 'var(--pf-grey-700)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '12px' }}>
-            Master list:{' '}
+            Umbrella body:{' '}
             <a
-              href="https://www.universities-scotland.ac.uk/our-priorities/widening-access/sanctuary-scholarships/"
+              href="https://www.universities-scotland.ac.uk"
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
             >
-              universities-scotland.ac.uk/our-priorities/widening-access/sanctuary-scholarships/
+              universities-scotland.ac.uk
             </a>
+            . Check each university&apos;s widening access or sanctuary page directly for current
+            scholarship details.
           </p>
           <VerificationCaveat
             org="each university directly"
-            url="https://www.universities-scotland.ac.uk/our-priorities/widening-access/sanctuary-scholarships/"
+            url="https://www.universities-scotland.ac.uk"
             customText="Scholarship availability and amounts change each year. Check directly with the university you are applying to."
           />
         </div>

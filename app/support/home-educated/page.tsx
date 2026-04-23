@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 }
 
 const orgs = [
-  { name: 'Schoolhouse Home Education Association', site: 'schoolhouse.org.uk', notes: 'Scottish home education support and advice' },
+  { name: 'Schoolhouse Home Education Association', site: 'www.schoolhouse.org.uk', notes: 'Scottish home education support and advice' },
   { name: 'Education Scotland', site: 'education.gov.scot', notes: 'Curriculum framework context' },
   { name: 'SAAS', site: 'saas.gov.uk', notes: 'Funding for home-educated students entering HE' },
   { name: 'NowrongPath', site: 'nowrongpath.scot', notes: 'Alternative entry routes into Scottish universities' },

@@ -583,6 +583,6 @@ export function getAiRoleTier(rating: number | null | undefined): AiRoleTier {
 export const EXTERNAL_URLS = {
   ucas: 'https://www.ucas.com',
   saas: 'https://www.saas.gov.uk',
-  sqa: 'https://www.sqa.org.uk',
+  sqa: 'https://www.qualifications.gov.scot',
   simd: 'https://www.gov.scot/collections/scottish-index-of-multiple-deprivation-2020/',
 } as const

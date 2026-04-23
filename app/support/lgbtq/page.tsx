@@ -14,7 +14,6 @@ const orgs = [
   { name: 'LGBT Youth Scotland', site: 'lgbtyouth.org.uk', notes: 'Support for LGBTQ+ young people aged 13–25 in Scotland' },
   { name: 'LGBT Health and Wellbeing', site: 'lgbthealth.org.uk', notes: 'Wellbeing services, 16+' },
   { name: 'NUS Scotland', site: 'nus-scotland.org.uk', notes: 'Student rights and LGBTQ+ campaigns' },
-  { name: 'TransEDU', site: 'trans.ac.uk', notes: 'Resources for trans and non-binary students in FE and HE' },
   { name: 'AKT (Albert Kennedy Trust)', site: 'akt.org.uk', notes: 'Housing and support for LGBTQ+ young people at risk of homelessness' },
 ]
 
@@ -70,16 +69,7 @@ export default function LgbtqPage() {
               <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>University of Strathclyde</h3>
               <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '6px' }}>
                 <strong>Ask Alex</strong> service for trans, non-binary and gender-diverse students
-                (strath.ac.uk/askalex). Also home of the{' '}
-                <a
-                  href="https://trans.ac.uk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
-                >
-                  TransEDU project (trans.ac.uk)
-                </a>{' '}
-                — sector-wide resources for trans and non-binary students in FE and HE.
+                (strath.ac.uk/askalex).
               </p>
             </div>
 
@@ -221,11 +211,11 @@ export default function LgbtqPage() {
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
               If you are struggling, your Students&apos; Association LGBTQ+ society or EDI service is
               a good first contact. You can also contact{' '}
-              <strong>LGBT Youth Scotland</strong> on{' '}
-              <a href="tel:03454597766" style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}>
-                0345 459 7766
+              <strong>Switchboard</strong> (LGBTQ+ helpline) on{' '}
+              <a href="tel:08000119100" style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}>
+                0800 0119 100
               </a>{' '}
-              (Monday–Friday 9am–5pm).
+              (10am–10pm, every day).
             </p>
           </div>
 
