@@ -1154,6 +1154,10 @@ function usePersonalisedPrompts(ctx: ContextResponse | null): { q1: string; q2: 
       )
     }
 
+    // TODO: If the student has recorded extenuating circumstances (illness, bereavement, serious
+    // family disruption), surface a contextual prompt here encouraging them to mention it briefly
+    // and factually in Q3 — one or two sentences on what happened and how they kept going.
+    // See /support/difficult-circumstances for the admissions guidance this prompt should echo.
     const q3 =
       'Think about part-time work, volunteering, caring responsibilities, hobbies or personal projects. What skills have these given you, and how do they connect to your course? If you are first in your family to apply, have caring responsibilities, or have faced barriers that others have not, this is a strength in your application. Scottish universities actively look for students who have achieved in difficult circumstances.'
 

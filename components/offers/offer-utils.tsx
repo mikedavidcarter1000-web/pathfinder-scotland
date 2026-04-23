@@ -93,6 +93,7 @@ export const SUPPORT_GROUP_LABELS: Record<SupportGroup, string> = {
   'early-leavers': 'Early leavers',
   'rural-island': 'Rural / island',
   'care-experienced': 'Care-experienced',
+  'difficult-circumstances': 'Difficult circumstances',
 }
 
 export const SUPPORT_GROUP_ROUTES: Record<SupportGroup, string | null> = {
@@ -109,6 +110,7 @@ export const SUPPORT_GROUP_ROUTES: Record<SupportGroup, string | null> = {
   'early-leavers': '/support/early-leavers',
   'rural-island': '/support/rural-island',
   'care-experienced': null,
+  'difficult-circumstances': '/support/difficult-circumstances',
 }
 
 // Map Lucide icon names (stored in offer_categories.icon) to inline SVG paths.

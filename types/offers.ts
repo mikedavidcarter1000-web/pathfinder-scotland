@@ -28,6 +28,7 @@ export type SupportGroup =
   | 'early-leavers'
   | 'rural-island'
   | 'care-experienced'
+  | 'difficult-circumstances'
 
 export type ChecklistCategory = 'finance' | 'health' | 'housing' | 'admin' | 'tech'
 

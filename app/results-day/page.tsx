@@ -999,6 +999,28 @@ function ResultsDayContent() {
         </>
       )}
 
+      {/* ── DIFFICULT CIRCUMSTANCES ───────────────────────── */}
+      <section className="pf-section pf-section-white">
+        <div className="pf-container" style={{ maxWidth: '760px' }}>
+          <h2 style={{ marginBottom: '8px' }}>If something went wrong during your exams</h2>
+          <p style={{ color: 'var(--pf-grey-600)', marginBottom: '20px', lineHeight: 1.6 }}>
+            Illness, bereavement, or another serious event near exam time can affect your grades.
+            There are formal processes — through SQA and through university admissions teams —
+            that can take your circumstances into account. You do not have to accept a result that
+            does not reflect what you are capable of.
+          </p>
+          <Link
+            href="/support/difficult-circumstances"
+            className="inline-flex items-center gap-2 pf-btn-secondary"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            Extenuating circumstances support
+          </Link>
+        </div>
+      </section>
+
       {/* ── CLEARING SECTION (on/after results day) ─────────── */}
       {countdown.isResultsDayOrAfter && (
         <section
