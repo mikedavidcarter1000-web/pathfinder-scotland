@@ -7,6 +7,18 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-29 Extenuating circumstances support page
+
+- **Adding a value to a `SupportGroup` union type ripples into two exhaustive `Record<SupportGroup, ...>` maps in `offer-utils.tsx`.** TypeScript catches this immediately but the fix requires touching both `SUPPORT_GROUP_LABELS` and `SUPPORT_GROUP_ROUTES`. **Rule: whenever a new support group page is added, update the type union in `types/offers.ts` and both maps in `components/offers/offer-utils.tsx` in the same commit.**
+
+- **`SupportGroupOffers` is an async server component — any page that imports it compiles as a dynamic route, not a static one.** Static support pages (no DB reads of their own) become `ƒ` (dynamic) in the build table purely because of this component. This is correct behaviour and not a build error. **Rule: support group pages with `<SupportGroupOffers>` will always be dynamic; do not add `export const dynamic = 'force-static'` to them.**
+
+- **Helpline numbers sourced from well-known authoritative pages (NHS Scotland, Samaritans, Childline, Breathing Space, Young Minds).** These are stable but should be verified annually. Add to the `docs/data-maintenance.md` review cycle. **Rule: any page with a helpline number block should carry a `VerificationCaveat` or be listed in `data-maintenance.md` for annual review.**
+
+- **New support group card should NOT have a `highlighted` prop tied to any student profile flag.** The difficult-circumstances card has no student-flag equivalent (unlike `is_young_carer`, `has_disability` etc.). Omitting the `highlighted` prop is correct — the base `SupportGroupCard` renders without highlighting when the prop is absent or falsy. **Rule: only add `highlighted` to a support card when there is a specific boolean flag on the `students` table that reliably identifies that group.**
+
+- **`SupportGroupOffers` with a group that has no seeded offers renders an empty section gracefully.** The component already handles zero results — it renders nothing if no offers are tagged for the group. No null-guard needed in the page. **Rule: do not add a conditional wrapper around `<SupportGroupOffers>` to hide it when empty; the component handles that itself.**
+
 ## 2026-04-28 UCAS personal statement guidance tool
 
 - **Files added:** `data/personal-statement-examples.json` (6 fictional Scottish students, 36 examples covering 3 reformed UCAS questions in weak and strong versions with 2-4 annotations each); `app/tools/personal-statement/layout.tsx` (metadata, FAQ schema); `app/tools/personal-statement/page.tsx` (Suspense wrapper + FeedbackWidget); `app/tools/personal-statement/personal-statement-client.tsx` (720-line single-file client with tabs, student selector, filter chips, drafting tool, mistakes checklist, related links); `app/api/personal-statement/context/route.ts` (server-side personalisation data fetcher reading students / saved_courses / student_subject_choices / student_grades / quiz_results in a single `Promise.all`). Surgical edits: `components/layout/navbar.tsx` (added to Tools dropdown), `app/sitemap.ts`, `app/tools/page.tsx` (added card), `.gitignore` (allow new data file past `/data/*` block).
