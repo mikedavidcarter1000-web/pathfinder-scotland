@@ -17,6 +17,7 @@ import {
 } from '@/hooks/use-results-day'
 import { useToast } from '@/components/ui/toast'
 import { COMMON_SUBJECTS_BY_LEVEL } from '@/lib/constants'
+import { useSubjects } from '@/hooks/use-subjects'
 import { compareGradeStrings } from '@/lib/grades'
 import type { Tables } from '@/types/database'
 
@@ -1152,7 +1153,17 @@ function QuickGradeForm({
   grades: QuickGrade[]
   onChange: (grades: QuickGrade[]) => void
 }) {
-  const subjects = COMMON_SUBJECTS_BY_LEVEL.higher
+  // Pull every Higher-level subject from the DB so students sitting less-common
+  // subjects (Psychology, Philosophy, Gàidhlig, NPAs etc.) can still record
+  // their result. Falls back to the hardcoded list while the fetch is in-flight
+  // so the form is usable immediately on a cold load.
+  const { data: higherSubjects } = useSubjects({ level: 'higher' })
+  const subjects = useMemo(() => {
+    if (higherSubjects && higherSubjects.length > 0) {
+      return higherSubjects.map((s) => s.name)
+    }
+    return COMMON_SUBJECTS_BY_LEVEL.higher
+  }, [higherSubjects])
 
   const updateRow = (index: number, field: 'subject' | 'grade', value: string) => {
     const next = [...grades]

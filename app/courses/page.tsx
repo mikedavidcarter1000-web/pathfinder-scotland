@@ -57,7 +57,9 @@ function CoursesPageContent() {
   }, [searchParams])
 
   const [search, setSearch] = useState('')
-  const [universityId, setUniversityId] = useState<string>('')
+  const [universityId, setUniversityId] = useState<string>(
+    () => searchParams.get('universityId') ?? ''
+  )
   const [subjectArea, setSubjectArea] = useState<string>('')
   const [eligibilityFilter, setEligibilityFilter] = useState<EligibilityFilter>('all')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')

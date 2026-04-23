@@ -89,7 +89,7 @@ export default function CareersIndexPage() {
               Explore Career Sectors
             </h1>
             <p style={{ color: 'var(--pf-grey-600)', fontSize: '0.9375rem', maxWidth: '760px' }}>
-              Discover 16 career areas and see which subjects, qualifications, and university
+              Discover {sectors?.length ?? 19} career areas and see which subjects, qualifications, and university
               courses lead there.
             </p>
           </div>

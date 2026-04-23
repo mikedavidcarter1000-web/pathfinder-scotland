@@ -55,6 +55,7 @@ export type SimulatorData = {
   rules: Record<string, CourseChoiceRule>
   mandatoryByCourse: Map<string, Set<string>>
   courses: SimulatorCourse[]
+  totalCoursesInCatalogue: number
   careerSectors: CareerSector[]
   subjectToSectors: Map<string, Set<string>>
   sectorToSubjects: Map<string, Set<string>>
@@ -87,6 +88,7 @@ export function useSimulatorData() {
         progResult,
         rolesResult,
         roleSubjectsResult,
+        totalCoursesResult,
       ] = await Promise.all([
         supabase
           .from('subjects')
@@ -113,6 +115,7 @@ export function useSimulatorData() {
           .order('ai_rating_2030_2035', { ascending: true, nullsFirst: false })
           .order('title', { ascending: true }),
         supabase.from('career_role_subjects').select('career_role_id, subject_id'),
+        supabase.from('courses').select('id', { count: 'exact', head: true }),
       ])
 
       if (subjectsResult.error) throw subjectsResult.error
@@ -124,6 +127,8 @@ export function useSimulatorData() {
       if (progResult.error) throw progResult.error
       if (rolesResult.error) throw rolesResult.error
       if (roleSubjectsResult.error) throw roleSubjectsResult.error
+      if (totalCoursesResult.error) throw totalCoursesResult.error
+      const totalCoursesInCatalogue = totalCoursesResult.count ?? 0
 
       const subjects = (subjectsResult.data as unknown as SubjectWithArea[]) || []
       const subjectsById = new Map(subjects.map((s) => [s.id, s]))
@@ -266,6 +271,7 @@ export function useSimulatorData() {
         rules,
         mandatoryByCourse,
         courses,
+        totalCoursesInCatalogue,
         careerSectors,
         subjectToSectors,
         sectorToSubjects,
@@ -302,6 +308,7 @@ export type ImpactResult = {
   eligibleCourses: SimulatorCourse[]
   eligibleCount: number
   totalCourses: number
+  totalCoursesInCatalogue: number
   missedOpportunities: MissedOpportunity[]
   coveredSectorIds: Set<string>
   uncoveredSectorIds: Set<string>
@@ -457,6 +464,7 @@ export function calculateSimulatorImpact(
     eligibleCourses,
     eligibleCount: eligibleCourses.length,
     totalCourses,
+    totalCoursesInCatalogue: data.totalCoursesInCatalogue,
     missedOpportunities,
     coveredSectorIds,
     uncoveredSectorIds,

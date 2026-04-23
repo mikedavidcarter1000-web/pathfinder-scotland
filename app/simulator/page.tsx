@@ -707,10 +707,22 @@ function HeroVisual({
           fontSize: '2.25rem',
           color: 'var(--pf-grey-900)',
           lineHeight: 1,
-          marginBottom: '12px',
+          marginBottom: '4px',
         }}
       >
         {eligibleCount} / {totalCourses}
+      </div>
+      <div
+        style={{
+          fontSize: '0.75rem',
+          color: 'var(--pf-grey-500)',
+          marginBottom: '12px',
+        }}
+      >
+        courses with mapped subject requirements
+        {impact?.totalCoursesInCatalogue
+          ? ` (${impact.totalCoursesInCatalogue} total)`
+          : ''}
       </div>
       <div
         style={{
@@ -1094,9 +1106,23 @@ function ImpactPanel({
                 {impact.eligibleCount}
               </span>
               <span style={{ fontSize: '0.9375rem', color: 'var(--pf-grey-600)' }}>
-                of {impact.totalCourses} courses
+                of {impact.totalCourses} courses with mapped requirements
+                {impact.totalCoursesInCatalogue
+                  ? ` (${impact.totalCoursesInCatalogue} total)`
+                  : ''}
               </span>
             </div>
+            <p
+              style={{
+                fontSize: '0.8125rem',
+                color: 'var(--pf-grey-600)',
+                marginBottom: '12px',
+                fontStyle: 'italic',
+              }}
+            >
+              Not all courses have subject requirements mapped yet. We&apos;re
+              adding more regularly.
+            </p>
             <div
               style={{
                 height: '8px',
