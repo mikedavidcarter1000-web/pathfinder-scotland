@@ -262,6 +262,11 @@ export function ParentFundingCard({ child }: { child: LinkedChild }) {
               Read the SAAS application guide →
             </Link>
           </p>
+          <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', marginTop: '4px' }}>
+            <Link href="/tools/living-costs" style={{ color: 'var(--pf-blue-700)' }}>
+              See how far your child&apos;s funding goes at different universities →
+            </Link>
+          </p>
         </>
       )}
     </section>

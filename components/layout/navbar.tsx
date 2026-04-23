@@ -59,6 +59,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { name: 'Career Quiz', href: '/quiz' },
       { name: 'Cost Calculator', href: '/tools/roi-calculator' },
+      { name: 'Living Costs', href: '/tools/living-costs' },
       { name: 'Grade Sensitivity', href: '/tools/grade-sensitivity' },
       { name: 'Personal Statement Guide', href: '/tools/personal-statement' },
       { name: 'UCAS Calculator', href: '/tools/ucas-calculator' },

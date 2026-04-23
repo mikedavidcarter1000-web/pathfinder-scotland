@@ -20,6 +20,7 @@ import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import { UNIVERSITY_TYPES } from '@/lib/constants'
 import { UniversityRankingsSection } from '@/components/universities/rankings-section'
+import { UniversityLivingCostsSection } from '@/components/universities/living-costs-section'
 import type { Tables } from '@/types/database'
 
 type University = Tables<'universities'>
@@ -305,6 +306,9 @@ export default function UniversityPage({ params }: { params: Promise<{ id: strin
 
             {/* Rankings and institutional outcomes */}
             <UniversityRankingsSection university={university} />
+
+            {/* Living costs */}
+            <UniversityLivingCostsSection slug={university.slug} name={university.name} />
 
             {/* Widening Access — comprehensive section */}
             {hasAnyWaData && (

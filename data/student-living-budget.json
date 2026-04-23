@@ -1,0 +1,62 @@
+{
+  "food_at_home_weekly": 30,
+  "food_at_home_annual": 1560,
+  "food_at_home_label": "Contribution to household food costs",
+  "food_away_weekly": 50,
+  "food_away_annual": 2600,
+  "food_away_label": "Groceries and basic meals",
+  "course_costs_annual": 400,
+  "course_costs_label": "Books, printing, equipment (estimated average)",
+  "social_weekly": 30,
+  "social_annual": 1560,
+  "social_label": "Social, clothes, phone, personal",
+  "laundry_away_annual": 250,
+  "laundry_away_label": "Laundry and household supplies (if living away)",
+  "source": "Save the Student National Student Money Survey 2025 / NUS Scotland estimates",
+  "needs_verification": true,
+  "saas_support": {
+    "under_21000": { "bursary": 2000, "loan": 9400, "total": 11400 },
+    "21000_24000": { "bursary": 1125, "loan": 9400, "total": 10525 },
+    "24000_34000": { "bursary": 500, "loan": 9400, "total": 9900 },
+    "34000_45000": { "bursary": 0, "loan": 8400, "total": 8400 },
+    "over_45000": { "bursary": 0, "loan": 8400, "total": 8400 }
+  },
+  "free_things": [
+    {
+      "item": "Bus travel",
+      "detail": "Free for under 22s across Scotland (Young Scot NEC card)",
+      "annual_value": 600,
+      "value_label": "Worth around £600 per year"
+    },
+    {
+      "item": "Tuition fees",
+      "detail": "Paid by SAAS for Scottish students -- nothing to pay",
+      "annual_value": 1820,
+      "value_label": "Worth £1,820 per year"
+    },
+    {
+      "item": "Prescriptions",
+      "detail": "Free in Scotland for everyone",
+      "annual_value": null,
+      "value_label": ""
+    },
+    {
+      "item": "Council tax",
+      "detail": "Full-time students are exempt",
+      "annual_value": null,
+      "value_label": "Saves around £1,200 per year"
+    },
+    {
+      "item": "Eye tests",
+      "detail": "Free in Scotland for everyone",
+      "annual_value": null,
+      "value_label": ""
+    },
+    {
+      "item": "Student discounts",
+      "detail": "TOTUM, UNiDAYS, Student Beans, Young Scot",
+      "annual_value": null,
+      "value_label": "Varies"
+    }
+  ]
+}
