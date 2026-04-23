@@ -2467,6 +2467,7 @@ export type Database = {
           demographic_completed: boolean | null
           disability_details: string | null
           email: string
+          email_preferences: Json | null
           email_reminders_enabled: boolean | null
           first_generation: boolean | null
           first_name: string | null
@@ -2499,6 +2500,7 @@ export type Database = {
           demographic_completed?: boolean | null
           disability_details?: string | null
           email: string
+          email_preferences?: Json | null
           email_reminders_enabled?: boolean | null
           first_generation?: boolean | null
           first_name?: string | null
@@ -2531,6 +2533,7 @@ export type Database = {
           demographic_completed?: boolean | null
           disability_details?: string | null
           email?: string
+          email_preferences?: Json | null
           email_reminders_enabled?: boolean | null
           first_generation?: boolean | null
           first_name?: string | null

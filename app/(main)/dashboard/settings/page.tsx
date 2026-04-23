@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { useToast } from '@/components/ui/toast'
@@ -8,6 +9,10 @@ import { useCurrentStudent, useUpdateStudent } from '@/hooks/use-student'
 import { useGenerateReminders } from '@/hooks/use-reminders'
 import { useAuth, useUpdatePassword } from '@/hooks/use-auth'
 import { getSupabaseClient } from '@/lib/supabase'
+import {
+  onboardingPostcodeLookupAction,
+  type OnboardingPostcodeResult,
+} from '@/app/actions/onboarding-postcode-lookup'
 import { ParentAccessSection } from '@/components/dashboard/parent-access-section'
 import { LinkToSchool } from '@/components/student/link-to-school'
 
@@ -128,8 +133,23 @@ export default function SettingsPage() {
         <p className="text-gray-600 mt-1">Manage your account and privacy preferences</p>
       </div>
 
+      {/* Home postcode — change postcode + auto-refresh SIMD decile */}
+      {student && <PostcodeSection student={student} updateStudent={updateStudent} toast={toast} />}
+
       {/* Funding Profile section */}
       {student && <FundingProfileSection student={student} updateStudent={updateStudent} toast={toast} />}
+
+      {/* Email preferences — GDPR opt-out for marketing + platform emails */}
+      {student && <EmailPreferencesSection student={student} updateStudent={updateStudent} toast={toast} />}
+
+      {/*
+        TODO (Phase 2): Career interests editing. Onboarding does not persist
+        career interests today — no student_career_interests table or
+        students.career_interests column exists. When the quiz results flow
+        lands and career interests start being stored per-student, surface a
+        matching edit section here so users can add/remove interests outside
+        the onboarding flow.
+      */}
 
       {/* Parent / guardian access — only shown for student accounts */}
       {student && <ParentAccessSection />}
@@ -411,9 +431,22 @@ function FundingProfileSection({ student, updateStudent, toast }: FundingProfile
               Complete your funding profile to see all the bursaries and grants you&apos;re eligible
               for.
             </p>
-            <button onClick={() => setEditing(true)} className="pf-btn pf-btn-primary">
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              className="pf-btn pf-btn-primary"
+            >
               Complete funding profile
             </button>
+            <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', marginTop: '12px' }}>
+              Check which bursaries and grants you may be eligible for based on your profile.{' '}
+              <Link
+                href="/bursaries"
+                style={{ color: 'var(--pf-blue-700)', fontWeight: 600 }}
+              >
+                Browse bursaries →
+              </Link>
+            </p>
           </div>
         )}
       </div>
@@ -730,6 +763,418 @@ function ProfileRow({ label, value }: { label: string; value: string }) {
     <div className="flex justify-between gap-4" style={{ padding: '6px 0', borderBottom: '1px solid var(--pf-grey-100)' }}>
       <span style={{ color: 'var(--pf-grey-600)' }}>{label}</span>
       <span style={{ color: 'var(--pf-grey-900)', fontWeight: 500, textAlign: 'right' }}>{value}</span>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Home postcode section — students can update their postcode after onboarding
+// if they move or entered it incorrectly. Updating the postcode re-runs the
+// SIMD lookup so widening-access eligibility stays accurate.
+// ---------------------------------------------------------------------------
+
+interface PostcodeSectionProps {
+  student: NonNullable<ReturnType<typeof useCurrentStudent>['data']>
+  updateStudent: ReturnType<typeof useUpdateStudent>
+  toast: ReturnType<typeof useToast>
+}
+
+function PostcodeSection({ student, updateStudent, toast }: PostcodeSectionProps) {
+  const [editing, setEditing] = useState(false)
+  const [postcode, setPostcode] = useState(student.postcode ?? '')
+  const [lookupResult, setLookupResult] = useState<OnboardingPostcodeResult | null>(null)
+  const [isLookingUp, startLookup] = useTransition()
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // Reset the local state whenever the user reopens the editor.
+  useEffect(() => {
+    if (editing) {
+      setPostcode(student.postcode ?? '')
+      setLookupResult(null)
+      setError(null)
+    }
+  }, [editing, student.postcode])
+
+  const handleLookup = () => {
+    if (!postcode.trim()) return
+    setError(null)
+    startLookup(async () => {
+      const res = await onboardingPostcodeLookupAction(postcode)
+      setLookupResult(res)
+    })
+  }
+
+  const handleSave = async () => {
+    if (!lookupResult) return
+    if (lookupResult.status === 'ok') {
+      setSaving(true)
+      try {
+        await updateStudent.mutateAsync({
+          postcode: lookupResult.postcode,
+          simd_decile: lookupResult.simdDecile,
+          local_authority: lookupResult.councilArea ?? null,
+        })
+        toast.success('Postcode updated', 'Your widening access status has been refreshed.')
+        setEditing(false)
+      } catch {
+        toast.error("Couldn't save", 'Please try again.')
+      } finally {
+        setSaving(false)
+      }
+    } else if (lookupResult.status === 'missing_simd') {
+      // Valid Scottish postcode but no SIMD row -- still persist the postcode
+      // so widening access can be reassessed later once seed refreshes.
+      setSaving(true)
+      try {
+        await updateStudent.mutateAsync({
+          postcode: lookupResult.postcode,
+          simd_decile: null,
+          local_authority: null,
+        })
+        toast.success('Postcode updated', 'SIMD data for this postcode is not yet available.')
+        setEditing(false)
+      } catch {
+        toast.error("Couldn't save", 'Please try again.')
+      } finally {
+        setSaving(false)
+      }
+    } else {
+      // not_scottish / not_found / invalid_format / server_error
+      setError("We couldn't find this postcode in our database. Please check and try again.")
+    }
+  }
+
+  if (!editing) {
+    return (
+      <div
+        className="rounded-xl p-6 mb-6"
+        style={{
+          backgroundColor: 'var(--pf-white)',
+          border: '1px solid var(--pf-grey-300)',
+        }}
+      >
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div>
+            <h2
+              style={{
+                fontSize: '1.125rem',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                color: 'var(--pf-grey-900)',
+              }}
+            >
+              Home postcode
+            </h2>
+            <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', marginTop: '4px' }}>
+              Used to check your SIMD decile and widening access eligibility.
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-2" style={{ fontSize: '0.875rem' }}>
+          <ProfileRow label="Postcode" value={student.postcode || 'Not set'} />
+          {student.simd_decile != null && (
+            <ProfileRow label="SIMD decile" value={String(student.simd_decile)} />
+          )}
+          {student.local_authority && (
+            <ProfileRow label="Council area" value={student.local_authority} />
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          className="pf-btn pf-btn-secondary mt-4"
+          style={{ fontSize: '0.875rem' }}
+        >
+          {student.postcode ? 'Change postcode' : 'Add postcode'}
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className="rounded-xl p-6 mb-6"
+      style={{
+        backgroundColor: 'var(--pf-white)',
+        border: '1px solid var(--pf-blue-500)',
+      }}
+    >
+      <h2
+        style={{
+          fontSize: '1.125rem',
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          color: 'var(--pf-grey-900)',
+          marginBottom: '12px',
+        }}
+      >
+        Update postcode
+      </h2>
+
+      <label htmlFor="settings-postcode" className="pf-label">
+        Home postcode
+      </label>
+      <div className="flex flex-col sm:flex-row gap-3 mt-1">
+        <input
+          id="settings-postcode"
+          type="text"
+          value={postcode}
+          onChange={(e) => {
+            setPostcode(e.target.value.toUpperCase())
+            setLookupResult(null)
+            setError(null)
+          }}
+          className="pf-input flex-1 uppercase"
+          placeholder="e.g. EH1 1YZ"
+          autoComplete="postal-code"
+        />
+        <button
+          type="button"
+          onClick={handleLookup}
+          disabled={!postcode.trim() || isLookingUp}
+          className="pf-btn pf-btn-secondary justify-center"
+          style={{ minHeight: '44px' }}
+        >
+          {isLookingUp ? 'Checking…' : 'Look up'}
+        </button>
+      </div>
+
+      {lookupResult?.status === 'ok' && (
+        <div
+          className="mt-4 rounded-lg"
+          style={{
+            padding: '12px 14px',
+            backgroundColor: 'var(--pf-blue-50)',
+            border: '1px solid var(--pf-blue-100)',
+            color: 'var(--pf-blue-900)',
+            fontSize: '0.875rem',
+          }}
+        >
+          <strong>{lookupResult.postcode}</strong> — SIMD decile {lookupResult.simdDecile}
+          {lookupResult.councilArea ? `, ${lookupResult.councilArea}` : ''}.
+        </div>
+      )}
+
+      {lookupResult?.status === 'missing_simd' && (
+        <div
+          className="mt-4 rounded-lg"
+          style={{
+            padding: '12px 14px',
+            backgroundColor: 'var(--pf-blue-50)',
+            border: '1px solid var(--pf-blue-100)',
+            color: 'var(--pf-blue-900)',
+            fontSize: '0.875rem',
+          }}
+        >
+          <strong>{lookupResult.postcode}</strong> is a valid Scottish postcode. SIMD data for this
+          postcode is not in our database yet — your postcode can still be saved.
+        </div>
+      )}
+
+      {error && <p className="text-sm text-red-600 mt-3">{error}</p>}
+
+      {lookupResult &&
+        lookupResult.status !== 'ok' &&
+        lookupResult.status !== 'missing_simd' && (
+          <p className="text-sm text-red-600 mt-3">
+            We couldn&apos;t find this postcode in our database. Please check and try again.
+          </p>
+        )}
+
+      <div className="flex gap-3 mt-5">
+        <button
+          type="button"
+          onClick={() => setEditing(false)}
+          disabled={saving}
+          className="pf-btn pf-btn-secondary"
+        >
+          Cancel
+        </button>
+        <SubmitButton
+          onClick={handleSave}
+          isLoading={saving}
+          loadingText="Saving..."
+          disabled={
+            !lookupResult ||
+            (lookupResult.status !== 'ok' && lookupResult.status !== 'missing_simd')
+          }
+        >
+          Save postcode
+        </SubmitButton>
+      </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Email preferences section — GDPR opt-out for marketing-style emails.
+// Three independent toggles persisted to students.email_preferences JSONB.
+// ---------------------------------------------------------------------------
+
+type EmailPrefs = {
+  results_day_reminders: boolean
+  platform_updates: boolean
+  tips_and_guidance: boolean
+}
+
+const EMAIL_PREF_DEFAULTS: EmailPrefs = {
+  results_day_reminders: true,
+  platform_updates: true,
+  tips_and_guidance: true,
+}
+
+function readPrefs(raw: unknown): EmailPrefs {
+  if (raw && typeof raw === 'object') {
+    const r = raw as Record<string, unknown>
+    return {
+      results_day_reminders:
+        typeof r.results_day_reminders === 'boolean'
+          ? r.results_day_reminders
+          : EMAIL_PREF_DEFAULTS.results_day_reminders,
+      platform_updates:
+        typeof r.platform_updates === 'boolean'
+          ? r.platform_updates
+          : EMAIL_PREF_DEFAULTS.platform_updates,
+      tips_and_guidance:
+        typeof r.tips_and_guidance === 'boolean'
+          ? r.tips_and_guidance
+          : EMAIL_PREF_DEFAULTS.tips_and_guidance,
+    }
+  }
+  return { ...EMAIL_PREF_DEFAULTS }
+}
+
+interface EmailPreferencesSectionProps {
+  student: NonNullable<ReturnType<typeof useCurrentStudent>['data']>
+  updateStudent: ReturnType<typeof useUpdateStudent>
+  toast: ReturnType<typeof useToast>
+}
+
+function EmailPreferencesSection({ student, updateStudent, toast }: EmailPreferencesSectionProps) {
+  const initial = readPrefs((student as unknown as { email_preferences?: unknown }).email_preferences)
+  const [prefs, setPrefs] = useState<EmailPrefs>(initial)
+  const [saving, setSaving] = useState(false)
+
+  const togglePref = async (key: keyof EmailPrefs) => {
+    const next = { ...prefs, [key]: !prefs[key] }
+    setPrefs(next)
+    setSaving(true)
+    try {
+      // email_preferences is a JSONB column; UpdateTables<'students'> accepts
+      // Json so this round-trip is type-safe once the generated types include
+      // the new column.
+      await updateStudent.mutateAsync({
+        email_preferences: next as unknown as Record<string, boolean>,
+      } as Parameters<typeof updateStudent.mutateAsync>[0])
+      toast.success('Email preferences updated')
+    } catch {
+      // Revert on failure so the toggle state matches the DB.
+      setPrefs(prefs)
+      toast.error("Couldn't save", 'Please try again.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const items: Array<{ key: keyof EmailPrefs; label: string; description: string }> = [
+    {
+      key: 'results_day_reminders',
+      label: 'Results Day reminders',
+      description: 'Get notified about key dates and deadlines around results day.',
+    },
+    {
+      key: 'platform_updates',
+      label: 'Platform updates',
+      description: 'Hear about new features and content on Pathfinder.',
+    },
+    {
+      key: 'tips_and_guidance',
+      label: 'Tips and guidance',
+      description: 'Receive subject choice and career planning tips.',
+    },
+  ]
+
+  return (
+    <div
+      className="rounded-xl p-6 mb-6"
+      style={{
+        backgroundColor: 'var(--pf-white)',
+        border: '1px solid var(--pf-grey-300)',
+      }}
+    >
+      <div className="mb-4">
+        <h2
+          style={{
+            fontSize: '1.125rem',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+            color: 'var(--pf-grey-900)',
+          }}
+        >
+          Email preferences
+        </h2>
+        <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)', marginTop: '4px' }}>
+          Choose which types of email you want to receive from Pathfinder.
+        </p>
+      </div>
+
+      <ul className="space-y-3" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        {items.map((item) => (
+          <li key={item.key} className="flex items-start gap-3">
+            <input
+              id={`email-pref-${item.key}`}
+              type="checkbox"
+              checked={prefs[item.key]}
+              onChange={() => togglePref(item.key)}
+              disabled={saving}
+              style={{
+                width: '20px',
+                height: '20px',
+                accentColor: 'var(--pf-blue-700)',
+                marginTop: '2px',
+                flexShrink: 0,
+              }}
+            />
+            <label htmlFor={`email-pref-${item.key}`} className="flex-1 cursor-pointer">
+              <span
+                style={{
+                  display: 'block',
+                  fontWeight: 600,
+                  color: 'var(--pf-grey-900)',
+                  fontSize: '0.9375rem',
+                }}
+              >
+                {item.label}
+              </span>
+              <span
+                style={{
+                  display: 'block',
+                  color: 'var(--pf-grey-600)',
+                  fontSize: '0.8125rem',
+                  marginTop: '2px',
+                }}
+              >
+                {item.description}
+              </span>
+            </label>
+          </li>
+        ))}
+      </ul>
+
+      <p
+        style={{
+          fontSize: '0.75rem',
+          color: 'var(--pf-grey-600)',
+          marginTop: '16px',
+          paddingTop: '12px',
+          borderTop: '1px solid var(--pf-grey-100)',
+        }}
+      >
+        You can change these at any time. We will never share your email address with third parties.
+      </p>
     </div>
   )
 }
