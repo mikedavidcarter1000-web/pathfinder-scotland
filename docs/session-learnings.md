@@ -7,6 +7,14 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-30 Critical fixes -- safeguarding link removal, auth credential audit, GA URL verification
+
+- **Hijacked domains serving gambling content are a safeguarding risk on pages used by vulnerable teenagers.** `als.scot` (previously listed as "Adult Learning Scotland" on the ESOL/EAL support page) redirected to an online casino at time of fix. Removed entirely rather than replacing -- no verified replacement domain was available and an absent entry is safer than a wrong one. **Rule: any support-page external link to a third-party domain should be periodically re-checked. If a domain no longer serves the expected content, remove first and find a replacement second. Do not leave a placeholder or broken link.**
+
+- **Hardcoded test credentials in auth forms: verify against live code before acting.** User reported `jamie.r.e.carter@gmail.com` / `Test123456` visible in sign-in and sign-up DOM. Codebase grep returned no matches; both `app/auth/sign-in/page.tsx` and `app/auth/sign-up/page.tsx` already use `useState('')` empty defaults. Likely browser autofill from previous testing. **Rule: before acting on a "credentials visible in DOM" report, grep the full repo (including git history with `git log --all -S "string"`) and read the actual file before concluding they exist. Browser autofill is indistinguishable from hardcoded values in a visual scan.**
+
+- **GA university list was already correct from prior commit; only the Edinburgh College school-partnership link needed fixing.** The alternatives page had two Edinburgh College links: the GA delivery-partner link (correct) and a school-college-partnership link pointing to a 404 URL. The 404 link was the one missed in the prior QA session. **Rule: when a task says "verify the GA list is correct", check ALL links on the page, not just the university list array -- there may be secondary links in the same section (delivery partners, school partnership links) that are separate from the main array and were not caught in the prior fix.**
+
 ## 2026-04-30 QA fixes -- landing-page spacing, job-card linkage, GA URL refresh
 
 - **Files touched:** `app/page.tsx` (hero section pb reduced from `py-12 sm:py-16` to `pt-12 sm:pt-16 pb-6`; PostcodeTeaser section overrides `pf-section`'s 64px paddingTop with inline `paddingTop: '16px'`); `app/careers/[sectorId]/page.tsx` (added `roleIdByTitle` `useMemo` from `data.career_roles`, wrapped each `exampleJobs` card in a `Link` to `/careers/${sector.id}/${role.id}` when there's a title match, falls back to a plain `<div className="pf-card">` when no match); `app/pathways/alternatives/page.tsx` (replaced 7 GA URLs, removed Stirling + Aberdeen, added Dundee, Glasgow, UHI -- Open University deliberately omitted, see below).
