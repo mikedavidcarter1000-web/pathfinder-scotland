@@ -174,15 +174,16 @@ const GA_FRAMEWORKS: string[] = [
 ]
 
 const GA_UNIVERSITIES: Array<{ name: string; url: string }> = [
-  { name: 'Edinburgh Napier University', url: 'https://www.napier.ac.uk/courses/graduate-apprenticeships' },
+  { name: 'Edinburgh Napier University', url: 'https://www.napier.ac.uk/study-with-us/apprenticeships' },
   { name: 'Glasgow Caledonian University', url: 'https://www.gcu.ac.uk/study/graduateapprenticeships' },
-  { name: 'Robert Gordon University', url: 'https://www.rgu.ac.uk/study/graduate-apprenticeships' },
-  { name: 'University of Strathclyde', url: 'https://www.strath.ac.uk/studywithus/graduateapprenticeships/' },
-  { name: 'Heriot-Watt University', url: 'https://www.hw.ac.uk/study/graduate-apprenticeships.htm' },
-  { name: 'University of the West of Scotland', url: 'https://www.uws.ac.uk/study/graduate-apprenticeships/' },
-  { name: 'University of Stirling', url: 'https://www.stir.ac.uk/courses/graduate-apprenticeships/' },
-  { name: 'University of Aberdeen', url: 'https://www.abdn.ac.uk/study/undergraduate/graduate-apprenticeships' },
-  { name: 'Edinburgh College (delivery partner)', url: 'https://www.edinburghcollege.ac.uk' },
+  { name: 'Heriot-Watt University', url: 'https://www.hw.ac.uk/research-enterprise/discovery/graduate-apprenticeships' },
+  { name: 'Robert Gordon University', url: 'https://www.rgu.ac.uk/business-innovation/workforce-development/graduate-apprenticeships' },
+  { name: 'University of Dundee', url: 'https://www.dundee.ac.uk/graduate-apprenticeships' },
+  { name: 'University of Glasgow', url: 'https://www.gla.ac.uk/schools/computing/study/undergraduate/graduateapprenticeships/' },
+  { name: 'University of Strathclyde', url: 'https://www.strath.ac.uk/studywithus/apprenticeshipdegreesatstrathclyde/graduateapprenticeships/' },
+  { name: 'University of the Highlands and Islands', url: 'https://www.uhi.ac.uk/en/business/apprenticeships/ga/' },
+  { name: 'University of the West of Scotland', url: 'https://www.uws.ac.uk/study/undergraduate/graduate-apprenticeships/' },
+  { name: 'Edinburgh College (delivery partner)', url: 'https://www.edinburghcollege.ac.uk/employers/apprenticeships/apprenticeships-for-students' },
 ]
 
 type ComparisonRow = {

@@ -258,6 +258,14 @@ export default function CareerSectorDetailPage({
     [data]
   )
 
+  const roleIdByTitle = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const role of data?.career_roles ?? []) {
+      map.set(role.title.toLowerCase().trim(), role.id)
+    }
+    return map
+  }, [data])
+
   if (isLoading) {
     return (
       <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
@@ -417,31 +425,48 @@ export default function CareerSectorDetailPage({
               Ten jobs you could do in this area. Each one is a different route into the sector.
             </p>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {exampleJobs.map((job) => (
-                <div
-                  key={job}
-                  className="pf-card"
-                  style={{ padding: '16px 20px' }}
-                >
-                  <h3
-                    style={{
-                      fontSize: '0.9375rem',
-                      marginBottom: '4px',
-                      color: 'var(--pf-grey-900)',
-                    }}
-                  >
-                    {job}
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: '0.8125rem',
-                      color: 'var(--pf-grey-600)',
-                      lineHeight: 1.5,
-                    }}
-                    dangerouslySetInnerHTML={{ __html: getJobBlurb(job) }}
-                  />
-                </div>
-              ))}
+              {exampleJobs.map((job) => {
+                const matchedRoleId = roleIdByTitle.get(job.toLowerCase().trim())
+                const cardInner = (
+                  <>
+                    <h3
+                      style={{
+                        fontSize: '0.9375rem',
+                        marginBottom: '4px',
+                        color: matchedRoleId ? 'var(--pf-blue-700)' : 'var(--pf-grey-900)',
+                      }}
+                    >
+                      {job}
+                    </h3>
+                    <p
+                      style={{
+                        fontSize: '0.8125rem',
+                        color: 'var(--pf-grey-600)',
+                        lineHeight: 1.5,
+                      }}
+                      dangerouslySetInnerHTML={{ __html: getJobBlurb(job) }}
+                    />
+                  </>
+                )
+                if (matchedRoleId) {
+                  return (
+                    <Link
+                      key={job}
+                      href={`/careers/${sector.id}/${matchedRoleId}`}
+                      className="pf-card-hover no-underline hover:no-underline"
+                      style={{ padding: '16px 20px', color: 'var(--pf-grey-900)' }}
+                      aria-label={`Read more about ${job}`}
+                    >
+                      {cardInner}
+                    </Link>
+                  )
+                }
+                return (
+                  <div key={job} className="pf-card" style={{ padding: '16px 20px' }}>
+                    {cardInner}
+                  </div>
+                )
+              })}
             </div>
           </section>
         )}

@@ -127,7 +127,7 @@ export default async function HomePage() {
 
       {/* 1. Hero */}
       <section
-        className="py-12 sm:py-16"
+        className="pt-12 sm:pt-16 pb-6"
         style={{
           backgroundColor: 'var(--pf-blue-50)',
           position: 'relative',
@@ -206,7 +206,7 @@ export default async function HomePage() {
       </section>
 
       {/* 2. Sample personalisation */}
-      <section className="pf-section pf-section-white">
+      <section className="pf-section-white" style={{ paddingTop: '16px', paddingBottom: '64px' }}>
         <div className="pf-container">
           <div style={{ maxWidth: '680px', margin: '0 auto' }}>
             <PostcodeTeaser />
