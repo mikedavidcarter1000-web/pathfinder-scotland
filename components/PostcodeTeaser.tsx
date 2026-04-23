@@ -2,46 +2,25 @@
 
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import {
   homepageTeaserAction,
   type HomepageTeaserResult,
 } from '@/app/actions/homepage-teaser'
 import {
   getSimdBand,
-  getSimdLine1Copy,
+  getSimdHeadlineCopy,
   getSimdLine2Copy,
 } from '@/lib/simd-bands'
 
 const YEAR_GROUPS = ['S2', 'S3', 'S4', 'S5', 'S6'] as const
 type YearGroup = (typeof YEAR_GROUPS)[number]
 
-// Non-student audiences -- these options in the dropdown route to dedicated
-// info pages rather than the postcode-lookup flow. Keep in sync with the
-// /for-* routes (see app/for-parents, app/for-teachers, app/for-advisers).
-const AUDIENCE_ROUTES: Record<string, string> = {
-  parent: '/for-parents',
-  teacher: '/for-teachers',
-  adviser: '/for-advisers',
-}
-
 export function PostcodeTeaser() {
-  const router = useRouter()
   const [postcode, setPostcode] = useState('')
   const [yearGroup, setYearGroup] = useState<YearGroup | ''>('')
   const [result, setResult] = useState<HomepageTeaserResult | null>(null)
   const [inlineError, setInlineError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
-
-  // If the user selects a non-student audience option, route straight to the
-  // relevant info page -- these don't use the postcode-lookup flow at all.
-  function handleYearGroupChange(raw: string) {
-    if (raw in AUDIENCE_ROUTES) {
-      router.push(AUDIENCE_ROUTES[raw])
-      return
-    }
-    setYearGroup(raw as YearGroup | '')
-  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -163,7 +142,7 @@ export function PostcodeTeaser() {
                 id="pt-yeargroup"
                 name="yearGroup"
                 value={yearGroup}
-                onChange={(e) => handleYearGroupChange(e.target.value)}
+                onChange={(e) => setYearGroup(e.target.value as YearGroup | '')}
                 disabled={isPending}
                 style={{
                   width: '100%',
@@ -183,10 +162,6 @@ export function PostcodeTeaser() {
                     {yg}
                   </option>
                 ))}
-                <option value="" disabled>──────────</option>
-                <option value="parent">I&rsquo;m a parent or carer</option>
-                <option value="teacher">I&rsquo;m a teacher</option>
-                <option value="adviser">I&rsquo;m a careers adviser</option>
               </select>
             </div>
           </div>
@@ -428,7 +403,7 @@ function TeaserResultPanel({
   onReset: () => void
 }) {
   const { simdDecile, bursaryCount, simd20CourseCount, simd40CourseCount, sectorSamples } = result
-  const simdLine = getSimdLine1Copy(simdDecile)
+  const { headline: simdHeadline, footnote: simdFootnote } = getSimdHeadlineCopy(simdDecile)
   const wideningAccessLine = getSimdLine2Copy(simdDecile, simd20CourseCount, simd40CourseCount)
 
   return (
@@ -463,7 +438,17 @@ function TeaserResultPanel({
             fontWeight: 500,
           }}
         >
-          {simdLine}
+          {simdHeadline}
+        </p>
+        <p
+          style={{
+            marginTop: '6px',
+            marginBottom: 0,
+            fontSize: '0.8125rem',
+            color: 'var(--pf-grey-600)',
+          }}
+        >
+          ({simdFootnote})
         </p>
       </div>
 

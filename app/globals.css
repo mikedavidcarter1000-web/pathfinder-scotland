@@ -542,6 +542,15 @@
   .pf-blog-content li > p {
     margin-bottom: 8px;
   }
+  .pf-blog-content .pf-blog-table-wrap {
+    overflow-x: auto;
+    margin: 24px 0;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+  .pf-blog-content .pf-blog-table-wrap > table {
+    margin: 0;
+  }
   .pf-blog-content table {
     width: 100%;
     border-collapse: collapse;

@@ -46,9 +46,6 @@ export default function BlogPage() {
       >
         <div className="pf-container">
           <div style={{ maxWidth: '760px' }}>
-            <span className="pf-badge-blue inline-flex" style={{ marginBottom: '20px' }}>
-              Guides &amp; Articles
-            </span>
             <h1
               style={{
                 fontSize: 'clamp(2rem, 5vw, 2.75rem)',

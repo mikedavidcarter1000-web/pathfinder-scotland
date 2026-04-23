@@ -6,15 +6,32 @@ export function getSimdBand(decile: number): SimdBand {
   return 'outside'
 }
 
-export function getSimdLine1Copy(decile: number): string {
+export interface SimdHeadlineCopy {
+  headline: string
+  footnote: string
+}
+
+export function getSimdHeadlineCopy(decile: number): SimdHeadlineCopy {
   const band = getSimdBand(decile)
   if (band === 'simd20') {
-    return `You live in a SIMD ${decile} area. This is in the most-deprived 20% (SIMD20), which unlocks adjusted entry requirements at all 18 Scottish universities.`
+    return {
+      headline:
+        'Based on your postcode, you live in one of the most disadvantaged areas in Scotland. Many universities offer lower entry requirements and extra support for students from your area.',
+      footnote: `SIMD decile ${decile} -- most deprived 20%`,
+    }
   }
   if (band === 'simd40') {
-    return `You live in a SIMD ${decile} area. This is in the most-deprived 40% (SIMD40), and some Scottish universities offer adjusted entry requirements at this band.`
+    return {
+      headline:
+        'Based on your postcode, you may qualify for adjusted entry requirements at some Scottish universities. This is called widening access -- it means universities take your circumstances into account.',
+      footnote: `SIMD decile ${decile} -- most deprived 40%`,
+    }
   }
-  return `You live in a SIMD ${decile} area. This is outside the standard postcode-based widening access bands, but you may still qualify through other routes - care experience, young carer status, estranged student, first in your family to attend university, and others.`
+  return {
+    headline:
+      'Based on your postcode, standard entry requirements apply. You can still access bursaries, scholarships, and support -- explore your options below.',
+    footnote: `SIMD decile ${decile}`,
+  }
 }
 
 export function getSimdLine2Copy(

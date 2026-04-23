@@ -554,6 +554,16 @@ function FundingProfileSection({ student, updateStudent, toast }: FundingProfile
 // Change Password Section
 // ---------------------------------------------------------------------------
 
+// Map Supabase provider IDs to the user-facing name shown in the SSO notice.
+const SSO_PROVIDER_LABELS: Record<string, string> = {
+  google: 'Google',
+  apple: 'Apple',
+  github: 'GitHub',
+  twitter: 'X (Twitter)',
+  azure: 'Microsoft',
+  facebook: 'Facebook',
+}
+
 function ChangePasswordSection() {
   const { user } = useAuth()
   const toast = useToast()
@@ -565,6 +575,24 @@ function ChangePasswordSection() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+
+  // Detect whether the account has a password credential. Supabase puts the
+  // primary sign-in method on user.app_metadata.provider and lists every
+  // linked identity on user.identities. An account only has a password if
+  // one of its identities is the `email` provider.
+  const identities = (user?.identities ?? []) as Array<{ provider?: string }>
+  const hasEmailIdentity = identities.some((i) => i?.provider === 'email')
+  const appMetadata = (user?.app_metadata ?? {}) as {
+    provider?: string
+    providers?: string[]
+  }
+  const primaryProvider = appMetadata.provider
+  const providers = appMetadata.providers ?? (primaryProvider ? [primaryProvider] : [])
+  const ssoProvider = providers.find((p) => p && p !== 'email')
+
+  // Show the SSO notice only when the account has no password credential
+  // (no email identity) and was created via an OAuth provider.
+  const showSsoNotice = !!user && !hasEmailIdentity && !!ssoProvider
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -615,6 +643,22 @@ function ChangePasswordSection() {
     } finally {
       setSubmitting(false)
     }
+  }
+
+  if (showSsoNotice) {
+    const providerLabel =
+      (ssoProvider && SSO_PROVIDER_LABELS[ssoProvider]) ||
+      (ssoProvider ? ssoProvider.charAt(0).toUpperCase() + ssoProvider.slice(1) : 'your identity provider')
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <div className="mb-2">
+          <h2 className="text-lg font-semibold text-gray-900">Password</h2>
+        </div>
+        <p className="text-sm text-gray-600">
+          You sign in with {providerLabel}. Manage your password through your {providerLabel} account.
+        </p>
+      </div>
+    )
   }
 
   return (

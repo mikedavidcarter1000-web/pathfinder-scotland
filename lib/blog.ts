@@ -129,9 +129,18 @@ export async function getArticleBySlug(slug: string): Promise<RenderedBlogArticl
     .use(rehypeStringify)
     .process(article.rawContent)
 
+  // Wrap each table in a horizontally-scrollable container so wide tables
+  // don't break the viewport on mobile. GFM doesn't nest tables, so a
+  // string-level replacement is safe and avoids a bespoke rehype plugin.
+  const rawHtml = String(processed)
+  const html = rawHtml.replace(
+    /<table\b([^>]*)>([\s\S]*?)<\/table>/g,
+    '<div class="pf-blog-table-wrap"><table$1>$2</table></div>',
+  )
+
   return {
     ...article,
-    html: String(processed),
+    html,
     toc: extractToc(article.rawContent),
   }
 }
