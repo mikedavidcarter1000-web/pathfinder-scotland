@@ -1,0 +1,481 @@
+{
+  "_meta": {
+    "source": "Hand-written for Pathfinder Scotland, 2026 entry UCAS reform. Students are fictional composites; examples are illustrative and should never be copied verbatim into a real UCAS submission -- UCAS runs similarity detection.",
+    "last_reviewed": "2026-04-28"
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "label": "Why do you want to study this course?",
+      "short": "Why this course?",
+      "hint": "Universities want to hear a specific moment or idea that pulled you into this subject -- not general enthusiasm."
+    },
+    {
+      "id": "q2",
+      "label": "How have your studies prepared you for this course?",
+      "short": "Your studies",
+      "hint": "Name the subject, the topic, and what clicked. One concrete project or unit beats a list of Highers."
+    },
+    {
+      "id": "q3",
+      "label": "What else have you done that's relevant to this course?",
+      "short": "Everything else",
+      "hint": "Part-time work, volunteering, caring roles, personal projects -- anything outside school that connects, however small. Widening-access context belongs here when it fits."
+    }
+  ],
+  "students": [
+    {
+      "id": "aisha",
+      "name": "Aisha",
+      "location": "Glasgow",
+      "subject": "Medicine",
+      "university": "Glasgow",
+      "bio": "Aisha is in S5 at a Glasgow secondary. Nobody in her family has been to university. She works part-time at Boots and volunteers at a local care home. She wants to study Medicine.",
+      "backgrounds": ["first-generation", "state-school"]
+    },
+    {
+      "id": "callum",
+      "name": "Callum",
+      "location": "rural Aberdeenshire",
+      "subject": "Mechanical Engineering",
+      "university": "Strathclyde",
+      "bio": "Callum is in S6 at a small school in rural Aberdeenshire. His school only offers 5 Highers. He got interested in engineering through working on farm machinery with his dad. He wants to study Mechanical Engineering.",
+      "backgrounds": ["rural", "state-school"]
+    },
+    {
+      "id": "sophie",
+      "name": "Sophie",
+      "location": "Edinburgh",
+      "subject": "Law",
+      "university": "Edinburgh",
+      "bio": "Sophie is in S6 at an Edinburgh state school with a strong track record of university entry. Her parents are both professionals. She arranged a mini-pupillage at a law firm through a family contact. She wants to study Law.",
+      "backgrounds": ["state-school"]
+    },
+    {
+      "id": "lewis",
+      "name": "Lewis",
+      "location": "Dundee",
+      "subject": "Computing",
+      "university": "Abertay",
+      "bio": "Lewis is in S5 in Dundee. He has been in foster care since he was 12. He taught himself to code and has built several projects on his own. He wants to study Computing.",
+      "backgrounds": ["care-experienced", "first-generation", "state-school"]
+    },
+    {
+      "id": "eilidh",
+      "name": "Eilidh",
+      "location": "Isle of Lewis",
+      "subject": "Nursing",
+      "university": "UHI",
+      "bio": "Eilidh is in S6 on the Isle of Lewis. She speaks Gaelic and has been caring for her grandmother since S3. She wants to study Nursing and is looking at starting at UHI close to home.",
+      "backgrounds": ["rural", "state-school"]
+    },
+    {
+      "id": "james",
+      "name": "James",
+      "location": "East Renfrewshire",
+      "subject": "Business Management",
+      "university": "Strathclyde",
+      "bio": "James is in S6 in East Renfrewshire. His family runs a restaurant where he has worked since he was 14. He wants to study Business Management.",
+      "backgrounds": ["first-generation", "state-school"]
+    }
+  ],
+  "examples": [
+    {
+      "studentId": "aisha",
+      "questionId": "q1",
+      "bad": {
+        "type": "bad_generic",
+        "text": "I have always been passionate about medicine and helping people. I want to make a difference in the world and I believe that studying medicine will allow me to do this. I am a hard-working and dedicated student who is committed to achieving my goals.",
+        "annotations": [
+          { "label": "Overused phrase", "text": "'Passionate about helping people' is the single most common opening in UCAS history. Aisha could be any one of 20,000 medicine applicants this year." },
+          { "label": "No personal detail", "text": "Nothing here is specific to Aisha. Her job at Boots, her care home volunteering, her grandmother -- all absent. What would she tell a friend about why she wants to do this?" },
+          { "label": "No evidence", "text": "Admissions tutors look for evidence of real interest: a specific book, conversation, or observation. This has none." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "Working at Boots on Saturdays, I watch the pharmacist explain medication to patients who are confused or frightened. She turns complex information into something they can understand. That is the kind of doctor I want to be. My interest started in S3 Biology when we studied the nervous system and I wanted to know more than the textbook covered. Since then I have been reading about neurodegenerative conditions -- partly because my grandmother in Pakistan has early-stage dementia, partly because the science genuinely fascinates me. Volunteering at Hillside Care Home showed me how much of medicine is communication, not just clinical knowledge.",
+        "annotations": [
+          { "label": "Specific moment", "text": "The Boots pharmacist scene is vivid and original -- it tells the tutor something only Aisha could write." },
+          { "label": "Builds a chain", "text": "S3 Biology to neurology reading to family context to care-home volunteering. Every element supports the next." },
+          { "label": "Honest personal context", "text": "Her grandmother's dementia is mentioned naturally, not milked for sympathy. It makes the academic interest feel grounded." },
+          { "label": "Reflective, not listing", "text": "The care-home sentence ends with an insight ('medicine is communication') not just a credential." }
+        ]
+      }
+    },
+    {
+      "studentId": "aisha",
+      "questionId": "q2",
+      "bad": {
+        "type": "bad_vague",
+        "text": "My school subjects have helped me prepare for studying medicine. I have taken Biology and Chemistry which are relevant, and also Maths and English. I enjoy studying and working hard on my subjects. I think the skills I have learned will be useful for a medicine degree.",
+        "annotations": [
+          { "label": "Could be any course", "text": "'Subjects have helped me prepare' could apply to any degree. What specifically did Aisha study and what did it teach her?" },
+          { "label": "No specific topic", "text": "She mentions Biology and Chemistry but never says what topic gripped her or what project she did. No evidence of engagement." },
+          { "label": "Generic skills claim", "text": "'Skills I have learned will be useful' -- which skills? How? Tutors need concrete examples." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "Higher Biology was where medicine became real for me. Our unit on immunology included a task designing a vaccine-development plan for a fictional pathogen -- I spent evenings reading about mRNA vaccines and ended up explaining them to my mum at the kitchen table. Higher Chemistry taught me to follow a problem through, especially organic reaction mechanisms. I am currently sitting Advanced Higher Biology and Chemistry. I found the Higher Maths statistics unit surprisingly relevant: understanding p-values and confidence intervals will matter when I read clinical research papers at university.",
+        "annotations": [
+          { "label": "Specific project", "text": "The vaccine task is a concrete, memorable detail. 'Explaining it to my mum' shows engagement outside the classroom." },
+          { "label": "Names actual topics", "text": "Organic reaction mechanisms, p-values, immunology -- real things Aisha studied, not generic 'Chemistry'." },
+          { "label": "Links school to university", "text": "Ending with 'clinical research papers at university' connects school learning to what is coming next." }
+        ]
+      }
+    },
+    {
+      "studentId": "aisha",
+      "questionId": "q3",
+      "bad": {
+        "type": "bad_vague",
+        "text": "Outside of school I have done various activities which have helped me develop as a person. I have worked at Boots in a customer-facing role where I have learned about teamwork and communication. I have volunteered at a care home which has taught me about empathy and dealing with older people. These experiences have all contributed to my suitability for medicine.",
+        "annotations": [
+          { "label": "Lists without specifics", "text": "Boots and care home are mentioned but never brought to life -- what actually happened? What did Aisha see or do?" },
+          { "label": "Overused skills", "text": "'Teamwork and communication' are the most overused skill-words on UCAS. Evidence is what makes them real." },
+          { "label": "Tells not shows", "text": "'Dealing with older people' at the care home -- what did that look like day-to-day? A single specific example would transform this." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "At Boots I learned to spot when a customer was struggling to understand dosage instructions -- I started asking quiet, specific questions to check they had followed the pharmacist correctly. At Hillside Care Home I spent Sunday afternoons with residents with dementia. One woman, Betty, recited the same poem every week; I read it with her and asked about the children she mentioned. It taught me that medicine is partly science, partly careful attention. I am also the Urdu-English translator for my elderly neighbours at hospital appointments -- I see how easily things are missed when the doctor does not have time to explain again.",
+        "annotations": [
+          { "label": "Named detail", "text": "'Betty' and her repeated poem -- one concrete memory, not a generic description." },
+          { "label": "Reflective insight", "text": "'Medicine is partly science, partly careful attention' -- drawn from experience, not asserted out of nowhere." },
+          { "label": "Unusual relevant skill", "text": "The Urdu translation work is specific to Aisha, relevant to medical communication, and honest about healthcare gaps." }
+        ]
+      }
+    },
+    {
+      "studentId": "callum",
+      "questionId": "q1",
+      "bad": {
+        "type": "bad_generic",
+        "text": "I want to study mechanical engineering because I have always been interested in how things work. I am a practical person who enjoys solving problems. Engineering is a great career with lots of opportunities and I think it would suit my skills. I am looking forward to learning more at university.",
+        "annotations": [
+          { "label": "Generic opening", "text": "'Always been interested in how things work' is every engineering applicant's line. What does Callum actually mean?" },
+          { "label": "No specifics", "text": "Farm, tractor, broken gearbox, grain dryer -- none of the concrete material of Callum's real life appears here." },
+          { "label": "Reads like a leaflet", "text": "'Great career with lots of opportunities' is what a careers leaflet says. It tells us nothing about why he wants to do it." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "My dad runs a small beef farm in Aberdeenshire and most Saturdays since I was twelve I have been under one machine or another with him. Last summer our grain dryer stopped halfway through harvest. We stripped the motor, found a failed bearing, replaced it with the wrong part, tried again, and finally got it running at 2am. That is the moment I knew I wanted to study engineering properly -- not just fix things, but understand the design decisions behind them. Higher Physics helped me see the whole tractor as a series of applied-force problems rather than just a machine you know by feel.",
+        "annotations": [
+          { "label": "Vivid moment", "text": "The grain dryer at 2am is memorable and only Callum could write it. Tutors will remember this paragraph." },
+          { "label": "Shows intellectual interest", "text": "'Understand the design decisions behind them' shows Callum wants to study, not just apply what he already knows." },
+          { "label": "Home life meets school", "text": "The 'whole tractor as applied-force problems' line makes the real-world-to-classroom link concrete." }
+        ]
+      }
+    },
+    {
+      "studentId": "callum",
+      "questionId": "q2",
+      "bad": {
+        "type": "bad_grammar",
+        "text": "I done Higher Maths and Physics which I found intresting. I also took Design and Manufacture becuase I like making things. My teachers says I'm good at problem solving and I got a A in my prelim for maths which shows I can do the work needed for enginerring.",
+        "annotations": [
+          { "label": "Spelling errors", "text": "'Intresting', 'becuase', 'enginerring' -- easily caught with a spell-checker. Do not let spelling mistakes make strong content look weak." },
+          { "label": "Grammar slips", "text": "'I done' should be 'I took' or 'I did'; 'teachers says' should be 'teacher says' or 'teachers say'. Read it aloud -- your ear will catch it." },
+          { "label": "Content is actually good", "text": "Callum's actual points (Higher Maths and Physics, Design and Manufacture, A in prelim) are strong. The errors make it look rushed. Get someone to proofread." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "Higher Maths gave me the algebra to model forces properly. For my Advanced Higher Physics project I chose to investigate how the geometry of a gear ratio affects torque -- I built a small test rig in my dad's workshop and found the numbers matched the theory to within five per cent. Higher Design and Manufacture taught me CAD and the discipline of keeping a design log. My school only runs five Highers, so I have been working through SCHOLAR's Maths of Mechanics material in the evenings because I knew I would need it for a mechanical engineering degree.",
+        "annotations": [
+          { "label": "Specific project with numbers", "text": "A gear-ratio rig with five-per-cent tolerance is concrete evidence of engineering mindset." },
+          { "label": "Honest about constraints", "text": "Mentioning the five-Highers limit without complaining shows resilience, not excuse-making." },
+          { "label": "Self-directed learning", "text": "Working through SCHOLAR's Maths of Mechanics signals initiative -- a key signal for engineering tutors." }
+        ]
+      }
+    },
+    {
+      "studentId": "callum",
+      "questionId": "q3",
+      "bad": {
+        "type": "bad_vague",
+        "text": "I help my dad with the farm work which has given me a lot of practical experience. I have also been involved in the school football team for four years where I have developed teamwork skills. In my spare time I enjoy tinkering with things and have watched a lot of engineering videos on YouTube which has increased my knowledge of the subject.",
+        "annotations": [
+          { "label": "Experience not explored", "text": "'Help my dad with farm work' skips the actual content -- Callum does real mechanical repair. Be specific." },
+          { "label": "Football not course-relevant", "text": "Four years of football only helps if there is an engineering angle. Better to leave it out or connect it to something concrete." },
+          { "label": "YouTube as evidence", "text": "'Watched engineering videos' is weak without naming a specific channel, video or idea that changed how Callum thought about something." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "Farm work means real mechanical repair: I have serviced quad bikes, replaced the clutch on a 1998 Defender, and rebuilt the PTO shaft on our round baler. I keep a notebook of the fixes with rough sketches because some of them will come back. Last year I helped a neighbour diagnose a hydraulic leak on his loader -- traced it to a cracked return line -- and he asked me back to help with winter maintenance. I am not from a city and I have not done a formal placement at a big firm, but I know what a failing bearing sounds like at 200 metres.",
+        "annotations": [
+          { "label": "Concrete tasks", "text": "Clutch on a '98 Defender, PTO shaft on a round baler -- specific, unusual, and shows depth of practical skill." },
+          { "label": "Honest framing", "text": "'Not done a formal placement' is said without apology; the last sentence reframes rural experience as an advantage." },
+          { "label": "Distinctive voice", "text": "Callum sounds like himself -- direct, practical, not trying to be clever." }
+        ]
+      }
+    },
+    {
+      "studentId": "sophie",
+      "questionId": "q1",
+      "bad": {
+        "type": "bad_ai_slop",
+        "text": "My passion for law stems from a deep-seated desire to contribute meaningfully to the pursuit of justice within contemporary society. The intersection of legal theory and practical application presents a fascinating intellectual challenge that I am eager to explore at undergraduate level. I am particularly drawn to the way in which legal frameworks shape and are shaped by evolving social norms, and I believe that a rigorous academic grounding in law will equip me with the analytical and critical thinking skills necessary to navigate the complexities of the modern legal landscape.",
+        "annotations": [
+          { "label": "AI tells", "text": "'Deep-seated desire', 'contemporary society', 'modern legal landscape' -- phrases chatbots love. UCAS now runs similarity detection on every submission." },
+          { "label": "Says nothing", "text": "No case, no book, no court visit, no conversation. A tutor reading this learns zero about Sophie." },
+          { "label": "Tonal red flag", "text": "A 17-year-old does not write this way naturally. Admissions tutors are trained to spot it -- and they flag it." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "The first time I went into a real courtroom was with my aunt, a solicitor, on a Wednesday last July. I expected it to feel like The Crown; instead it was paperwork, a door opened too early, and a half-hour argument about whether a witness statement had been served in time. What stayed with me was how much of the law was procedure -- not who was right, but whether the right steps had been followed. I had been reading Helena Kennedy's Eve Was Framed and suddenly its point about procedure as protection made sense. I want to study law because that gap between what people think the law does and what it actually does fascinates me.",
+        "annotations": [
+          { "label": "Specific scene", "text": "The door opening early and the argument about witness service are tiny, memorable, and real." },
+          { "label": "Honest reflection", "text": "'Not who was right, but whether the right steps had been followed' -- a genuine insight, not a rehearsed line." },
+          { "label": "Book tied to experience", "text": "Helena Kennedy is not name-dropped; her argument is tied to what Sophie actually saw on the day." }
+        ]
+      }
+    },
+    {
+      "studentId": "sophie",
+      "questionId": "q2",
+      "bad": {
+        "type": "bad_vague",
+        "text": "I have taken a range of Highers including English, History and Modern Studies which have all given me skills that are useful for studying law. English has helped my essay writing, History has taught me to use evidence, and Modern Studies has given me an understanding of politics. I also take Advanced Higher English which is helping me prepare for the writing style needed at university.",
+        "annotations": [
+          { "label": "Every subject tidily listed", "text": "English to essays, History to evidence, Modern Studies to politics. It reads like a careers-leaflet flowchart." },
+          { "label": "No specific topic", "text": "No mention of what Sophie actually wrote about, which essay stood out, which History period hooked her." },
+          { "label": "'Helps my essay writing'", "text": "Tutors want to see how the subject changed Sophie's thinking, not a generic skills claim." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "My Advanced Higher English dissertation is on Jeanette Winterson's Oranges Are Not the Only Fruit and how the novel's structure -- named after the books of the Old Testament -- reshapes the reader's moral frame. It has made me careful about structure as an argument, not just a container. Higher Modern Studies took me into constitutional material: the essay I enjoyed most was on whether devolution had created a quasi-federal UK. Higher History's Russia unit taught me to handle primary sources critically -- a skill that turned out to matter when I started reading law reports, where one judge's framing can hide another's.",
+        "annotations": [
+          { "label": "Substantive AH dissertation", "text": "Naming the book, the structural idea, and why it mattered -- this is what academic engagement looks like." },
+          { "label": "Genuine question", "text": "'Quasi-federal UK' is the kind of question an actual undergraduate would write about." },
+          { "label": "Bridges subject to law", "text": "The last sentence links Higher History skills directly to law-report work." }
+        ]
+      }
+    },
+    {
+      "studentId": "sophie",
+      "questionId": "q3",
+      "bad": {
+        "type": "bad_oversell",
+        "text": "I completed a week-long placement at a leading Edinburgh law firm where I gained invaluable insight into commercial litigation. I also volunteered at a citizens advice bureau, took part in a national mock trial competition where our team reached the semi-finals, and I am head of the school debating society. These experiences have confirmed my absolute commitment to a career in law.",
+        "annotations": [
+          { "label": "List, not reflection", "text": "What did the placement actually show Sophie? What surprised her? What did she come away thinking?" },
+          { "label": "Filler adjectives", "text": "'Leading', 'invaluable', 'absolute commitment' -- the filler words of an overselling statement. None of them add information." },
+          { "label": "Credentials without critique", "text": "A tutor would rather see 'I wasn't sure what I thought about the settlement' than 'confirmed my absolute commitment'." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "My placement at a commercial firm was arranged through my aunt -- and the most useful thing I saw was how junior the work is: proofreading bundles, cross-checking exhibit numbers. It made me take the administrative side of law seriously. At the local Citizens Advice Bureau I sit in on benefits appointments as a note-taker; a single misread sentence on a PIP letter can cost someone six months of payments. Mock-trial semi-finals and debating were fun, but Citizens Advice was where I noticed how often the law works unfairly by accident rather than design -- which is the main reason I want to study it, not just practise it.",
+        "annotations": [
+          { "label": "Honest about privilege", "text": "'Arranged through my aunt' is said plainly. It shows self-awareness without drawing attention to itself." },
+          { "label": "Specific CAB detail", "text": "A misread PIP letter costing six months -- a concrete, unusual, memorable observation." },
+          { "label": "Critical reflection", "text": "'Law works unfairly by accident rather than design' -- sharper and more honest than the bad version's 'absolute commitment'." }
+        ]
+      }
+    },
+    {
+      "studentId": "lewis",
+      "questionId": "q1",
+      "bad": {
+        "type": "bad_generic",
+        "text": "I have always loved computers and been fascinated by how they work. In today's world technology is everywhere and I think computing is a really exciting field to go into. I enjoy programming and want to develop my skills further at university so I can have a successful career in the tech industry.",
+        "annotations": [
+          { "label": "'Always loved computers'", "text": "This is every computing applicant's opener. It says nothing about Lewis." },
+          { "label": "Vague 'programming'", "text": "Which language? What project? When did he last push code? Nothing concrete." },
+          { "label": "Career-first framing", "text": "'Successful career in tech' is a result, not a reason. What made him actually want to do this?" }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "I started coding at fourteen because I wanted to make a bot that would scrape the weekly Scottish Football League tables and post them to a Discord server for my foster brother's fantasy league. It did not work for three weeks; when it finally did, the feeling of having built a thing from nothing became the main reason I want to study computing. Since then I have written a Pomodoro tracker for my own revision, a small Python script that sorts my music library by BPM, and a half-finished Godot game. I keep starting more than I finish, which is one reason I want the structure of a degree -- I want to learn to work at software like a professional, not a hobbyist.",
+        "annotations": [
+          { "label": "Very specific first project", "text": "Scraping SPFL tables for a foster brother's fantasy league is unforgettable and unmistakably Lewis's." },
+          { "label": "Honest about limits", "text": "'I keep starting more than I finish' is the opposite of overselling -- and much more believable than 'self-directed learner'." },
+          { "label": "Clear reason for a degree", "text": "The closing 'work at software like a professional, not a hobbyist' is an authentic reason to choose university over self-study." }
+        ]
+      }
+    },
+    {
+      "studentId": "lewis",
+      "questionId": "q2",
+      "bad": {
+        "type": "bad_vague",
+        "text": "I take Higher Computing and Higher Maths which are both useful for the course. Higher Computing has taught me about programming and databases which I will need at university. Higher Maths has helped with logical thinking. I have also done well in my prelims which shows I can handle the academic demands of a computing degree.",
+        "annotations": [
+          { "label": "One-line-per-subject template", "text": "Computing to programming; Maths to logical thinking. This is filler." },
+          { "label": "'Done well in prelims'", "text": "State the grade or the project. 'Done well' means nothing to a reader who hasn't seen the paper." },
+          { "label": "No project named", "text": "Higher Computing has a coursework project. What did Lewis build? The statement is the place to say." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "For my Higher Computing coursework I built a small library tracker in Python using SQLite -- the version of it I actually use still lives on my laptop and has logged 47 books. The classroom work on Big-O notation was the piece that clicked most: I realised the reason my Discord bot had been slow was that I was looping a list inside a loop. Higher Maths' logic unit gave me the language for what I had been doing intuitively in code. I am in the middle of Advanced Higher Computing now, building a small scheduling tool for a local charity as my project -- it is teaching me that real users have needs a textbook never raises.",
+        "annotations": [
+          { "label": "Named coursework", "text": "47 logged books is a tiny detail that proves the tool exists beyond the grade." },
+          { "label": "Lightbulb moment", "text": "Big-O explaining the Discord bot's slowness is a genuine classroom-to-home link -- the opposite of a generic 'logical thinking' claim." },
+          { "label": "Real-user project", "text": "Building for a local charity shows Lewis already thinks beyond the code." }
+        ]
+      }
+    },
+    {
+      "studentId": "lewis",
+      "questionId": "q3",
+      "bad": {
+        "type": "bad_overshare",
+        "text": "I went into care when I was 12 because of problems at home. It was really hard and I struggled a lot. I moved between different placements and missed a lot of school. Things are better now with my foster family but it has been a difficult journey. I think I deserve a chance to go to university because of everything I have been through.",
+        "annotations": [
+          { "label": "Hardship without connection to course", "text": "The paragraph says nothing about computing. Universities want to know what Lewis learned, not only what happened to him." },
+          { "label": "'I deserve a chance'", "text": "Asks for sympathy. A UCAS statement is not the place. Tutors respond to capability, not to pity." },
+          { "label": "Experience valid, framing isn't", "text": "Care-experienced students are actively welcomed by Scottish universities. The good version keeps the honesty and changes the frame." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "I moved into foster care when I was 12 and between then and S3 I changed schools twice, which meant I fell behind in Maths. The way I caught up was by working through Khan Academy on an old laptop my foster dad lent me -- that was also where I first wrote a line of code. I mention this because it is the reason I am self-directed about learning: if a topic does not stick, I chase the explanation until it does. I am also on my school's LGBT Youth group and I help a partially sighted neighbour set up his Android phone each time it updates. Neither of those is a coding project, but they are why I will be a patient teammate.",
+        "annotations": [
+          { "label": "Honesty without self-pity", "text": "Foster care and missed school are stated plainly, then connected to how Lewis learns -- a strength, not a plea." },
+          { "label": "Catching-up story", "text": "Khan Academy on a borrowed laptop is a concrete, credible detail." },
+          { "label": "Other activities connect", "text": "The sight-impaired neighbour's phone is a small piece of accessibility volunteering -- relevant to computing without stretching." }
+        ]
+      }
+    },
+    {
+      "studentId": "eilidh",
+      "questionId": "q1",
+      "bad": {
+        "type": "bad_vague",
+        "text": "I would like to study nursing because I want to care for people and make a difference to their lives. Nursing is a really important job and I think it would suit me well. I have always been a caring person and I know that nursing is what I want to do with my life.",
+        "annotations": [
+          { "label": "Another 'caring person'", "text": "'Caring person' is the 'passionate about helping people' of nursing statements -- a phrase tutors have read ten thousand times." },
+          { "label": "No evidence", "text": "What does 'caring' look like in practice for Eilidh? She has a real caring life. It belongs in this paragraph." },
+          { "label": "Circular reasoning", "text": "'Nursing is what I want to do because I know nursing is what I want to do' says nothing." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "I have been helping to care for my grandmother since S3. She has Parkinson's and lives in the flat below ours in Stornoway. A lot of what I do is practical -- helping her dress, reminding her about her medication, noticing when she is shakier than usual and ringing the district nurse -- and that noticing is what pulled me toward nursing. Her nurse, Catriona, explained how dopamine works one afternoon over tea, and I ordered a textbook the next week. I want to study at UHI so I can keep living near my family while I train; I am considering articulating to a larger university for a specialist postgrad in neurological nursing later on.",
+        "annotations": [
+          { "label": "Concrete caring work", "text": "'Ringing the district nurse when she is shakier than usual' is a specific, named moment of nursing judgement." },
+          { "label": "Named professional", "text": "Catriona and the dopamine conversation make the interest real, not decorative." },
+          { "label": "Honest plan", "text": "Mentioning UHI now and articulating later is an adult, practical framing that Scottish tutors understand and respect." }
+        ]
+      }
+    },
+    {
+      "studentId": "eilidh",
+      "questionId": "q2",
+      "bad": {
+        "type": "bad_vague",
+        "text": "I am taking Higher Biology and Higher Human Biology as well as Higher English. I enjoy my science subjects and am doing well in them. English is helping me with communication which is important for nursing. My teachers have said that I am a reliable student who works hard and I think this will help me succeed on the course.",
+        "annotations": [
+          { "label": "Passive voice", "text": "'Have said that I am reliable' -- tutors want Eilidh's own voice, not a paraphrased teacher reference." },
+          { "label": "'Doing well'", "text": "State the prelim grade or the topic. 'Doing well' tells the reader nothing." },
+          { "label": "Misses what the Highers taught", "text": "Higher Human Biology has units that matter for nursing (cardiovascular, immunity). None are named." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "Higher Human Biology's cardiovascular unit is the one I keep returning to -- it is also the unit that explained why my grandmother's bradykinesia sometimes comes with dizziness. Higher Biology's fieldwork on coastal ecology, done off the Eye peninsula, taught me to record observations carefully, which is not a skill I would have called relevant to nursing before I saw my grandmother's nurse writing up her notes. Higher English is teaching me to listen past the first version of what someone says -- useful for an older patient who plays down symptoms. I am also studying Gàidhlig at Higher, which I will use on placements in the islands where some older patients are more comfortable speaking Gaelic than English.",
+        "annotations": [
+          { "label": "Subject meets patient", "text": "Cardiovascular unit explaining her grandmother's dizziness is a direct school-to-life link." },
+          { "label": "Observation skill reframed", "text": "Coastal fieldwork to careful clinical note-taking is unusual and honest." },
+          { "label": "Gàidhlig as a professional asset", "text": "Stating it will be useful on island placements turns a heritage skill into a course-relevant one." }
+        ]
+      }
+    },
+    {
+      "studentId": "eilidh",
+      "questionId": "q3",
+      "bad": {
+        "type": "bad_vague",
+        "text": "I have been a young carer for my grandmother for several years. This has given me a lot of skills such as responsibility, time management and empathy which will be useful in nursing. I also help out with things in my community and I enjoy spending time with my family. Although I have not had the chance to travel to many open days because of where I live, I am still committed to studying nursing.",
+        "annotations": [
+          { "label": "Skills listed, not shown", "text": "Responsibility, time management, empathy -- three of the most overused words on any UCAS statement." },
+          { "label": "'Help out with things'", "text": "Which things? Even one named example would transform this paragraph." },
+          { "label": "Defensive closing", "text": "Eilidh is allowed to describe her caring role in detail; she does not need to end by reassuring the tutor." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "Being a young carer is not a skill -- it is a life. I get my sister Niamh out of the door for the school bus, check on my grandmother, then make the 7:10am walk to the bus myself. When my grandmother had a fall in the summer I spoke to the paramedics, collected her medication from the pharmacy, and relayed the medication list back to the GP the next morning in the order she took them. I am also a volunteer youth leader at the local church running activities for the primary-age group, and I help run the Gàidhlig reading club at the library. I cannot easily get to mainland open days, so I have done virtual ones for RGU, Stirling and Napier and spoken to UHI staff by phone.",
+        "annotations": [
+          { "label": "Caring life, not credential", "text": "Niamh, the 7:10am walk, the pharmacy trip -- honest and concrete, speaking for itself." },
+          { "label": "Clinical moment", "text": "The paramedic and GP sequence is exactly the kind of clinical judgement tutors look for." },
+          { "label": "Access turned to initiative", "text": "Virtual open days for four named universities -- turns a limitation into evidence of initiative." }
+        ]
+      }
+    },
+    {
+      "studentId": "james",
+      "questionId": "q1",
+      "bad": {
+        "type": "bad_generic",
+        "text": "I want to study business management because I am interested in business and how it works. Business is everywhere in today's world and I think it is a really important subject to study. I have always been interested in making money and running a business and I think a business management degree would be the perfect thing for me.",
+        "annotations": [
+          { "label": "Generic twice", "text": "'Interested in business' and 'business is everywhere' are two of the most overused openers in the subject." },
+          { "label": "Nothing about James's real life", "text": "He has worked at his family's restaurant since he was fourteen. None of that is in this paragraph." },
+          { "label": "'Making money'", "text": "Honest but bare. What has James actually seen about how a business makes money? That is what tutors want to read." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "I have worked in my family's restaurant in Giffnock since I was fourteen, starting on pot wash and now doing Friday shifts on the till and Sunday stocktake. The thing that pulled me into business studies was not the big decisions -- it was watching my mum redo the rota after a supplier hiked the price of olive oil by 22 per cent, having to move one member of staff between front-of-house and kitchen to cover the gap. That small decision touched rostering, cost of goods, and customer experience at the same time. I want to study business management to understand the theory behind choices my family is already making in practice.",
+        "annotations": [
+          { "label": "Specific moment", "text": "The olive-oil hike and the rota rewrite are real, memorable, and show James has noticed how a small business actually operates." },
+          { "label": "Practice meets theory", "text": "He names what he wants the degree to add -- 'the theory behind the choices'. A clear, honest reason." },
+          { "label": "Confident without overreach", "text": "No claim to be a future CEO. Just a clear reason for this course, not any other." }
+        ]
+      }
+    },
+    {
+      "studentId": "james",
+      "questionId": "q2",
+      "bad": {
+        "type": "bad_casual",
+        "text": "so basically i do higher business management and its actually pretty good, we learned about marketing and stuff which is cool. also doing maths which is needed apparently lol. my teacher said i should mention that i got an A in my business prelim so yeah thats good i think.",
+        "annotations": [
+          { "label": "Tone is wrong", "text": "'Basically', 'lol', 'yeah thats good i think' -- fine for WhatsApp, wrong for UCAS. No need to be stiff, but this is a written application." },
+          { "label": "Capitalisation", "text": "A UCAS statement is a formal piece of writing -- sentences begin with a capital letter and use I rather than i." },
+          { "label": "Content is actually strong", "text": "An A in the Business prelim is genuinely impressive. James is underselling it with the register." }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "Higher Business Management and Higher Maths are my two most relevant subjects and I am currently sitting Higher Economics as well. The Business Management marketing unit gave me the vocabulary for something I had been watching in the restaurant for years: why a menu redesign in 2024 -- moving the higher-margin dishes to the top-right of the page -- quietly lifted our average order value. I scored an A in my Business prelim. Higher Maths has been tougher; I am at B borderline and having to work harder at statistics. I am planning to sit my Higher Economics exam in May because I think the degree will lean on all three.",
+        "annotations": [
+          { "label": "Real-life application", "text": "The top-right menu placement lifting order value is a concrete marketing observation only James could make." },
+          { "label": "Honest about weaknesses", "text": "'B borderline in Higher Maths' is a small confession that reads as grown-up and believable." },
+          { "label": "Forward-looking", "text": "Connecting all three Highers to the degree shows James has thought about why the course is right for him." }
+        ]
+      }
+    },
+    {
+      "studentId": "james",
+      "questionId": "q3",
+      "bad": {
+        "type": "bad_vague",
+        "text": "I have worked at my family's restaurant for a long time which has given me a lot of experience in the business world. I have also been in school for my Highers and done my schoolwork. I play football at the weekend with my friends which helps me stay active. I think all of these things have made me ready for university.",
+        "annotations": [
+          { "label": "'A long time'", "text": "Four years, since 14, shifts of 8am to 3pm -- any of these would be specific. 'A long time' is filler." },
+          { "label": "Listing, not reflecting", "text": "Restaurant, schoolwork, football -- no content that shows what James has gained or thought." },
+          { "label": "Empty closing", "text": "'Made me ready for university' means nothing. What specifically -- what skill, what insight -- has he taken from any of this?" }
+        ]
+      },
+      "good": {
+        "type": "good",
+        "text": "Restaurant shifts have taught me things no Higher could: how to count the till at 11pm and find a 40p error, how to read the pace of a Friday night and know when to stop taking walk-ins, how to explain to an angry customer that their dish will be another ten minutes without making it worse. I have helped my mum with the quarterly VAT return twice now -- not filled it in, but checked her workings against the till receipts. On Saturday mornings I play five-a-side with a team that includes three small-business owners; they have given me offhand lessons about cash flow that I have never heard in class. I am not from a family that has been to university, which is partly why I want to go.",
+        "annotations": [
+          { "label": "Concrete work", "text": "Counting the till at 11pm and pacing a Friday night service -- specific, memorable, unmistakably James's." },
+          { "label": "Financial literacy", "text": "The VAT-return detail is unusual and shows genuine exposure to running a business." },
+          { "label": "First-generation note", "text": "Closes honestly without dwelling on it -- a simple fact, simply stated." }
+        ]
+      }
+    }
+  ]
+}
