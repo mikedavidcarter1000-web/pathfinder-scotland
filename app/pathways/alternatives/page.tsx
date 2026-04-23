@@ -733,7 +733,7 @@ function CollegeSection() {
               </li>
             </ul>
             <ExternalLink
-              href="https://www.edinburghcollege.ac.uk/courses/school-college-partnership"
+              href="https://www.edinburghcollege.ac.uk/schools/are-you-a-teacher/foundation-apprenticeships"
               label="Edinburgh College school partnership"
             />
           </div>

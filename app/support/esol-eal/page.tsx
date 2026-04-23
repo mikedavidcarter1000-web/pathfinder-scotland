@@ -16,7 +16,6 @@ const pathway = [
 ]
 
 const orgs = [
-  { name: 'Adult Learning Scotland', site: 'als.scot', notes: 'ESOL provision for adults' },
   { name: 'Scottish Refugee Council', site: 'scottishrefugeecouncil.org.uk', notes: 'Advice on ESOL routes for refugees' },
   { name: 'BEMIS Scotland', site: 'bemis.org.uk', notes: 'Support for ethnic minorities and new Scots' },
   { name: 'Education Scotland EAL guidance', site: 'education.gov.scot', notes: 'Resources for learners and teachers' },
