@@ -62,6 +62,7 @@ const NAV_GROUPS: NavGroup[] = [
       { name: 'Grade Sensitivity', href: '/tools/grade-sensitivity' },
       { name: 'UCAS Calculator', href: '/tools/ucas-calculator' },
       { name: 'Results Day', href: '/results-day' },
+      { name: 'Subject Choice Worksheet', href: '/tools/worksheet' },
     ],
   },
   {

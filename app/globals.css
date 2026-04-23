@@ -741,6 +741,11 @@
   }
 }
 
+/* Screen-only: hide elements that should only appear in print */
+.print-only {
+  display: none;
+}
+
 @media print {
   .no-print {
     display: none !important;
@@ -750,6 +755,70 @@
   }
   .print-break-after {
     page-break-after: always;
+  }
+
+  /* Show print-only content */
+  .print-only {
+    display: block !important;
+  }
+
+  /* A4 portrait with 15mm margins */
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  /* Hide chrome that doesn't belong on paper */
+  nav,
+  footer,
+  button[aria-label="Leave this site quickly"] {
+    display: none !important;
+  }
+
+  /* Worksheet page: switch to serif print font */
+  .worksheet-page {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 11pt;
+    color: #000;
+    background: #fff;
+    max-width: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Section cards: flatten to plain bordered boxes */
+  .worksheet-section {
+    border: 1pt solid #ccc !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 12pt !important;
+    padding: 14pt 16pt !important;
+  }
+
+  /* Keep tables together and prevent row splits */
+  .worksheet-table {
+    page-break-inside: avoid;
+  }
+
+  .worksheet-table tr {
+    page-break-inside: avoid;
+  }
+
+  /* Fixed footer repeats on every printed page */
+  .worksheet-print-footer {
+    display: block !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 8pt;
+    color: #555;
+    padding: 4pt 15mm;
+    border-top: 0.5pt solid #ccc;
+    background: #fff;
   }
 }
 

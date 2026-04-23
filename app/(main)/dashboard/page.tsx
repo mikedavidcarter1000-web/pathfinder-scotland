@@ -294,6 +294,60 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* Subject choice worksheet (shown for S2–S5 students) */}
+      {['s2', 's3', 's4', 's5'].includes(student.school_stage ?? '') && (
+        <div className="mb-6">
+          <Link
+            href="/tools/worksheet"
+            className="pf-card-hover no-underline hover:no-underline flex items-center gap-4"
+            style={{ padding: '20px 24px' }}
+          >
+            <div
+              className="flex items-center justify-center flex-shrink-0"
+              style={{
+                width: '52px',
+                height: '52px',
+                borderRadius: '12px',
+                backgroundColor: 'var(--pf-blue-100)',
+                color: 'var(--pf-blue-700)',
+              }}
+              aria-hidden="true"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                  color: 'var(--pf-grey-900)',
+                  marginBottom: '2px',
+                }}
+              >
+                Print your subject choice worksheet
+              </p>
+              <p style={{ fontSize: '0.875rem', color: 'var(--pf-grey-600)' }}>
+                Personalised worksheet for your guidance meeting — career mapping, course impact, and funding.
+              </p>
+            </div>
+            <svg
+              className="w-5 h-5 flex-shrink-0"
+              style={{ color: 'var(--pf-blue-700)' }}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+      )}
+
       {/* Discover prompt — surfaces the dual-path entry point for students
           who still feel lost even with an account set up. */}
       <div className="mb-6">
