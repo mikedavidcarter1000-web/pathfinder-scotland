@@ -283,3 +283,24 @@ When the NULL bucket drops below ~50 rows, tighten the homepage S2/S3 sector fil
 Current tier thresholds (resilient ≤3, transforming ≥7) were calibrated against the old `ai_rating` column and carried forward to `ai_rating_2030_2035` unchanged. This is probably correct for the 2030-2035 column. For `ai_rating_2040_2045`, the drift guidance in `docs/ai-horizon-rubric.md` pushes many knowledge-work roles 2-3 points higher — which means more roles will land at 6-8 under the mid-career horizon.
 
 When 80%+ of roles have horizon ratings, revisit whether the tier boundaries should differ between the two horizon columns, or whether UI copy ("resilient in the near term", "resilient across both horizons") is the right differentiator rather than numeric threshold shifts.
+
+---
+
+## Appended 2026-04-26 -- Quick wins session (exit button / UCAS calc / feedback)
+
+### Feedback admin page: server-component rewrite
+
+`app/admin/feedback/page.tsx` is currently a client component that redirects unauthenticated users and then calls `/api/admin/feedback`. This means a logged-in non-admin user lands on the page briefly before the API 403 is received. Other admin pages (`app/admin/data-quality`, `app/admin/offers`) are server components that do the admin check at render time (no flash). When there is a convenient session to refactor, convert the feedback page to a server component + client sub-component pattern matching those other admin pages.
+
+### Feedback `types/database.ts` update
+
+The `feedback` table was added via Supabase MCP `apply_migration` and is not yet in `types/database.ts` (project convention: never regenerate wholesale). If `feedback` rows are ever queried with the typed client in a future server component, manually add the interface to `types/database.ts` under `public.Tables`. For now all access uses `(supabase as any).from('feedback')` which is correct per convention.
+
+### UCAS Calculator: pre-fill expansion
+
+Current pre-fill only surfaces `higher` and `advanced_higher` grades from `student_grades`. If `national_5` rows are ever added to `student_grades`, the pre-fill banner in `/tools/ucas-calculator` will silently ignore them (N5 has no tariff points, so the omission is academically correct but might confuse a student who expects all their grades to appear).
+
+### Quick-exit button: keyboard shortcut
+
+A keyboard shortcut (e.g. `Escape × 3` within 1s) would allow users to trigger the exit without a mouse click. Accessibility win for users in distress. Not shipped in this session to avoid complexity; worth revisiting if the feature is promoted in GDPR or safeguarding documentation.
+
