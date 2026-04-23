@@ -29,40 +29,43 @@ function SignUpContent() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [acceptTerms, setAcceptTerms] = useState(false)
-  const [validationError, setValidationError] = useState('')
+  const [validationErrors, setValidationErrors] = useState<string[]>([])
 
   const signUp = useSignUp()
   const toast = useToast()
 
   const onboardingHref = '/onboarding'
 
-  const validatePassword = (password: string) => {
-    if (password.length < 8) return 'Password must be at least 8 characters'
-    if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter'
-    if (!/[a-z]/.test(password)) return 'Password must contain at least one lowercase letter'
-    if (!/[0-9]/.test(password)) return 'Password must contain at least one number'
-    return null
+  const passwordRules = [
+    { label: 'At least 8 characters', met: password.length >= 8 },
+    { label: 'At least one uppercase letter', met: /[A-Z]/.test(password) },
+    { label: 'At least one lowercase letter', met: /[a-z]/.test(password) },
+    { label: 'At least one number', met: /[0-9]/.test(password) },
+  ]
+
+  const collectValidationErrors = (): string[] => {
+    const errors: string[] = []
+    const unmetRules = passwordRules.filter((r) => !r.met)
+    if (unmetRules.length > 0) {
+      errors.push(
+        `Password must have: ${unmetRules.map((r) => r.label.toLowerCase()).join(', ')}`
+      )
+    }
+    if (password && confirmPassword && password !== confirmPassword) {
+      errors.push('Passwords do not match')
+    }
+    if (!acceptTerms) {
+      errors.push('Please accept the terms and conditions')
+    }
+    return errors
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setValidationError('')
 
-    const passwordError = validatePassword(password)
-    if (passwordError) {
-      setValidationError(passwordError)
-      return
-    }
-
-    if (password !== confirmPassword) {
-      setValidationError('Passwords do not match')
-      return
-    }
-
-    if (!acceptTerms) {
-      setValidationError('Please accept the terms and conditions')
-      return
-    }
+    const errors = collectValidationErrors()
+    setValidationErrors(errors)
+    if (errors.length > 0) return
 
     signUp.mutate(
       { email, password },
@@ -140,8 +143,9 @@ function SignUpContent() {
           <SocialLoginDivider />
 
           {/* Error Message */}
-          {(signUp.error || validationError) && (
+          {(signUp.error || validationErrors.length > 0) && (
             <div
+              role="alert"
               className="mb-4 rounded-lg"
               style={{
                 padding: '12px',
@@ -151,7 +155,19 @@ function SignUpContent() {
                 fontSize: '0.875rem',
               }}
             >
-              {validationError || signUp.error?.message || 'An error occurred'}
+              {validationErrors.length > 0 ? (
+                validationErrors.length === 1 ? (
+                  <span>{validationErrors[0]}</span>
+                ) : (
+                  <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
+                    {validationErrors.map((err, i) => (
+                      <li key={i}>{err}</li>
+                    ))}
+                  </ul>
+                )
+              ) : (
+                signUp.error?.message || 'An error occurred'
+              )}
             </div>
           )}
 
@@ -229,6 +245,56 @@ function SignUpContent() {
                   </p>
                 </div>
               )}
+
+              {/* Password Rules Checklist */}
+              <ul
+                aria-label="Password requirements"
+                style={{
+                  marginTop: '8px',
+                  padding: 0,
+                  listStyle: 'none',
+                  fontSize: '0.8125rem',
+                  lineHeight: 1.5,
+                }}
+              >
+                {passwordRules.map((rule) => (
+                  <li
+                    key={rule.label}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      color: rule.met ? 'var(--pf-green-500)' : 'var(--pf-grey-600)',
+                    }}
+                  >
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '16px',
+                        height: '16px',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {rule.met ? (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                          <circle cx="12" cy="12" r="9" />
+                        </svg>
+                      )}
+                    </span>
+                    <span>
+                      <span className="sr-only">{rule.met ? 'Met:' : 'Not yet met:'} </span>
+                      {rule.label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div>

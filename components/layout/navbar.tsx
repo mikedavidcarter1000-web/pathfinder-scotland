@@ -311,6 +311,7 @@ export function Navbar() {
               {filteredGroups.map((group) => {
                 const active = isGroupActive(group)
                 const open = openGroup === group.name
+                const dropdownId = `nav-dropdown-${group.name.toLowerCase().replace(/\s+/g, '-')}`
                 return (
                   <div
                     key={group.name}
@@ -331,7 +332,8 @@ export function Navbar() {
                         background: 'transparent',
                       }}
                       aria-expanded={open}
-                      aria-haspopup="true"
+                      aria-haspopup="menu"
+                      aria-controls={dropdownId}
                     >
                       {group.name}
                       <svg
@@ -346,6 +348,7 @@ export function Navbar() {
                     </button>
                     {open && (
                       <div
+                        id={dropdownId}
                         className="absolute left-0 z-50"
                         style={{
                           top: '100%',
@@ -610,6 +613,7 @@ export function Navbar() {
                 {filteredGroups.map((group) => {
                   const expanded = mobileExpanded.has(group.name)
                   const groupActive = isGroupActive(group)
+                  const mobileDropdownId = `nav-mobile-dropdown-${group.name.toLowerCase().replace(/\s+/g, '-')}`
                   return (
                     <div key={group.name} className="flex flex-col">
                       <button
@@ -625,6 +629,8 @@ export function Navbar() {
                           textAlign: 'left',
                         }}
                         aria-expanded={expanded}
+                        aria-haspopup="menu"
+                        aria-controls={mobileDropdownId}
                       >
                         <span>{group.name}</span>
                         <svg
@@ -637,7 +643,7 @@ export function Navbar() {
                         </svg>
                       </button>
                       {expanded && (
-                        <div className="flex flex-col gap-1 pl-3 mt-1 mb-2">
+                        <div id={mobileDropdownId} className="flex flex-col gap-1 pl-3 mt-1 mb-2">
                           {group.items.map((item) => {
                             const active = isActive(item.href)
                             return (

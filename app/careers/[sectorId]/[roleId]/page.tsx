@@ -68,14 +68,13 @@ export async function generateMetadata({
     return { title: 'Role not found' }
   }
 
-  const sector = role.career_sectors
   const description =
     profile?.description && profile.description.trim().length > 0
       ? profile.description.trim().slice(0, 160)
       : `Explore the ${role.title} role in Scotland — typical salary, day-to-day work, and progression.`
 
   return {
-    title: `${role.title} | ${sector.name}`,
+    title: role.title,
     description,
     alternates: { canonical: `/careers/${sectorId}/${roleId}` },
   }

@@ -209,6 +209,36 @@ const JOB_BLURBS: Record<string, string> = {
   Choreographer: 'Creates and teaches dance sequences.',
   'Music Producer': 'Records and shapes music for release.',
   'Arts Administrator': 'Runs organisations like theatres and galleries.',
+  // Retail & Customer Service
+  'Retail Manager': 'Oversees daily store operations, manages staff, and drives sales targets.',
+  'Visual Merchandiser': 'Designs store displays and layouts to attract customers and boost sales.',
+  'Shop Assistant': 'Serves customers, processes transactions, and maintains stock on the shop floor.',
+  'E-commerce Specialist': 'Manages online sales channels, product listings, and digital marketing.',
+  'Customer Service Advisor': 'Handles customer enquiries, complaints, and orders across phone, email, and chat.',
+  'Supply Chain Coordinator': 'Plans and tracks the movement of goods from suppliers to stores or customers.',
+  Buyer: 'Selects and purchases products for retail sale, negotiating with suppliers on price and quality.',
+  'Store Planner': 'Analyses sales data and store layouts to optimise product placement and space.',
+  'Personal Shopper': 'Provides one-to-one styling advice and product recommendations for customers.',
+  'Contact Centre Team Leader': 'Supervises a team of advisors, monitors call quality, and ensures service targets are met.',
+  // Transport & Logistics
+  'HGV Driver': 'Transports goods across the country by road, managing routes, loads, and delivery schedules.',
+  'Train Driver': 'Operates passenger or freight trains safely across the rail network.',
+  'Delivery Driver': 'Collects and delivers parcels and packages to homes and businesses.',
+  'Warehouse Operative': 'Picks, packs, and dispatches stock in distribution centres and warehouses.',
+  'Logistics Coordinator': 'Plans and schedules deliveries, manages transport providers, and tracks shipments.',
+  'Traffic Planner': 'Designs and manages road traffic systems, signals, and flow to reduce congestion.',
+  'Fleet Manager': 'Oversees a fleet of vehicles, managing maintenance, compliance, and driver allocation.',
+  'Supply Chain Analyst': 'Uses data to forecast demand, optimise inventory, and improve supply chain efficiency.',
+  'Transport Planner': 'Plans public transport routes, timetables, and infrastructure improvements.',
+  'Rail Signaller': 'Controls railway signals and points to ensure safe and efficient train movements.',
+  // Armed Forces
+  'Army Officer': 'Leads and manages soldiers, planning operations and making tactical decisions.',
+  'Army Soldier': 'Serves in ground-based military operations across combat, engineering, medical, and logistics roles.',
+  'Royal Navy Officer': 'Commands naval personnel and operations at sea, in submarines, or at shore bases.',
+  'Royal Navy Rating': 'Serves as crew on warships and submarines in roles from engineering to communications.',
+  'RAF Officer': 'Leads Royal Air Force personnel across flying, engineering, and support operations.',
+  'RAF Airman / Airwoman': 'Serves in the RAF in technical, support, or specialist roles on the ground or in the air.',
+  'Royal Marines Commando': 'Serves as an elite amphibious infantry soldier trained for rapid deployment worldwide.',
 }
 
 function getJobBlurb(title: string): string {
@@ -666,6 +696,11 @@ export default function CareerSectorDetailPage({
         <AlternativeRoutes />
 
         {/* Section 4c — AI & the Future (full role-level breakdown) */}
+        {/* TODO: Armed Forces sector has zero roles with is_new_ai_role=true, so
+            the "New careers created by AI" block renders nothing. Content
+            session required to flag post-2020 AI-native defence roles
+            (cyber-intelligence specialist, autonomous systems operator, etc.)
+            by setting career_roles.is_new_ai_role = true. */}
         <AiFutureSection
           sector={sector}
           roles={career_roles}
@@ -673,6 +708,11 @@ export default function CareerSectorDetailPage({
         />
 
         {/* Section 4d — What's the work actually like? (hours, pay, lifestyle) */}
+        {/* TODO: Armed Forces is absent from data/career-realities.ts
+            (SECTOR_NAME_TO_REALITIES_SLUG has no entry for "Armed Forces").
+            Needs a CareerRealities entry covering weeklyHoursContractual,
+            jobSecurity, payProgression, wellbeing, remoteHybrid — authored
+            in a dedicated content session. */}
         <CareerRealities sectorName={sector.name} />
 
         {/* Section 4e — Explore Further (external links) */}

@@ -108,6 +108,7 @@ export default function SearchPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search subjects, courses, universities, careers..."
+                aria-label="Search Pathfinder Scotland"
                 autoFocus
                 className="w-full focus:outline-none"
                 style={{
