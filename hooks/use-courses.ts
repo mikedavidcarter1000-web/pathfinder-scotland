@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
+import { slugOrIdColumn } from '@/lib/slug-or-id'
 import { useAuth } from './use-auth'
 import type { Tables, Enums } from '@/types/database'
 
@@ -49,14 +50,15 @@ export function useCourses(filters: CourseFilters = {}) {
   })
 }
 
-// Fetch single course by ID
-export function useCourse(courseId: string | null) {
+// Fetch single course by ID or slug
+export function useCourse(courseIdOrSlug: string | null) {
   const supabase = getSupabaseClient()
 
   return useQuery({
-    queryKey: ['course', courseId],
+    queryKey: ['course', courseIdOrSlug],
     queryFn: async () => {
-      if (!courseId) return null
+      if (!courseIdOrSlug) return null
+      const column = slugOrIdColumn(courseIdOrSlug)
 
       const { data, error } = await supabase
         .from('courses')
@@ -64,13 +66,13 @@ export function useCourse(courseId: string | null) {
           *,
           university:universities(*)
         `)
-        .eq('id', courseId)
-        .single()
+        .eq(column, courseIdOrSlug)
+        .maybeSingle()
 
       if (error) throw error
       return data
     },
-    enabled: !!courseId,
+    enabled: !!courseIdOrSlug,
   })
 }
 

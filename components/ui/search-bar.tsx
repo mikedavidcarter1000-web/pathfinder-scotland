@@ -443,7 +443,7 @@ export function SearchBar({
                       return (
                         <ResultRow
                           key={subject.id}
-                          href={`/subjects/${subject.id}`}
+                          href={`/subjects/${subject.slug ?? subject.id}`}
                           active={globalIdx === activeIndex}
                           onHover={() => setActiveIndex(globalIdx)}
                           onClick={handleResultClick}
@@ -498,7 +498,7 @@ export function SearchBar({
                       return (
                         <ResultRow
                           key={course.id}
-                          href={`/courses/${course.id}`}
+                          href={`/courses/${course.slug ?? course.id}`}
                           active={globalIdx === activeIndex}
                           onHover={() => setActiveIndex(globalIdx)}
                           onClick={handleResultClick}
@@ -542,7 +542,7 @@ export function SearchBar({
                       return (
                         <ResultRow
                           key={uni.id}
-                          href={`/universities/${uni.id}`}
+                          href={`/universities/${uni.slug ?? uni.id}`}
                           active={globalIdx === activeIndex}
                           onHover={() => setActiveIndex(globalIdx)}
                           onClick={handleResultClick}

@@ -196,6 +196,7 @@ export default async function HomePage() {
                   minHeight: '44px',
                   display: 'inline-flex',
                   alignItems: 'center',
+                  padding: '12px 4px',
                 }}
               >
                 Or try it without signing up

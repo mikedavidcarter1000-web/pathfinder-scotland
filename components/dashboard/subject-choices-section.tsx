@@ -220,7 +220,7 @@ function TransitionGroup({
                 aria-hidden="true"
               />
               <Link
-                href={`/subjects/${subject.id}`}
+                href={`/subjects/${subject.slug ?? subject.id}`}
                 className="flex-1 min-w-0 no-underline hover:no-underline"
                 style={{
                   fontSize: '0.9375rem',

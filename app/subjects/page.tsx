@@ -305,7 +305,7 @@ function SubjectCard({
 
   return (
     <Link
-      href={`/subjects/${subject.id}`}
+      href={`/subjects/${subject.slug ?? subject.id}`}
       className="pf-card-hover no-underline hover:no-underline flex flex-col h-full relative"
       style={{ padding: 0, overflow: 'hidden' }}
       aria-label={`View details for ${subject.name}`}

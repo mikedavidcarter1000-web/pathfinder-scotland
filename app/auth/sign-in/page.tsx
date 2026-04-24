@@ -9,6 +9,13 @@ import { SocialLoginButtons, SocialLoginDivider } from '@/components/auth/social
 import { SubmitButton } from '@/components/ui/submit-button'
 import { useToast } from '@/components/ui/toast'
 
+const REASON_BANNERS: Record<string, string> = {
+  compare: 'Sign in to compare your saved courses side by side.',
+  saved: 'Sign in to access your saved courses.',
+  dashboard: 'Sign in to access your dashboard.',
+  onboarding: 'Sign in to continue setting up your profile.',
+}
+
 export default function SignInPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -25,6 +32,9 @@ export default function SignInPage() {
   const callbackErrorRaw =
     searchParams.get('error_description') || searchParams.get('error')
   const callbackError = callbackErrorRaw ? callbackErrorRaw.slice(0, 200) : null
+
+  const reasonParam = searchParams.get('reason')
+  const reasonBanner = REASON_BANNERS[reasonParam ?? ''] ?? null
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -89,6 +99,23 @@ export default function SignInPage() {
             <h1 style={{ marginBottom: '4px' }}>Welcome back</h1>
             <p style={{ color: 'var(--pf-grey-600)' }}>Sign in to continue your journey.</p>
           </div>
+
+          {/* Contextual reason banner (compare, saved, dashboard, onboarding) */}
+          {reasonBanner && (
+            <div
+              className="mb-4 rounded-lg"
+              style={{
+                padding: '12px 14px',
+                backgroundColor: 'var(--pf-blue-50)',
+                border: '1px solid var(--pf-blue-100)',
+                color: 'var(--pf-blue-700)',
+                fontSize: '0.875rem',
+                lineHeight: 1.5,
+              }}
+            >
+              {reasonBanner}
+            </div>
+          )}
 
           {/* Social Login */}
           <SocialLoginButtons redirectTo={redirect} />

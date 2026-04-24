@@ -1,6 +1,14 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+function reasonForPath(pathname: string): string | null {
+  if (pathname.startsWith('/compare')) return 'compare'
+  if (pathname.startsWith('/saved')) return 'saved'
+  if (pathname.startsWith('/dashboard')) return 'dashboard'
+  if (pathname.startsWith('/onboarding')) return 'onboarding'
+  return null
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -86,6 +94,9 @@ export async function middleware(request: NextRequest) {
   if (isProtectedRoute && !session) {
     const redirectUrl = new URL('/auth/sign-in', request.url)
     redirectUrl.searchParams.set('redirect', pathname)
+    // Contextual reason for the sign-in page banner (optional).
+    const reason = reasonForPath(pathname)
+    if (reason) redirectUrl.searchParams.set('reason', reason)
     return NextResponse.redirect(redirectUrl)
   }
 

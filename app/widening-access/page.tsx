@@ -731,7 +731,7 @@ export default function WideningAccessPage() {
               ex.university ? (
                 <Link
                   key={ex.slug}
-                  href={`/universities/${ex.university.id}`}
+                  href={`/universities/${ex.university.slug ?? ex.university.id}`}
                   className="pf-card-hover no-underline hover:no-underline"
                   style={{
                     padding: '20px',
@@ -1103,7 +1103,7 @@ export default function WideningAccessPage() {
               return (
                 <Link
                   key={h.slug}
-                  href={uni ? `/universities/${uni.id}` : '/pathways/alternatives'}
+                  href={uni ? `/universities/${uni.slug ?? uni.id}` : '/pathways/alternatives'}
                   className="pf-card-hover no-underline hover:no-underline"
                   style={{
                     padding: '24px',
@@ -1358,7 +1358,7 @@ function UniversityWaCard({ uni }: { uni: University }) {
 
   return (
     <Link
-      href={`/universities/${uni.id}`}
+      href={`/universities/${uni.slug ?? uni.id}`}
       className="pf-card-hover no-underline hover:no-underline"
       style={{
         padding: '20px',
@@ -1494,7 +1494,7 @@ function GatewayMedicineCard({
     | null
   return (
     <Link
-      href={`/courses/${course.id}`}
+      href={`/courses/${course.slug ?? course.id}`}
       className="pf-card-hover no-underline hover:no-underline"
       style={{
         padding: '24px',

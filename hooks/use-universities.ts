@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
+import { slugOrIdColumn } from '@/lib/slug-or-id'
 import type { Tables, Enums } from '@/types/database'
 
 interface UniversityFilters {
@@ -42,25 +43,26 @@ export function useUniversities(filters: UniversityFilters = {}) {
   })
 }
 
-// Fetch single university by ID
-export function useUniversity(universityId: string | null) {
+// Fetch single university by ID or slug
+export function useUniversity(universityIdOrSlug: string | null) {
   const supabase = getSupabaseClient()
 
   return useQuery({
-    queryKey: ['university', universityId],
+    queryKey: ['university', universityIdOrSlug],
     queryFn: async () => {
-      if (!universityId) return null
+      if (!universityIdOrSlug) return null
+      const column = slugOrIdColumn(universityIdOrSlug)
 
       const { data, error } = await supabase
         .from('universities')
         .select('*')
-        .eq('id', universityId)
-        .single()
+        .eq(column, universityIdOrSlug)
+        .maybeSingle()
 
       if (error) throw error
       return data
     },
-    enabled: !!universityId,
+    enabled: !!universityIdOrSlug,
   })
 }
 
@@ -112,15 +114,32 @@ export function useUniversityCities() {
   return cities.sort() as string[]
 }
 
+// Resolve a universityId-or-slug to a UUID; returns null if not found.
+async function resolveUniversityId(
+  idOrSlug: string,
+): Promise<string | null> {
+  if (!idOrSlug) return null
+  const supabase = getSupabaseClient()
+  const column = slugOrIdColumn(idOrSlug)
+  const { data } = await supabase
+    .from('universities')
+    .select('id')
+    .eq(column, idOrSlug)
+    .maybeSingle()
+  return data?.id ?? null
+}
+
 // Fetch student_benefits records linked to a specific university via the
 // related_university_id foreign key — used by the university detail page to
 // show university-specific widening-access bursaries and CE top-ups.
-export function useUniversityBenefits(universityId: string | null) {
+export function useUniversityBenefits(universityIdOrSlug: string | null) {
   const supabase = getSupabaseClient()
 
   return useQuery<Tables<'student_benefits'>[]>({
-    queryKey: ['university-benefits', universityId],
+    queryKey: ['university-benefits', universityIdOrSlug],
     queryFn: async () => {
+      if (!universityIdOrSlug) return []
+      const universityId = await resolveUniversityId(universityIdOrSlug)
       if (!universityId) return []
 
       const { data, error } = await supabase
@@ -133,18 +152,20 @@ export function useUniversityBenefits(universityId: string | null) {
       if (error) throw error
       return data || []
     },
-    enabled: !!universityId,
+    enabled: !!universityIdOrSlug,
     staleTime: 5 * 60 * 1000,
   })
 }
 
 // Fetch courses for a specific university
-export function useUniversityCourses(universityId: string | null) {
+export function useUniversityCourses(universityIdOrSlug: string | null) {
   const supabase = getSupabaseClient()
 
   return useQuery({
-    queryKey: ['university-courses', universityId],
+    queryKey: ['university-courses', universityIdOrSlug],
     queryFn: async () => {
+      if (!universityIdOrSlug) return []
+      const universityId = await resolveUniversityId(universityIdOrSlug)
       if (!universityId) return []
 
       const { data, error } = await supabase
@@ -156,6 +177,6 @@ export function useUniversityCourses(universityId: string | null) {
       if (error) throw error
       return data || []
     },
-    enabled: !!universityId,
+    enabled: !!universityIdOrSlug,
   })
 }

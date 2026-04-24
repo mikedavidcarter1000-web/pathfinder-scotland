@@ -19,7 +19,7 @@ export function UniversityCard({ university, compact = false }: UniversityCardPr
 
   return (
     <Link
-      href={`/universities/${university.id}`}
+      href={`/universities/${university.slug ?? university.id}`}
       className="block group no-underline hover:no-underline h-full"
     >
       <div

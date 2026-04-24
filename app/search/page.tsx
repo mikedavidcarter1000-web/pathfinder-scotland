@@ -399,7 +399,7 @@ function SubjectResultCard({ subject }: { subject: SubjectWithArea }) {
 
   return (
     <Link
-      href={`/subjects/${subject.id}`}
+      href={`/subjects/${subject.slug ?? subject.id}`}
       className="block group no-underline hover:no-underline h-full"
     >
       <div

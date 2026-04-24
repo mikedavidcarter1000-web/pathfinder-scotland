@@ -1191,7 +1191,7 @@ function SubjectRow({
               </span>
             )}
             <Link
-              href={`/subjects/${subject.id}`}
+              href={`/subjects/${subject.slug ?? subject.id}`}
               onClick={(e) => e.stopPropagation()}
               className="ml-auto"
               style={{ fontSize: '0.75rem', color: 'var(--pf-blue-700)', fontWeight: 600 }}
@@ -1785,7 +1785,7 @@ function CourseMatchRow({
   variant,
 }: {
   match: {
-    course: { id: string; name: string; university: { id: string; name: string } | null }
+    course: { id: string; slug?: string | null; name: string; university: { id: string; name: string } | null }
     satisfiedSubjects: Array<{ id: string; name: string }>
     missingSubjects: Array<{ id: string; name: string }>
   }
@@ -1794,7 +1794,7 @@ function CourseMatchRow({
   return (
     <li>
       <Link
-        href={`/courses/${match.course.id}`}
+        href={`/courses/${match.course.slug ?? match.course.id}`}
         className="block rounded-lg no-underline hover:no-underline"
         style={{
           padding: '8px 8px',

@@ -95,7 +95,7 @@ export function CourseCard({
   )
 
   return (
-    <Link href={`/courses/${course.id}`} className="block group no-underline hover:no-underline">
+    <Link href={`/courses/${course.slug ?? course.id}`} className="block group no-underline hover:no-underline">
       <div
         className="pf-card-hover"
         style={{ padding: 0, overflow: 'hidden', height: '100%' }}

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { getAnonSupabase } from '@/lib/supabase-public'
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 interface LayoutProps {
   children: React.ReactNode
   params: Promise<{ sectorId: string }>
@@ -20,10 +22,11 @@ export async function generateMetadata({
     }
   }
 
+  const column = UUID_RE.test(sectorId) ? 'id' : 'slug'
   const { data } = await supabase
     .from('career_sectors')
-    .select('name')
-    .eq('id', sectorId)
+    .select('name, slug')
+    .eq(column, sectorId)
     .maybeSingle()
 
   if (!data) {
@@ -35,7 +38,7 @@ export async function generateMetadata({
 
   return {
     title: `${data.name} Careers`,
-    alternates: { canonical: `/careers/${sectorId}` },
+    alternates: { canonical: `/careers/${data.slug ?? sectorId}` },
   }
 }
 

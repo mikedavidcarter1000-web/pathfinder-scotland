@@ -147,7 +147,7 @@ export function SavedCoursesSection() {
                 className="group flex items-center gap-4 rounded-lg transition-colors"
                 style={{ padding: '12px', backgroundColor: 'var(--pf-blue-50)' }}
               >
-                <Link href={`/courses/${course.id}`} className="flex-1 min-w-0 no-underline hover:no-underline">
+                <Link href={`/courses/${course.slug ?? course.id}`} className="flex-1 min-w-0 no-underline hover:no-underline">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <h3

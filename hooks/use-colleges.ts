@@ -132,13 +132,24 @@ export function useCollegeArticulation(collegeId: string | null) {
 }
 
 // Fetch articulation routes to a university, grouped by college
-export function useUniversityArticulation(universityId: string | null) {
+export function useUniversityArticulation(universityIdOrSlug: string | null) {
   const supabase = getSupabaseClient()
 
   return useQuery<ArticulationWithCollege[]>({
-    queryKey: ['university-articulation', universityId],
+    queryKey: ['university-articulation', universityIdOrSlug],
     queryFn: async () => {
-      if (!universityId) return []
+      if (!universityIdOrSlug) return []
+
+      let universityId = universityIdOrSlug
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(universityIdOrSlug)) {
+        const { data: uni } = await supabase
+          .from('universities')
+          .select('id')
+          .eq('slug', universityIdOrSlug)
+          .maybeSingle()
+        if (!uni?.id) return []
+        universityId = uni.id
+      }
 
       const { data: routes, error: routesError } = await supabase
         .from('college_articulation')
@@ -168,7 +179,7 @@ export function useUniversityArticulation(universityId: string | null) {
         college_name: collegeMap[r.college_id] || 'Unknown college',
       }))
     },
-    enabled: !!universityId,
+    enabled: !!universityIdOrSlug,
     staleTime: 5 * 60 * 1000,
   })
 }

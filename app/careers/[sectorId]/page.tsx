@@ -309,21 +309,21 @@ export default function CareerSectorDetailPage({
     return (jobTitle: string): string | undefined => {
       const needle = jobTitle.toLowerCase().trim()
       for (const r of roles) {
-        if (r.title.toLowerCase().trim() === needle) return r.id
+        if (r.title.toLowerCase().trim() === needle) return r.slug
       }
       for (const r of roles) {
-        if (baseName(r.title) === needle) return r.id
+        if (baseName(r.title) === needle) return r.slug
       }
       const strippedNeedle = stripPunct(needle)
       if (strippedNeedle) {
         for (const r of roles) {
-          if (stripPunct(r.title) === strippedNeedle) return r.id
+          if (stripPunct(r.title) === strippedNeedle) return r.slug
         }
       }
       const pluralNeedle = stripPunctAndPlural(needle)
       if (pluralNeedle) {
         for (const r of roles) {
-          if (stripPunctAndPlural(r.title) === pluralNeedle) return r.id
+          if (stripPunctAndPlural(r.title) === pluralNeedle) return r.slug
         }
       }
       const safeNeedle = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -332,7 +332,7 @@ export default function CareerSectorDetailPage({
         'i'
       )
       for (const r of roles) {
-        if (phrasePattern.test(r.title)) return r.id
+        if (phrasePattern.test(r.title)) return r.slug
       }
       return undefined
     }
@@ -498,14 +498,14 @@ export default function CareerSectorDetailPage({
             </p>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {exampleJobs.map((job) => {
-                const matchedRoleId = findRoleIdForExample(job)
+                const matchedRoleSlug = findRoleIdForExample(job)
                 const cardInner = (
                   <>
                     <h3
                       style={{
                         fontSize: '0.9375rem',
                         marginBottom: '4px',
-                        color: matchedRoleId ? 'var(--pf-blue-700)' : 'var(--pf-grey-900)',
+                        color: matchedRoleSlug ? 'var(--pf-blue-700)' : 'var(--pf-grey-900)',
                       }}
                     >
                       {job}
@@ -520,11 +520,11 @@ export default function CareerSectorDetailPage({
                     />
                   </>
                 )
-                if (matchedRoleId) {
+                if (matchedRoleSlug) {
                   return (
                     <Link
                       key={job}
-                      href={`/careers/${sector.id}/${matchedRoleId}`}
+                      href={`/careers/${sector.slug}/${matchedRoleSlug}`}
                       className="pf-card-hover no-underline hover:no-underline"
                       style={{ padding: '16px 20px', color: 'var(--pf-grey-900)' }}
                       aria-label={`Read more about ${job}`}
@@ -1138,12 +1138,12 @@ function AiFutureSection({
             </h3>
             <RoleSortToggle sort={sort} onChange={setSort} />
           </div>
-          <RoleTable roles={sortedRoles} sectorId={sector.id} />
+          <RoleTable roles={sortedRoles} sectorSlug={sector.slug} />
         </div>
       )}
 
       {/* New AI roles */}
-      {newAiRoles.length > 0 && <NewAiRolesSection roles={newAiRoles} sectorId={sector.id} />}
+      {newAiRoles.length > 0 && <NewAiRolesSection roles={newAiRoles} sectorSlug={sector.slug} />}
 
       {/* SQA subjects */}
       {sector.sqa_subjects_text && (
@@ -1327,7 +1327,7 @@ function RoleSortToggle({
   )
 }
 
-function RoleTable({ roles, sectorId }: { roles: CareerRole[]; sectorId: string }) {
+function RoleTable({ roles, sectorSlug }: { roles: CareerRole[]; sectorSlug: string }) {
   return (
     <div
       className="pf-card"
@@ -1445,7 +1445,7 @@ function RoleTable({ roles, sectorId }: { roles: CareerRole[]; sectorId: string 
                   }}
                 >
                   <Link
-                    href={`/careers/${sectorId}/${role.id}`}
+                    href={`/careers/${sectorSlug}/${role.slug}`}
                     style={{ color: 'var(--pf-blue-700)', textDecoration: 'none' }}
                     className="hover:underline"
                   >
@@ -1555,7 +1555,7 @@ function RoleTable({ roles, sectorId }: { roles: CareerRole[]; sectorId: string 
   )
 }
 
-function NewAiRolesSection({ roles, sectorId }: { roles: CareerRole[]; sectorId: string }) {
+function NewAiRolesSection({ roles, sectorSlug }: { roles: CareerRole[]; sectorSlug: string }) {
   return (
     <div>
       <div className="flex items-center" style={{ gap: '10px', marginBottom: '8px' }}>
@@ -1623,7 +1623,7 @@ function NewAiRolesSection({ roles, sectorId }: { roles: CareerRole[]; sectorId:
               }}
             >
               <Link
-                href={`/careers/${sectorId}/${role.id}`}
+                href={`/careers/${sectorSlug}/${role.slug}`}
                 style={{ color: 'var(--pf-blue-700)', textDecoration: 'none' }}
                 className="hover:underline"
               >

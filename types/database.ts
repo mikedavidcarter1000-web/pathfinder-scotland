@@ -511,6 +511,7 @@ export type Database = {
           salary_needs_verification: boolean | null
           salary_notes: string | null
           salary_source: string | null
+          slug: string
           soc_code_2020: string | null
           title: string
         }
@@ -537,6 +538,7 @@ export type Database = {
           salary_needs_verification?: boolean | null
           salary_notes?: string | null
           salary_source?: string | null
+          slug?: string
           soc_code_2020?: string | null
           title: string
         }
@@ -563,6 +565,7 @@ export type Database = {
           salary_needs_verification?: boolean | null
           salary_notes?: string | null
           salary_source?: string | null
+          slug?: string
           soc_code_2020?: string | null
           title?: string
         }
@@ -596,6 +599,7 @@ export type Database = {
           salary_range_entry: string | null
           salary_range_experienced: string | null
           scottish_context: string | null
+          slug: string
           sqa_subjects_text: string | null
         }
         Insert: {
@@ -617,6 +621,7 @@ export type Database = {
           salary_range_entry?: string | null
           salary_range_experienced?: string | null
           scottish_context?: string | null
+          slug?: string
           sqa_subjects_text?: string | null
         }
         Update: {
@@ -638,6 +643,7 @@ export type Database = {
           salary_range_entry?: string | null
           salary_range_experienced?: string | null
           scottish_context?: string | null
+          slug?: string
           sqa_subjects_text?: string | null
         }
         Relationships: []
@@ -2659,6 +2665,7 @@ export type Database = {
           is_npa: boolean | null
           name: string
           skills_tags: string[] | null
+          slug: string
           sqa_course_code: string | null
           typical_availability: string | null
           why_choose: string | null
@@ -2678,6 +2685,7 @@ export type Database = {
           is_npa?: boolean | null
           name: string
           skills_tags?: string[] | null
+          slug: string
           sqa_course_code?: string | null
           typical_availability?: string | null
           why_choose?: string | null
@@ -2697,6 +2705,7 @@ export type Database = {
           is_npa?: boolean | null
           name?: string
           skills_tags?: string[] | null
+          slug?: string
           sqa_course_code?: string | null
           typical_availability?: string | null
           why_choose?: string | null

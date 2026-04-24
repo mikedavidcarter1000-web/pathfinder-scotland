@@ -258,43 +258,61 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const supabase = await createServerSupabaseClient()
 
-    const [subjectsRes, universitiesRes, coursesRes, careerSectorsRes, collegesRes, offersRes] = await Promise.all([
-      supabase.from('subjects').select('id, created_at'),
-      supabase.from('universities').select('id, updated_at'),
-      supabase.from('courses').select('id, updated_at'),
-      supabase.from('career_sectors').select('id'),
+    const [subjectsRes, universitiesRes, coursesRes, careerSectorsRes, careerRolesRes, collegesRes, offersRes] = await Promise.all([
+      supabase.from('subjects').select('id, slug, created_at'),
+      supabase.from('universities').select('id, slug, updated_at'),
+      supabase.from('courses').select('id, slug, updated_at'),
+      supabase.from('career_sectors').select('id, slug'),
+      supabase
+        .from('career_roles')
+        .select('id, slug, career_sectors!inner(slug)'),
       supabase.from('colleges').select('id, created_at').eq('is_active', true),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (supabase as any).from('offers').select('slug, updated_at').eq('is_active', true),
     ])
 
     const subjectRoutes: MetadataRoute.Sitemap = (subjectsRes.data ?? []).map((row) => ({
-      url: `${SITE_URL}/subjects/${row.id}`,
+      url: `${SITE_URL}/subjects/${row.slug ?? row.id}`,
       lastModified: row.created_at ? new Date(row.created_at) : now,
       changeFrequency: 'monthly',
       priority: 0.6,
     }))
 
     const universityRoutes: MetadataRoute.Sitemap = (universitiesRes.data ?? []).map((row) => ({
-      url: `${SITE_URL}/universities/${row.id}`,
+      url: `${SITE_URL}/universities/${row.slug ?? row.id}`,
       lastModified: row.updated_at ? new Date(row.updated_at) : now,
       changeFrequency: 'monthly',
       priority: 0.7,
     }))
 
     const courseRoutes: MetadataRoute.Sitemap = (coursesRes.data ?? []).map((row) => ({
-      url: `${SITE_URL}/courses/${row.id}`,
+      url: `${SITE_URL}/courses/${row.slug ?? row.id}`,
       lastModified: row.updated_at ? new Date(row.updated_at) : now,
       changeFrequency: 'monthly',
       priority: 0.6,
     }))
 
     const careerSectorRoutes: MetadataRoute.Sitemap = (careerSectorsRes.data ?? []).map((row) => ({
-      url: `${SITE_URL}/careers/${row.id}`,
+      url: `${SITE_URL}/careers/${row.slug ?? row.id}`,
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.7,
     }))
+
+    const careerRoleRoutes: MetadataRoute.Sitemap = (
+      (careerRolesRes.data ?? []) as Array<{
+        id: string
+        slug: string | null
+        career_sectors: { slug: string | null } | null
+      }>
+    )
+      .filter((row) => row.slug && row.career_sectors?.slug)
+      .map((row) => ({
+        url: `${SITE_URL}/careers/${row.career_sectors!.slug}/${row.slug}`,
+        lastModified: now,
+        changeFrequency: 'monthly',
+        priority: 0.6,
+      }))
 
     const collegeRoutes: MetadataRoute.Sitemap = (collegesRes.data ?? []).map((row) => ({
       url: `${SITE_URL}/colleges/${row.id}`,
@@ -319,6 +337,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...universityRoutes,
       ...courseRoutes,
       ...careerSectorRoutes,
+      ...careerRoleRoutes,
       ...collegeRoutes,
       ...offerRoutes,
     ]

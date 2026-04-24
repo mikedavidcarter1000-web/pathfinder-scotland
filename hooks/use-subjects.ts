@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
+import { slugOrIdColumn } from '@/lib/slug-or-id'
 import { useAuth } from './use-auth'
 import type { Tables } from '@/types/database'
 
@@ -148,13 +149,14 @@ export function useSubjects(filters: SubjectFilters = {}) {
  * (upstream + downstream), career sector mappings, and university courses
  * that list the subject in their entry_requirements.required_subjects.
  */
-export function useSubjectDetail(subjectId: string | null) {
+export function useSubjectDetail(subjectIdOrSlug: string | null) {
   const supabase = getSupabaseClient()
 
   return useQuery<SubjectDetail | null>({
-    queryKey: ['subject-detail', subjectId],
+    queryKey: ['subject-detail', subjectIdOrSlug],
     queryFn: async () => {
-      if (!subjectId) return null
+      if (!subjectIdOrSlug) return null
+      const column = slugOrIdColumn(subjectIdOrSlug)
 
       // 1. Fetch subject with curricular area and career sector links
       const { data: subject, error: subjectError } = await supabase
@@ -169,8 +171,8 @@ export function useSubjectDetail(subjectId: string | null) {
           )
         `
         )
-        .eq('id', subjectId)
-        .single()
+        .eq(column, subjectIdOrSlug)
+        .maybeSingle()
 
       if (subjectError) throw subjectError
       if (!subject) return null
@@ -178,6 +180,7 @@ export function useSubjectDetail(subjectId: string | null) {
       const typedSubject = subject as unknown as SubjectWithArea & {
         career_links: CareerLink[]
       }
+      const subjectId = typedSubject.id
 
       // 2. Fetch progression links where this subject is either end
       const { data: progressions, error: progError } = await supabase
@@ -268,7 +271,7 @@ export function useSubjectDetail(subjectId: string | null) {
         related_courses_by_level: byLevel,
       }
     },
-    enabled: !!subjectId,
+    enabled: !!subjectIdOrSlug,
   })
 }
 
@@ -529,23 +532,25 @@ export type CareerSectorPageData = CareerSectorDetail & {
  * + course count, and university courses whose subject_area matches the
  * sector's course_subject_areas array.
  */
-export function useCareerSectorPageData(sectorId: string | null) {
+export function useCareerSectorPageData(sectorIdOrSlug: string | null) {
   const supabase = getSupabaseClient()
 
   return useQuery<CareerSectorPageData | null>({
-    queryKey: ['career-sector-page', sectorId],
+    queryKey: ['career-sector-page', sectorIdOrSlug],
     queryFn: async () => {
-      if (!sectorId) return null
+      if (!sectorIdOrSlug) return null
+      const column = slugOrIdColumn(sectorIdOrSlug)
 
       // 1. Sector metadata (includes the new enrichment columns).
       const { data: sector, error: sectorErr } = await supabase
         .from('career_sectors')
         .select('*')
-        .eq('id', sectorId)
-        .single()
+        .eq(column, sectorIdOrSlug)
+        .maybeSingle()
       if (sectorErr) throw sectorErr
       if (!sector) return null
       const typedSector = sector as CareerSector
+      const sectorId = typedSector.id
 
       // 2. Subject links grouped by relevance, with curricular area + course counts.
       const { data: links, error: linksErr } = await supabase
@@ -643,7 +648,7 @@ export function useCareerSectorPageData(sectorId: string | null) {
         career_roles: (roles as CareerRole[]) || [],
       }
     },
-    enabled: !!sectorId,
+    enabled: !!sectorIdOrSlug,
     staleTime: 5 * 60 * 1000,
   })
 }

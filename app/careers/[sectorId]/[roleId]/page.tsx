@@ -19,41 +19,53 @@ type RoleRow = Database['public']['Tables']['career_roles']['Row']
 type ProfileRow = Database['public']['Tables']['role_profiles']['Row']
 type SectorRow = Database['public']['Tables']['career_sectors']['Row']
 
-type SectorSummary = Pick<SectorRow, 'id' | 'name' | 'description'>
+type SectorSummary = Pick<SectorRow, 'id' | 'name' | 'description' | 'slug'>
 type FullRole = RoleRow & { career_sectors: SectorSummary }
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export async function generateStaticParams() {
   const supabase = getAnonSupabase()
   if (!supabase) return []
-  const { data } = await supabase.from('career_roles').select('id, career_sector_id')
-  return (data ?? []).map((r) => ({
-    sectorId: r.career_sector_id,
-    roleId: r.id,
-  }))
+  const { data } = await supabase
+    .from('career_roles')
+    .select('slug, career_sectors!inner(slug)')
+  return (data ?? [])
+    .map((r) => {
+      const sectorSlug = (r as unknown as { career_sectors: { slug: string } | null }).career_sectors?.slug
+      const roleSlug = (r as unknown as { slug: string }).slug
+      if (!sectorSlug || !roleSlug) return null
+      return { sectorId: sectorSlug, roleId: roleSlug }
+    })
+    .filter((v): v is { sectorId: string; roleId: string } => v !== null)
 }
 
-async function fetchRoleAndProfile(sectorId: string, roleId: string) {
+async function fetchRoleAndProfile(sectorIdOrSlug: string, roleIdOrSlug: string) {
   const supabase = getAnonSupabase()
   if (!supabase) return { role: null, profile: null }
 
-  const [roleRes, profileRes] = await Promise.all([
-    supabase
-      .from('career_roles')
-      .select('*, career_sectors!inner(id, name, description)')
-      .eq('id', roleId)
-      .eq('career_sector_id', sectorId)
-      .maybeSingle(),
-    supabase
-      .from('role_profiles')
-      .select('*')
-      .eq('career_role_id', roleId)
-      .maybeSingle(),
-  ])
+  const roleColumn = UUID_RE.test(roleIdOrSlug) ? 'id' : 'slug'
+  const sectorColumn = UUID_RE.test(sectorIdOrSlug) ? 'id' : 'slug'
 
+  const roleQuery = supabase
+    .from('career_roles')
+    .select('*, career_sectors!inner(id, name, description, slug)')
+    .eq(roleColumn, roleIdOrSlug)
+    .eq(`career_sectors.${sectorColumn}`, sectorIdOrSlug)
+    .maybeSingle()
+
+  const roleRes = await roleQuery
   const role = (roleRes.data as FullRole | null) ?? null
-  const profile = (profileRes.data as ProfileRow | null) ?? null
 
-  return { role, profile }
+  if (!role) return { role: null, profile: null }
+
+  const { data: profileData } = await supabase
+    .from('role_profiles')
+    .select('*')
+    .eq('career_role_id', role.id)
+    .maybeSingle()
+
+  return { role, profile: (profileData as ProfileRow | null) ?? null }
 }
 
 export async function generateMetadata({
@@ -76,7 +88,7 @@ export async function generateMetadata({
   return {
     title: role.title,
     description,
-    alternates: { canonical: `/careers/${sectorId}/${roleId}` },
+    alternates: { canonical: `/careers/${role.career_sectors.slug}/${role.slug}` },
   }
 }
 
@@ -112,7 +124,7 @@ export default async function RoleDetailPage({
               Careers
             </Link>
             <span>/</span>
-            <Link href={`/careers/${sector.id}`} style={{ color: 'var(--pf-blue-500)' }}>
+            <Link href={`/careers/${sector.slug}`} style={{ color: 'var(--pf-blue-500)' }}>
               {sector.name}
             </Link>
             <span>/</span>
@@ -127,7 +139,7 @@ export default async function RoleDetailPage({
 
           <div className="flex flex-wrap items-center" style={{ gap: '8px', marginBottom: '12px' }}>
             <Link
-              href={`/careers/${sector.id}`}
+              href={`/careers/${sector.slug}`}
               className="inline-flex items-center no-underline hover:no-underline"
               style={{
                 padding: '6px 14px',
@@ -417,7 +429,7 @@ export default async function RoleDetailPage({
         {/* Section 11 — Back navigation */}
         <section>
           <Link
-            href={`/careers/${sector.id}`}
+            href={`/careers/${sector.slug}`}
             className="pf-btn-ghost inline-flex items-center"
             style={{ fontSize: '0.9375rem', gap: '6px' }}
           >

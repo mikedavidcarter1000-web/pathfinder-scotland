@@ -177,7 +177,7 @@ export function ComparisonTable({ courses, onRemove }: ComparisonTableProps) {
               <th key={course.id} className="p-4 bg-gray-50 text-left min-w-[200px]">
                 <div className="flex items-start justify-between gap-2">
                   <Link
-                    href={`/courses/${course.id}`}
+                    href={`/courses/${course.slug ?? course.id}`}
                     className="font-semibold text-gray-900 hover:text-blue-600 transition-colors line-clamp-2"
                   >
                     {course.name}
@@ -240,7 +240,7 @@ export function ComparisonTable({ courses, onRemove }: ComparisonTableProps) {
             {courses.map((course) => (
               <td key={course.id} className="p-4">
                 <Link
-                  href={`/courses/${course.id}`}
+                  href={`/courses/${course.slug ?? course.id}`}
                   className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
                 >
                   View details
