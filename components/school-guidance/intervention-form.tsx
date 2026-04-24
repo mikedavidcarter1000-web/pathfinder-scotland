@@ -40,6 +40,8 @@ export function InterventionForm({ studentId, studentName, onClose, onSaved }: P
   const [pefCost, setPefCost] = useState('')
   const [confidential, setConfidential] = useState(false)
   const [actions, setActions] = useState<ActionItem[]>([])
+  const [contactMethod, setContactMethod] = useState<'phone' | 'email' | 'in_person' | 'letter'>('phone')
+  const [parentName, setParentName] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -63,6 +65,21 @@ export function InterventionForm({ studentId, studentName, onClose, onSaved }: P
     }
     setSubmitting(true)
     try {
+      // For parent_contact interventions, prepend contact-method metadata
+      // to the notes so it surfaces on the intervention timeline without
+      // needing a new column on the interventions table.
+      let effectiveNotes = notes
+      if (type === 'parent_contact') {
+        const methodLabel = {
+          phone: 'Phone',
+          email: 'Email',
+          in_person: 'In person',
+          letter: 'Letter',
+        }[contactMethod]
+        const header = `[${methodLabel}${parentName ? ` with ${parentName.trim()}` : ''}]`
+        effectiveNotes = notes ? `${header}\n${notes}` : header
+      }
+
       const res = await fetch('/api/school/guidance/interventions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -70,7 +87,7 @@ export function InterventionForm({ studentId, studentName, onClose, onSaved }: P
           student_id: studentId,
           intervention_type: type,
           title: title.trim(),
-          notes: notes || null,
+          notes: effectiveNotes || null,
           outcome: outcome || null,
           follow_up_date: followUp || null,
           action_items: actions.filter((a) => a.description.trim()).map((a) => ({
@@ -127,6 +144,35 @@ export function InterventionForm({ studentId, studentName, onClose, onSaved }: P
             ))}
           </select>
         </label>
+
+        {type === 'parent_contact' && (
+          <fieldset style={{ border: '1px solid #e5e5e5', padding: 10, margin: '10px 0', borderRadius: 4 }}>
+            <legend style={{ fontSize: 13, fontWeight: 600 }}>Parent contact details</legend>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 8 }}>
+              {(['phone', 'email', 'in_person', 'letter'] as const).map((method) => (
+                <label key={method} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13 }}>
+                  <input
+                    type="radio"
+                    name="contact_method"
+                    value={method}
+                    checked={contactMethod === method}
+                    onChange={() => setContactMethod(method)}
+                  />
+                  {method === 'in_person' ? 'In person' : method.charAt(0).toUpperCase() + method.slice(1)}
+                </label>
+              ))}
+            </div>
+            <label style={label}>
+              <div style={labelText}>Parent / carer name (optional)</div>
+              <input
+                value={parentName}
+                onChange={(e) => setParentName(e.target.value)}
+                placeholder="e.g. Ms Smith"
+                style={input}
+              />
+            </label>
+          </fieldset>
+        )}
 
         <label style={label}>
           <div style={labelText}>Title</div>

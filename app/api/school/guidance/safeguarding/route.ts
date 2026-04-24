@@ -127,5 +127,27 @@ export async function POST(req: Request) {
     action: escalation !== 'concern' ? 'escalated' : 'created',
   })
 
+  // Fire a safeguarding_escalation notification when the concern is
+  // escalated to a named staff member. The concern description is NOT
+  // included in the notification body; it is sensitive and only viewable
+  // via the safeguarding detail page.
+  if (escalation !== 'concern' && escalatedTo) {
+    try {
+      const { sendSchoolNotification } = await import('@/lib/school/notifications')
+      await sendSchoolNotification({
+        admin,
+        schoolId: ctx.schoolId,
+        type: 'safeguarding_escalation',
+        title: 'URGENT: Safeguarding concern escalated',
+        body: 'A safeguarding concern has been escalated to you. Please review the case immediately in the safeguarding log.',
+        targetStaffIds: [escalatedTo],
+        channel: 'both',
+        createdBy: ctx.userId,
+      })
+    } catch {
+      // Best-effort.
+    }
+  }
+
   return NextResponse.json({ ok: true, id: inserted.id })
 }

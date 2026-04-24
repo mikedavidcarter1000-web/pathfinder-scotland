@@ -9,6 +9,7 @@ import { useHasAcceptedOffer } from '@/hooks/use-offers'
 import { UserMenu } from '@/components/auth/user-menu'
 import { useIsSchoolStaff } from '@/hooks/use-school-staff'
 import { getInitials } from '@/lib/utils'
+import { NotificationBell } from '@/components/notifications/NotificationBell'
 
 const SearchBar = lazy(() =>
   import('@/components/ui/search-bar').then((m) => ({ default: m.SearchBar }))
@@ -420,8 +421,16 @@ export function Navbar() {
               {isLoading ? (
                 <div className="w-8 h-8 rounded-full animate-pulse hidden lg:block" style={{ backgroundColor: 'rgba(27,58,92,0.12)' }} />
               ) : user ? (
-                <div className="hidden lg:block">
-                  <UserMenu />
+                <div className="flex items-center gap-1">
+                  {(isStaff || isParent || (student && student.school_id)) && (
+                    <NotificationBell
+                      audience={isStaff ? 'staff' : isParent ? 'parent' : 'student'}
+                      userId={user.id}
+                    />
+                  )}
+                  <div className="hidden lg:block">
+                    <UserMenu />
+                  </div>
                 </div>
               ) : (
                 <div className="hidden lg:flex items-center gap-2">

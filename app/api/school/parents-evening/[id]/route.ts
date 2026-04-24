@@ -103,6 +103,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: before } = await (admin as any)
+    .from('parent_evenings')
+    .select('status, name, event_date, booking_closes_at')
+    .eq('id', id)
+    .eq('school_id', ctx.schoolId)
+    .maybeSingle()
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (admin as any)
     .from('parent_evenings')
     .update(patch)
@@ -110,6 +118,76 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     .eq('school_id', ctx.schoolId)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // If we just flipped status from not-open to open, notify parents of
+  // students at the school. Year group targeting is not available on the
+  // evening itself -- the convention is that an admin sets up one evening
+  // per year group by name, so we broadcast to every active parent.
+  if (patch.status === 'open' && before && before.status !== 'open') {
+    try {
+      const { sendSchoolNotification, templates } = await import('@/lib/school/notifications')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: linkRows } = await (admin as any)
+        .from('school_student_links')
+        .select('student_id')
+        .eq('school_id', ctx.schoolId)
+      type LR = { student_id: string }
+      const studentIds = ((linkRows ?? []) as LR[]).map((r) => r.student_id)
+      if (studentIds.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: parentLinks } = await (admin as any)
+          .from('parent_student_links')
+          .select('parent_id')
+          .in('student_id', studentIds)
+          .eq('status', 'active')
+        type PL = { parent_id: string | null }
+        const parentIds = Array.from(
+          new Set(
+            ((parentLinks ?? []) as PL[]).map((r) => r.parent_id).filter((v): v is string => !!v)
+          )
+        )
+        if (parentIds.length > 0) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { data: school } = await (admin as any)
+            .from('schools')
+            .select('name, settings')
+            .eq('id', ctx.schoolId)
+            .maybeSingle()
+          const schoolName = (school?.name as string | null) ?? 'School'
+          const settings = (school?.settings as Record<string, unknown> | null) ?? {}
+          const headerColour =
+            typeof settings['primary_colour'] === 'string'
+              ? (settings['primary_colour'] as string)
+              : '#1B3A5C'
+          const logoUrl = typeof settings['logo_url'] === 'string' ? (settings['logo_url'] as string) : null
+          const appBase = process.env.NEXT_PUBLIC_APP_URL ?? 'https://pathfinderscot.co.uk'
+          const emailOverride = templates.parentEveningOpen({
+            schoolName,
+            eveningName: before.name as string,
+            eventDate: before.event_date as string,
+            bookingCloses: (before.booking_closes_at as string | null) ?? 'the closing date',
+            bookingUrl: `${appBase}/parent/parents-evening/${id}`,
+            headerColour,
+            logoUrl,
+          })
+          await sendSchoolNotification({
+            admin,
+            schoolId: ctx.schoolId,
+            type: 'parent_evening_reminder',
+            title: `Book your ${before.name} appointments`,
+            body: `Booking is now open for ${before.name} on ${before.event_date}. Please book your appointments before the window closes.`,
+            targetParentIds: parentIds,
+            channel: 'both',
+            createdBy: ctx.userId,
+            emailOverride,
+          })
+        }
+      }
+    } catch {
+      // Best-effort.
+    }
+  }
+
   return NextResponse.json({ ok: true })
 }
 

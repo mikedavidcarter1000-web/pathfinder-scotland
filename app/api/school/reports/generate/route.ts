@@ -172,5 +172,40 @@ export async function POST(req: Request) {
     .select('id')
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
+  // Fire an in-app notification for each affected parent so they see the
+  // report surfaced in their bell. Emails still go out through the
+  // send-all flow; this is the in-app companion.
+  try {
+    const { sendSchoolNotification } = await import('@/lib/school/notifications')
+    const coveredStudentIds = students.map((s) => s.id)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: parentLinks } = await (admin as any)
+      .from('parent_student_links')
+      .select('parent_id')
+      .in('student_id', coveredStudentIds)
+      .eq('status', 'active')
+    const parentIds = Array.from(
+      new Set(
+        ((parentLinks ?? []) as Array<{ parent_id: string | null }>)
+          .map((r) => r.parent_id)
+          .filter((v): v is string => !!v)
+      )
+    )
+    if (parentIds.length > 0) {
+      await sendSchoolNotification({
+        admin,
+        schoolId: ctx.schoolId,
+        type: 'report_ready',
+        title: `${cycle.name} reports available`,
+        body: `Tracking reports for ${cycle.name} have been generated and are ready to view on your Pathfinder dashboard.`,
+        targetParentIds: parentIds,
+        channel: 'in_app',
+        createdBy: ctx.userId,
+      })
+    }
+  } catch {
+    // Notifications are a best-effort signal; do not fail the generate call.
+  }
+
   return NextResponse.json({ ok: true, generated: inserted?.length ?? 0 })
 }

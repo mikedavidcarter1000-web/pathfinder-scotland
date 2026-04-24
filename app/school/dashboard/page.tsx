@@ -85,6 +85,12 @@ export default function SchoolDashboardPage() {
           )}
           <Link href="/school/guidance/wellbeing" style={quickLink}>Wellbeing surveys &rarr;</Link>
           <Link href="/school/parents-evening" style={quickLink}>Parents&apos; evenings &rarr;</Link>
+          <Link href="/school/notifications" style={quickLink}>Notifications &rarr;</Link>
+        </div>
+      )}
+      {!me.staff.canViewIndividualStudents && (
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '0 0 12px 0', fontSize: 14 }}>
+          <Link href="/school/notifications" style={quickLink}>Notifications &rarr;</Link>
         </div>
       )}
       {(me.staff.role === 'depute' || me.staff.role === 'head_teacher' || me.staff.isAdmin) && (
