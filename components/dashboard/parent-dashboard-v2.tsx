@@ -103,6 +103,24 @@ export function ParentDashboardV2({ parent }: { parent: ParentRow }) {
         )}
       </div>
 
+      {/* Subject choice approvals */}
+      {children && children.length > 0 && (
+        <div
+          className="pf-card mb-6"
+          style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe' }}
+        >
+          <h2 style={{ marginBottom: '4px', fontSize: '1.05rem' }}>Subject choice approvals</h2>
+          <p style={{ margin: 0, fontSize: '0.9rem' }}>
+            When your child submits subject choices that need a parent signature, review them here.
+          </p>
+          <div style={{ marginTop: '12px' }}>
+            <Link href="/parent/choices" className="pf-btn-primary pf-btn-sm">
+              View subject choices &rarr;
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Parent account settings */}
       <div className="pf-card">
         <h2 style={{ marginBottom: '8px', fontSize: '1.125rem' }}>Your account</h2>

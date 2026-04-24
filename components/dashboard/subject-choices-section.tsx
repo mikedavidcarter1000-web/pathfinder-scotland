@@ -94,6 +94,26 @@ export function SubjectChoicesSection() {
 
   return (
     <div className="pf-card">
+      <div
+        style={{
+          marginBottom: 12,
+          padding: '8px 12px',
+          background: '#eff6ff',
+          border: '1px solid #bfdbfe',
+          borderRadius: 6,
+          fontSize: '0.8125rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 8,
+          flexWrap: 'wrap',
+        }}
+      >
+        <span>Is your school running a structured choice round?</span>
+        <Link href="/student/choices" style={{ fontWeight: 600, color: '#1D4ED8' }}>
+          Check my school choices &rarr;
+        </Link>
+      </div>
       <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
         <div className="flex items-center gap-3 flex-wrap">
           <h2 style={{ margin: 0, fontSize: '1.125rem' }}>My Subject Choices</h2>

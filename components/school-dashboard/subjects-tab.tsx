@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import type { SubjectData } from './types'
 
 const TRANSITIONS = ['s2_to_s3', 's3_to_s4', 's4_to_s5', 's5_to_s6'] as const
@@ -33,6 +34,16 @@ export function SubjectsTab() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <section style={{ ...card, backgroundColor: '#eff6ff', border: '1px solid #bfdbfe' }}>
+        <h3 style={h3}>Choice rounds</h3>
+        <p style={{ margin: '0 0 8px', fontSize: '0.875rem' }}>
+          Run a full column-based subject choice round — build columns, collect student picks, see demand in real time, and export SEEMIS CSV when ready.
+        </p>
+        <Link href="/school/choices" style={{ fontWeight: 600, color: '#1D4ED8' }}>
+          Manage choice rounds &rarr;
+        </Link>
+      </section>
+
       <section style={card}>
         <h3 style={h3}>Subject choice popularity</h3>
         {subjectList.length === 0 ? (
