@@ -1,0 +1,191 @@
+{
+  "_meta": {
+    "description": "Reference contacts for Scottish universities on Results Day. Every entry is flagged needs_verification:true because admissions phone numbers, emails, and clearing pages change yearly. Verify each entry against the live university website before publication.",
+    "last_reviewed": "2026-04-25",
+    "results_day_2026": "2026-08-04",
+    "clearing_opens": "2026-07-02",
+    "clearing_closes": "2026-10-19"
+  },
+  "universities": [
+    {
+      "university_name": "University of St Andrews",
+      "slug": "st-andrews",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.st-andrews.ac.uk/study/ug/apply/",
+      "results_day_hours": "8am-6pm",
+      "notes": "St Andrews rarely participates in Clearing. Contact admissions through the form on their study page.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "University of Edinburgh",
+      "slug": "edinburgh",
+      "admissions_phone": "0131 650 4296",
+      "admissions_email": "communications.office@ed.ac.uk",
+      "clearing_page": "https://www.ed.ac.uk/studying/undergraduate/clearing",
+      "results_day_hours": "8am-6pm",
+      "notes": "Each College has its own admissions team. Use the Clearing hotline route on Results Day.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "Heriot-Watt University",
+      "slug": "heriot-watt",
+      "admissions_phone": "0131 451 3450",
+      "admissions_email": "ugadmissions@hw.ac.uk",
+      "clearing_page": "https://www.hw.ac.uk/study/clearing",
+      "results_day_hours": "8am-6pm",
+      "notes": "Recruitment and Admissions handles Clearing enquiries.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "University of Aberdeen",
+      "slug": "aberdeen",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.abdn.ac.uk/study/undergraduate/clearing.php",
+      "results_day_hours": "8am-6pm",
+      "notes": "Clearing hotline number published on the Aberdeen Clearing page each year.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "University of Glasgow",
+      "slug": "glasgow",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.gla.ac.uk/undergraduate/clearing/",
+      "results_day_hours": "8am-6pm",
+      "notes": "Glasgow runs a dedicated Clearing hotline on Results Day - number is announced via the Clearing page.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "University of Strathclyde",
+      "slug": "strathclyde",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.strath.ac.uk/studywithus/clearing/",
+      "results_day_hours": "8am-6pm",
+      "notes": "Each Faculty has its own admissions team. Strathclyde participates fully in Clearing.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "University of Dundee",
+      "slug": "dundee",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.dundee.ac.uk/undergraduate/clearing",
+      "results_day_hours": "8am-6pm",
+      "notes": "Dundee Clearing hotline number is published on Results Day.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "University of Stirling",
+      "slug": "stirling",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.stir.ac.uk/clearing/",
+      "results_day_hours": "8am-6pm",
+      "notes": "Stirling publishes its dedicated Clearing hotline number on Results Day.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "Glasgow Caledonian University",
+      "slug": "gcu",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.gcu.ac.uk/study/undergraduate/howtoapply/clearing",
+      "results_day_hours": "8am-6pm",
+      "notes": "GCU runs a dedicated Clearing line on Results Day.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "Robert Gordon University",
+      "slug": "robert-gordon",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.rgu.ac.uk/study/how-to-apply/undergraduate/clearing",
+      "results_day_hours": "8am-6pm",
+      "notes": "RGU publishes Clearing hotline numbers on Results Day.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "Abertay University",
+      "slug": "abertay",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.abertay.ac.uk/study-apply/clearing/",
+      "results_day_hours": "8am-6pm",
+      "notes": "Abertay specialises in Computing, Games, and Cybersecurity routes.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "Edinburgh Napier University",
+      "slug": "edinburgh-napier",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.napier.ac.uk/study-with-us/undergraduate/clearing",
+      "results_day_hours": "8am-6pm",
+      "notes": "Napier publishes a dedicated Clearing line on Results Day.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "Queen Margaret University",
+      "slug": "queen-margaret",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.qmu.ac.uk/study-here/clearing/",
+      "results_day_hours": "8am-6pm",
+      "notes": "QMU specialises in Health, Drama, and Business routes.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "University of the West of Scotland",
+      "slug": "uws",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.uws.ac.uk/study/undergraduate/clearing/",
+      "results_day_hours": "8am-6pm",
+      "notes": "UWS Clearing hotline runs throughout the Clearing period.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "University of the Highlands and Islands",
+      "slug": "highlands-islands",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.uhi.ac.uk/en/studying-at-uhi/first-steps/clearing/",
+      "results_day_hours": "8am-6pm",
+      "notes": "UHI has 13 academic partner institutions across the Highlands and Islands.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "Glasgow School of Art",
+      "slug": "glasgow-school-of-art",
+      "admissions_phone": null,
+      "admissions_email": "admissions@gsa.ac.uk",
+      "clearing_page": "https://www.gsa.ac.uk/study/undergraduate-degrees/",
+      "results_day_hours": "9am-5pm",
+      "notes": "GSA selection is portfolio-based and does not typically use Clearing. Contact Admissions directly.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "Royal Conservatoire of Scotland",
+      "slug": "royal-conservatoire-of-scotland",
+      "admissions_phone": null,
+      "admissions_email": "admissions@rcs.ac.uk",
+      "clearing_page": "https://www.rcs.ac.uk/study/",
+      "results_day_hours": "9am-5pm",
+      "notes": "RCS entry is audition-based. Clearing is not the standard route.",
+      "needs_verification": true
+    },
+    {
+      "university_name": "Scotland's Rural College",
+      "slug": "sruc",
+      "admissions_phone": null,
+      "admissions_email": null,
+      "clearing_page": "https://www.sruc.ac.uk/study/undergraduate/clearing/",
+      "results_day_hours": "8am-6pm",
+      "notes": "SRUC offers degree programmes in Agriculture, Animal Sciences, and Rural Business.",
+      "needs_verification": true
+    }
+  ]
+}

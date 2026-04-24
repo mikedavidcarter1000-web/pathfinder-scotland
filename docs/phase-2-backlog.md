@@ -418,3 +418,34 @@ Shipped in Schools-9b: migration `20260424195138_personal_statement_drafts.sql` 
 
 First time an authenticated student opens the drafting tool, their existing anonymous localStorage draft (if any) is lifted into the DB via the first PUT (see the load effect in `personal-statement-client.tsx`). A student who drafted offline, signed in, then drafted MORE offline could find the offline tail overwritten on next cloud save. Consider a conflict-resolution prompt if both localStorage and DB have content and they diverge by more than N characters.
 
+## Appended 2026-04-25 -- Results Day hub + worksheet + EC page deferrals
+
+### Verify the 18 university admissions contacts in `data/results-day-contacts.json`
+
+Built with `needs_verification: true` on every entry. Edinburgh and Heriot-Watt have verified phone numbers; the other 16 have `null` for `admissions_phone` and a "See Clearing page" placeholder in the rendered table. Before Results Day 2026 (4 August), an admin should:
+- Phone each university's switchboard or check the live Clearing landing page to confirm the dedicated Clearing hotline number.
+- Update `admissions_phone`, `admissions_email`, and `clearing_page` in the JSON.
+- Verify the `clearing_page` URL still 200s -- some universities restructure their admissions site annually.
+- Set `needs_verification: false` on each row that has been confirmed, so the page can later filter out unverified entries if needed.
+- Update `_meta.last_reviewed`.
+
+### Anonymous worksheet -- save / share path for logged-in users
+
+The new `/tools/subject-choice-worksheet` is intentionally anonymous-friendly (no sign-in, no DB writes, all state in React). The existing `/tools/worksheet` is the personalised version that pulls from the student profile. Phase-2 idea: when an anonymous user fills in the new worksheet and is logged in, offer "save this worksheet to my account" via a new `worksheet_drafts` table (or reuse `student_subject_choices` JSONB). The cleaner approach is to merge the two worksheets into one with a "use my saved choices" toggle, but that's a bigger UX call.
+
+### Sector-aware "missing subject" suggestions on the worksheet
+
+Currently the worksheet's "What you might be missing" section only flags career sectors the student has selected but their subjects don't connect to. Phase-2: also surface specific subject suggestions ("Adding Maths would unlock 47 more courses and connect to STEM Engineering"). Requires a richer query than the current `course_subject_requirements` count -- need to compute course-count delta per candidate subject, capped at 3-5 suggestions to keep the worksheet uncluttered.
+
+### Worksheet PDF as a download (not browser print)
+
+Both worksheets currently use `window.print()`. This works on desktop browsers but mobile Safari / Chrome's "Save as PDF" route is hidden in the share menu and unfamiliar to students. Phase-2: integrate `@react-pdf/renderer` or a server-side Chromium-headless render so the "Download as PDF" button produces a real .pdf download. Caveat: adds ~2MB to the bundle (react-pdf) or requires a Vercel Edge / serverless Chromium dependency.
+
+### Extenuating circumstances vs difficult circumstances -- decide the long-term IA
+
+Two pages now exist: `/support/difficult-circumstances` (narrative tone, helpline-led, comprehensive) and `/support/extenuating-circumstances` (procedural / formal-process focus, action-oriented). Both link to each other. This-session's decision was to ship both because the spec was explicit about a new URL, but the IA could be cleaner with one page that has two clear modes (Get help / Make a formal claim). Phase-2 review: gather user analytics for 2-3 months, then decide whether to merge, redirect, or keep both.
+
+### Results Day decision tree -- pre-fill from result outcome
+
+The new `ResultsDayDecisionTree` is a manual chooser. The existing `AdviceCard` block in the same page auto-detects an outcome from `predicted vs actual` grade comparison. Phase-2: when a logged-in student enters their actual results, pre-select the matching radio in the decision tree so they don't have to repeat the choice. Avoid making it irreversible -- students may want to explore other branches.
+

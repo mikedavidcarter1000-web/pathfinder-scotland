@@ -21,6 +21,9 @@ import { useSubjects } from '@/hooks/use-subjects'
 import { compareGradeStrings } from '@/lib/grades'
 import type { Tables } from '@/types/database'
 import { SchoolImportedResults } from '@/components/results-day/school-imported-results'
+import { ResultsDayDecisionTree } from '@/components/results-day/results-day-decision-tree'
+import { ResultsDayContacts } from '@/components/results-day/results-day-contacts'
+import { ResultsDayHelplines } from '@/components/results-day/results-day-helplines'
 
 type StudentGrade = Tables<'student_grades'>
 
@@ -411,11 +414,14 @@ function ResultsDayContent() {
 
             <div className="space-y-3">
               {[
-                'Know your UCAS Track login details',
-                "Know your school's process for collecting results (some post, some online)",
-                'Have your university and UCAS contact details ready',
-                'Know the Clearing and Adjustment timelines',
-                'Talk to family about plan B',
+                'Know your login for the Qualifications Scotland results portal',
+                'Check your UCAS Track login works (ucas.com)',
+                "Know your school's contact number for Results Day",
+                'Have your SAAS funding application submitted',
+                'Review your firm and insurance choices on UCAS Track',
+                'Know the Clearing process in case you need it',
+                'Have your UCAS ID ready (it starts with your year of entry)',
+                'Check your predicted grades against your saved Pathfinder courses',
               ].map((item, i) => (
                 <ChecklistItem key={i} label={item} />
               ))}
@@ -1004,128 +1010,189 @@ function ResultsDayContent() {
         </>
       )}
 
-      {/* ── DIFFICULT CIRCUMSTANCES ───────────────────────── */}
+      {/* ── INTERACTIVE DECISION TREE ─────────────────────── */}
+      <ResultsDayDecisionTree />
+
+      {/* ── UNIVERSITY ADMISSIONS CONTACTS ────────────────── */}
+      <ResultsDayContacts />
+
+      {/* ── DIFFICULT / EXTENUATING CIRCUMSTANCES ─────────── */}
       <section className="pf-section pf-section-white">
         <div className="pf-container" style={{ maxWidth: '760px' }}>
           <h2 style={{ marginBottom: '8px' }}>If something went wrong during your exams</h2>
           <p style={{ color: 'var(--pf-grey-600)', marginBottom: '20px', lineHeight: 1.6 }}>
             Illness, bereavement, or another serious event near exam time can affect your grades.
-            There are formal processes — through SQA and through university admissions teams —
-            that can take your circumstances into account. You do not have to accept a result that
-            does not reflect what you are capable of.
+            There are formal processes &mdash; through Qualifications Scotland and through university
+            admissions teams &mdash; that can take your circumstances into account. You do not have
+            to accept a result that does not reflect what you are capable of.
           </p>
-          <Link
-            href="/support/difficult-circumstances"
-            className="inline-flex items-center gap-2 pf-btn-secondary"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-            Extenuating circumstances support
-          </Link>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+            <Link
+              href="/support/extenuating-circumstances"
+              className="inline-flex items-center gap-2 pf-btn-primary"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              Extenuating circumstances guide
+            </Link>
+            <Link
+              href="/support/difficult-circumstances"
+              className="inline-flex items-center gap-2 pf-btn-secondary"
+            >
+              Wider difficult-circumstances support
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* ── CLEARING SECTION (on/after results day) ─────────── */}
-      {countdown.isResultsDayOrAfter && (
-        <section
-          className="pf-section"
-          style={{ backgroundColor: 'var(--pf-blue-900)' }}
-        >
-          <div className="pf-container" style={{ maxWidth: '760px' }}>
-            <span
-              className="pf-badge inline-flex"
+      {/* ── CLEARING SECTION (always shown for reference) ───── */}
+      <section
+        id="clearing"
+        className="pf-section"
+        style={{ backgroundColor: 'var(--pf-blue-900)' }}
+      >
+        <div className="pf-container" style={{ maxWidth: '760px' }}>
+          <span
+            className="pf-badge inline-flex"
+            style={{
+              marginBottom: '16px',
+              backgroundColor: 'rgba(255,255,255,0.12)',
+              color: '#fff',
+            }}
+          >
+            UCAS Clearing
+          </span>
+          <h2 style={{ color: '#fff', marginBottom: '16px' }}>How Clearing works in Scotland</h2>
+          <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '12px', lineHeight: 1.6 }}>
+            Clearing opens on <strong style={{ color: '#fff' }}>2 July 2026</strong> and closes on{' '}
+            <strong style={{ color: '#fff' }}>19 October 2026</strong>. You can apply through Clearing
+            if: you have no offers, you declined all offers, you did not meet your conditions, or you
+            applied late.
+          </p>
+          <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '24px', fontSize: '0.875rem', fontStyle: 'italic' }}>
+            Scottish students keep their full SAAS funding for Clearing places &mdash; you do not lose
+            funding if you accept a Clearing offer.
+          </p>
+
+          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '1.125rem' }}>
+            Step by step
+          </h3>
+          <ol className="space-y-3" style={{ marginBottom: '32px', paddingLeft: 0, listStyle: 'none', counterReset: 'clearing-step' }}>
+            {[
+              'Check UCAS Track. If you are in Clearing, your Clearing number is shown there.',
+              'Search for available courses on ucas.com/clearing or contact universities directly.',
+              'When you find a course, phone the university Clearing hotline. Lines open at 8am.',
+              'Have your results, your UCAS ID, and your Clearing number ready before you call.',
+              'If they make a verbal offer, add it to UCAS Track using your Clearing number.',
+              'Accept the offer on UCAS Track to confirm your place.',
+            ].map((item, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <span
+                  className="flex-shrink-0"
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '9999px',
+                    backgroundColor: 'rgba(255,255,255,0.15)',
+                    color: '#fff',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '0.8125rem',
+                    marginTop: '1px',
+                  }}
+                >
+                  {i + 1}
+                </span>
+                <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9375rem', lineHeight: 1.55 }}>
+                  {item}
+                </span>
+              </li>
+            ))}
+          </ol>
+
+          <h3 style={{ color: '#fff', marginBottom: '12px', fontSize: '1.125rem' }}>
+            Tips
+          </h3>
+          <div className="space-y-3" style={{ marginBottom: '32px' }}>
+            {[
+              'Call early on Results Day - lines are quietest before 10am.',
+              'Be ready to explain why you want the course - admissions staff make decisions on the call.',
+              'Do not panic. Thousands of courses are available in Clearing, including at Russell Group universities.',
+              'Scottish universities are generally supportive and helpful through Clearing.',
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <span
+                  className="flex-shrink-0"
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '9999px',
+                    backgroundColor: 'rgba(255,255,255,0.15)',
+                    color: '#fff',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginTop: '2px',
+                  }}
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </span>
+                <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9375rem' }}>{item}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href="https://www.ucas.com/undergraduate/results-confirmation-and-clearing/what-clearing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 no-underline hover:no-underline"
               style={{
-                marginBottom: '16px',
-                backgroundColor: 'rgba(255,255,255,0.12)',
-                color: '#fff',
+                backgroundColor: '#fff',
+                color: 'var(--pf-blue-900)',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.9375rem',
+                minHeight: '48px',
               }}
             >
-              UCAS Clearing
-            </span>
-            <h2 style={{ color: '#fff', marginBottom: '16px' }}>What is Clearing?</h2>
-            <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '24px', lineHeight: 1.6 }}>
-              Clearing matches students to university courses that still have places available.
-              It runs from July to October and is used by thousands of students each year.
-            </p>
-
-            <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '1.125rem' }}>
-              How to use Clearing in Scotland
-            </h3>
-            <div className="space-y-3" style={{ marginBottom: '32px' }}>
-              {[
-                'Check UCAS for available courses — new places are added throughout the day',
-                'Call universities directly — Scottish universities are generally supportive and helpful',
-                "Don't rush — take time to find the right course for you",
-                "You can enter Clearing if: you didn't get any offers, you didn't meet your conditions, you changed your mind, or you applied late",
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <span
-                    className="flex-shrink-0"
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      borderRadius: '9999px',
-                      backgroundColor: 'rgba(255,255,255,0.15)',
-                      color: '#fff',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginTop: '2px',
-                    }}
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </span>
-                  <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9375rem' }}>{item}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <a
-                href="https://www.ucas.com/undergraduate/results-confirmation-and-clearing/what-clearing"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 no-underline hover:no-underline"
-                style={{
-                  backgroundColor: '#fff',
-                  color: 'var(--pf-blue-900)',
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 600,
-                  fontSize: '0.9375rem',
-                  minHeight: '48px',
-                }}
-              >
-                UCAS Clearing search
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
-              <Link
-                href="/courses"
-                className="inline-flex items-center justify-center gap-2 no-underline hover:no-underline"
-                style={{
-                  backgroundColor: 'transparent',
-                  color: '#fff',
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 600,
-                  fontSize: '0.9375rem',
-                  minHeight: '48px',
-                }}
-              >
-                Browse Pathfinder courses
-              </Link>
-            </div>
+              UCAS Clearing search
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+            <Link
+              href="/courses"
+              className="inline-flex items-center justify-center gap-2 no-underline hover:no-underline"
+              style={{
+                backgroundColor: 'transparent',
+                color: '#fff',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.3)',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 600,
+                fontSize: '0.9375rem',
+                minHeight: '48px',
+              }}
+            >
+              Browse Pathfinder courses
+            </Link>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
+
+      {/* ── HELPLINES ─────────────────────────────────────── */}
+      <ResultsDayHelplines />
     </div>
   )
 }

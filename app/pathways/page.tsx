@@ -390,6 +390,51 @@ function PathwaysPageContent() {
               </p>
             </div>
           </Link>
+          <Link
+            href="/tools/subject-choice-worksheet"
+            className="no-underline hover:no-underline mt-3 flex items-start gap-3"
+            style={{
+              padding: '14px 18px',
+              backgroundColor: 'rgba(16, 185, 129, 0.08)',
+              borderRadius: '8px',
+              borderLeft: '3px solid var(--pf-green-500)',
+              maxWidth: '560px',
+              color: 'var(--pf-grey-900)',
+            }}
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--pf-green-500)"
+              strokeWidth="2"
+              aria-hidden="true"
+              style={{ flexShrink: 0, marginTop: '2px' }}
+            >
+              <path
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <div>
+              <p
+                style={{
+                  fontSize: '0.9375rem',
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 600,
+                  color: 'var(--pf-grey-900)',
+                  margin: 0,
+                }}
+              >
+                Create your printable worksheet
+              </p>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', margin: '2px 0 0 0' }}>
+                Take it to your guidance teacher meeting &mdash; works without an account →
+              </p>
+            </div>
+          </Link>
         </div>
       </div>
 

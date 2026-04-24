@@ -65,7 +65,8 @@ const NAV_GROUPS: NavGroup[] = [
       { name: 'Personal Statement Guide', href: '/tools/personal-statement' },
       { name: 'UCAS Calculator', href: '/tools/ucas-calculator' },
       { name: 'Results Day', href: '/results-day' },
-      { name: 'Subject Choice Worksheet', href: '/tools/worksheet' },
+      { name: 'Subject Choice Worksheet', href: '/tools/subject-choice-worksheet' },
+      { name: 'Personalised Subject Worksheet', href: '/tools/worksheet' },
     ],
   },
   {
