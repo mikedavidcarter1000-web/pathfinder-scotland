@@ -1,0 +1,43 @@
+{
+  "_comment": "Reference: Stripe configuration for the Pathfinder Schools tier. Update this file when prices, coupons, or promotion codes change, but the authoritative state lives in the Stripe dashboard. These values must be set in .env.local before the checkout / portal routes can run.",
+  "products": [
+    {
+      "name": "Pathfinder Schools - Standard",
+      "description": "Annual subscription. Grade tracking, guidance hub, leadership analytics, HGIOS4 evidence, SIMD equity, SEEMIS + SQA import, parent reports.",
+      "price_gbp_per_year": 1500,
+      "env_var": "STRIPE_SCHOOL_STANDARD_PRICE_ID",
+      "metadata": { "tier": "standard", "type": "school" }
+    },
+    {
+      "name": "Pathfinder Schools - Premium",
+      "description": "Everything in Standard, plus DYW dashboard, parent evening booking, alumni destinations, primary transitions, CPD & PRD management, curriculum rationale generator.",
+      "price_gbp_per_year": 2500,
+      "env_var": "STRIPE_SCHOOL_PREMIUM_PRICE_ID",
+      "metadata": { "tier": "premium", "type": "school" }
+    }
+  ],
+  "coupons": [
+    {
+      "name": "Founding schools - 50% off forever",
+      "stripe_coupon_id_env": "STRIPE_FOUNDING_SCHOOL_COUPON_ID",
+      "configuration": "Create a coupon in Stripe dashboard: 50% off, duration = 'forever', id 'FOUNDING50' (or similar). Set STRIPE_FOUNDING_SCHOOL_COUPON_ID in .env.local to the returned coupon id (e.g. 'FOUNDING50' or 'prDx8aBc'). The schools billing checkout route applies this coupon automatically when schools.is_founding_school = true."
+    }
+  ],
+  "promotion_codes": {
+    "strategy": "stripe_native",
+    "notes": "For school promo codes, create Promotion Codes in the Stripe Dashboard > Products > Coupons > Promotion Codes. These are automatically applied at checkout when the customer enters the code, because the checkout session is created with allow_promotion_codes = true. No custom promo_codes table logic is needed for schools; the existing promo_codes table remains student-only.",
+    "mutual_exclusion": "allow_promotion_codes and discounts[] are mutually exclusive in Stripe. The checkout route flips to the discounts[] path only when the school is_founding_school AND STRIPE_FOUNDING_SCHOOL_COUPON_ID is set; otherwise allow_promotion_codes is true."
+  },
+  "webhook_events": [
+    "checkout.session.completed",
+    "customer.subscription.created",
+    "customer.subscription.updated",
+    "customer.subscription.deleted",
+    "invoice.payment_succeeded",
+    "invoice.payment_failed"
+  ],
+  "webhook_routing": {
+    "school_vs_student": "The webhook handler distinguishes school subscriptions via subscription.metadata.type === 'school' and falls back to matching schools.stripe_subscription_id when metadata is missing (e.g. on renewals where Stripe doesn't replay metadata). See app/api/stripe/webhook/route.ts::isSchoolSubscription.",
+    "school_customer_table": "School customers are NOT inserted into stripe_customers (which is student-scoped and keyed on user_id). Their customer id lives on schools.stripe_customer_id only."
+  }
+}
