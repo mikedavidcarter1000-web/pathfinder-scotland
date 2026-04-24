@@ -21,6 +21,7 @@ export async function POST() {
     asn_reviews: 0,
     parent_evening_reminders: 0,
     choice_deadlines: 0,
+    trial_expiry_warnings: 0,
   }
 
   // 1. Tracking cycles ending in <= 3 days.
@@ -276,6 +277,69 @@ export async function POST() {
       createdBy: ctx.userId,
     })
     stats.choice_deadlines += 1
+  }
+
+  // 6. Trial expiry warnings for this school (30 days / 7 days / expiry day /
+  //    7 days after). Only runs when the school is on the trial tier.
+  const { data: schoolRow } = await adminAny
+    .from('schools')
+    .select('id, name, subscription_tier, trial_expires_at')
+    .eq('id', ctx.schoolId)
+    .maybeSingle()
+  type SchoolRow = {
+    id: string
+    name: string
+    subscription_tier: string | null
+    trial_expires_at: string | null
+  }
+  const schoolTrial = schoolRow as SchoolRow | null
+  if (schoolTrial && schoolTrial.subscription_tier === 'trial' && schoolTrial.trial_expires_at) {
+    const expiry = new Date(schoolTrial.trial_expires_at).getTime()
+    const nowMs = Date.now()
+    const dayMs = 24 * 60 * 60 * 1000
+    const daysToExpiry = Math.floor((expiry - nowMs) / dayMs)
+    const daysSinceExpiry = Math.floor((nowMs - expiry) / dayMs)
+
+    // Target: every school_staff member with is_school_admin = true.
+    const { data: admins } = await adminAny
+      .from('school_staff')
+      .select('id')
+      .eq('school_id', ctx.schoolId)
+      .eq('is_school_admin', true)
+    const adminIds = ((admins ?? []) as Array<{ id: string }>).map((s) => s.id)
+
+    let title: string | null = null
+    let body: string | null = null
+    if (daysToExpiry === 30) {
+      title = 'Your Pathfinder Schools trial expires in 30 days'
+      body = 'Your free trial ends in 30 days. Subscribe to keep access to your data and reports.'
+    } else if (daysToExpiry === 7) {
+      title = 'Your trial expires in 7 days'
+      body = 'Your free trial ends in 7 days. Subscribe now to keep access to your data.'
+    } else if (daysToExpiry === 0) {
+      title = 'Your trial expires today'
+      body = 'Your free trial ends today. Your data is safe. Subscribe to continue using Pathfinder Schools.'
+    } else if (daysSinceExpiry === 7) {
+      title = 'Final reminder: your data will be retained for 90 days'
+      const cutoff = new Date(expiry + 90 * dayMs).toLocaleDateString('en-GB')
+      body = `Your Pathfinder Schools trial expired a week ago. Your data will be retained until ${cutoff}. Subscribe before then to avoid data deletion.`
+    }
+
+    if (title && body && adminIds.length > 0) {
+      if (!(await hasRecentDuplicate(admin, { schoolId: ctx.schoolId, type: 'custom', title }))) {
+        await sendSchoolNotification({
+          admin,
+          schoolId: ctx.schoolId,
+          type: 'custom',
+          title,
+          body,
+          targetStaffIds: adminIds,
+          channel: 'both',
+          createdBy: ctx.userId,
+        })
+        stats.trial_expiry_warnings += 1
+      }
+    }
   }
 
   return NextResponse.json({ ok: true, stats })

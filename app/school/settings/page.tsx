@@ -1,13 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import { useToast } from '@/components/ui/toast'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { SCOTTISH_LOCAL_AUTHORITIES, STAFF_ROLE_LABELS, type SchoolStaffRole } from '@/lib/school/constants'
 import type { DashboardMe } from '@/components/school-dashboard/types'
+import { BillingSection } from '@/components/school-dashboard/billing-section'
 
 type StaffRow = {
   id: string
@@ -29,7 +30,16 @@ const INVITE_ROLES: SchoolStaffRole[] = [
 ]
 
 export default function SchoolSettingsPage() {
+  return (
+    <Suspense fallback={<div className="pf-container pt-8 pb-12"><p>Loading…</p></div>}>
+      <SchoolSettingsInner />
+    </Suspense>
+  )
+}
+
+function SchoolSettingsInner() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user, isLoading: authLoading } = useAuth()
   const toast = useToast()
 
@@ -69,6 +79,13 @@ export default function SchoolSettingsPage() {
       })
       .finally(() => setLoading(false))
   }, [authLoading, user, router])
+
+  useEffect(() => {
+    if (searchParams.get('billing') === 'success') {
+      toast.success('Subscription activated', 'Thank you for subscribing to Pathfinder Schools.')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   if (loading || !me || !me.school) {
     return <div className="pf-container pt-8 pb-12"><p>Loading…</p></div>
@@ -168,6 +185,8 @@ export default function SchoolSettingsPage() {
           <SubmitButton isLoading={savingSchool}>Save</SubmitButton>
         </form>
       </section>
+
+      <BillingSection />
 
       <section style={card}>
         <h2 style={h2}>Join code</h2>

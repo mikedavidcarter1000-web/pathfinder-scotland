@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { PremiumGate } from '@/components/school-dashboard/premium-gate'
 
 type Sector = { id: string; name: string; slug: string }
 type Overview = {
@@ -97,7 +98,15 @@ const STATUS_COLOURS: Record<string, string> = {
   dormant: '#6b7280',
 }
 
-export default function DywDashboardPage() {
+export default function DywDashboardPageGate() {
+  return (
+    <PremiumGate featureName="DYW dashboard" description="Employer engagement, work placements, sector coverage, and CES Networks capacity for HMIE evidence.">
+      <DywDashboardPage />
+    </PremiumGate>
+  )
+}
+
+function DywDashboardPage() {
   const router = useRouter()
   const [me, setMe] = useState<Me | null>(null)
   const [loading, setLoading] = useState(true)

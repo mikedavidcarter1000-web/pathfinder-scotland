@@ -2,7 +2,10 @@ import Link from 'next/link'
 import { getAdminClient } from '@/lib/admin-auth'
 import { FOUNDING_SCHOOLS_CAP } from '@/lib/school/constants'
 
-export const revalidate = 300
+// Counter must be live (queried on each page load), not cached: schools
+// registering while someone else is viewing the page should see their
+// place taken immediately.
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'For Schools',

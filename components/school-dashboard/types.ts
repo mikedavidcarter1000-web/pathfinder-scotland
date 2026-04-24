@@ -21,9 +21,12 @@ export type DashboardMe = {
     postcode: string | null
     school_type: string | null
     subscription_status: 'trial' | 'active' | 'expired' | 'cancelled'
+    subscription_tier: 'trial' | 'standard' | 'premium' | 'authority'
     is_founding_school: boolean
     trial_started_at: string | null
     trial_expires_at: string | null
+    stripe_customer_id: string | null
+    stripe_subscription_id: string | null
   } | null
   joinCode: { code: string; is_active: boolean; expires_at: string | null } | null
   linkedStudents: number

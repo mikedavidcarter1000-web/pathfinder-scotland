@@ -348,3 +348,39 @@ The attendance importer upserts on (school_id, student_id, academic_year, term) 
 
 Name-match fallback on pupil import currently logs a warning and proceeds. This is fine for cluster schools with unique names but risks silent misattribution for common names (e.g. a new "James Smith S4" matching an existing unrelated "James Smith" in the linked cohort). Consider adding a confirmation step or requiring full DOB match for name-only merges.
 
+---
+
+## Appended 2026-04-25 -- Schools-9 (Stripe billing + feature gating) deferrals
+
+### School-API tier gating
+
+`/api/school/dyw/*`, `/api/school/parents-evening/*`, `/api/school/cpd/school-summary` etc. are NOT tier-gated at the API layer -- only the UI is gated via `<PremiumGate />`. A sophisticated standard-tier user could hit the API directly. Add a `requirePremiumTier()` guard in each premium-only API route before pilot billing go-live.
+
+### Subscription-expiry blocks on non-dashboard school pages
+
+The `<SubscriptionOverlay />` is rendered on `/school/dashboard` only. Deep-linking to `/school/dyw` or `/school/guidance/123` bypasses the overlay for expired schools. Either (a) move the overlay into a shared layout that every `/school/*` route includes, or (b) add a server-side subscription check to each page.
+
+### Founding-school discount on Stripe portal upgrades
+
+`STRIPE_FOUNDING_SCHOOL_COUPON_ID` is applied in the checkout route only. If a founding school upgrades standard -> premium via the Stripe customer portal, the coupon is NOT carried over. Document that founding schools must resubscribe via `/school/subscribe` (not the portal) to keep the discount, OR configure the portal's upgrade flow to preserve coupons.
+
+### Trial-warning notification branding
+
+The trial-expiry sweep uses the generic `genericSchoolMessageEmail` template. Consider moving to a dedicated `trialExpiryReminderEmail` template that matches other school-branded email messaging (CTA button, school logo slot, etc.).
+
+### Trial-warning notification fallback recipients
+
+Trial-expiry warnings target `is_school_admin = true` only. A school whose only admin leaves mid-trial could miss the warning. Extend to `can_manage_school = true` staff as a fallback.
+
+### Webhook dead-letter queue
+
+The school webhook routing falls back from metadata -> DB lookup. If both fail (e.g. webhook fires before the checkout-completed write lands), the event is logged as "Customer not found" and lost. Add a short retry + dead-letter queue for webhook events that hit this path.
+
+### MCP apply-migration post-rename automation
+
+Ninth consecutive school session where the MCP `apply_migration` tool produced a different timestamp than the drafted local migration filename. `scripts/apply-migration.sh` only wraps `supabase db push`. Options: (a) wrap the MCP call similarly, (b) document the workflow so the manual rename is always immediate after `apply_migration`, (c) always prefer `supabase db push` + the wrapper for DDL when Docker is available. The wrapper was shipped in Schools-7 but has no effect on the MCP path.
+
+### Subscription state module promotion
+
+`lib/school/subscription.ts` is a single source of truth for trial/tier state. Phase-2: audit remaining places that read `subscription_status` or `subscription_tier` as strings directly and migrate them to use `getSubscriptionState()` so drift between callers can't happen (e.g. if we ever add a new status like `paused` or `past_due`).
+

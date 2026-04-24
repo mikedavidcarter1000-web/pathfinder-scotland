@@ -98,7 +98,63 @@ export async function POST(req: Request) {
   }
 }
 
+// A subscription is treated as a school subscription when either:
+//   (a) its metadata carries type = 'school' (our checkout sets this), OR
+//   (b) there is an existing schools row with stripe_subscription_id = sub.id
+// so that renewals (where Stripe may not replay metadata) still route.
+async function isSchoolSubscription(subscription: Stripe.Subscription): Promise<{ schoolId: string | null; matchedByMetadata: boolean }> {
+  const meta = subscription.metadata ?? {}
+  const schoolIdFromMeta = typeof meta.school_id === 'string' ? meta.school_id : null
+  if (meta.type === 'school' && schoolIdFromMeta) {
+    return { schoolId: schoolIdFromMeta, matchedByMetadata: true }
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: school } = await (getSupabaseAdmin() as any)
+    .from('schools')
+    .select('id')
+    .eq('stripe_subscription_id', subscription.id)
+    .maybeSingle()
+  return { schoolId: school?.id ?? null, matchedByMetadata: false }
+}
+
+function mapStripeStatusToSchool(status: Stripe.Subscription.Status): 'active' | 'expired' | 'cancelled' {
+  if (status === 'canceled') return 'cancelled'
+  if (status === 'unpaid' || status === 'incomplete_expired') return 'expired'
+  // past_due stays active (grace period); trialing/active/incomplete -> active.
+  return 'active'
+}
+
+function mapPriceToSchoolTier(priceId: string | null | undefined): 'standard' | 'premium' {
+  if (priceId && priceId === process.env.STRIPE_SCHOOL_PREMIUM_PRICE_ID) return 'premium'
+  return 'standard'
+}
+
+async function handleSchoolSubscriptionChange(subscription: Stripe.Subscription, schoolId: string) {
+  const priceId = subscription.items.data[0]?.price?.id ?? null
+  const tier = mapPriceToSchoolTier(priceId)
+  const status = mapStripeStatusToSchool(subscription.status)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (getSupabaseAdmin() as any)
+    .from('schools')
+    .update({
+      subscription_tier: tier,
+      subscription_status: status,
+      stripe_subscription_id: subscription.id,
+      stripe_customer_id: subscription.customer as string,
+    })
+    .eq('id', schoolId)
+}
+
 async function handleSubscriptionChange(subscription: Stripe.Subscription) {
+  // Route school subscriptions to the school handler first so the student
+  // handler doesn't look them up in stripe_customers (school customers are
+  // not inserted there).
+  const schoolMatch = await isSchoolSubscription(subscription)
+  if (schoolMatch.schoolId) {
+    await handleSchoolSubscriptionChange(subscription, schoolMatch.schoolId)
+    return
+  }
+
   const customerId = subscription.customer as string
 
   // Get user ID from customer
@@ -148,6 +204,19 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+  const schoolMatch = await isSchoolSubscription(subscription)
+  if (schoolMatch.schoolId) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (getSupabaseAdmin() as any)
+      .from('schools')
+      .update({
+        subscription_status: 'cancelled',
+        stripe_subscription_id: null,
+      })
+      .eq('id', schoolMatch.schoolId)
+    return
+  }
+
   await getSupabaseAdmin()
     .from('stripe_subscriptions')
     .update({
@@ -251,6 +320,26 @@ async function handlePriceChange(price: Stripe.Price) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  // Checkout completed - subscription should already be handled by subscription webhooks
+  // For school checkouts, stamp the school record immediately so the
+  // success page doesn't depend on the subscription webhook arriving first.
+  // Stripe may send checkout.session.completed before customer.subscription.*
+  // in some configurations.
+  const meta = session.metadata ?? {}
+  if (meta.type === 'school' && typeof meta.school_id === 'string') {
+    const tier = meta.tier === 'premium' ? 'premium' : 'standard'
+    const subscriptionId = typeof session.subscription === 'string' ? session.subscription : null
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (getSupabaseAdmin() as any)
+      .from('schools')
+      .update({
+        subscription_tier: tier,
+        subscription_status: 'active',
+        stripe_subscription_id: subscriptionId,
+        stripe_customer_id: session.customer as string,
+      })
+      .eq('id', meta.school_id)
+    return
+  }
+  // Student / other checkouts -- subscription webhook will handle the state.
   console.log('Checkout completed:', session.id)
 }

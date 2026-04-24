@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import { TrialBanner } from '@/components/school-dashboard/trial-banner'
+import { SubscriptionOverlay } from '@/components/school-dashboard/subscription-overlay'
+import { getSubscriptionState } from '@/lib/school/subscription'
 import { OverviewTab } from '@/components/school-dashboard/overview-tab'
 import { SubjectsTab } from '@/components/school-dashboard/subjects-tab'
 import { StudentsTab } from '@/components/school-dashboard/students-tab'
@@ -60,22 +62,15 @@ export default function SchoolDashboardPage() {
   }
   if (!me || !me.school) return null
 
-  const expired = me.school.subscription_status === 'expired'
+  const subState = getSubscriptionState(me.school)
+  const expired = subState.isExpired || subState.isCancelled
 
   return (
     <div className="pf-container pt-6 pb-12" style={{ maxWidth: '1200px' }}>
       <HeaderBar me={me} />
       <TrialBanner me={me} />
 
-      {expired && (
-        <div style={expiredOverlay}>
-          <div style={expiredCard}>
-            <h3 style={{ margin: 0 }}>Your trial has expired</h3>
-            <p>Dashboard access is paused. Your data is preserved.</p>
-            <Link href="/school/subscribe" style={{ fontWeight: 700 }}>Subscribe to restore access &rarr;</Link>
-          </div>
-        </div>
-      )}
+      <SubscriptionOverlay me={me} />
 
       {me.staff.canViewIndividualStudents && (
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '0 0 12px 0', fontSize: 14 }}>
@@ -84,7 +79,9 @@ export default function SchoolDashboardPage() {
             <Link href="/school/guidance/safeguarding" style={quickLink}>Safeguarding log &rarr;</Link>
           )}
           <Link href="/school/guidance/wellbeing" style={quickLink}>Wellbeing surveys &rarr;</Link>
-          <Link href="/school/parents-evening" style={quickLink}>Parents&apos; evenings &rarr;</Link>
+          <Link href="/school/parents-evening" style={premiumAware(me.school.subscription_tier, quickLink)}>
+            {premiumIcon(me.school.subscription_tier)}Parents&apos; evenings &rarr;
+          </Link>
           <Link href="/school/notifications" style={quickLink}>Notifications &rarr;</Link>
         </div>
       )}
@@ -95,7 +92,9 @@ export default function SchoolDashboardPage() {
       )}
       {(me.staff.role === 'dyw_coordinator' || me.staff.role === 'depute' || me.staff.role === 'head_teacher' || me.staff.isAdmin) && (
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '0 0 12px 0', fontSize: 14 }}>
-          <Link href="/school/dyw" style={quickLink}>DYW dashboard &rarr;</Link>
+          <Link href="/school/dyw" style={premiumAware(me.school.subscription_tier, quickLink)}>
+            {premiumIcon(me.school.subscription_tier)}DYW dashboard &rarr;
+          </Link>
         </div>
       )}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '0 0 12px 0', fontSize: 14 }}>
@@ -110,7 +109,9 @@ export default function SchoolDashboardPage() {
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '0 0 12px 0', fontSize: 14 }}>
           <Link href="/school/analytics" style={quickLink}>Analytics &rarr;</Link>
           <Link href="/school/inspection" style={quickLink}>Inspection portfolio &rarr;</Link>
-          <Link href="/school/inspection/curriculum" style={quickLink}>Curriculum rationale &rarr;</Link>
+          <Link href="/school/inspection/curriculum" style={premiumAware(me.school.subscription_tier, quickLink)}>
+            {premiumIcon(me.school.subscription_tier)}Curriculum rationale &rarr;
+          </Link>
         </div>
       )}
 
@@ -211,16 +212,25 @@ const quickLink: React.CSSProperties = {
   fontWeight: 500,
   border: '1px solid var(--pf-blue-200, #BFDBFE)',
 }
-const expiredOverlay: React.CSSProperties = {
-  position: 'relative',
-  backgroundColor: '#FEE2E2',
-  border: '2px solid #DC2626',
-  borderRadius: '8px',
-  padding: '24px',
-  marginBottom: '16px',
-  textAlign: 'center',
+
+// Visually mark premium features when the school is on a tier that can't
+// access them (standard). Trial / premium / authority get the normal style.
+function isPremiumLocked(tier: string | null | undefined): boolean {
+  return tier === 'standard'
 }
-const expiredCard: React.CSSProperties = {
-  maxWidth: '500px',
-  margin: '0 auto',
+function premiumAware(tier: string | null | undefined, base: React.CSSProperties): React.CSSProperties {
+  if (!isPremiumLocked(tier)) return base
+  return { ...base, opacity: 0.75, background: '#fff', borderStyle: 'dashed' }
+}
+function premiumIcon(tier: string | null | undefined): React.ReactNode {
+  if (!isPremiumLocked(tier)) return null
+  return (
+    <span
+      aria-label="Premium feature"
+      title="Premium feature"
+      style={{ marginRight: 6, color: 'var(--pf-blue-700, #1D4ED8)' }}
+    >
+      ♦
+    </span>
+  )
 }

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import { useToast } from '@/components/ui/toast'
+import { PremiumGate } from '@/components/school-dashboard/premium-gate'
 
 type Evening = {
   id: string
@@ -27,7 +28,15 @@ const STATUS_LABEL: Record<Evening['status'], { label: string; colour: string }>
   completed: { label: 'Completed', colour: '#4338ca' },
 }
 
-export default function ParentsEveningListPage() {
+export default function ParentsEveningListPageGate() {
+  return (
+    <PremiumGate featureName="Parents' evening booking" description="Run parent-evening rounds with magic-link booking, prep snapshots, schedule printing, and automatic reminders.">
+      <ParentsEveningListPage />
+    </PremiumGate>
+  )
+}
+
+function ParentsEveningListPage() {
   const router = useRouter()
   const { user, isLoading: authLoading } = useAuth()
   const toast = useToast()

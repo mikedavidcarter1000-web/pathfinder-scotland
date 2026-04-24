@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import type { DashboardMe } from '@/components/school-dashboard/types'
+import { PremiumGate } from '@/components/school-dashboard/premium-gate'
 
 type RationaleData = {
   school_context: string
@@ -25,7 +26,15 @@ type Rationale = {
   published_at?: string | null
 }
 
-export default function CurriculumRationalePage() {
+export default function CurriculumRationalePageGate() {
+  return (
+    <PremiumGate featureName="Curriculum rationale generator" description="Auto-draft a HGIOS4-aligned curriculum rationale from your existing platform data (CES capacities, destinations, widening access) for the Inspection Portfolio.">
+      <CurriculumRationalePage />
+    </PremiumGate>
+  )
+}
+
+function CurriculumRationalePage() {
   const router = useRouter()
   const { user, isLoading: authLoading } = useAuth()
   const [me, setMe] = useState<DashboardMe | null>(null)
