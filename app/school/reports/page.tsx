@@ -7,14 +7,18 @@ import { useAuth } from '@/hooks/use-auth'
 import { useToast } from '@/components/ui/toast'
 
 type Cycle = { id: string; name: string; academic_year: string; is_current: boolean }
+type Template = { id: string; name: string; is_default: boolean }
 type Report = {
   id: string
   student_id: string
   generated_at: string
   emailed_at: string | null
   emailed_to: string | null
+  best_email: string | null
+  best_email_source: 'parent' | 'student' | null
   students: { first_name: string | null; last_name: string | null; school_stage: string | null; registration_class: string | null; email: string | null } | null
   tracking_cycles: { name: string } | null
+  report_templates: { id: string; name: string } | null
 }
 
 const YEAR_GROUPS = ['s1', 's2', 's3', 's4', 's5', 's6']
@@ -24,12 +28,17 @@ export default function ReportsPage() {
   const { user, isLoading: authLoading } = useAuth()
   const toast = useToast()
   const [cycles, setCycles] = useState<Cycle[]>([])
+  const [templates, setTemplates] = useState<Template[]>([])
   const [reports, setReports] = useState<Report[]>([])
   const [cycleId, setCycleId] = useState<string>('')
   const [yearGroup, setYearGroup] = useState<string>('')
+  const [templateId, setTemplateId] = useState<string>('')
   const [generating, setGenerating] = useState(false)
   const [sendingAll, setSendingAll] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null)
+  const [previewStudent, setPreviewStudent] = useState<string>('')
+  const [previewingFilter, setPreviewingFilter] = useState(false)
 
   useEffect(() => {
     if (authLoading) return
@@ -37,13 +46,19 @@ export default function ReportsPage() {
       router.replace('/auth/sign-in?redirect=/school/reports')
       return
     }
-    fetch('/api/school/tracking/cycles')
-      .then((r) => r.json())
-      .then((d) => {
-        const list = (d.cycles ?? []) as Cycle[]
-        setCycles(list)
-        const cur = list.find((c) => c.is_current)
+    Promise.all([
+      fetch('/api/school/tracking/cycles').then((r) => r.json()),
+      fetch('/api/school/reports/templates').then((r) => r.json()),
+    ])
+      .then(([cyclesRes, templatesRes]) => {
+        const cycleList = (cyclesRes.cycles ?? []) as Cycle[]
+        const templateList = (templatesRes.templates ?? []) as Template[]
+        setCycles(cycleList)
+        setTemplates(templateList)
+        const cur = cycleList.find((c) => c.is_current)
         if (cur) setCycleId(cur.id)
+        const defaultT = templateList.find((t) => t.is_default)
+        if (defaultT) setTemplateId(defaultT.id)
       })
       .finally(() => setLoading(false))
   }, [authLoading, user, router])
@@ -63,6 +78,55 @@ export default function ReportsPage() {
     setReports(d.reports ?? [])
   }
 
+  async function previewFilter() {
+    // Render a sample report using the selected template against stock
+    // sample data. Useful to sanity-check a template before bulk-generating.
+    if (!templateId) {
+      toast.error('Pick a template first.')
+      return
+    }
+    setPreviewingFilter(true)
+    try {
+      const res = await fetch(`/api/school/reports/templates/${templateId}`)
+      const d = await res.json()
+      if (!res.ok || !d.template) {
+        toast.error(d.error ?? 'Template not found.')
+        return
+      }
+      const p = await fetch('/api/school/reports/templates/preview', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          template_html: d.template.template_html,
+          header_colour: d.template.header_colour,
+          school_logo_url: d.template.school_logo_url,
+        }),
+      })
+      const pd = await p.json()
+      if (!p.ok) {
+        toast.error(pd.error ?? 'Preview failed.')
+        return
+      }
+      setPreviewStudent(`Sample &mdash; ${d.template.name}`)
+      setPreviewHtml(pd.html ?? '')
+    } finally {
+      setPreviewingFilter(false)
+    }
+  }
+
+  async function previewOne(report: Report) {
+    setPreviewHtml('Loading…')
+    setPreviewStudent(`${report.students?.first_name ?? ''} ${report.students?.last_name ?? ''}`.trim() || 'Report')
+    const res = await fetch(`/api/school/reports/${report.id}/preview`)
+    const d = await res.json()
+    if (!res.ok) {
+      setPreviewHtml(null)
+      toast.error(d.error ?? 'Preview failed.')
+      return
+    }
+    setPreviewHtml(d.html ?? '')
+  }
+
   async function generate() {
     if (!cycleId) {
       toast.error('Select a cycle first.')
@@ -73,7 +137,11 @@ export default function ReportsPage() {
       const res = await fetch('/api/school/reports/generate', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ cycle_id: cycleId, year_group: yearGroup || undefined }),
+        body: JSON.stringify({
+          cycle_id: cycleId,
+          year_group: yearGroup || undefined,
+          template_id: templateId || undefined,
+        }),
       })
       const d = await res.json()
       if (!res.ok) {
@@ -88,7 +156,7 @@ export default function ReportsPage() {
   }
 
   async function sendOne(report: Report) {
-    const to = report.students?.email ?? prompt('Enter recipient email:')
+    const to = report.best_email ?? prompt('Enter recipient email:')
     if (!to) return
     const res = await fetch(`/api/school/reports/${report.id}/send`, {
       method: 'POST',
@@ -105,30 +173,31 @@ export default function ReportsPage() {
   }
 
   async function sendAll() {
-    const pending = reports.filter((r) => !r.emailed_at)
+    const pending = reports.filter((r) => !r.emailed_at && r.best_email)
     if (pending.length === 0) {
       toast.info('No reports pending send.')
       return
     }
-    if (!confirm(`Send ${pending.length} reports?`)) return
+    if (!confirm(`Send ${pending.length} reports? Rate-limited to 10/second.`)) return
     setSendingAll(true)
     try {
-      let sent = 0
-      let skipped = 0
-      for (const r of pending) {
-        const to = r.students?.email
-        if (!to) {
-          skipped += 1
-          continue
-        }
-        const res = await fetch(`/api/school/reports/${r.id}/send`, {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ to }),
-        })
-        if (res.ok) sent += 1
+      const res = await fetch('/api/school/reports/send-all', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ cycle_id: cycleId, year_group: yearGroup || undefined }),
+      })
+      const d = await res.json()
+      if (!res.ok) {
+        toast.error(d.error ?? 'Bulk send failed.')
+        return
       }
-      toast.success(`Sent ${sent} reports${skipped > 0 ? `, skipped ${skipped} (no email)` : ''}.`)
+      const msgs = [
+        `Sent ${d.sent}`,
+        d.skipped_no_email > 0 ? `skipped ${d.skipped_no_email} (no email)` : null,
+        d.failed > 0 ? `${d.failed} failed` : null,
+        d.already_sent > 0 ? `${d.already_sent} already sent` : null,
+      ].filter(Boolean)
+      toast.success(msgs.join(', ') + '.')
       await refreshList()
     } finally {
       setSendingAll(false)
@@ -138,12 +207,17 @@ export default function ReportsPage() {
   if (loading) return <div className="pf-container pt-8 pb-12"><p>Loading reports…</p></div>
 
   return (
-    <div className="pf-container pt-6 pb-12" style={{ maxWidth: '1100px' }}>
+    <div className="pf-container pt-6 pb-12" style={{ maxWidth: '1200px' }}>
       <div style={{ marginBottom: 12 }}>
         <Link href="/school/dashboard" style={{ fontSize: '0.875rem' }}>&larr; Dashboard</Link>
       </div>
-      <h1 style={{ margin: '0 0 4px', fontSize: '1.75rem' }}>Parent reports</h1>
-      <p style={{ opacity: 0.7 }}>Generate and send termly reports.</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap' }}>
+        <div>
+          <h1 style={{ margin: '0 0 4px', fontSize: '1.75rem' }}>Parent reports</h1>
+          <p style={{ opacity: 0.7, margin: 0 }}>Generate, preview, and send termly reports to parents.</p>
+        </div>
+        <Link href="/school/reports/templates" style={btnGhost}>Manage templates</Link>
+      </div>
 
       <section style={card}>
         <h2 style={h2}>Generate</h2>
@@ -160,13 +234,24 @@ export default function ReportsPage() {
             <option value="">All year groups</option>
             {YEAR_GROUPS.map((yg) => <option key={yg} value={yg}>{yg.toUpperCase()}</option>)}
           </select>
+          <select value={templateId} onChange={(e) => setTemplateId(e.target.value)} style={sel}>
+            <option value="">Default template</option>
+            {templates.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name} {t.is_default ? '(default)' : ''}
+              </option>
+            ))}
+          </select>
           <button onClick={generate} disabled={generating || !cycleId} style={btnPrimary}>
-            {generating ? 'Generating…' : 'Generate reports'}
+            {generating ? 'Generating…' : 'Generate all'}
+          </button>
+          <button onClick={previewFilter} disabled={previewingFilter} style={btnGhost}>
+            {previewingFilter ? 'Checking…' : 'Preview template'}
           </button>
         </div>
         <p style={{ fontSize: '0.8125rem', opacity: 0.7, marginTop: 8 }}>
-          Generates a parent report per student using the school&apos;s default template.
-          Previously-generated reports for the same cycle are re-added — delete the old ones first if you want to replace.
+          &quot;Generate all&quot; creates one report per student in the selected year group.
+          Emails route to the first active linked parent; if no parent is linked, to the student&apos;s address.
         </p>
       </section>
 
@@ -175,7 +260,7 @@ export default function ReportsPage() {
           <h2 style={h2}>{reports.length} report{reports.length === 1 ? '' : 's'}</h2>
           {reports.length > 0 && (
             <button onClick={sendAll} disabled={sendingAll} style={btnPrimary}>
-              {sendingAll ? 'Sending…' : 'Send all pending'}
+              {sendingAll ? 'Sending…' : 'Send all unsent'}
             </button>
           )}
         </div>
@@ -187,7 +272,7 @@ export default function ReportsPage() {
               <tr>
                 <th style={th}>Student</th>
                 <th style={th}>Year</th>
-                <th style={th}>Cycle</th>
+                <th style={th}>Template</th>
                 <th style={th}>Generated</th>
                 <th style={th}>Status</th>
                 <th style={th}></th>
@@ -200,27 +285,35 @@ export default function ReportsPage() {
                   <tr key={r.id}>
                     <td style={td}>
                       <div>{name}</div>
-                      <div style={{ fontSize: '0.75rem', opacity: 0.6 }}>{r.students?.email ?? 'no email'}</div>
+                      <div style={{ fontSize: '0.75rem', opacity: 0.6 }}>
+                        {r.best_email ? (
+                          <>
+                            {r.best_email}{' '}
+                            <span style={{ color: r.best_email_source === 'parent' ? '#065f46' : '#9ca3af' }}>
+                              ({r.best_email_source === 'parent' ? 'parent' : 'student'})
+                            </span>
+                          </>
+                        ) : (
+                          'no email on file'
+                        )}
+                      </div>
                     </td>
                     <td style={td}>{r.students?.school_stage?.toUpperCase() ?? ''}</td>
-                    <td style={td}>{r.tracking_cycles?.name ?? ''}</td>
+                    <td style={td}>{r.report_templates?.name ?? '—'}</td>
                     <td style={td}>{new Date(r.generated_at).toLocaleDateString('en-GB')}</td>
                     <td style={td}>
                       {r.emailed_at ? (
                         <span style={{ color: '#166534' }}>Sent to {r.emailed_to}</span>
-                      ) : r.students?.email ? (
+                      ) : r.best_email ? (
                         <span style={{ color: '#6b7280' }}>Pending</span>
                       ) : (
                         <span style={{ color: '#991b1b' }}>No email</span>
                       )}
                     </td>
                     <td style={{ ...td, whiteSpace: 'nowrap' }}>
-                      <a href={`/school/reports/${r.id}/print`} target="_blank" rel="noopener noreferrer" style={btnGhost}>
-                        Preview / Print
-                      </a>{' '}
-                      <button onClick={() => sendOne(r)} style={btnGhost}>
-                        Email
-                      </button>
+                      <button onClick={() => previewOne(r)} style={btnGhost}>Preview</button>{' '}
+                      <a href={`/school/reports/${r.id}/print`} target="_blank" rel="noopener noreferrer" style={btnGhost}>PDF</a>{' '}
+                      <button onClick={() => sendOne(r)} style={btnGhost}>Email</button>
                     </td>
                   </tr>
                 )
@@ -233,10 +326,28 @@ export default function ReportsPage() {
       <section style={{ ...card, background: '#f8fafc' }}>
         <h3 style={{ margin: '0 0 8px', fontSize: '1rem' }}>PDF export</h3>
         <p style={{ fontSize: '0.875rem', margin: 0 }}>
-          Click <strong>Preview / Print</strong> on any report and use your browser&apos;s print dialog (Ctrl+P / &#8984;P) to save as PDF.
-          Chrome&apos;s <em>Save as PDF</em> destination produces a clean, shareable file.
+          Click <strong>PDF</strong> on any row to open the printable version. Use your browser&apos;s print
+          dialog (Ctrl+P / &#8984;P) and choose <em>Save as PDF</em> as the destination.
         </p>
       </section>
+
+      {previewHtml !== null && (
+        <div
+          onClick={() => setPreviewHtml(null)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.5)', zIndex: 50, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: 20 }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ background: 'white', borderRadius: 10, width: '100%', maxWidth: 900, maxHeight: '90vh', overflow: 'auto' }}
+          >
+            <div style={{ padding: '10px 14px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <strong>{previewStudent || 'Preview'}</strong>
+              <button onClick={() => setPreviewHtml(null)} style={btnGhost}>Close</button>
+            </div>
+            <div style={{ padding: 14 }} dangerouslySetInnerHTML={{ __html: previewHtml === 'Loading…' ? '<p>Loading…</p>' : previewHtml }} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

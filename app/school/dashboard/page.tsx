@@ -84,6 +84,7 @@ export default function SchoolDashboardPage() {
             <Link href="/school/guidance/safeguarding" style={quickLink}>Safeguarding log &rarr;</Link>
           )}
           <Link href="/school/guidance/wellbeing" style={quickLink}>Wellbeing surveys &rarr;</Link>
+          <Link href="/school/parents-evening" style={quickLink}>Parents&apos; evenings &rarr;</Link>
         </div>
       )}
       {(me.staff.role === 'depute' || me.staff.role === 'head_teacher' || me.staff.isAdmin) && (

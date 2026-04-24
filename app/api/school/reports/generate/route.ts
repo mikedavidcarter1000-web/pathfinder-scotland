@@ -22,15 +22,25 @@ export async function POST(req: Request) {
     cycle_id?: unknown
     year_group?: unknown
     student_ids?: unknown
+    template_id?: unknown
   } | null
   if (!body) return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
 
   const cycleId = typeof body.cycle_id === 'string' ? body.cycle_id : ''
   const yearGroup = typeof body.year_group === 'string' && body.year_group.trim() ? body.year_group.trim() : null
   const explicitIds = Array.isArray(body.student_ids) ? body.student_ids.filter((v): v is string => typeof v === 'string') : null
+  const templateIdIn = typeof body.template_id === 'string' && body.template_id.trim() ? body.template_id.trim() : null
   if (!cycleId) return NextResponse.json({ error: 'cycle_id required' }, { status: 400 })
 
-  // Load cycle, school, template in parallel
+  // Load cycle, school, template in parallel. Template defaults to the
+  // school's is_default=true template when not explicitly provided.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const templateQuery = templateIdIn
+    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (admin as any).from('report_templates').select('*').eq('id', templateIdIn).eq('school_id', ctx.schoolId).maybeSingle()
+    : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (admin as any).from('report_templates').select('*').eq('school_id', ctx.schoolId).eq('is_default', true).maybeSingle()
+
   const [
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     cycleR,
@@ -43,8 +53,7 @@ export async function POST(req: Request) {
     (admin as any).from('tracking_cycles').select('*').eq('id', cycleId).eq('school_id', ctx.schoolId).maybeSingle(),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (admin as any).from('schools').select('id, name').eq('id', ctx.schoolId).maybeSingle(),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (admin as any).from('report_templates').select('*').eq('school_id', ctx.schoolId).eq('is_default', true).maybeSingle(),
+    templateQuery,
   ])
   const cycle = cycleR.data
   const school = schoolR.data

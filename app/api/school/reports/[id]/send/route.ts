@@ -34,8 +34,25 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     .maybeSingle()
   if (!report) return NextResponse.json({ error: 'Report not found' }, { status: 404 })
 
-  // Resolve recipient: override > student email > fallback
+  // Resolve recipient. Priority: explicit override -> any active linked
+  // parent email -> student's email on file. Parent emails are preferred
+  // because parent reports are fundamentally addressed to parents /
+  // guardians; we fall back to the student only when no active parent is
+  // linked yet.
   let recipient = overrideTo
+  if (!recipient) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: parentLinks } = await (admin as any)
+      .from('parent_student_links')
+      .select('parents:parent_id(email)')
+      .eq('student_id', report.student_id)
+      .eq('status', 'active')
+      .limit(1)
+    const parentEmail = (parentLinks ?? [])
+      .map((r: { parents: { email: string | null } | null }) => r.parents?.email ?? null)
+      .find((v: string | null) => !!v)
+    if (parentEmail) recipient = parentEmail as string
+  }
   if (!recipient) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: student } = await (admin as any)

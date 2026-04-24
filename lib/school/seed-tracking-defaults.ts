@@ -108,11 +108,16 @@ export const DEFAULT_COMMENT_BANK: {
   },
 ]
 
-// Default report template. HTML is Mustache-ish; the generator replaces
+// Default report templates. HTML is Mustache-ish; the generator replaces
 // {{key}} and {{#array}}...{{/array}} block iterators at render time. The
-// template purposely uses inline styles so email clients (with ham-fisted
-// CSS strippers) still render the layout correctly when the HTML is piped
+// templates use inline styles so email clients (with ham-fisted CSS
+// strippers) still render the layout correctly when the HTML is piped
 // into an email body.
+//
+// Three flavours are seeded: Standard (grade colour backgrounds, full
+// comment column); Compact (tighter rows, no background fills, designed
+// for double-sided printing); Detailed (adds custom-metric columns,
+// attendance, guidance contact).
 export const DEFAULT_REPORT_TEMPLATE_HTML = `<div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
   <div style="background: {{header_colour}}; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
     <div>
@@ -150,6 +155,94 @@ export const DEFAULT_REPORT_TEMPLATE_HTML = `<div style="font-family: Arial, san
     </p>
   </div>
 </div>`
+
+export const COMPACT_REPORT_TEMPLATE_HTML = `<div style="font-family: Arial, sans-serif; max-width: 780px; margin: 0 auto; font-size: 11.5px;">
+  <div style="background: {{header_colour}}; color: white; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h1 style="margin: 0; font-size: 16px;">{{school_name}}</h1>
+      <div style="font-size: 11px; opacity: 0.9;">{{cycle_name}} &middot; {{generated_date}}</div>
+    </div>
+    {{#school_logo}}<img src="{{school_logo}}" alt="" style="height: 36px;">{{/school_logo}}
+  </div>
+  <div style="padding: 12px 14px;">
+    <div style="font-weight: 600; margin-bottom: 6px;">{{student_name}} &middot; {{year_group}} {{registration_class}}</div>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background: #f3f4f6;">
+          <th style="padding: 4px 6px; text-align: left; border: 1px solid #d1d5db; font-size: 11px;">Subject</th>
+          <th style="padding: 4px 6px; text-align: center; border: 1px solid #d1d5db; font-size: 11px;">Grd</th>
+          <th style="padding: 4px 6px; text-align: center; border: 1px solid #d1d5db; font-size: 11px;">On Trk</th>
+          <th style="padding: 4px 6px; text-align: center; border: 1px solid #d1d5db; font-size: 11px;">Effort</th>
+          <th style="padding: 4px 6px; text-align: left; border: 1px solid #d1d5db; font-size: 11px;">Comment</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#subjects}}
+        <tr>
+          <td style="padding: 3px 6px; border: 1px solid #d1d5db;">{{subject_name}}</td>
+          <td style="padding: 3px 6px; text-align: center; border: 1px solid #d1d5db;">{{working_grade}}</td>
+          <td style="padding: 3px 6px; text-align: center; border: 1px solid #d1d5db;">{{on_track}}</td>
+          <td style="padding: 3px 6px; text-align: center; border: 1px solid #d1d5db;">{{effort}}</td>
+          <td style="padding: 3px 6px; border: 1px solid #d1d5db; font-size: 10.5px;">{{comment}}</td>
+        </tr>
+        {{/subjects}}
+      </tbody>
+    </table>
+    <p style="margin: 10px 0 0; font-size: 10px; color: #6b7280;">Report generated on {{generated_date}}.</p>
+  </div>
+</div>`
+
+export const DETAILED_REPORT_TEMPLATE_HTML = `<div style="font-family: Arial, sans-serif; max-width: 820px; margin: 0 auto;">
+  <div style="background: {{header_colour}}; color: white; padding: 22px; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h1 style="margin: 0;">{{school_name}}</h1>
+      <p style="margin: 4px 0 0;">{{cycle_name}} &middot; Detailed Report</p>
+    </div>
+    {{#school_logo}}<img src="{{school_logo}}" alt="" style="height: 60px;">{{/school_logo}}
+  </div>
+  <div style="padding: 20px;">
+    <h2 style="margin: 0 0 4px;">{{student_name}}</h2>
+    <p style="margin: 0 0 12px; color: #6b7280;">Year {{year_group}} &middot; Class {{registration_class}} &middot; Attendance {{attendance_pct}}% &middot; UCAS tariff {{ucas_tariff}}</p>
+    {{#guidance_teacher_name}}<p style="margin: 0 0 14px; color: #374151;">Guidance: <strong>{{guidance_teacher_name}}</strong></p>{{/guidance_teacher_name}}
+    <table style="width: 100%; border-collapse: collapse; margin-top: 12px;">
+      <thead>
+        <tr style="background: #f3f4f6;">
+          <th style="padding: 8px; text-align: left; border: 1px solid #e5e7eb;">Subject</th>
+          <th style="padding: 8px; text-align: center; border: 1px solid #e5e7eb;">Grade</th>
+          <th style="padding: 8px; text-align: center; border: 1px solid #e5e7eb;">On Track</th>
+          <th style="padding: 8px; text-align: center; border: 1px solid #e5e7eb;">Effort</th>
+          {{#custom_metrics_present}}{{#custom_metric_names}}<th style="padding: 8px; text-align: center; border: 1px solid #e5e7eb;">{{.}}</th>{{/custom_metric_names}}{{/custom_metrics_present}}
+          <th style="padding: 8px; text-align: left; border: 1px solid #e5e7eb;">Comment</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#subjects}}
+        <tr>
+          <td style="padding: 8px; border: 1px solid #e5e7eb;">{{subject_name}}</td>
+          <td style="padding: 8px; text-align: center; border: 1px solid #e5e7eb; background: {{grade_colour}};">{{working_grade}}</td>
+          <td style="padding: 8px; text-align: center; border: 1px solid #e5e7eb; background: {{on_track_colour}};">{{on_track}}</td>
+          <td style="padding: 8px; text-align: center; border: 1px solid #e5e7eb; background: {{effort_colour}};">{{effort}}</td>
+          {{#custom_values}}<td style="padding: 8px; text-align: center; border: 1px solid #e5e7eb;">{{.}}</td>{{/custom_values}}
+          <td style="padding: 8px; border: 1px solid #e5e7eb;">{{comment}}</td>
+        </tr>
+        {{/subjects}}
+      </tbody>
+    </table>
+    <p style="margin-top: 22px; font-size: 12px; color: #6b7280;">
+      Report generated on {{generated_date}}. If you have questions, please contact {{guidance_teacher_name}} or your child&apos;s class teacher directly.
+    </p>
+  </div>
+</div>`
+
+export const DEFAULT_REPORT_TEMPLATES: Array<{
+  name: string
+  template_html: string
+  is_default: boolean
+}> = [
+  { name: 'Standard Report', template_html: DEFAULT_REPORT_TEMPLATE_HTML, is_default: true },
+  { name: 'Compact Report', template_html: COMPACT_REPORT_TEMPLATE_HTML, is_default: false },
+  { name: 'Detailed Report', template_html: DETAILED_REPORT_TEMPLATE_HTML, is_default: false },
+]
 
 // Seed the three defaults (metrics, comment bank, report template) for a
 // newly-created school. Idempotent: repeated calls are safe because the
@@ -195,21 +288,32 @@ export async function seedTrackingDefaults(
     await (admin as any).from('comment_banks').insert(commentRows)
   }
 
-  // Default report template (only if none exist for the school).
+  // Default report templates. Insert the three canonical templates if
+  // none currently exist for the school, OR add any individual template
+  // (by name) that's missing (backfill for schools created before Schools-6a
+  // when only the Standard template was seeded).
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { count: existingTemplates } = await (admin as any)
+  const { data: existingTemplates } = await (admin as any)
     .from('report_templates')
-    .select('id', { count: 'exact', head: true })
+    .select('name, is_default')
     .eq('school_id', schoolId)
 
-  if ((existingTemplates ?? 0) === 0) {
+  const existing = (existingTemplates ?? []) as Array<{ name: string; is_default: boolean }>
+  const existingNames = new Set(existing.map((t) => t.name))
+  const hasAnyDefault = existing.some((t) => t.is_default)
+
+  const rowsToInsert = DEFAULT_REPORT_TEMPLATES.filter((t) => !existingNames.has(t.name)).map((t) => ({
+    school_id: schoolId,
+    name: t.name,
+    template_html: t.template_html,
+    header_colour: '#1B3A5C',
+    // Only mark the Standard template as default if no other default exists
+    // yet -- otherwise keep the school's existing choice.
+    is_default: t.is_default && !hasAnyDefault,
+  }))
+
+  if (rowsToInsert.length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (admin as any).from('report_templates').insert({
-      school_id: schoolId,
-      name: 'Standard Termly Report',
-      template_html: DEFAULT_REPORT_TEMPLATE_HTML,
-      header_colour: '#1B3A5C',
-      is_default: true,
-    })
+    await (admin as any).from('report_templates').insert(rowsToInsert)
   }
 }
