@@ -384,3 +384,37 @@ Ninth consecutive school session where the MCP `apply_migration` tool produced a
 
 `lib/school/subscription.ts` is a single source of truth for trial/tier state. Phase-2: audit remaining places that read `subscription_status` or `subscription_tier` as strings directly and migrate them to use `getSubscriptionState()` so drift between callers can't happen (e.g. if we ever add a new status like `paused` or `past_due`).
 
+---
+
+## Appended 2026-04-25 -- Graduate outcomes, rankings, personal statement drafts
+
+### Bulk seed of Discover Uni / HESA graduate outcomes for 410 courses
+
+Schema + display components are shipped (`components/courses/graduate-outcomes.tsx`, `components/universities/rankings-section.tsx`, compare-by-subject outcomes columns). Only 1 of 410 courses currently has outcomes data populated and only 14 of 18 universities have rankings populated. Next sessions should:
+- Request a Discover Uni CSV export (or use their public HEP data API if available) for all Scottish providers.
+- Write an import script that matches on UKPRN + subject area, populates `employment_rate_15m`, `highly_skilled_employment_pct`, `salary_median_1yr/3yr/5yr`, `student_satisfaction_pct`, `continuation_rate_pct`, `subject_ranking_cug`, `outcomes_data_year`, and sets `outcomes_needs_verification=false` for rows that match cleanly (true for partial matches so admins can spot-check).
+- Populate `graduate_employment_rate` + `student_satisfaction_overall` at institution level from HESA open data tables (Scottish providers only).
+- Leave specialist providers (Glasgow School of Art, Royal Conservatoire of Scotland, Scotland's Rural College, UHI) with NULL general-UK rankings -- they don't meaningfully appear in Complete University Guide / Guardian / Times general league tables. Add a display-layer advisory in `rankings-section.tsx` for these institutions so the section doesn't silently disappear.
+
+### Rankings verification pass against primary sources (CUG / Guardian / Times)
+
+Existing 14 universities have `rankings_needs_verification=true` but the values may pre-date the 2026 editions. Secondary sources (e.g. thetab.com) show some DB values drift by 5-25 places vs the 2026 CUG list. Next session should cross-check every row against the primary CUG / Guardian / Times sites, update where they differ, and clear the flag. One of this-session's updates (`Strathclyde ranking_times = 11`) is verified and landed, but the rest weren't overwritten to respect the previous admin import.
+
+### is_new_ai_role semantic clarification (carried over)
+
+Already logged further up. Still unresolved.
+
+### Personal statement drafts -- UX / analytics polish
+
+Shipped in Schools-9b: migration `20260424195138_personal_statement_drafts.sql` creates the table with RLS (students see own + leadership of school see read-only), API at `/api/personal-statement/drafts` (GET/PUT/DELETE), client auto-sync every 30s + on-blur + manual "Save now", school guidance profile shows per-Q char counts with traffic lights. Phase-2 ideas:
+- Allow guidance staff to add feedback threads directly on the draft (comment sidebar) rather than requiring them to open the student's live tool to read the text.
+- Version history so students can revert to an earlier draft state (currently one row per student, last-write-wins).
+- Cross-session analytics: which prompts drive the longest answers, where do students get stuck on Q2 vs Q3.
+- Export to DOCX or direct UCAS format once UCAS publishes the 2026-entry format API.
+- Surface draft-in-progress on the student's main dashboard so S6 students don't have to navigate back to `/tools/personal-statement` each time.
+- Optional: parent view of char counts (not text) for engaged parents who want to nudge their S6 child; gated behind a per-student "share with parent" toggle that defaults off.
+
+### Personal statement localStorage migration path
+
+First time an authenticated student opens the drafting tool, their existing anonymous localStorage draft (if any) is lifted into the DB via the first PUT (see the load effect in `personal-statement-client.tsx`). A student who drafted offline, signed in, then drafted MORE offline could find the offline tail overwritten on next cloud save. Consider a conflict-resolution prompt if both localStorage and DB have content and they diverge by more than N characters.
+

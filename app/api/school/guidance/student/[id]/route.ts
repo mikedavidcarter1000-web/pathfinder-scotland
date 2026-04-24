@@ -224,6 +224,32 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     .limit(1)
     .maybeSingle()
 
+  // Personal statement draft progress. Only counts + timestamps are
+  // surfaced here so guidance staff can see who has started / is ready
+  // for feedback without seeing the text on the overview panel. Students
+  // with no draft simply get psDraft=null.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: psDraftRow } = await (admin as any)
+    .from('personal_statement_drafts')
+    .select('q1_text, q2_text, q3_text, last_saved_at')
+    .eq('student_id', studentId)
+    .maybeSingle()
+  type PsDraftRow = {
+    q1_text: string | null
+    q2_text: string | null
+    q3_text: string | null
+    last_saved_at: string | null
+  }
+  const psRow = (psDraftRow ?? null) as PsDraftRow | null
+  const psDraft = psRow
+    ? {
+        q1Len: (psRow.q1_text ?? '').length,
+        q2Len: (psRow.q2_text ?? '').length,
+        q3Len: (psRow.q3_text ?? '').length,
+        lastSavedAt: psRow.last_saved_at,
+      }
+    : null
+
   const latestWellbeing = (wellbeing && wellbeing.length > 0) ? wellbeing[0] : null
 
   return NextResponse.json({
@@ -269,5 +295,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     bursaryMatches,
     safeguardingCount,
     transition: transition ?? null,
+    psDraft,
   })
 }

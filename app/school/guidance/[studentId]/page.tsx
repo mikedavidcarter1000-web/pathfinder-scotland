@@ -99,6 +99,12 @@ type ProfilePayload = {
     asn_notes: string | null
     pastoral_notes: string | null
   } | null
+  psDraft: {
+    q1Len: number
+    q2Len: number
+    q3Len: number
+    lastSavedAt: string | null
+  } | null
 }
 
 function FlagBadge({ color, children }: { color: string; children: React.ReactNode }) {
@@ -392,6 +398,8 @@ function OverviewTab({ payload }: { payload: ProfilePayload }) {
           )}
         </section>
       )}
+
+      <PersonalStatementCard psDraft={payload.psDraft} schoolStage={student.schoolStage} />
 
       <section style={card}>
         <h2 style={cardHeader}>Bursary matches ({bursaryMatches.length})</h2>
@@ -856,6 +864,73 @@ function PlacementsTab({ studentId }: { studentId: string }) {
           {p.employer_feedback && <div style={{ fontSize: 13, marginTop: 4 }}><b>Employer:</b> {p.employer_feedback} {p.employer_rating ? `(${p.employer_rating}/5)` : ''}</div>}
         </div>
       ))}
+    </div>
+  )
+}
+
+// Personal statement indicator card.
+// Shows char counts per Q with a traffic light. Only a progress snapshot --
+// the full draft text is readable via RLS but is intentionally NOT surfaced
+// here; guidance staff can open the student's Pathfinder account to read
+// it during feedback sessions.
+function PersonalStatementCard({
+  psDraft,
+  schoolStage,
+}: {
+  psDraft: ProfilePayload['psDraft']
+  schoolStage: string | null
+}) {
+  // Hide the card for pre-S5 students who would not yet be drafting.
+  const isRelevantStage = schoolStage === 's5' || schoolStage === 's6'
+  if (!isRelevantStage && !psDraft) return null
+
+  if (!psDraft) {
+    return (
+      <section style={card}>
+        <h2 style={cardHeader}>Personal statement</h2>
+        <div style={{ color: '#666', fontSize: 13 }}>Not started</div>
+      </section>
+    )
+  }
+  const total = psDraft.q1Len + psDraft.q2Len + psDraft.q3Len
+  return (
+    <section style={card}>
+      <h2 style={cardHeader}>Personal statement</h2>
+      <div style={{ display: 'grid', gap: 6, fontSize: 13 }}>
+        <PsProgressRow label="Q1: Why this course" len={psDraft.q1Len} />
+        <PsProgressRow label="Q2: Prep from qualifications" len={psDraft.q2Len} />
+        <PsProgressRow label="Q3: Wider preparation" len={psDraft.q3Len} />
+        <div style={{ marginTop: 6, color: '#666', fontSize: 12 }}>
+          Total {total.toLocaleString()} / 4,000 chars
+          {psDraft.lastSavedAt
+            ? ` · last saved ${new Date(psDraft.lastSavedAt).toLocaleDateString('en-GB')}`
+            : ''}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function PsProgressRow({ label, len }: { label: string; len: number }) {
+  const colour = len === 0 ? '#c62828' : len < 350 ? '#c62828' : len < 500 ? '#e6a800' : '#2e7d32'
+  const status = len === 0 ? 'Not started' : len < 350 ? 'Under 350 min' : len < 500 ? 'Started' : 'Good depth'
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <span
+        aria-hidden="true"
+        style={{
+          display: 'inline-block',
+          width: 10,
+          height: 10,
+          borderRadius: '50%',
+          background: colour,
+          flexShrink: 0,
+        }}
+      />
+      <span style={{ flex: 1 }}>{label}</span>
+      <span style={{ color: '#666' }}>
+        {len.toLocaleString()} chars — {status}
+      </span>
     </div>
   )
 }

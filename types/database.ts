@@ -2902,6 +2902,36 @@ export type Database = {
         }
         Relationships: []
       }
+      personal_statement_drafts: {
+        Row: {
+          id: string
+          student_id: string
+          q1_text: string
+          q2_text: string
+          q3_text: string
+          last_saved_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          student_id: string
+          q1_text?: string
+          q2_text?: string
+          q3_text?: string
+          last_saved_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          student_id?: string
+          q1_text?: string
+          q2_text?: string
+          q3_text?: string
+          last_saved_at?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

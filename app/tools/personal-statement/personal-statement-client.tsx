@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import examplesDataRaw from '@/data/personal-statement-examples.json'
 
@@ -83,6 +83,41 @@ const CHARACTER_LIMITS = {
 }
 
 const DRAFT_STORAGE_KEY = 'pf_personal_statement_draft_v1'
+
+async function cloudSave(
+  drafts: { q1: string; q2: string; q3: string },
+  setState: (s: 'idle' | 'saving' | 'saved' | 'error') => void,
+  setLastSavedAt: (ts: string | null) => void,
+): Promise<void> {
+  setState('saving')
+  try {
+    const res = await fetch('/api/personal-statement/drafts', {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(drafts),
+    })
+    if (!res.ok) throw new Error('save failed')
+    const json = (await res.json()) as { draft?: { lastSavedAt?: string } }
+    setLastSavedAt(json.draft?.lastSavedAt ?? null)
+    setState('saved')
+  } catch {
+    setState('error')
+  }
+}
+
+function formatRelativeTime(iso: string | null): string | null {
+  if (!iso) return null
+  const then = new Date(iso).getTime()
+  if (Number.isNaN(then)) return null
+  const diffSec = Math.max(0, Math.round((Date.now() - then) / 1000))
+  if (diffSec < 10) return 'just now'
+  if (diffSec < 60) return `${diffSec}s ago`
+  const diffMin = Math.round(diffSec / 60)
+  if (diffMin < 60) return `${diffMin} min${diffMin === 1 ? '' : 's'} ago`
+  const diffHr = Math.round(diffMin / 60)
+  if (diffHr < 24) return `${diffHr} hour${diffHr === 1 ? '' : 's'} ago`
+  return new Date(iso).toLocaleString('en-GB')
+}
 
 // ---- RIASEC labels ----------------------------------------------------------
 
@@ -679,30 +714,82 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
   })
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
+  const [cloudState, setCloudState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [lastCloudSavedAt, setLastCloudSavedAt] = useState<string | null>(null)
+  const cloudTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const authedAfterLoad = ctx?.authenticated === true
 
-  // Load from localStorage on mount. setState-in-effect is the right pattern
-  // here because the initial render must match SSR output ('') and then
-  // hydrate client-only storage after mount.
+  // Load on mount. For authenticated users we prefer the DB copy (cross-device
+  // source of truth); anon users fall back to localStorage. If DB is empty but
+  // localStorage has content, we upload the localStorage copy on first save.
   useEffect(() => {
     if (typeof window === 'undefined') return
-    try {
-      const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY)
-      if (raw) {
+    let cancelled = false
+
+    const loadLocal = () => {
+      try {
+        const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY)
+        if (!raw) return null
         const parsed = JSON.parse(raw) as Partial<{ q1: string; q2: string; q3: string }>
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setDrafts({
+        return {
           q1: typeof parsed.q1 === 'string' ? parsed.q1 : '',
           q2: typeof parsed.q2 === 'string' ? parsed.q2 : '',
           q3: typeof parsed.q3 === 'string' ? parsed.q3 : '',
-        })
+        }
+      } catch {
+        return null
       }
-    } catch {
-      // ignore
     }
-    setLoaded(true)
-  }, [])
 
-  // Save to localStorage (debounced via microtask)
+    const run = async () => {
+      if (ctx === null) return
+      if (!ctx.authenticated) {
+        const local = loadLocal()
+        if (!cancelled) {
+          if (local) setDrafts(local)
+          setLoaded(true)
+        }
+        return
+      }
+      try {
+        const res = await fetch('/api/personal-statement/drafts', { cache: 'no-store' })
+        if (!res.ok) throw new Error('load failed')
+        const json = (await res.json()) as {
+          draft: {
+            q1: string
+            q2: string
+            q3: string
+            lastSavedAt: string
+          } | null
+        }
+        if (cancelled) return
+        if (json.draft) {
+          setDrafts({ q1: json.draft.q1, q2: json.draft.q2, q3: json.draft.q3 })
+          setLastCloudSavedAt(json.draft.lastSavedAt)
+          setCloudState('saved')
+        } else {
+          // First login with no DB draft yet -- migrate localStorage if any
+          const local = loadLocal()
+          if (local && (local.q1 || local.q2 || local.q3)) {
+            setDrafts(local)
+          }
+        }
+      } catch {
+        const local = loadLocal()
+        if (!cancelled && local) setDrafts(local)
+        if (!cancelled) setCloudState('error')
+      }
+      if (!cancelled) setLoaded(true)
+    }
+
+    run()
+    return () => {
+      cancelled = true
+    }
+  }, [ctx])
+
+  // Save to localStorage immediately; for authenticated users also queue a
+  // 30-second debounced cloud save (per spec 3c) plus an on-blur save (below).
   useEffect(() => {
     if (!loaded || typeof window === 'undefined') return
     try {
@@ -710,17 +797,33 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
     } catch {
       // storage quota or privacy mode -- silent
     }
-  }, [drafts, loaded])
+    if (!authedAfterLoad) return
+    if (cloudTimerRef.current) clearTimeout(cloudTimerRef.current)
+    cloudTimerRef.current = setTimeout(() => {
+      void cloudSave(drafts, setCloudState, setLastCloudSavedAt)
+    }, 30_000)
+    return () => {
+      if (cloudTimerRef.current) clearTimeout(cloudTimerRef.current)
+    }
+  }, [drafts, loaded, authedAfterLoad])
 
   const total = drafts.q1.length + drafts.q2.length + drafts.q3.length
 
   const personalisedPrompts = usePersonalisedPrompts(ctx)
 
   const clearDraft = useCallback(() => {
-    if (window.confirm('Clear all three drafts from this browser? This cannot be undone.')) {
-      setDrafts({ q1: '', q2: '', q3: '' })
+    const msg = authedAfterLoad
+      ? 'Clear all three drafts from your account AND this browser? This cannot be undone.'
+      : 'Clear all three drafts from this browser? This cannot be undone.'
+    if (!window.confirm(msg)) return
+    setDrafts({ q1: '', q2: '', q3: '' })
+    if (authedAfterLoad) {
+      void fetch('/api/personal-statement/drafts', { method: 'DELETE' }).then(() => {
+        setCloudState('idle')
+        setLastCloudSavedAt(null)
+      })
     }
-  }, [])
+  }, [authedAfterLoad])
 
   const copyAll = useCallback(async () => {
     const text = formatDraftForExport(drafts)
@@ -749,6 +852,15 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
 
   const handlePrint = useCallback(() => window.print(), [])
 
+  const saveNow = useCallback(async () => {
+    if (!authedAfterLoad) return
+    if (cloudTimerRef.current) {
+      clearTimeout(cloudTimerRef.current)
+      cloudTimerRef.current = null
+    }
+    await cloudSave(drafts, setCloudState, setLastCloudSavedAt)
+  }, [drafts, authedAfterLoad])
+
   return (
     <section id="draft" style={{ paddingTop: '16px', paddingBottom: '32px' }}>
       <div className="pf-container" style={{ maxWidth: '900px' }}>
@@ -757,10 +869,17 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
             Draft your own
           </h2>
           <p style={{ color: 'var(--pf-grey-700)', lineHeight: 1.6, maxWidth: '720px' }}>
-            Write directly into each question below. Your draft auto-saves to this browser only --
-            nothing is sent to our servers. When you are ready, copy or download the full draft and
-            paste it into your UCAS application.
+            {authedAfterLoad
+              ? 'Write directly into each question below. Your draft auto-saves to this browser AND to your Pathfinder account, so you can pick up on any device. When you are ready, copy or download the full draft and paste it into your UCAS application.'
+              : 'Write directly into each question below. Your draft auto-saves to this browser only. Sign in to save your draft to your Pathfinder account so you can work on it from any device.'}
           </p>
+          {authedAfterLoad && (
+            <CloudSaveStatus
+              state={cloudState}
+              lastSavedAt={lastCloudSavedAt}
+              onSaveNow={saveNow}
+            />
+          )}
         </header>
 
         {!ctx?.authenticated && (
@@ -797,6 +916,7 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
               question={q}
               value={drafts[q.id as 'q1' | 'q2' | 'q3']}
               onChange={(v) => setDrafts((prev) => ({ ...prev, [q.id]: v }))}
+              onBlur={authedAfterLoad ? saveNow : undefined}
               prompt={personalisedPrompts[q.id as 'q1' | 'q2' | 'q3']}
             />
           ))}
@@ -851,11 +971,19 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
           text="UCAS runs similarity and AI detection on every submission. AI-generated statements are easy to spot and will be flagged. Use AI to brainstorm or to proofread your own writing, never to write for you."
           tone="warn"
         />
-        <WarningBanner
-          title="Your draft lives only in this browser"
-          text="We do not save your personal statement on our servers. If you clear your browser data, use a different device, or open this page in private browsing, your draft will be lost. Copy or download your draft regularly to keep it safe."
-          tone="info"
-        />
+        {authedAfterLoad ? (
+          <WarningBanner
+            title="Drafts are saved to your Pathfinder account"
+            text="We auto-save your draft to your account every 30 seconds and when you move to another field, so you can pick up from any device. Your guidance teacher (if your school uses Pathfinder) can see how many characters you have drafted per question, so they know when you are ready for feedback. They cannot edit your draft."
+            tone="info"
+          />
+        ) : (
+          <WarningBanner
+            title="Your draft lives only in this browser"
+            text="We do not save your personal statement on our servers for anonymous users. If you clear your browser data, use a different device, or open this page in private browsing, your draft will be lost. Sign in to save it to your Pathfinder account, or copy and download your draft regularly to keep it safe."
+            tone="info"
+          />
+        )}
       </div>
     </section>
   )
@@ -866,12 +994,14 @@ function DraftQuestionBlock({
   question,
   value,
   onChange,
+  onBlur,
   prompt,
 }: {
   index: number
   question: Question
   value: string
   onChange: (v: string) => void
+  onBlur?: () => void
   prompt: string
 }) {
   const len = value.length
@@ -924,6 +1054,7 @@ function DraftQuestionBlock({
         id={`draft-${question.id}`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={() => onBlur?.()}
         className="pf-input"
         rows={8}
         maxLength={CHARACTER_LIMITS.totalMax}
@@ -955,6 +1086,59 @@ function DraftQuestionBlock({
           <strong>{Math.min(100, Math.round((len / CHARACTER_LIMITS.totalMax) * 100))}%</strong>
         </span>
       </div>
+    </div>
+  )
+}
+
+function CloudSaveStatus({
+  state,
+  lastSavedAt,
+  onSaveNow,
+}: {
+  state: 'idle' | 'saving' | 'saved' | 'error'
+  lastSavedAt: string | null
+  onSaveNow: () => Promise<void>
+}) {
+  const relative = formatRelativeTime(lastSavedAt)
+  const badge =
+    state === 'saving'
+      ? { text: 'Saving...', color: 'var(--pf-blue-700)' }
+      : state === 'error'
+      ? { text: 'Save failed', color: 'var(--pf-red-500)' }
+      : state === 'saved' && relative
+      ? { text: `Saved ${relative}`, color: 'var(--pf-green-500)' }
+      : { text: 'Not saved yet', color: 'var(--pf-grey-600)' }
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
+        marginTop: '12px',
+        fontSize: '0.8125rem',
+        color: 'var(--pf-grey-700)',
+        flexWrap: 'wrap',
+      }}
+    >
+      <span style={{ color: badge.color, fontWeight: 600 }}>{badge.text}</span>
+      <button
+        type="button"
+        onClick={() => void onSaveNow()}
+        disabled={state === 'saving'}
+        style={{
+          padding: '6px 12px',
+          borderRadius: '999px',
+          border: '1px solid var(--pf-blue-700)',
+          backgroundColor: state === 'saving' ? 'var(--pf-grey-100)' : 'transparent',
+          color: 'var(--pf-blue-700)',
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 600,
+          fontSize: '0.75rem',
+          cursor: state === 'saving' ? 'wait' : 'pointer',
+        }}
+      >
+        Save now
+      </button>
     </div>
   )
 }
