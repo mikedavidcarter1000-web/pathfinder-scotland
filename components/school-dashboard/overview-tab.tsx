@@ -3,17 +3,30 @@
 import { useEffect, useState } from 'react'
 import type { OverviewData } from './types'
 import { LeadershipAnalyticsWidget } from './leadership-analytics-widget'
+import { DywSummaryWidget, CpdSummaryWidget } from './dyw-cpd-widgets'
 
 export function OverviewTab() {
   const [data, setData] = useState<OverviewData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [role, setRole] = useState<string>('')
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     fetch('/api/school/dashboard/overview')
       .then((r) => r.json())
       .then(setData)
       .finally(() => setLoading(false))
+    fetch('/api/school/me')
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => {
+        if (d?.staff) {
+          setRole(d.staff.role ?? '')
+          setIsAdmin(!!d.staff.isAdmin)
+        }
+      })
   }, [])
+
+  const canSeeDyw = isAdmin || role === 'dyw_coordinator' || role === 'depute' || role === 'head_teacher'
 
   if (loading) return <p>Loading…</p>
   if (!data) return <p>Could not load overview.</p>
@@ -21,6 +34,10 @@ export function OverviewTab() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       <LeadershipAnalyticsWidget />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
+        <DywSummaryWidget canSee={canSeeDyw} />
+        <CpdSummaryWidget />
+      </div>
       <div style={metricsGrid}>
         <Metric label="Registered students" value={data.total} />
         <Metric label="Active this month" value={data.activeThisMonth} />

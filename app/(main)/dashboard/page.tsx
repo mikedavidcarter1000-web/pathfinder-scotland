@@ -21,6 +21,7 @@ import {
 } from '@/components/dashboard'
 import { StalePostcodeBanner } from '@/components/StalePostcodeBanner'
 import { WellbeingBanner } from '@/components/dashboard/wellbeing-banner'
+import { WorkExperienceCard } from '@/components/dashboard/work-experience-card'
 import { ParentDashboardV2 } from '@/components/dashboard/parent-dashboard-v2'
 import { ShareWithParentButton } from '@/components/dashboard/share-with-parent-button'
 import { StatsCard, StatsGrid } from '@/components/ui/stats-card'
@@ -132,6 +133,7 @@ export default function DashboardPage() {
 
       <StalePostcodeBanner />
       <WellbeingBanner />
+      <WorkExperienceCard />
 
       {/* Stats Row */}
       <div className="mb-8">

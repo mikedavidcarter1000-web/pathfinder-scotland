@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { ShanarriRadar } from '@/components/school-guidance/shanarri-radar'
 import { InterventionForm } from '@/components/school-guidance/intervention-form'
 
-type TabKey = 'overview' | 'interventions' | 'tracking' | 'wellbeing' | 'safeguarding' | 'asn' | 'notes'
+type TabKey = 'overview' | 'interventions' | 'tracking' | 'wellbeing' | 'safeguarding' | 'asn' | 'placements' | 'notes'
 
 type ProfilePayload = {
   canViewSafeguarding: boolean
@@ -232,6 +232,7 @@ export default function StudentProfilePage() {
           </TabButton>
         )}
         <TabButton active={tab === 'asn'} onClick={() => setTab('asn')}>ASN ({payload.asn.length})</TabButton>
+        <TabButton active={tab === 'placements'} onClick={() => setTab('placements')}>Placements</TabButton>
         <TabButton active={tab === 'notes'} onClick={() => setTab('notes')}>Notes</TabButton>
       </div>
 
@@ -247,6 +248,7 @@ export default function StudentProfilePage() {
       {tab === 'wellbeing' && <WellbeingTab payload={payload} />}
       {tab === 'safeguarding' && payload.canViewSafeguarding && <SafeguardingTab studentId={student.id} />}
       {tab === 'asn' && <AsnTab payload={payload} studentId={student.id} onRefetch={refetch} />}
+      {tab === 'placements' && <PlacementsTab studentId={student.id} />}
       {tab === 'notes' && <NotesTab />}
 
       {showInterventionForm && (
@@ -772,6 +774,54 @@ function NotesTab() {
         Free-form notes area and file upload for IEPs / reports / letters will ship in a follow-up iteration.
         For now, record notes against an intervention via the Interventions tab.
       </p>
+    </div>
+  )
+}
+
+function PlacementsTab({ studentId }: { studentId: string }) {
+  type P = {
+    id: string; title: string; placement_type: string; status: string
+    start_date: string | null; end_date: string | null; hours: number | null
+    is_group_event: boolean
+    student_feedback: string | null; student_rating: number | null
+    employer_feedback: string | null; employer_rating: number | null
+    employer: { company_name: string } | null
+  }
+  const [rows, setRows] = useState<P[]>([])
+  const [loaded, setLoaded] = useState(false)
+  useEffect(() => {
+    fetch(`/api/school/dyw/placements?student_id=${studentId}`)
+      .then((r) => r.ok ? r.json() : { placements: [] })
+      .then((d) => setRows(d.placements ?? []))
+      .finally(() => setLoaded(true))
+  }, [studentId])
+
+  const labelType = (t: string): string => ({ work_experience: 'Work experience', careers_talk: 'Careers talk', workplace_tour: 'Workplace tour', mock_interview: 'Mock interview', mentoring: 'Mentoring', industry_project: 'Industry project', other: 'Other' } as Record<string, string>)[t] ?? t
+
+  return (
+    <div style={card}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
+        <h2 style={cardHeader}>Placements &amp; experience</h2>
+        <Link href="/school/dyw" style={{ fontSize: 12, padding: '4px 10px', background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: 4, textDecoration: 'none', color: '#1D4ED8' }}>Add placement</Link>
+      </div>
+      {!loaded && <p style={{ fontSize: 14, color: '#666' }}>Loading…</p>}
+      {loaded && rows.length === 0 && <p style={{ fontSize: 14, color: '#666' }}>No placements recorded for this student. Add one from the DYW dashboard.</p>}
+      {rows.map((p) => (
+        <div key={p.id} style={{ border: '1px solid #e5e5e5', borderRadius: 4, padding: 10, marginBottom: 8, background: '#fafafa' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+            <div>
+              <b>{p.title}</b>
+              <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
+                {p.employer?.company_name ?? '—'} · {labelType(p.placement_type)} · {p.status}
+                {p.start_date ? ` · ${new Date(p.start_date).toLocaleDateString('en-GB')}` : ''}
+                {p.hours ? ` · ${p.hours} hrs` : ''}
+              </div>
+            </div>
+          </div>
+          {p.student_feedback && <div style={{ fontSize: 13, marginTop: 6 }}><b>Student:</b> {p.student_feedback} {p.student_rating ? `(${p.student_rating}/5)` : ''}</div>}
+          {p.employer_feedback && <div style={{ fontSize: 13, marginTop: 4 }}><b>Employer:</b> {p.employer_feedback} {p.employer_rating ? `(${p.employer_rating}/5)` : ''}</div>}
+        </div>
+      ))}
     </div>
   )
 }

@@ -8,6 +8,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { getAttainmentMeasures, getSimdGap, getCesCapacities, getValueAdded } from './analytics'
+import { currentAcademicYear as currentCpdAcademicYear, academicYearStartIso } from './cpd'
 
 export type GeneratedEvidence = {
   indicator_code: string
@@ -51,6 +52,33 @@ async function q15(admin: SupabaseClient, schoolId: string): Promise<GeneratedEv
     })
   }
   return out
+}
+
+// QI 1.4: Leadership and management of staff -- built from CPD records.
+async function q14(admin: SupabaseClient, schoolId: string): Promise<GeneratedEvidence[]> {
+  const startDate = academicYearStartIso(currentCpdAcademicYear())
+  const { data: records } = await (admin as any)
+    .from('cpd_records')
+    .select('id, staff_id, hours, gtcs_standard, hgios4_indicator_id')
+    .eq('school_id', schoolId)
+    .gte('date_completed', startDate)
+  const rows = records ?? []
+  const totalHours = rows.reduce((a: number, r: any) => a + Number(r.hours ?? 0), 0)
+  const staffSet = new Set<string>(rows.map((r: any) => r.staff_id))
+  const gtcsSet = new Set<string>(rows.map((r: any) => r.gtcs_standard).filter(Boolean))
+
+  const { data: allStaff } = await (admin as any).from('school_staff').select('id').eq('school_id', schoolId)
+  const totalStaff = (allStaff ?? []).length
+  const staffWithoutCpd = Math.max(totalStaff - staffSet.size, 0)
+
+  return [{
+    indicator_code: '1.4',
+    evidence_type: 'quantitative',
+    title: 'Staff professional learning',
+    description: `${rows.length} CPD activities logged by ${staffSet.size} staff members this year, totalling ${Math.round(totalHours * 10) / 10} hours. CPD addresses ${gtcsSet.size} of 3 GTCS standards. Staff with no CPD logged: ${staffWithoutCpd}.`,
+    source: 'auto_generated: cpd_records + school_staff',
+    data_snapshot: { total_records: rows.length, staff_engaged: staffSet.size, total_hours: totalHours, gtcs_standards: Array.from(gtcsSet), staff_without_cpd: staffWithoutCpd, total_staff: totalStaff },
+  }]
 }
 
 // QI 2.1: Safeguarding and child protection
@@ -104,18 +132,50 @@ async function q22(admin: SupabaseClient, schoolId: string): Promise<GeneratedEv
 
 // QI 2.3: Learning, teaching and assessment
 async function q23(admin: SupabaseClient, schoolId: string): Promise<GeneratedEvidence[]> {
+  const out: GeneratedEvidence[] = []
   const { data: cycles } = await (admin as any).from('tracking_cycles').select('id, is_locked').eq('school_id', schoolId)
   const locked = (cycles ?? []).filter((c: any) => c.is_locked).length
   const measures = await getAttainmentMeasures(admin, schoolId)
   const completion = measures.total_students > 0 ? Math.round((measures.students_with_grades / measures.total_students) * 1000) / 10 : 0
-  return [{
+  out.push({
     indicator_code: '2.3',
     evidence_type: 'quantitative',
     title: 'Tracking cycles and completion',
     description: `${cycles?.length ?? 0} tracking cycles configured (${locked} locked). Current/latest cycle completion: ${completion}% of registered students (${measures.students_with_grades} of ${measures.total_students}).`,
     source: 'auto_generated: tracking_cycles + tracking_entries',
     data_snapshot: { cycles: cycles?.length ?? 0, locked, measures },
-  }]
+  })
+
+  // CPD linked to QI 2.3 is inspection-relevant evidence of teacher-led
+  // improvement of learning, teaching and assessment.
+  const startDate = academicYearStartIso(currentCpdAcademicYear())
+  const { data: indicator } = await (admin as any)
+    .from('inspection_indicators')
+    .select('id')
+    .eq('framework_name', 'HGIOS4')
+    .eq('indicator_code', '2.3')
+    .maybeSingle()
+  if (indicator?.id) {
+    const { data: linked } = await (admin as any)
+      .from('cpd_records')
+      .select('id, staff_id, hours')
+      .eq('school_id', schoolId)
+      .eq('hgios4_indicator_id', indicator.id)
+      .gte('date_completed', startDate)
+    const linkedRows = linked ?? []
+    const linkedStaff = new Set<string>(linkedRows.map((r: any) => r.staff_id))
+    const linkedHours = linkedRows.reduce((a: number, r: any) => a + Number(r.hours ?? 0), 0)
+    out.push({
+      indicator_code: '2.3',
+      evidence_type: 'quantitative',
+      title: 'Professional learning linked to QI 2.3',
+      description: `${linkedRows.length} CPD activities linked to Learning, Teaching and Assessment. ${linkedStaff.size} staff participated, totalling ${Math.round(linkedHours * 10) / 10} hours.`,
+      source: 'auto_generated: cpd_records WHERE hgios4_indicator_id = 2.3',
+      data_snapshot: { records: linkedRows.length, staff: linkedStaff.size, hours: linkedHours },
+    })
+  }
+
+  return out
 }
 
 // QI 2.4: Personalised support
@@ -227,6 +287,7 @@ async function q33(admin: SupabaseClient, schoolId: string): Promise<GeneratedEv
 
 export async function autoGenerateEvidenceFor(admin: SupabaseClient, schoolId: string, indicatorCode: string): Promise<GeneratedEvidence[]> {
   switch (indicatorCode) {
+    case '1.4': return q14(admin, schoolId)
     case '1.5': return q15(admin, schoolId)
     case '2.1': return q21(admin, schoolId)
     case '2.2': return q22(admin, schoolId)
@@ -239,4 +300,4 @@ export async function autoGenerateEvidenceFor(admin: SupabaseClient, schoolId: s
   }
 }
 
-export const AUTO_GEN_SUPPORTED = new Set(['1.5', '2.1', '2.2', '2.3', '2.4', '3.1', '3.2', '3.3'])
+export const AUTO_GEN_SUPPORTED = new Set(['1.4', '1.5', '2.1', '2.2', '2.3', '2.4', '3.1', '3.2', '3.3'])

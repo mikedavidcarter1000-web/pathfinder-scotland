@@ -8,6 +8,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { getNetworksCapacity } from './dyw'
 
 // ----------------------------------------------------------------------------
 // Types
@@ -678,13 +679,22 @@ export async function getCesCapacities(admin: SupabaseClient, schoolId: string):
         { label: 'Students who compared careers', value: compStudents.size },
       ],
     },
-    networks: {
-      score: 0,
-      max: 100,
-      indicators: [
-        { label: 'Employer placements', value: 0, note: 'Connect employer engagement data (Schools-7 DYW) to populate this capacity' },
-      ],
-    },
+    networks: await buildNetworksCapacity(admin, schoolId),
+  }
+}
+
+async function buildNetworksCapacity(admin: SupabaseClient, schoolId: string): Promise<CesCapacity> {
+  const net = await getNetworksCapacity(admin, schoolId)
+  const ov = net.overview
+  return {
+    score: net.score,
+    max: 100,
+    indicators: [
+      { label: 'Active employer partners', value: ov.active_partners, note: `${ov.total_contacts} total contacts` },
+      { label: 'Placements completed this year', value: ov.placements_completed_this_year },
+      { label: 'Distinct students placed', value: ov.distinct_students_placed, note: `${ov.student_reach_pct}% of linked cohort` },
+      { label: 'Sectors with active partners', value: ov.sectors_covered, note: `of ${ov.sectors_total} sectors` },
+    ],
   }
 }
 
