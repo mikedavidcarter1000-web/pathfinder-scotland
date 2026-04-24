@@ -90,6 +90,8 @@ export type StaffPermissions = {
   can_edit_guidance_notes: boolean
   can_view_analytics: boolean
   can_manage_school: boolean
+  can_view_safeguarding: boolean
+  can_view_sensitive_flags: boolean
 }
 
 export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions> = {
@@ -102,6 +104,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_edit_guidance_notes: false,
     can_view_analytics: false,
     can_manage_school: false,
+    can_view_safeguarding: false,
+    can_view_sensitive_flags: false,
   },
   faculty_head: {
     can_view_individual_students: false,
@@ -112,6 +116,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_edit_guidance_notes: false,
     can_view_analytics: true,
     can_manage_school: false,
+    can_view_safeguarding: false,
+    can_view_sensitive_flags: false,
   },
   guidance_teacher: {
     can_view_individual_students: true,
@@ -122,6 +128,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_edit_guidance_notes: true,
     can_view_analytics: true,
     can_manage_school: false,
+    can_view_safeguarding: false,
+    can_view_sensitive_flags: true,
   },
   pt_guidance: {
     can_view_individual_students: true,
@@ -132,6 +140,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_edit_guidance_notes: true,
     can_view_analytics: true,
     can_manage_school: false,
+    can_view_safeguarding: true,
+    can_view_sensitive_flags: true,
   },
   dyw_coordinator: {
     can_view_individual_students: true,
@@ -142,6 +152,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_edit_guidance_notes: false,
     can_view_analytics: true,
     can_manage_school: false,
+    can_view_safeguarding: false,
+    can_view_sensitive_flags: false,
   },
   depute: {
     can_view_individual_students: true,
@@ -152,6 +164,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_edit_guidance_notes: true,
     can_view_analytics: true,
     can_manage_school: true,
+    can_view_safeguarding: true,
+    can_view_sensitive_flags: true,
   },
   head_teacher: {
     can_view_individual_students: true,
@@ -162,6 +176,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_edit_guidance_notes: true,
     can_view_analytics: true,
     can_manage_school: true,
+    can_view_safeguarding: true,
+    can_view_sensitive_flags: true,
   },
   admin: {
     can_view_individual_students: false,
@@ -172,6 +188,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_edit_guidance_notes: false,
     can_view_analytics: true,
     can_manage_school: true,
+    can_view_safeguarding: true,
+    can_view_sensitive_flags: true,
   },
 }
 

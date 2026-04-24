@@ -13,6 +13,8 @@ export type StaffContext = {
   canViewIndividualStudents: boolean
   canEditTracking: boolean
   canManageTracking: boolean
+  canViewSafeguarding: boolean
+  canViewSensitiveFlags: boolean
   role: string
   fullName: string
   department: string | null
@@ -28,6 +30,8 @@ export async function requireSchoolStaffApi(opts?: {
   mustViewStudents?: boolean
   mustEditTracking?: boolean
   mustManageTracking?: boolean
+  mustViewSafeguarding?: boolean
+  mustViewSensitiveFlags?: boolean
 }): Promise<
   | { ok: true; ctx: StaffContext; admin: SupabaseClient<Database> }
   | { ok: false; response: NextResponse }
@@ -44,7 +48,7 @@ export async function requireSchoolStaffApi(opts?: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: staff } = await (supabase as any)
     .from('school_staff')
-    .select('id, user_id, school_id, email, full_name, role, department, is_school_admin, can_view_individual_students, can_edit_tracking, can_manage_tracking')
+    .select('id, user_id, school_id, email, full_name, role, department, is_school_admin, can_view_individual_students, can_edit_tracking, can_manage_tracking, can_view_safeguarding, can_view_sensitive_flags')
     .eq('user_id', user.id)
     .maybeSingle()
 
@@ -68,6 +72,14 @@ export async function requireSchoolStaffApi(opts?: {
     return { ok: false, response: NextResponse.json({ error: 'Tracking management not permitted for your role' }, { status: 403 }) }
   }
 
+  if (opts?.mustViewSafeguarding && !staff.can_view_safeguarding && !staff.is_school_admin) {
+    return { ok: false, response: NextResponse.json({ error: 'Safeguarding view not permitted for your role' }, { status: 403 }) }
+  }
+
+  if (opts?.mustViewSensitiveFlags && !staff.can_view_sensitive_flags && !staff.is_school_admin) {
+    return { ok: false, response: NextResponse.json({ error: 'Sensitive flag view not permitted for your role' }, { status: 403 }) }
+  }
+
   const admin = getAdminClient()
   if (!admin) {
     return {
@@ -87,6 +99,8 @@ export async function requireSchoolStaffApi(opts?: {
       canViewIndividualStudents: !!staff.can_view_individual_students,
       canEditTracking: !!staff.can_edit_tracking,
       canManageTracking: !!staff.can_manage_tracking,
+      canViewSafeguarding: !!staff.can_view_safeguarding,
+      canViewSensitiveFlags: !!staff.can_view_sensitive_flags,
       role: staff.role,
       fullName: staff.full_name,
       department: staff.department ?? null,

@@ -10,6 +10,8 @@ export type DashboardMe = {
     canViewIndividualStudents: boolean
     canEditTracking: boolean
     canManageTracking: boolean
+    canViewSafeguarding: boolean
+    canViewSensitiveFlags: boolean
   }
   school: {
     id: string

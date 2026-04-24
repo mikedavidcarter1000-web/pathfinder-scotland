@@ -79,6 +79,8 @@ export async function POST(req: Request) {
         can_edit_guidance_notes: perms.can_edit_guidance_notes,
         can_view_analytics: perms.can_view_analytics,
         can_manage_school: perms.can_manage_school,
+        can_view_safeguarding: perms.can_view_safeguarding,
+        can_view_sensitive_flags: perms.can_view_sensitive_flags,
       },
       { onConflict: 'user_id,school_id' }
     )

@@ -182,6 +182,8 @@ export async function POST(req: Request) {
         can_edit_guidance_notes: true,
         can_view_analytics: true,
         can_manage_school: true,
+        can_view_safeguarding: true,
+        can_view_sensitive_flags: true,
       })
       .select('id')
       .single()

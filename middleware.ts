@@ -89,7 +89,9 @@ export async function middleware(request: NextRequest) {
     '/school/departments',
     '/school/reports',
     '/school/choices',
+    '/school/guidance',
     '/student/choices',
+    '/wellbeing',
   ]
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
 
@@ -123,7 +125,7 @@ export async function middleware(request: NextRequest) {
     ])
 
     // School staff must not access student or parent dashboards; land on /school/dashboard instead
-    const studentOnlyPrefixes = ['/dashboard', '/saved', '/grades', '/quiz', '/prep', '/student/choices']
+    const studentOnlyPrefixes = ['/dashboard', '/saved', '/grades', '/quiz', '/prep', '/student/choices', '/wellbeing']
     if (staff && (pathname === '/dashboard' || studentOnlyPrefixes.some((p) => pathname === p || pathname.startsWith(p + '/')) || pathname.startsWith('/parent/dashboard') || pathname.startsWith('/parent/choices'))) {
       return NextResponse.redirect(new URL('/school/dashboard', request.url))
     }
@@ -134,7 +136,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // Students and parents must not access the school dashboard
-    if (!staff && (pathname.startsWith('/school/dashboard') || pathname.startsWith('/school/settings') || pathname.startsWith('/school/tracking') || pathname.startsWith('/school/departments') || pathname.startsWith('/school/reports') || pathname.startsWith('/school/choices'))) {
+    if (!staff && (pathname.startsWith('/school/dashboard') || pathname.startsWith('/school/settings') || pathname.startsWith('/school/tracking') || pathname.startsWith('/school/departments') || pathname.startsWith('/school/reports') || pathname.startsWith('/school/choices') || pathname.startsWith('/school/guidance'))) {
       if (parent) return NextResponse.redirect(new URL('/parent/dashboard', request.url))
       if (student) return NextResponse.redirect(new URL('/dashboard', request.url))
     }

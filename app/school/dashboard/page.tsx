@@ -77,6 +77,16 @@ export default function SchoolDashboardPage() {
         </div>
       )}
 
+      {me.staff.canViewIndividualStudents && (
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '0 0 12px 0', fontSize: 14 }}>
+          <Link href="/school/guidance" style={quickLink}>Guidance Hub &rarr;</Link>
+          {me.staff.canViewSafeguarding && (
+            <Link href="/school/guidance/safeguarding" style={quickLink}>Safeguarding log &rarr;</Link>
+          )}
+          <Link href="/school/guidance/wellbeing" style={quickLink}>Wellbeing surveys &rarr;</Link>
+        </div>
+      )}
+
       <div style={tabStrip} role="tablist">
         {TABS.map((t) => (
           <button
@@ -164,6 +174,15 @@ const tabBtn: React.CSSProperties = {
 const tabActive: React.CSSProperties = {
   borderBottomColor: 'var(--pf-blue-700, #1D4ED8)',
   color: 'var(--pf-blue-700, #1D4ED8)',
+}
+const quickLink: React.CSSProperties = {
+  padding: '6px 12px',
+  background: 'var(--pf-blue-50, #EFF6FF)',
+  color: 'var(--pf-blue-700, #1D4ED8)',
+  textDecoration: 'none',
+  borderRadius: 4,
+  fontWeight: 500,
+  border: '1px solid var(--pf-blue-200, #BFDBFE)',
 }
 const expiredOverlay: React.CSSProperties = {
   position: 'relative',

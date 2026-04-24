@@ -45,6 +45,8 @@ export async function GET() {
       canViewIndividualStudents: ctx.canViewIndividualStudents,
       canEditTracking: ctx.canEditTracking,
       canManageTracking: ctx.canManageTracking,
+      canViewSafeguarding: ctx.canViewSafeguarding,
+      canViewSensitiveFlags: ctx.canViewSensitiveFlags,
     },
     school,
     joinCode,
