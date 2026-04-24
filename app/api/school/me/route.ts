@@ -35,12 +35,16 @@ export async function GET() {
 
   return NextResponse.json({
     staff: {
+      staffId: ctx.staffId,
       userId: ctx.userId,
       fullName: ctx.fullName,
       email: ctx.email,
       role: ctx.role,
+      department: ctx.department,
       isAdmin: ctx.isAdmin,
       canViewIndividualStudents: ctx.canViewIndividualStudents,
+      canEditTracking: ctx.canEditTracking,
+      canManageTracking: ctx.canManageTracking,
     },
     school,
     joinCode,

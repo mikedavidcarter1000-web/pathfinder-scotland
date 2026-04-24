@@ -74,6 +74,7 @@ export async function POST(req: Request) {
         can_view_individual_students: perms.can_view_individual_students,
         can_view_tracking: perms.can_view_tracking,
         can_edit_tracking: perms.can_edit_tracking,
+        can_manage_tracking: perms.can_manage_tracking,
         can_view_guidance_notes: perms.can_view_guidance_notes,
         can_edit_guidance_notes: perms.can_edit_guidance_notes,
         can_view_analytics: perms.can_view_analytics,

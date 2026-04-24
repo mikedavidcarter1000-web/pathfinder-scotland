@@ -3,6 +3,7 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getAdminClient } from '@/lib/admin-auth'
 import { generateInitialJoinCode, saltJoinCode, slugifySchoolName } from '@/lib/school/join-code'
 import { FOUNDING_SCHOOLS_CAP, TRIAL_MONTHS, STAFF_ROLE_LABELS, type SchoolStaffRole } from '@/lib/school/constants'
+import { seedTrackingDefaults } from '@/lib/school/seed-tracking-defaults'
 
 export const runtime = 'nodejs'
 
@@ -164,21 +165,26 @@ export async function POST(req: Request) {
     // Create staff row: registering user is the school's first admin and
     // gets every permission regardless of their stated role.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: staffErr } = await (admin as any).from('school_staff').insert({
-      user_id: user.id,
-      school_id: school.id,
-      full_name: contactName,
-      email: user.email ?? '',
-      role: contactRole,
-      is_school_admin: true,
-      can_view_individual_students: true,
-      can_view_tracking: true,
-      can_edit_tracking: true,
-      can_view_guidance_notes: true,
-      can_edit_guidance_notes: true,
-      can_view_analytics: true,
-      can_manage_school: true,
-    })
+    const { data: staffRow, error: staffErr } = await (admin as any)
+      .from('school_staff')
+      .insert({
+        user_id: user.id,
+        school_id: school.id,
+        full_name: contactName,
+        email: user.email ?? '',
+        role: contactRole,
+        is_school_admin: true,
+        can_view_individual_students: true,
+        can_view_tracking: true,
+        can_edit_tracking: true,
+        can_manage_tracking: true,
+        can_view_guidance_notes: true,
+        can_edit_guidance_notes: true,
+        can_view_analytics: true,
+        can_manage_school: true,
+      })
+      .select('id')
+      .single()
     if (staffErr) {
       console.error('[school/register] create staff failed:', staffErr)
       return NextResponse.json({ error: 'Could not create staff record.' }, { status: 500 })
@@ -191,6 +197,15 @@ export async function POST(req: Request) {
       code: joinCode,
       is_active: true,
     })
+
+    // Seed tracking defaults: 3 custom metrics + 10 comment bank templates
+    // + 1 default report template. Non-fatal if seeding fails; the school
+    // can still operate and reseed from /school/settings.
+    try {
+      await seedTrackingDefaults(admin, school.id, staffRow?.id)
+    } catch (seedErr) {
+      console.error('[school/register] seed tracking defaults failed (non-fatal):', seedErr)
+    }
 
     return NextResponse.json({
       ok: true,

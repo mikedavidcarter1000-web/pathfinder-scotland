@@ -85,6 +85,7 @@ export type StaffPermissions = {
   can_view_individual_students: boolean
   can_view_tracking: boolean
   can_edit_tracking: boolean
+  can_manage_tracking: boolean
   can_view_guidance_notes: boolean
   can_edit_guidance_notes: boolean
   can_view_analytics: boolean
@@ -96,6 +97,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_view_individual_students: false,
     can_view_tracking: true,
     can_edit_tracking: true,
+    can_manage_tracking: false,
     can_view_guidance_notes: false,
     can_edit_guidance_notes: false,
     can_view_analytics: false,
@@ -105,6 +107,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_view_individual_students: false,
     can_view_tracking: true,
     can_edit_tracking: true,
+    can_manage_tracking: false,
     can_view_guidance_notes: false,
     can_edit_guidance_notes: false,
     can_view_analytics: true,
@@ -114,6 +117,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_view_individual_students: true,
     can_view_tracking: true,
     can_edit_tracking: false,
+    can_manage_tracking: false,
     can_view_guidance_notes: true,
     can_edit_guidance_notes: true,
     can_view_analytics: true,
@@ -123,6 +127,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_view_individual_students: true,
     can_view_tracking: true,
     can_edit_tracking: false,
+    can_manage_tracking: false,
     can_view_guidance_notes: true,
     can_edit_guidance_notes: true,
     can_view_analytics: true,
@@ -132,6 +137,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_view_individual_students: true,
     can_view_tracking: true,
     can_edit_tracking: false,
+    can_manage_tracking: false,
     can_view_guidance_notes: false,
     can_edit_guidance_notes: false,
     can_view_analytics: true,
@@ -141,6 +147,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_view_individual_students: true,
     can_view_tracking: true,
     can_edit_tracking: true,
+    can_manage_tracking: true,
     can_view_guidance_notes: true,
     can_edit_guidance_notes: true,
     can_view_analytics: true,
@@ -150,6 +157,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_view_individual_students: true,
     can_view_tracking: true,
     can_edit_tracking: true,
+    can_manage_tracking: true,
     can_view_guidance_notes: true,
     can_edit_guidance_notes: true,
     can_view_analytics: true,
@@ -159,6 +167,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<SchoolStaffRole, StaffPermissions>
     can_view_individual_students: false,
     can_view_tracking: true,
     can_edit_tracking: false,
+    can_manage_tracking: true,
     can_view_guidance_notes: false,
     can_edit_guidance_notes: false,
     can_view_analytics: true,

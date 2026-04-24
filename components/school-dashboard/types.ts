@@ -1,11 +1,15 @@
 export type DashboardMe = {
   staff: {
+    staffId: string
     userId: string
     fullName: string
     email: string
     role: string
+    department: string | null
     isAdmin: boolean
     canViewIndividualStudents: boolean
+    canEditTracking: boolean
+    canManageTracking: boolean
   }
   school: {
     id: string

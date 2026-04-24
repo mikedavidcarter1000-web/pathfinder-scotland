@@ -197,6 +197,10 @@ export default function SchoolSettingsPage() {
         </form>
       </section>
 
+      <TrackingMetricsSection />
+
+      <CommentBankLink />
+
       <section style={card}>
         <h2 style={h2}>Staff ({staff.length})</h2>
         <table style={tbl}>
@@ -237,6 +241,229 @@ export default function SchoolSettingsPage() {
           </tbody>
         </table>
       </section>
+    </div>
+  )
+}
+
+function CommentBankLink() {
+  return (
+    <section style={card}>
+      <h2 style={h2}>Comment bank</h2>
+      <p style={{ margin: '6px 0 10px', fontSize: '0.9375rem' }}>
+        Manage reusable comment templates used in parent reports and the grade entry grid.
+      </p>
+      <Link href="/school/tracking/comments" style={{ display: 'inline-block', padding: '8px 14px', background: '#1B3A5C', color: 'white', borderRadius: 6, textDecoration: 'none', fontWeight: 600, fontSize: '0.875rem' }}>
+        Open comment bank &rarr;
+      </Link>
+    </section>
+  )
+}
+
+type Metric = {
+  id: string
+  metric_name: string
+  metric_key: string
+  scale_type: 'rating' | 'yes_no' | 'custom'
+  scale_options: string[] | null
+  colour_coding: Record<string, string> | null
+  applies_to_departments: string[] | null
+  sort_order: number
+  is_active: boolean
+}
+
+function TrackingMetricsSection() {
+  const [metrics, setMetrics] = useState<Metric[]>([])
+  const [loading, setLoading] = useState(true)
+  const [adding, setAdding] = useState(false)
+  const [editing, setEditing] = useState<Metric | null>(null)
+  const toast = useToast()
+
+  useEffect(() => {
+    fetch('/api/school/tracking/metrics')
+      .then((r) => r.json())
+      .then((d) => setMetrics(d.metrics ?? []))
+      .finally(() => setLoading(false))
+  }, [])
+
+  async function handleSave(
+    data: Omit<Metric, 'id' | 'is_active' | 'metric_key'> & { metric_key?: string },
+    id?: string
+  ) {
+    const res = id
+      ? await fetch(`/api/school/tracking/metrics/${id}`, {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(data),
+        })
+      : await fetch('/api/school/tracking/metrics', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(data),
+        })
+    const d = await res.json()
+    if (!res.ok) {
+      toast.error(d.error ?? 'Save failed.')
+      return
+    }
+    if (id) setMetrics((prev) => prev.map((m) => (m.id === id ? d.metric : m)))
+    else setMetrics((prev) => [...prev, d.metric])
+    setAdding(false)
+    setEditing(null)
+  }
+
+  async function toggleActive(m: Metric) {
+    const res = await fetch(`/api/school/tracking/metrics/${m.id}`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ is_active: !m.is_active }),
+    })
+    if (res.ok) {
+      const d = await res.json()
+      setMetrics((prev) => prev.map((x) => (x.id === m.id ? d.metric : x)))
+    }
+  }
+
+  return (
+    <section style={card}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+        <div>
+          <h2 style={h2}>Tracking metrics</h2>
+          <p style={{ margin: '4px 0 0', fontSize: '0.875rem', opacity: 0.7 }}>
+            Custom columns shown in the grade entry grid.
+          </p>
+        </div>
+        <button onClick={() => setAdding(true)} style={{ padding: '6px 12px', background: '#1B3A5C', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, fontSize: '0.8125rem' }}>
+          Add metric
+        </button>
+      </div>
+      {loading ? (
+        <p style={{ opacity: 0.6 }}>Loading metrics…</p>
+      ) : metrics.length === 0 ? (
+        <p style={{ opacity: 0.6 }}>No custom metrics yet.</p>
+      ) : (
+        <table style={{ ...tbl, marginTop: 10 }}>
+          <thead>
+            <tr>
+              <th style={th}>Name</th>
+              <th style={th}>Scale</th>
+              <th style={th}>Options</th>
+              <th style={th}>Order</th>
+              <th style={th}>Active</th>
+              <th style={th}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {metrics.map((m) => (
+              <tr key={m.id}>
+                <td style={td}>{m.metric_name}</td>
+                <td style={td}>{m.scale_type}</td>
+                <td style={td}>{(m.scale_options ?? []).join(', ') || '—'}</td>
+                <td style={td}>{m.sort_order}</td>
+                <td style={td}>
+                  <input type="checkbox" checked={m.is_active} onChange={() => toggleActive(m)} />
+                </td>
+                <td style={td}>
+                  <button onClick={() => setEditing(m)} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: 6, background: 'white', cursor: 'pointer', fontSize: '0.75rem' }}>
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {(adding || editing) && (
+        <MetricEditor
+          initial={editing}
+          onClose={() => { setAdding(false); setEditing(null) }}
+          onSave={(data) => handleSave(data, editing?.id)}
+        />
+      )}
+    </section>
+  )
+}
+
+function MetricEditor({
+  initial,
+  onClose,
+  onSave,
+}: {
+  initial: Metric | null
+  onClose: () => void
+  onSave: (data: {
+    metric_name: string
+    metric_key?: string
+    scale_type: 'rating' | 'yes_no' | 'custom'
+    scale_options: string[] | null
+    colour_coding: Record<string, string> | null
+    applies_to_departments: string[] | null
+    sort_order: number
+  }) => void
+}) {
+  const [name, setName] = useState(initial?.metric_name ?? '')
+  const [scaleType, setScaleType] = useState<'rating' | 'yes_no' | 'custom'>(initial?.scale_type ?? 'rating')
+  const [optsInput, setOptsInput] = useState<string>((initial?.scale_options ?? ['Excellent', 'Good', 'Satisfactory', 'Concern']).join(', '))
+  const [coloursInput, setColoursInput] = useState<string>(JSON.stringify(initial?.colour_coding ?? { Excellent: '#22c55e', Good: '#3b82f6', Satisfactory: '#f59e0b', Concern: '#ef4444' }))
+  const [sortOrder, setSortOrder] = useState<number>(initial?.sort_order ?? 10)
+
+  function handle(e: React.FormEvent) {
+    e.preventDefault()
+    if (!name.trim()) return
+    let options: string[] | null = null
+    if (scaleType === 'rating' || scaleType === 'custom') {
+      options = optsInput.split(',').map((s) => s.trim()).filter(Boolean)
+    }
+    let colours: Record<string, string> | null = null
+    try {
+      colours = coloursInput.trim() ? JSON.parse(coloursInput) : null
+    } catch {
+      colours = null
+    }
+    onSave({
+      metric_name: name.trim(),
+      scale_type: scaleType,
+      scale_options: options,
+      colour_coding: colours,
+      applies_to_departments: null,
+      sort_order: sortOrder,
+    })
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <form onSubmit={handle} style={{ background: 'white', borderRadius: 10, padding: 20, width: 'min(90vw, 500px)' }}>
+        <h3 style={{ margin: '0 0 12px' }}>{initial ? 'Edit metric' : 'Add metric'}</h3>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: '0.875rem', marginBottom: 10 }}>
+          Name
+          <input value={name} onChange={(e) => setName(e.target.value)} style={{ padding: '8px 10px', border: '1px solid #cbd5e1', borderRadius: 6 }} required />
+        </label>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: '0.875rem', marginBottom: 10 }}>
+          Scale type
+          <select value={scaleType} onChange={(e) => setScaleType(e.target.value as 'rating' | 'yes_no' | 'custom')} style={{ padding: '8px 10px', border: '1px solid #cbd5e1', borderRadius: 6 }}>
+            <option value="rating">Rating</option>
+            <option value="yes_no">Yes / No</option>
+            <option value="custom">Custom</option>
+          </select>
+        </label>
+        {scaleType !== 'yes_no' && (
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: '0.875rem', marginBottom: 10 }}>
+            Options (comma separated)
+            <input value={optsInput} onChange={(e) => setOptsInput(e.target.value)} style={{ padding: '8px 10px', border: '1px solid #cbd5e1', borderRadius: 6 }} />
+          </label>
+        )}
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: '0.875rem', marginBottom: 10 }}>
+          Colour coding (JSON)
+          <textarea value={coloursInput} onChange={(e) => setColoursInput(e.target.value)} rows={3} style={{ padding: '8px 10px', border: '1px solid #cbd5e1', borderRadius: 6, fontFamily: 'monospace', fontSize: '0.8125rem' }} />
+        </label>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: '0.875rem', marginBottom: 16 }}>
+          Sort order
+          <input type="number" value={sortOrder} onChange={(e) => setSortOrder(parseInt(e.target.value || '10', 10))} style={{ padding: '8px 10px', border: '1px solid #cbd5e1', borderRadius: 6 }} />
+        </label>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+          <button type="button" onClick={onClose} style={{ padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: 6, background: 'white', cursor: 'pointer' }}>Cancel</button>
+          <button type="submit" style={{ padding: '8px 12px', background: '#1B3A5C', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>Save</button>
+        </div>
+      </form>
     </div>
   )
 }

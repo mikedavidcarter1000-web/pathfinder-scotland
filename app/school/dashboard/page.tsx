@@ -10,12 +10,14 @@ import { SubjectsTab } from '@/components/school-dashboard/subjects-tab'
 import { StudentsTab } from '@/components/school-dashboard/students-tab'
 import { BenchmarkingTab } from '@/components/school-dashboard/benchmarking-tab'
 import { ReportsTab } from '@/components/school-dashboard/reports-tab'
+import { TrackingTab } from '@/components/school-dashboard/tracking-tab'
 import type { DashboardMe } from '@/components/school-dashboard/types'
 
-type TabKey = 'overview' | 'subjects' | 'students' | 'benchmarking' | 'reports'
+type TabKey = 'overview' | 'tracking' | 'subjects' | 'students' | 'benchmarking' | 'reports'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: 'Overview' },
+  { key: 'tracking', label: 'Tracking' },
   { key: 'subjects', label: 'Subject choices' },
   { key: 'students', label: 'Students' },
   { key: 'benchmarking', label: 'Benchmarking' },
@@ -90,6 +92,7 @@ export default function SchoolDashboardPage() {
 
       <div style={{ marginTop: '20px', opacity: expired ? 0.4 : 1, pointerEvents: expired ? 'none' : 'auto' }}>
         {tab === 'overview' && <OverviewTab />}
+        {tab === 'tracking' && <TrackingTab />}
         {tab === 'subjects' && <SubjectsTab />}
         {tab === 'students' && <StudentsTab canView={me.staff.canViewIndividualStudents} />}
         {tab === 'benchmarking' && <BenchmarkingTab />}
