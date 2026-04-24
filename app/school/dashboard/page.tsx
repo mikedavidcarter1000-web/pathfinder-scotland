@@ -86,6 +86,13 @@ export default function SchoolDashboardPage() {
           <Link href="/school/guidance/wellbeing" style={quickLink}>Wellbeing surveys &rarr;</Link>
         </div>
       )}
+      {(me.staff.role === 'depute' || me.staff.role === 'head_teacher' || me.staff.isAdmin) && (
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '0 0 12px 0', fontSize: 14 }}>
+          <Link href="/school/analytics" style={quickLink}>Analytics &rarr;</Link>
+          <Link href="/school/inspection" style={quickLink}>Inspection portfolio &rarr;</Link>
+          <Link href="/school/inspection/curriculum" style={quickLink}>Curriculum rationale &rarr;</Link>
+        </div>
+      )}
 
       <div style={tabStrip} role="tablist">
         {TABS.map((t) => (

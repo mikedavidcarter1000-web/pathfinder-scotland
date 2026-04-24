@@ -90,6 +90,8 @@ export async function middleware(request: NextRequest) {
     '/school/reports',
     '/school/choices',
     '/school/guidance',
+    '/school/analytics',
+    '/school/inspection',
     '/student/choices',
     '/wellbeing',
   ]
@@ -136,7 +138,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // Students and parents must not access the school dashboard
-    if (!staff && (pathname.startsWith('/school/dashboard') || pathname.startsWith('/school/settings') || pathname.startsWith('/school/tracking') || pathname.startsWith('/school/departments') || pathname.startsWith('/school/reports') || pathname.startsWith('/school/choices') || pathname.startsWith('/school/guidance'))) {
+    if (!staff && (pathname.startsWith('/school/dashboard') || pathname.startsWith('/school/settings') || pathname.startsWith('/school/tracking') || pathname.startsWith('/school/departments') || pathname.startsWith('/school/reports') || pathname.startsWith('/school/choices') || pathname.startsWith('/school/guidance') || pathname.startsWith('/school/analytics') || pathname.startsWith('/school/inspection'))) {
       if (parent) return NextResponse.redirect(new URL('/parent/dashboard', request.url))
       if (student) return NextResponse.redirect(new URL('/dashboard', request.url))
     }

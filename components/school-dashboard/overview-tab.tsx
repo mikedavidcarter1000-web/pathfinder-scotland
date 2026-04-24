@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import type { OverviewData } from './types'
+import { LeadershipAnalyticsWidget } from './leadership-analytics-widget'
 
 export function OverviewTab() {
   const [data, setData] = useState<OverviewData | null>(null)
@@ -19,6 +20,7 @@ export function OverviewTab() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <LeadershipAnalyticsWidget />
       <div style={metricsGrid}>
         <Metric label="Registered students" value={data.total} />
         <Metric label="Active this month" value={data.activeThisMonth} />
