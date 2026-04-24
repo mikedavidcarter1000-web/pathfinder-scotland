@@ -20,6 +20,7 @@ import { COMMON_SUBJECTS_BY_LEVEL } from '@/lib/constants'
 import { useSubjects } from '@/hooks/use-subjects'
 import { compareGradeStrings } from '@/lib/grades'
 import type { Tables } from '@/types/database'
+import { SchoolImportedResults } from '@/components/results-day/school-imported-results'
 
 type StudentGrade = Tables<'student_grades'>
 
@@ -348,6 +349,9 @@ function ResultsDayContent() {
           </div>
         </div>
       </section>
+
+      {/* School-imported SQA results (silent when no rows). */}
+      <SchoolImportedResults />
 
       {/* ── OFFER CHECK BANNER ─────────────────────────────────── */}
       {offerStatus && showResults && (

@@ -4,12 +4,14 @@ import { useEffect, useState } from 'react'
 import type { OverviewData } from './types'
 import { LeadershipAnalyticsWidget } from './leadership-analytics-widget'
 import { DywSummaryWidget, CpdSummaryWidget } from './dyw-cpd-widgets'
+import { ImportStatusWidget } from './import-widget'
 
 export function OverviewTab() {
   const [data, setData] = useState<OverviewData | null>(null)
   const [loading, setLoading] = useState(true)
   const [role, setRole] = useState<string>('')
   const [isAdmin, setIsAdmin] = useState(false)
+  const [canManageTracking, setCanManageTracking] = useState(false)
 
   useEffect(() => {
     fetch('/api/school/dashboard/overview')
@@ -22,6 +24,7 @@ export function OverviewTab() {
         if (d?.staff) {
           setRole(d.staff.role ?? '')
           setIsAdmin(!!d.staff.isAdmin)
+          setCanManageTracking(!!d.staff.canManageTracking)
         }
       })
   }, [])
@@ -37,6 +40,7 @@ export function OverviewTab() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
         <DywSummaryWidget canSee={canSeeDyw} />
         <CpdSummaryWidget />
+        <ImportStatusWidget canManage={isAdmin || canManageTracking} />
       </div>
       <div style={metricsGrid}>
         <Metric label="Registered students" value={data.total} />

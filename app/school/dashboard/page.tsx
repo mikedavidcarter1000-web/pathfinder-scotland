@@ -101,6 +101,11 @@ export default function SchoolDashboardPage() {
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '0 0 12px 0', fontSize: 14 }}>
         <Link href="/school/cpd" style={quickLink}>My CPD &rarr;</Link>
       </div>
+      {(me.staff.isAdmin || me.staff.canManageTracking) && (
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '0 0 12px 0', fontSize: 14 }}>
+          <Link href="/school/import" style={quickLink}>Data import &rarr;</Link>
+        </div>
+      )}
       {(me.staff.role === 'depute' || me.staff.role === 'head_teacher' || me.staff.isAdmin) && (
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '0 0 12px 0', fontSize: 14 }}>
           <Link href="/school/analytics" style={quickLink}>Analytics &rarr;</Link>

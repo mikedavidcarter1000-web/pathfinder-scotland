@@ -304,3 +304,47 @@ Current pre-fill only surfaces `higher` and `advanced_higher` grades from `stude
 
 A keyboard shortcut (e.g. `Escape × 3` within 1s) would allow users to trigger the exit without a mouse click. Accessibility win for users in distress. Not shipped in this session to avoid complexity; worth revisiting if the feature is promoted in GDPR or safeguarding documentation.
 
+---
+
+## Appended 2026-04-25 -- Schools-8 import follow-ups
+
+### Stub student promotion on signup
+
+Pupil import creates stub `students` rows keyed on SCN with a synthetic email (`stub+<scn>@import.pathfinderscot.co.uk`). When a real student signs up, there is no flow that matches the stub to the new `auth.users` row and merges their `school_student_links` + `tracking_entries`. Currently the student creates a fresh account and the stub stays orphaned until an admin manually deletes it. Add a post-signup hook that checks for a matching stub (by SCN, falling back to name + school) and offers to merge. Gate with school admin confirmation if name-only match.
+
+### Full import rollback
+
+Import deletion removes only the `seemis_imports` / `sqa_results_imports` audit row; the data stays. Full rollback (delete `sqa_results` by `import_id`, delete `class_students` by `import_id`, null-out the columns that were set by a pupil import) is deliberately deferred because the blast radius on a mid-term import deletion is large. Worth revisiting once pilot schools have real data and the "I uploaded the wrong file" scenario happens.
+
+### MCP apply_migration rename automation
+
+`scripts/apply-migration.sh` only wraps `supabase db push`. When migrations apply via MCP `apply_migration` (faster inside Claude Code sessions), the timestamp drift still occurs and the rename is manual. Either wrap the MCP call or document the MCP-specific workflow so the next session doesn't rediscover this.
+
+### CES Horizons alumni-blending tuning
+
+The current formula blends current-cohort engagement (80%) with historic alumni positive-destination rate (20%). The ratio is a first guess. Revisit once 5+ schools have 2+ years of destinations data so the component weights can be calibrated against actual student-outcome correlations.
+
+### SCN-less name fallback on SQA + destinations imports
+
+The pupil importer falls back to name matching when SCN doesn't match an existing student. SQA and destinations importers do not -- they skip rows with missing / non-matching SCN. For legacy results data (especially pre-2025 where some schools didn't record SCN in their SQA feeds) a name-based fallback would improve match rates. Add `nameMatches()` to `runSqaImport` + `runDestinationsImport`.
+
+### Transition primaries as a lookup table
+
+`transition_profiles.source_primary` is free text. Once 5+ secondaries use the feature and have stable cluster primaries, promote to a `cluster_primaries` lookup so dashboards can aggregate across all secondaries in a local-authority view.
+
+### Attendance upsert UNIQUE constraint
+
+The attendance importer upserts on (school_id, student_id, academic_year, term) but there is no UNIQUE constraint. Two concurrent admin imports could race. Add `UNIQUE (school_id, student_id, academic_year, term)` to `attendance_records` once pilot schools are running concurrent admin sessions.
+
+### Grade-to-numeric uses hard-coded A-D scale
+
+`lib/school/import-parsing.ts::gradeToNumeric` is a fixed 0-4 scale (A=4, D=1, NoAward=0). National 5 / Higher / Advanced Higher have different grade scales and different tariff points. Use the existing `grade_scales` table with `ucas_points` for more accurate value-added calculation.
+
+### XLSX sheet picker
+
+`parseXlsx()` reads `wb.SheetNames[0]`. If a school submits a workbook with a summary tab first and data on tab 2, rows go missing silently. Add a sheet-picker to the upload UI when the file has more than one non-empty sheet.
+
+### Stub + name fallback policy
+
+Name-match fallback on pupil import currently logs a warning and proceeds. This is fine for cluster schools with unique names but risks silent misattribution for common names (e.g. a new "James Smith S4" matching an existing unrelated "James Smith" in the linked cohort). Consider adding a confirmation step or requiring full DOB match for name-only merges.
+

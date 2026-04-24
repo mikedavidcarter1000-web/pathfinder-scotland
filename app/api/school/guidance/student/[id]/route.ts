@@ -214,6 +214,16 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     safeguardingCount = count ?? 0
   }
 
+  // Transition profile (primary -> secondary) if the student has one.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: transition } = await (admin as any)
+    .from('transition_profiles')
+    .select('source_primary, transition_year, reading_level, writing_level, listening_talking_level, numeracy_level, snsa_reading_score, snsa_numeracy_score, asn_notes, pastoral_notes')
+    .eq('student_id', studentId)
+    .order('imported_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
   const latestWellbeing = (wellbeing && wellbeing.length > 0) ? wellbeing[0] : null
 
   return NextResponse.json({
@@ -258,5 +268,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     asn: asn ?? [],
     bursaryMatches,
     safeguardingCount,
+    transition: transition ?? null,
   })
 }

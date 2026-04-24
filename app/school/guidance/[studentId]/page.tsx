@@ -87,6 +87,18 @@ type ProfilePayload = {
   }>
   bursaryMatches: Array<{ id: string; name: string; administeringBody: string | null; amountDescription: string | null; url: string | null }>
   safeguardingCount: number
+  transition: {
+    source_primary: string
+    transition_year: string
+    reading_level: string | null
+    writing_level: string | null
+    listening_talking_level: string | null
+    numeracy_level: string | null
+    snsa_reading_score: number | null
+    snsa_numeracy_score: number | null
+    asn_notes: string | null
+    pastoral_notes: string | null
+  } | null
 }
 
 function FlagBadge({ color, children }: { color: string; children: React.ReactNode }) {
@@ -358,6 +370,28 @@ function OverviewTab({ payload }: { payload: ProfilePayload }) {
           )}
         </div>
       </section>
+
+      {payload.transition && (
+        <section style={{ ...card, gridColumn: '1 / -1' }}>
+          <h2 style={cardHeader}>Transition from primary</h2>
+          <div style={{ fontSize: 13, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 10 }}>
+            <div><strong>Source primary:</strong> {payload.transition.source_primary}</div>
+            <div><strong>Transition year:</strong> {payload.transition.transition_year}</div>
+            <div><strong>Reading:</strong> {payload.transition.reading_level ?? '-'}</div>
+            <div><strong>Writing:</strong> {payload.transition.writing_level ?? '-'}</div>
+            <div><strong>Listening & talking:</strong> {payload.transition.listening_talking_level ?? '-'}</div>
+            <div><strong>Numeracy:</strong> {payload.transition.numeracy_level ?? '-'}</div>
+            {payload.transition.snsa_reading_score != null && <div><strong>SNSA reading:</strong> {payload.transition.snsa_reading_score}</div>}
+            {payload.transition.snsa_numeracy_score != null && <div><strong>SNSA numeracy:</strong> {payload.transition.snsa_numeracy_score}</div>}
+          </div>
+          {payload.transition.asn_notes && (
+            <div style={{ marginTop: 8, fontSize: 13 }}><strong>ASN notes:</strong> {payload.transition.asn_notes}</div>
+          )}
+          {payload.transition.pastoral_notes && (
+            <div style={{ marginTop: 6, fontSize: 13 }}><strong>Pastoral notes:</strong> {payload.transition.pastoral_notes}</div>
+          )}
+        </section>
+      )}
 
       <section style={card}>
         <h2 style={cardHeader}>Bursary matches ({bursaryMatches.length})</h2>

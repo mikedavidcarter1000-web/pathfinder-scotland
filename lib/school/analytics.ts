@@ -498,17 +498,37 @@ export async function getSimdGap(admin: SupabaseClient, schoolId: string): Promi
     }
   }
 
+  // Positive-destination rate per SIMD quintile, from alumni_destinations.
+  // Built on Schools-8 data -- null for quintiles with no destinations recorded.
+  const POSITIVE_TYPES = new Set([
+    'higher_education', 'further_education', 'modern_apprenticeship',
+    'graduate_apprenticeship', 'employment', 'training', 'voluntary',
+  ])
+  const { data: destRows } = await (admin as any)
+    .from('alumni_destinations')
+    .select('destination_type, simd_decile')
+    .eq('school_id', schoolId)
+  const destAgg: Record<number, { total: number; positive: number }> = {}
+  for (let q = 1; q <= 5; q++) destAgg[q] = { total: 0, positive: 0 }
+  for (const d of (destRows ?? []) as Array<{ destination_type: string; simd_decile: number | null }>) {
+    const q = decileToQuintile(d.simd_decile)
+    if (!q) continue
+    destAgg[q].total += 1
+    if (POSITIVE_TYPES.has(d.destination_type)) destAgg[q].positive += 1
+  }
+
   return Object.values(agg).map((a) => {
     const count = a.studentIds.size
     const n5_5plus = Array.from(a.n5AC.values()).filter((v) => v >= 5).length
     const higher_3plus = Array.from(a.higherAC.values()).filter((v) => v >= 3).length
+    const dAgg = destAgg[a.quintile] ?? { total: 0, positive: 0 }
     return {
       simd_quintile: a.quintile,
       student_count: count,
       avg_tariff_points: a.tariffCount > 0 ? Math.round((a.tariffSum / a.tariffCount) * 10) / 10 : 0,
       n5_5plus_ac_pct: count > 0 ? Math.round((n5_5plus / count) * 1000) / 10 : 0,
       higher_3plus_ac_pct: count > 0 ? Math.round((higher_3plus / count) * 1000) / 10 : 0,
-      positive_destination_pct: null, // alumni data not yet modelled
+      positive_destination_pct: dAgg.total > 0 ? Math.round((dAgg.positive / dAgg.total) * 1000) / 10 : null,
       saved_courses_avg: count > 0 ? Math.round((a.savedSum / count) * 10) / 10 : 0,
       widening_access_eligible_count: a.waEligibleCount,
     }
@@ -644,14 +664,28 @@ export async function getCesCapacities(admin: SupabaseClient, schoolId: string):
   const strengthsUnion = new Set<string>([...gradesStudents, ...choicesStudents])
   const strengthsScore = total > 0 ? Math.round((strengthsUnion.size / total) * 100) : 0
 
-  // Horizons: saved_courses + saved_comparisons (careers explored)
+  // Horizons: saved_courses + saved_comparisons + alumni positive-destination rate
   const { data: saved } = await (admin as any).from('saved_courses').select('student_id').in('student_id', studentIds)
   const savedStudents = new Set<string>((saved ?? []).map((s: any) => s.student_id))
   // saved_comparisons gives us career-sector exploration depth.
   const { data: comparisons } = await (admin as any).from('saved_comparisons').select('user_id').in('user_id', studentIds)
   const compStudents = new Set<string>((comparisons ?? []).map((c: any) => c.user_id))
   const horizonsUnion = new Set<string>([...savedStudents, ...compStudents])
-  const horizonsScore = total > 0 ? Math.round((horizonsUnion.size / total) * 100) : 0
+  // Alumni positive-destination rate -- if any destinations exist, score
+  // blends current-cohort engagement (80%) with historic positive-rate (20%).
+  const POSITIVE_TYPES = new Set([
+    'higher_education', 'further_education', 'modern_apprenticeship',
+    'graduate_apprenticeship', 'employment', 'training', 'voluntary',
+  ])
+  const { data: alumni } = await (admin as any)
+    .from('alumni_destinations').select('destination_type').eq('school_id', schoolId)
+  const alumniTotal = (alumni ?? []).length
+  const alumniPositive = (alumni ?? []).filter((r: any) => POSITIVE_TYPES.has(r.destination_type)).length
+  const positivePct = alumniTotal > 0 ? Math.round((alumniPositive / alumniTotal) * 1000) / 10 : null
+  const engagementScore = total > 0 ? (horizonsUnion.size / total) * 100 : 0
+  const horizonsScore = positivePct != null
+    ? Math.round(engagementScore * 0.8 + positivePct * 0.2)
+    : Math.round(engagementScore)
 
   return {
     self: {
@@ -677,6 +711,9 @@ export async function getCesCapacities(admin: SupabaseClient, schoolId: string):
       indicators: [
         { label: 'Students who saved at least one course', value: savedStudents.size },
         { label: 'Students who compared careers', value: compStudents.size },
+        ...(positivePct != null
+          ? [{ label: 'Alumni positive destinations', value: alumniPositive, note: `${positivePct}% of ${alumniTotal} leavers` }]
+          : []),
       ],
     },
     networks: await buildNetworksCapacity(admin, schoolId),
