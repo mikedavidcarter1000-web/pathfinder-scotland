@@ -124,6 +124,17 @@ export async function POST(req: Request) {
     const trialExpires = new Date(now)
     trialExpires.setMonth(trialExpires.getMonth() + TRIAL_MONTHS)
 
+    // Resolve Scotland territory id. Pathfinder is Scotland-only at the
+    // pilot stage; the territory FK makes the data model extensible to
+    // other nations without a schema rewrite.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: territoryRow } = await (admin as any)
+      .from('territories')
+      .select('id')
+      .eq('code', 'SCO')
+      .maybeSingle()
+    const territoryId = territoryRow?.id ?? null
+
     // Create school
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: school, error: schoolErr } = await (admin as any)
@@ -131,11 +142,13 @@ export async function POST(req: Request) {
       .insert({
         name: schoolName,
         slug,
+        territory_id: territoryId,
         local_authority: localAuthority,
         postcode: postcode || null,
         seed_code: seedCode || null,
         school_type: schoolType,
         subscription_status: 'trial',
+        subscription_tier: 'trial',
         is_founding_school: isFounding,
         trial_started_at: now.toISOString(),
         trial_expires_at: trialExpires.toISOString(),
@@ -148,7 +161,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Could not create school.' }, { status: 500 })
     }
 
-    // Create staff row (admin, full access)
+    // Create staff row: registering user is the school's first admin and
+    // gets every permission regardless of their stated role.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: staffErr } = await (admin as any).from('school_staff').insert({
       user_id: user.id,
@@ -158,6 +172,12 @@ export async function POST(req: Request) {
       role: contactRole,
       is_school_admin: true,
       can_view_individual_students: true,
+      can_view_tracking: true,
+      can_edit_tracking: true,
+      can_view_guidance_notes: true,
+      can_edit_guidance_notes: true,
+      can_view_analytics: true,
+      can_manage_school: true,
     })
     if (staffErr) {
       console.error('[school/register] create staff failed:', staffErr)

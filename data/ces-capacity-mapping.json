@@ -1,0 +1,22 @@
+{
+  "self": {
+    "label": "Self",
+    "description": "Understanding themselves and their interests",
+    "indicators": ["quiz_completed", "career_sectors_explored"]
+  },
+  "strengths": {
+    "label": "Strengths",
+    "description": "Identifying and developing their skills",
+    "indicators": ["subjects_chosen", "grades_tracked"]
+  },
+  "horizons": {
+    "label": "Horizons",
+    "description": "Exploring opportunities and pathways",
+    "indicators": ["courses_saved", "universities_browsed", "careers_explored"]
+  },
+  "networks": {
+    "label": "Networks",
+    "description": "Building connections and relationships",
+    "indicators": []
+  }
+}

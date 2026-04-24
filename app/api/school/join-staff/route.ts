@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getAdminClient } from '@/lib/admin-auth'
-import { INDIVIDUAL_VIEW_ROLES, type SchoolStaffRole } from '@/lib/school/constants'
+import { DEFAULT_ROLE_PERMISSIONS, type SchoolStaffRole } from '@/lib/school/constants'
 
 export const runtime = 'nodejs'
 
 const VALID_ROLES: SchoolStaffRole[] = [
+  'class_teacher',
+  'faculty_head',
   'guidance_teacher',
   'pt_guidance',
   'dyw_coordinator',
@@ -57,8 +59,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'School not found.' }, { status: 404 })
     }
 
-    const canIndividual = (INDIVIDUAL_VIEW_ROLES as string[]).includes(role)
-    const isAdmin = role === 'admin'
+    const perms = DEFAULT_ROLE_PERMISSIONS[role as SchoolStaffRole]
+    const isAdmin = role === 'admin' || role === 'head_teacher' || role === 'depute'
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: staffErr } = await (admin as any).from('school_staff').upsert(
@@ -69,7 +71,13 @@ export async function POST(req: Request) {
         email: user.email ?? '',
         role,
         is_school_admin: isAdmin,
-        can_view_individual_students: canIndividual || isAdmin,
+        can_view_individual_students: perms.can_view_individual_students,
+        can_view_tracking: perms.can_view_tracking,
+        can_edit_tracking: perms.can_edit_tracking,
+        can_view_guidance_notes: perms.can_view_guidance_notes,
+        can_edit_guidance_notes: perms.can_edit_guidance_notes,
+        can_view_analytics: perms.can_view_analytics,
+        can_manage_school: perms.can_manage_school,
       },
       { onConflict: 'user_id,school_id' }
     )
