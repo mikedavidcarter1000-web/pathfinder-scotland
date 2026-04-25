@@ -617,3 +617,24 @@ old (UTC-evaluated) function. The materialised view was rebuilt from
 scratch in the same migration, so the live data is consistent with
 the new function. No backfill needed today, but worth a sanity check
 when the view first carries production volume across an Aug 1 boundary.
+
+---
+
+## Appended 2026-04-25 -- Security review P1 #6/#7 deferrals
+
+### `get_user_subscription` p_user_id privilege escalation
+
+`public.get_user_subscription(p_user_id uuid)` is `SECURITY DEFINER` and accepts a caller-supplied UUID. Any authenticated user can invoke `supabase.rpc('get_user_subscription', { p_user_id: '<another user uuid>' })` and read back that user's subscription status (plan name, period end, cancel date).
+
+Surfaced during Codex second-opinion on the P1 #6 fix (2026-04-25). Not introduced by the session -- the parameter pre-exists in the baseline schema. Subscription data is low-sensitivity (no payment method, no PII beyond dates), but the pattern is wrong.
+
+Fix options:
+- Drop `p_user_id` parameter; function always uses `auth.uid()` (correct for client calls)
+- Keep parameter but add `IF p_user_id IS DISTINCT FROM auth.uid() AND NOT (SELECT usesuper FROM pg_user WHERE usename = current_user) THEN RAISE EXCEPTION ...`
+- Prefix the admin-facing variant with `admin_` and keep the client variant clean
+
+Pick up before public launch. The parameter is only used in admin tooling (if at all); check callers first.
+
+### Stripe payments null payment_intent edge case (P2 #8 scope)
+
+`handlePaymentSucceeded` and `handlePaymentFailed` now skip recording when `invoice.payment_intent` is null (free trials, £0 invoices). A future pass should add a `stripe_invoice_id` UNIQUE column to `stripe_payments` (P2 #8 from security review) to make all invoice events recordable and idempotent, not just those with a payment intent.

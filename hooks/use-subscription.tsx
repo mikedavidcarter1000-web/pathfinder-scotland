@@ -36,8 +36,10 @@ export function useSubscription() {
       const { data, error } = await supabase.rpc('get_user_subscription')
 
       if (error) {
-        console.error('Error fetching subscription:', error)
-        return { has_subscription: false }
+        // Throw so React Query surfaces isError rather than silently
+        // returning has_subscription: false (which would incorrectly
+        // show all users as unsubscribed on transient failures).
+        throw error
       }
 
       return data as unknown as Subscription
@@ -48,11 +50,13 @@ export function useSubscription() {
 }
 
 export function useHasActiveSubscription() {
-  const { data: subscription, isLoading } = useSubscription()
+  const { data: subscription, isLoading, isError } = useSubscription()
 
   return {
-    hasSubscription: subscription?.has_subscription ?? false,
+    // isError: true means the RPC failed; treat as unknown, not unsubscribed.
+    hasSubscription: isError ? false : (subscription?.has_subscription ?? false),
     isLoading,
+    isError,
     subscription,
   }
 }

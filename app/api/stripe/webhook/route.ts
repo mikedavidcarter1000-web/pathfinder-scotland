@@ -30,6 +30,21 @@ function getSupabaseAdmin(): SupabaseClient {
   return supabaseAdminClient
 }
 
+// Throw on any Supabase write error so the outer try/catch returns 500
+// and Stripe retries the webhook delivery.
+function throwOnError(error: unknown, context: string): void {
+  if (error) {
+    console.error(`Webhook DB error [${context}]:`, error)
+    throw new Error(`DB write failed: ${context}`)
+  }
+}
+
+// PGRST116 = "no rows returned" from a .single() call — not a DB failure.
+// Any other error code is a real problem and should cause a retry.
+function isNotFoundError(error: { code?: string } | null | undefined): boolean {
+  return error?.code === 'PGRST116'
+}
+
 export async function POST(req: Request) {
   const body = await req.text()
   const headersList = await headers()
@@ -109,11 +124,15 @@ async function isSchoolSubscription(subscription: Stripe.Subscription): Promise<
     return { schoolId: schoolIdFromMeta, matchedByMetadata: true }
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: school } = await (getSupabaseAdmin() as any)
+  const { data: school, error } = await (getSupabaseAdmin() as any)
     .from('schools')
     .select('id')
     .eq('stripe_subscription_id', subscription.id)
     .maybeSingle()
+  if (error) {
+    console.error('DB error looking up school by subscription id:', error)
+    throw new Error('DB error looking up school subscription')
+  }
   return { schoolId: school?.id ?? null, matchedByMetadata: false }
 }
 
@@ -134,7 +153,7 @@ async function handleSchoolSubscriptionChange(subscription: Stripe.Subscription,
   const tier = mapPriceToSchoolTier(priceId)
   const status = mapStripeStatusToSchool(subscription.status)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (getSupabaseAdmin() as any)
+  const { error } = await (getSupabaseAdmin() as any)
     .from('schools')
     .update({
       subscription_tier: tier,
@@ -143,6 +162,7 @@ async function handleSchoolSubscriptionChange(subscription: Stripe.Subscription,
       stripe_customer_id: subscription.customer as string,
     })
     .eq('id', schoolId)
+  throwOnError(error, 'handleSchoolSubscriptionChange')
 }
 
 async function handleSubscriptionChange(subscription: Stripe.Subscription) {
@@ -158,12 +178,16 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string
 
   // Get user ID from customer
-  const { data: customer } = await getSupabaseAdmin()
+  const { data: customer, error: customerError } = await getSupabaseAdmin()
     .from('stripe_customers')
     .select('user_id')
     .eq('stripe_customer_id', customerId)
     .single()
 
+  if (customerError && !isNotFoundError(customerError)) {
+    console.error('DB error looking up customer:', customerError)
+    throw new Error('DB error looking up customer')
+  }
   if (!customer) {
     console.error('Customer not found:', customerId)
     return
@@ -172,7 +196,7 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   const priceId = subscription.items.data[0]?.price?.id
   const sub = subscription as any // Type workaround for Stripe API changes
 
-  await getSupabaseAdmin().from('stripe_subscriptions').upsert(
+  const { error } = await getSupabaseAdmin().from('stripe_subscriptions').upsert(
     {
       user_id: customer.user_id,
       stripe_subscription_id: subscription.id,
@@ -201,88 +225,124 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
     },
     { onConflict: 'stripe_subscription_id' }
   )
+  throwOnError(error, 'handleSubscriptionChange upsert')
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   const schoolMatch = await isSchoolSubscription(subscription)
   if (schoolMatch.schoolId) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (getSupabaseAdmin() as any)
+    const { error } = await (getSupabaseAdmin() as any)
       .from('schools')
       .update({
         subscription_status: 'cancelled',
         stripe_subscription_id: null,
       })
       .eq('id', schoolMatch.schoolId)
+    throwOnError(error, 'handleSubscriptionDeleted school')
     return
   }
 
-  await getSupabaseAdmin()
+  const { error } = await getSupabaseAdmin()
     .from('stripe_subscriptions')
     .update({
       status: 'canceled',
       canceled_at: new Date().toISOString(),
     })
     .eq('stripe_subscription_id', subscription.id)
+  throwOnError(error, 'handleSubscriptionDeleted student')
 }
 
 async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string
   const inv = invoice as any // Type workaround for Stripe API changes
 
-  const { data: customer } = await getSupabaseAdmin()
+  const { data: customer, error: customerError } = await getSupabaseAdmin()
     .from('stripe_customers')
     .select('user_id')
     .eq('stripe_customer_id', customerId)
     .single()
 
+  if (customerError && !isNotFoundError(customerError)) {
+    console.error('DB error looking up customer for payment:', customerError)
+    throw new Error('DB error looking up customer for payment')
+  }
   if (!customer) {
     console.error('Customer not found for successful payment:', customerId)
     return
   }
 
-  await getSupabaseAdmin().from('stripe_payments').insert({
-    user_id: customer.user_id,
-    stripe_payment_intent_id: inv.payment_intent as string,
-    stripe_customer_id: customerId,
-    stripe_subscription_id: inv.subscription as string,
-    amount: invoice.amount_paid,
-    currency: invoice.currency,
-    status: 'succeeded',
-    description: invoice.description || `Invoice ${invoice.number}`,
-    receipt_url: invoice.hosted_invoice_url,
-  })
+  // Invoices without a PaymentIntent (e.g. free trials, £0 invoices) cannot
+  // be de-duped via stripe_payment_intent_id — skip recording them here.
+  // The subscription-change event carries the state that actually matters.
+  if (!inv.payment_intent) {
+    console.log('Skipping payment record for invoice with no payment_intent:', invoice.id)
+    return
+  }
+
+  // Upsert (not insert) on stripe_payment_intent_id so retried webhook
+  // deliveries for the same invoice are idempotent.
+  const { error } = await getSupabaseAdmin().from('stripe_payments').upsert(
+    {
+      user_id: customer.user_id,
+      stripe_payment_intent_id: inv.payment_intent as string,
+      stripe_customer_id: customerId,
+      stripe_subscription_id: inv.subscription as string,
+      amount: invoice.amount_paid,
+      currency: invoice.currency,
+      status: 'succeeded',
+      description: invoice.description || `Invoice ${invoice.number}`,
+      receipt_url: invoice.hosted_invoice_url,
+    },
+    { onConflict: 'stripe_payment_intent_id' }
+  )
+  throwOnError(error, 'handlePaymentSucceeded upsert')
 }
 
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string
   const inv = invoice as any // Type workaround for Stripe API changes
 
-  const { data: customer } = await getSupabaseAdmin()
+  const { data: customer, error: customerError } = await getSupabaseAdmin()
     .from('stripe_customers')
     .select('user_id')
     .eq('stripe_customer_id', customerId)
     .single()
 
+  if (customerError && !isNotFoundError(customerError)) {
+    console.error('DB error looking up customer for failed payment:', customerError)
+    throw new Error('DB error looking up customer for failed payment')
+  }
   if (!customer) {
     console.error('Customer not found for failed payment:', customerId)
     return
   }
 
-  await getSupabaseAdmin().from('stripe_payments').insert({
-    user_id: customer.user_id,
-    stripe_payment_intent_id: inv.payment_intent as string,
-    stripe_customer_id: customerId,
-    stripe_subscription_id: inv.subscription as string,
-    amount: invoice.amount_due,
-    currency: invoice.currency,
-    status: 'failed',
-    description: `Failed: ${invoice.description || `Invoice ${invoice.number}`}`,
-  })
+  if (!inv.payment_intent) {
+    console.log('Skipping payment record for failed invoice with no payment_intent:', invoice.id)
+    return
+  }
+
+  // Upsert (not insert) on stripe_payment_intent_id so retried webhook
+  // deliveries for the same invoice are idempotent.
+  const { error } = await getSupabaseAdmin().from('stripe_payments').upsert(
+    {
+      user_id: customer.user_id,
+      stripe_payment_intent_id: inv.payment_intent as string,
+      stripe_customer_id: customerId,
+      stripe_subscription_id: inv.subscription as string,
+      amount: invoice.amount_due,
+      currency: invoice.currency,
+      status: 'failed',
+      description: `Failed: ${invoice.description || `Invoice ${invoice.number}`}`,
+    },
+    { onConflict: 'stripe_payment_intent_id' }
+  )
+  throwOnError(error, 'handlePaymentFailed upsert')
 }
 
 async function handleProductChange(product: Stripe.Product) {
-  await getSupabaseAdmin().from('stripe_products').upsert(
+  const { error } = await getSupabaseAdmin().from('stripe_products').upsert(
     {
       stripe_product_id: product.id,
       name: product.name,
@@ -292,17 +352,23 @@ async function handleProductChange(product: Stripe.Product) {
     },
     { onConflict: 'stripe_product_id' }
   )
+  throwOnError(error, 'handleProductChange upsert')
 }
 
 async function handlePriceChange(price: Stripe.Price) {
   // Get product reference
-  const { data: product } = await getSupabaseAdmin()
+  const { data: product, error: productError } = await getSupabaseAdmin()
     .from('stripe_products')
     .select('id')
     .eq('stripe_product_id', price.product as string)
     .single()
 
-  await getSupabaseAdmin().from('stripe_prices').upsert(
+  if (productError && !isNotFoundError(productError)) {
+    console.error('DB error looking up product for price:', productError)
+    throw new Error('DB error looking up product for price')
+  }
+
+  const { error } = await getSupabaseAdmin().from('stripe_prices').upsert(
     {
       stripe_price_id: price.id,
       product_id: product?.id,
@@ -317,6 +383,7 @@ async function handlePriceChange(price: Stripe.Price) {
     },
     { onConflict: 'stripe_price_id' }
   )
+  throwOnError(error, 'handlePriceChange upsert')
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
@@ -329,7 +396,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     const tier = meta.tier === 'premium' ? 'premium' : 'standard'
     const subscriptionId = typeof session.subscription === 'string' ? session.subscription : null
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (getSupabaseAdmin() as any)
+    const { error } = await (getSupabaseAdmin() as any)
       .from('schools')
       .update({
         subscription_tier: tier,
@@ -338,6 +405,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         stripe_customer_id: session.customer as string,
       })
       .eq('id', meta.school_id)
+    throwOnError(error, 'handleCheckoutCompleted school update')
     return
   }
   // Student / other checkouts -- subscription webhook will handle the state.

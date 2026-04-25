@@ -2068,3 +2068,17 @@ Most recent session first.
   `<AuthorityShell>` wrapper which mounts the hook and renders the
   warning modal. The layout itself stays a server component so
   authority pages keep their `force-dynamic` server-rendering pattern.
+
+## 2026-04-25 P1 #6/#7 -- get_user_subscription search_path fix, webhook error handling
+
+- **Root cause of P1 #6:** `SET search_path TO ''` was applied as a security hardening step (archived migration `20260420000003`) but the function body was never updated to use schema-qualified references. Supabase with empty `search_path` cannot resolve unqualified relations -- every call raised `ERROR 42P01: relation "stripe_subscriptions" does not exist`. The `useSubscription` hook silently swallowed this as `{has_subscription: false}`, making all users appear unsubscribed. **Rule: when applying `SET search_path TO ''` to any existing SECURITY DEFINER function, immediately audit every relation reference in the body for schema qualification.**
+
+- **Webhook writes that discard `{ error }` cause permanent Stripe drift.** Nine write call sites in the webhook handler were discarding `{ data, error }`. RLS violations, FK violations, and DB errors all returned HTTP 200 to Stripe, which stopped retrying. Fix pattern: capture `{ error }`, throw on error (hits the outer try/catch which returns 500), log with context before throwing. Stripe retries on 5xx.
+
+- **Distinguish PGRST116 from real DB errors on `.single()` reads.** In the webhook, customer lookups that return no rows (PGRST116) should log and return early -- retrying won't help if the customer row genuinely doesn't exist. Real DB errors (connection failure, RLS deny, constraint) should throw so Stripe retries. Check `error.code === 'PGRST116'` before deciding.
+
+- **`stripe_payments` upsert is safe via existing UNIQUE(stripe_payment_intent_id).** No schema change needed for basic idempotency. Edge case: invoices without a `payment_intent` (free trials, £0) are excluded because Postgres allows multiple NULLs in a UNIQUE index. Guard with an explicit null check before the upsert. Full fix (add `stripe_invoice_id` UNIQUE column) is P2.
+
+- **React Query: throw to surface errors, don't return a safe default.** `useSubscription` was returning `{has_subscription: false}` on RPC failure, which is the same value as "no subscription" -- callers couldn't distinguish the two states. Throwing causes React Query to set `isError: true`; convenience wrappers should expose `isError` so callers can render an appropriate UI state rather than silently treating errors as "not subscribed".
+
+- **MCP timestamp drift happened again (5th consecutive session).** Local file `20260425160814`, remote applied `20260425160840`. Manual rename post-apply. The `scripts/apply-migration.sh` wrapper still doesn't cover MCP-applied migrations.
