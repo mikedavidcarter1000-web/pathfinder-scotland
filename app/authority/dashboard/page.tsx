@@ -16,6 +16,7 @@ import {
 } from '@/lib/authority/queries'
 import { getSubjectsTabData } from '@/lib/authority/subjects-queries'
 import { getEquityTabData } from '@/lib/authority/equity-queries'
+import { getCareersTabData } from '@/lib/authority/careers-queries'
 import { getLastMaterialisedViewRefresh } from '@/lib/authority/refresh-time'
 import { DashboardHeader } from '@/components/authority/dashboard-header'
 import { DashboardTabs } from '@/components/authority/dashboard-tabs'
@@ -23,6 +24,7 @@ import { DashboardFilterBar } from '@/components/authority/dashboard-filter-bar'
 import { OverviewTab } from '@/components/authority/tabs/overview-tab'
 import { SubjectsTab } from '@/components/authority/tabs/subjects-tab'
 import { EquityTab } from '@/components/authority/tabs/equity-tab'
+import { CareersTab } from '@/components/authority/tabs/careers-tab'
 import { PlaceholderTab } from '@/components/authority/tabs/placeholder-tab'
 
 export const dynamic = 'force-dynamic'
@@ -110,6 +112,13 @@ export default async function AuthorityDashboardPage({
       })()
     : null
 
+  const careersData = isVerified && tab === 'careers'
+    ? await (async () => {
+        const totalInScope = await countStudentsInScope(admin, scopedSchoolIds, filters)
+        return getCareersTabData(admin, authorityName, filters, scopedSchoolIds, totalInScope)
+      })()
+    : null
+
   return (
     <main style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
       {/* Top bar */}
@@ -130,6 +139,9 @@ export default async function AuthorityDashboardPage({
                 </Link>
                 <Link href="/authority/settings/staff" style={{ color: '#1d4ed8', fontSize: '0.875rem', textDecoration: 'none' }}>
                   Staff settings
+                </Link>
+                <Link href="/authority/settings/national-sharing" style={{ color: '#1d4ed8', fontSize: '0.875rem', textDecoration: 'none' }}>
+                  National sharing
                 </Link>
               </>
             )}
@@ -208,7 +220,13 @@ export default async function AuthorityDashboardPage({
                 totalSchoolsInLa={filterCtx.totalSchools}
               />
             )}
-            {tab !== 'overview' && tab !== 'subjects' && tab !== 'equity' && <PlaceholderTab tab={tab} />}
+            {tab === 'careers' && careersData && (
+              <CareersTab
+                data={careersData}
+                totalSchoolsInLa={filterCtx.totalSchools}
+              />
+            )}
+            {tab !== 'overview' && tab !== 'subjects' && tab !== 'equity' && tab !== 'careers' && <PlaceholderTab tab={tab} />}
           </>
         )}
       </div>

@@ -7,6 +7,73 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Authority-15 -- National tier foundation: tables, RLS, opt-in toggle, MVs, Challenge Authority flag
+
+- **`SET search_path = public` is not enough on SECURITY DEFINER -- pin
+  `pg_temp` last as well.** Three new helpers (`is_national_staff()`,
+  `is_national_admin()`, `create_national_staff()`) shipped with
+  `search_path = public`, mirroring older Pathfinder helpers. Codex
+  flagged the temp-table shadow class: an authenticated session that can
+  execute SQL can `CREATE TEMP TABLE national_staff(user_id uuid)` and
+  the function will resolve to that table first because pg_temp sits
+  ahead of `public` by default. Fix: `SET search_path = public, pg_temp`
+  on every SECURITY DEFINER function. Pathfinder has at least one prior
+  fix-up migration for the same issue
+  (`fix_get_user_subscription_search_path`); make this part of the
+  migration template, not a follow-up.
+
+- **`REVOKE ALL ON FUNCTION ... FROM PUBLIC` strips service_role too.**
+  The `create_national_staff` function shipped with the standard revoke,
+  intending to lock anon/authenticated out, but `service_role` doesn't
+  inherit EXECUTE from PUBLIC -- it loses the grant as well, and the API
+  RPC call from the admin client would 403. Fix: explicit
+  `GRANT EXECUTE ... TO service_role` after the revoke. Equivalent
+  pattern needed on every SECURITY DEFINER function called via
+  service-role RPC.
+
+- **API-level "duplicate exists?" check is racy without a UNIQUE
+  constraint.** First cut of POST /api/national/staff did a `SELECT id
+  FROM national_staff WHERE email = ?` then `INSERT`, with no UNIQUE on
+  the email column. Two concurrent calls both pass the SELECT and both
+  insert; nothing on the DB stops them. Fix: add the UNIQUE constraint
+  *and* keep the API check (so the 409 carries a friendly message
+  instead of a 500 from a constraint violation).
+
+- **A `WITH CHECK (is_*_staff())` insert policy on an audit log lets
+  any staff member forge audit rows.** `national_audit_log` originally
+  had `INSERT ... WITH CHECK (is_national_staff())` so the API-side
+  helper could log via the user session. But that means a national
+  analyst with a Supabase REST token could POST forged entries with
+  any `staff_id`. Audit logs already write through the service-role
+  admin client (`logNationalAction(admin, ...)`), so the policy was
+  pure attack surface. Fix: drop the INSERT policy. Service role
+  bypasses RLS; nothing else should write.
+
+- **MV opt-in filter must apply at view definition, not query time.**
+  `mv_national_subject_choices` and `mv_national_engagement` both bake
+  `WHERE la.share_national = true AND s.visible_to_authority = true`
+  into the materialised view. Tempting alternative: filter at the
+  query layer instead. Don't -- if any future query forgets the
+  filter, an opted-out LA's data is exposed. Filter at the view, fail
+  closed: when an LA toggles off, the next refresh removes their rows
+  entirely.
+
+- **Challenge Authority slugs in the live DB don't match the spec
+  prose.** Architecture spec mentions "Glasgow City" / "Dundee City";
+  the LA portal seed used `glasgow` and `dundee` as slugs. Always
+  query the live `local_authorities` table for slugs before writing
+  any seed UPDATE -- mismatched slugs produce zero affected rows and
+  the migration succeeds silently.
+
+- **Codex review caught all four issues pre-commit.** Same workflow as
+  Authority-6/7/13/14: write the migration + routes, run codex review
+  with read-only sandbox, fix findings via a follow-up hardening
+  migration before committing. P1 search_path drift, P1 service_role
+  EXECUTE drop, P2 email-race, P2 audit-forge -- all real, all worth
+  fixing. The hardening migration was applied as
+  `20260425222148_national_tier_security_hardening` and shipped in the
+  same commit.
+
 ## 2026-04-25 Authority-7 -- LA dashboard equity tab: SIMD gap, demographic groups, gender gap, WA tool usage
 
 - **Numerator suppression matters as much as denominator suppression on derived
