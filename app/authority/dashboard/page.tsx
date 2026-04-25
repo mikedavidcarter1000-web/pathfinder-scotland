@@ -15,12 +15,14 @@ import {
   loadSchoolFilterContext,
 } from '@/lib/authority/queries'
 import { getSubjectsTabData } from '@/lib/authority/subjects-queries'
+import { getEquityTabData } from '@/lib/authority/equity-queries'
 import { getLastMaterialisedViewRefresh } from '@/lib/authority/refresh-time'
 import { DashboardHeader } from '@/components/authority/dashboard-header'
 import { DashboardTabs } from '@/components/authority/dashboard-tabs'
 import { DashboardFilterBar } from '@/components/authority/dashboard-filter-bar'
 import { OverviewTab } from '@/components/authority/tabs/overview-tab'
 import { SubjectsTab } from '@/components/authority/tabs/subjects-tab'
+import { EquityTab } from '@/components/authority/tabs/equity-tab'
 import { PlaceholderTab } from '@/components/authority/tabs/placeholder-tab'
 
 export const dynamic = 'force-dynamic'
@@ -98,6 +100,13 @@ export default async function AuthorityDashboardPage({
     ? await (async () => {
         const totalInScope = await countStudentsInScope(admin, scopedSchoolIds, filters)
         return getSubjectsTabData(admin, authorityName, filters, scopedSchoolIds, totalInScope)
+      })()
+    : null
+
+  const equityData = isVerified && tab === 'equity'
+    ? await (async () => {
+        const totalInScope = await countStudentsInScope(admin, scopedSchoolIds, filters)
+        return getEquityTabData(admin, authorityName, filters, scopedSchoolIds, totalInScope)
       })()
     : null
 
@@ -193,7 +202,13 @@ export default async function AuthorityDashboardPage({
                 totalSchoolsInLa={filterCtx.totalSchools}
               />
             )}
-            {tab !== 'overview' && tab !== 'subjects' && <PlaceholderTab tab={tab} />}
+            {tab === 'equity' && equityData && (
+              <EquityTab
+                data={equityData}
+                totalSchoolsInLa={filterCtx.totalSchools}
+              />
+            )}
+            {tab !== 'overview' && tab !== 'subjects' && tab !== 'equity' && <PlaceholderTab tab={tab} />}
           </>
         )}
       </div>

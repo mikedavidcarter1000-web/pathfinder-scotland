@@ -7,6 +7,93 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Authority-7 -- LA dashboard equity tab: SIMD gap, demographic groups, gender gap, WA tool usage
+
+- **Numerator suppression matters as much as denominator suppression on derived
+  percentages.** First cut of `pctOfCohortWithSubject` /
+  `pctOfCohortWithEventCategory` returned raw `(count / cohort.length) * 100`
+  after pre-checking the cohort size at the call site. Codex flagged that with
+  cohort = 50 and matched-students = 4, the displayed 8% lets an observer
+  back-derive the suppressed numerator. **Rule:** any percentage with a
+  *numerator that itself counts students* must go through `safePercentage`
+  (which suppresses both sides). The cohort-size pre-check is necessary but
+  not sufficient -- it guards against denominator disclosure, not numerator
+  disclosure. Same incident pattern as Authority-6's `safePercentage` rollout.
+
+- **Secondary suppression on multi-cell rows.** A row that exposes a `total`
+  alongside individually-suppressed cells lets observers back-solve via
+  arithmetic: `total - (sum of visible cells) = suppressed cell`. Both the
+  per-school SIMD distribution (5 quintile cells + total) and the gender gap
+  table (male, female, other counts + total) had this leak. Fix: when ANY
+  cell in a row falls below threshold, suppress the total too -- and for SIMD,
+  suppress every quintile so the row degrades gracefully to "data partial".
+  **Rule:** any row that decomposes a population into two or more disjoint
+  cells with a visible total must apply secondary suppression -- if any cell
+  is `< 5`, the total goes too.
+
+- **Suppressed demographic groups must scrub the comparison cohort.** First
+  cut: when a demographic group cohort was `< 5`, the group's own fields
+  were nulled but `comparison_cohort_size` (the "everyone else" count) was
+  left in the payload. With `total_students` exposed elsewhere, an observer
+  could derive `group = total - comparison`. Fix: when group is suppressed,
+  return the full `emptyGroup()` payload -- both group and comparison
+  scrubbed. **Rule:** when the protected entity is suppressed, every
+  field that would let an observer back-derive it via subtraction must
+  also be scrubbed, not just the headline count.
+
+- **`mv_authority_engagement` does not carry demographic flags.** Only
+  `gender` and `simd_quintile`. So per-demographic-group engagement
+  metrics (engagement rate for care-experienced students etc.) cannot be
+  read from the MV at all -- they require reading `students.last_active_at`
+  + the demographic flag column directly, then aggregating in memory.
+  Documented as known gap. The MV could be extended in a future migration;
+  for now the equity-queries layer reads `students` and
+  `platform_engagement_log` directly for these metrics.
+
+- **`mv_authority_subject_choices` aliases the column names.** The MV
+  exposes `is_care_experienced`, `is_fsm_registered`, `is_eal` but
+  `students` actually has `care_experienced`, `receives_free_school_meals`,
+  `eal`. The MV definition does the rename via `... AS is_care_experienced`.
+  When writing equity queries that read the MV, use the MV's column names
+  (`is_*`); when reading `students` directly, use the underlying names.
+  Mixing them silently returns nothing.
+
+- **Modern languages set excludes English, ESOL, and Languages for Life and
+  Work Award.** The equity SIMD-gap "% choosing a modern language" metric
+  uses `MODERN_LANGUAGE_NAMES` = French, Spanish, German, Italian, Mandarin,
+  Gaelic (Learners), Gàidhlig, BSL. English is L1 (mother tongue), ESOL is
+  English-support, and the Languages for Life and Work Award is not a
+  single-language qualification. Latin is excluded because the spec talks
+  about *modern* languages.
+
+- **Per-student STEM membership cannot come from the MV.** The MV
+  pre-aggregates `student_count` per (school, subject, year, gender,
+  simd_quintile, flags) but a student appears in multiple rows (one per
+  subject), so we cannot determine "% of students who chose at least one
+  STEM subject" from the MV. Solution: query
+  `class_assignments JOIN class_students JOIN subjects JOIN curricular_areas`
+  directly to get per-student subject memberships, then aggregate in memory.
+  Same approach for modern languages.
+
+- **WA tool sniffing via event_detail substring is a stop-gap.** The
+  bursary, entitlement, and support categories have dedicated
+  `event_category` values, but widening-access pages use a free-text
+  `event_detail` field. `mapEventCategoryToTool` matches WA pages by
+  regex on `widening[-_ ]access|sw[a]p|reach|sumitup`. When real
+  engagement data starts flowing the regex will need verifying against
+  actual logged values; consider adding a dedicated `event_category`
+  for WA pages.
+
+- **Codex MCP review caught five P0 disclosure leaks pre-commit.** Same
+  workflow as Authority-6: write the queries, then run codex review with
+  `read-only` sandbox before committing. Five real findings (numerator
+  disclosure, demographic engagement %, SIMD secondary suppression,
+  gender gap secondary suppression, suppressed-group comparison-leak) all
+  fixed before commit. Two P1 / P2 findings (engagement window
+  intentionally split between 30d and 90d, defence-in-depth on
+  authority-scope predicates) reviewed and accepted as either by-design
+  or already mitigated by upstream `loadSchoolFilterContext`.
+
 ## 2026-04-25 Authority-14 -- LA Stripe subscriptions: pricing engine, checkout, webhooks, school tier bundling
 
 - **`local_authorities.subscription_status` CHECK does not include `'trial'`.**
