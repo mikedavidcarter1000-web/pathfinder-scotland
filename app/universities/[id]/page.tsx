@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useMemo } from 'react'
+import { use, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -21,6 +21,7 @@ import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import { UNIVERSITY_TYPES } from '@/lib/constants'
 import { UniversityRankingsSection } from '@/components/universities/rankings-section'
 import { UniversityLivingCostsSection } from '@/components/universities/living-costs-section'
+import { trackEngagement } from '@/lib/engagement/track'
 import type { Tables } from '@/types/database'
 
 type University = Tables<'universities'>
@@ -28,6 +29,9 @@ type Course = Tables<'courses'>
 
 export default function UniversityPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
+  useEffect(() => {
+    trackEngagement('page_view', 'university', id)
+  }, [id])
   const { data: university, isLoading, error, refetch } = useUniversity(id) as {
     data: University | null | undefined
     isLoading: boolean

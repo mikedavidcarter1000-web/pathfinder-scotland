@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
 import { slugOrIdColumn } from '@/lib/slug-or-id'
+import { trackEngagement } from '@/lib/engagement/track'
 import { useAuth } from './use-auth'
 import type { Tables, Enums } from '@/types/database'
 
@@ -151,8 +152,9 @@ export function useSaveCourse() {
       if (error) throw error
       return data as Tables<'saved_courses'>
     },
-    onSuccess: () => {
+    onSuccess: (_data, courseId) => {
       queryClient.invalidateQueries({ queryKey: ['saved-courses'] })
+      trackEngagement('course_save', 'university', courseId)
     },
   })
 }
@@ -175,8 +177,9 @@ export function useRemoveSavedCourse() {
 
       if (error) throw error
     },
-    onSuccess: () => {
+    onSuccess: (_data, courseId) => {
       queryClient.invalidateQueries({ queryKey: ['saved-courses'] })
+      trackEngagement('course_unsave', 'university', courseId)
     },
   })
 }

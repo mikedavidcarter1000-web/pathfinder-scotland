@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { FeedbackWidget } from '@/components/ui/feedback-widget'
 import { useComparisonWithCourses } from '@/hooks/use-comparison'
@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/loading-skeleton'
 import { calculateEligibility, type EligibilityDetail } from '@/hooks/use-course-matching'
 import { useQuery } from '@tanstack/react-query'
 import { getSupabaseClient } from '@/lib/supabase'
+import { trackEngagement } from '@/lib/engagement/track'
 import type { Tables } from '@/types/database'
 
 const ComparisonTable = dynamic(
@@ -66,6 +67,9 @@ function useRequirementsForCourses(courseIds: string[]) {
 }
 
 export default function ComparePage() {
+  useEffect(() => {
+    trackEngagement('tool_use', 'comparison', null)
+  }, [])
   const { courses, removeCourse, clearAll, isLoading, count, maxCourses } =
     useComparisonWithCourses()
   const gradeSummary = useGradeSummary()

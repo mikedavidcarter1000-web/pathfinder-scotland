@@ -22,6 +22,7 @@ import { SUBJECTS } from '@/lib/constants'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { useToast } from '@/components/ui/toast'
 import { FeedbackWidget } from '@/components/ui/feedback-widget'
+import { trackEngagement } from '@/lib/engagement/track'
 import type { Tables } from '@/types/database'
 
 export default function GradeSensitivityPage() {
@@ -61,6 +62,10 @@ function GradeSensitivityContent() {
   const { data: studentGrades } = useStudentGrades() as {
     data: Tables<'student_grades'>[] | undefined
   }
+
+  useEffect(() => {
+    trackEngagement('tool_use', 'tool', 'grade_sensitivity')
+  }, [])
 
   // Parse URL params for shared grades
   const urlGrades = useMemo<GradeEntry[] | null>(() => {

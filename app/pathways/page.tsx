@@ -26,6 +26,7 @@ import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { useToast } from '@/components/ui/toast'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { ParentNotice } from '@/components/ui/parent-notice'
+import { trackEngagement } from '@/lib/engagement/track'
 import type { Tables } from '@/types/database'
 
 type YearGoingInto = 's3' | 's4' | 's5' | 's6'
@@ -88,6 +89,10 @@ export default function PathwaysPage() {
 
 function PathwaysPageContent() {
   const searchParams = useSearchParams()
+
+  useEffect(() => {
+    trackEngagement('page_view', 'pathway', null)
+  }, [])
 
   // Optional entry from /discover/career-search → /pathways?suggest=id1,id2&sector=...&stage=s3
   // When present we highlight these subjects as "suggested for this career".
@@ -791,6 +796,7 @@ function PathwaysPageContent() {
                       academyRankings:
                         yearGoingInto === 's3' ? academyRankings : undefined,
                     })
+                    trackEngagement('pathway_action', 'pathway', currentTransition)
                     pfToast.success('Choices saved', 'Your subject plan is up to date.')
                   } catch (err) {
                     const message =

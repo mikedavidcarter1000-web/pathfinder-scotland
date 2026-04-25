@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, Suspense } from 'react'
+import { useEffect, useState, useMemo, Suspense } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/use-auth'
 import { useCurrentStudent, useStudentGrades, useUpdateGrade, useGradeSummary, useBulkUpsertGrades } from '@/hooks/use-student'
@@ -24,6 +24,7 @@ import { SchoolImportedResults } from '@/components/results-day/school-imported-
 import { ResultsDayDecisionTree } from '@/components/results-day/results-day-decision-tree'
 import { ResultsDayContacts } from '@/components/results-day/results-day-contacts'
 import { ResultsDayHelplines } from '@/components/results-day/results-day-helplines'
+import { trackEngagement } from '@/lib/engagement/track'
 
 type StudentGrade = Tables<'student_grades'>
 
@@ -46,6 +47,11 @@ const INITIAL_QUICK_GRADES: QuickGrade[] = Array.from({ length: 5 }, () => ({
 function ResultsDayContent() {
   const { user, isLoading: authLoading } = useAuth()
   const { data: student } = useCurrentStudent() as { data: Tables<'students'> | null | undefined }
+
+  useEffect(() => {
+    trackEngagement('tool_use', 'results_day', 'opened')
+  }, [])
+
   const { data: existingGrades, isLoading: gradesLoading } = useStudentGrades() as {
     data: StudentGrade[] | undefined
     isLoading: boolean

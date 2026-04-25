@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useColleges } from '@/hooks/use-colleges'
@@ -10,6 +10,7 @@ import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
+import { trackEngagement } from '@/lib/engagement/track'
 import type { Tables } from '@/types/database'
 
 type College = Tables<'colleges'>
@@ -40,6 +41,10 @@ export default function CollegesPage() {
   const { data: colleges, isLoading, error, refetch } = useColleges()
 
   useAuthErrorRedirect([error])
+
+  useEffect(() => {
+    trackEngagement('page_view', 'college', null)
+  }, [])
 
   // Client-side filtering to support search across name + course_areas
   const filteredColleges = useMemo(() => {

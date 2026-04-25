@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useMemo, useState } from 'react'
+import { use, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -23,6 +23,7 @@ import { HorizonRatings } from '@/components/careers/HorizonRatings'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import { FeedbackWidget } from '@/components/ui/feedback-widget'
+import { trackEngagement } from '@/lib/engagement/track'
 import type { CareerSector } from '@/hooks/use-subjects'
 
 type GrowthTone = 'growing' | 'stable' | 'variable'
@@ -254,6 +255,10 @@ export default function CareerSectorDetailPage({
   const { data, isLoading, error, refetch } = useCareerSectorPageData(sectorId)
 
   useAuthErrorRedirect([error])
+
+  useEffect(() => {
+    trackEngagement('page_view', 'career_sector', sectorId)
+  }, [sectorId])
 
   const coursesByUniversity = useMemo(() => {
     if (!data) return []

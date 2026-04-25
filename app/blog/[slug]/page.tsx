@@ -13,6 +13,7 @@ import {
 } from '@/lib/blog'
 import { ArticleContent } from '@/components/blog/article-content'
 import { ArticleFooter } from '@/components/blog/article-footer'
+import { TrackPageView } from '@/components/engagement/track-page-view'
 
 const SITE_URL = 'https://pathfinderscot.co.uk'
 
@@ -150,6 +151,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
   return (
     <div style={{ backgroundColor: 'var(--pf-blue-50)' }}>
+      <TrackPageView eventCategory="blog" eventDetail={article.slug} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}

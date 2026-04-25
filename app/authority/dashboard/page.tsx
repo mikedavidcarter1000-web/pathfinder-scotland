@@ -2,8 +2,66 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getAdminClient } from '@/lib/admin-auth'
+import {
+  calculateSchoolDataQuality,
+  type StudentWithDemographics,
+} from '@/lib/authority/data-quality'
 
 export const dynamic = 'force-dynamic'
+
+type AuthorityDataQualitySummary = {
+  total_students: number
+  schools_count: number
+  overall_score: 1 | 2 | 3 | 4 | 5
+  fields: ReturnType<typeof calculateSchoolDataQuality>['fields']
+}
+
+async function loadAuthorityDataQuality(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  admin: any,
+  authorityName: string,
+): Promise<AuthorityDataQualitySummary | null> {
+  const { data: schools } = await admin
+    .from('schools')
+    .select('id, name')
+    .eq('local_authority', authorityName)
+    .eq('visible_to_authority', true)
+
+  if (!schools || schools.length === 0) return null
+
+  const schoolIds = schools.map((s: { id: string }) => s.id)
+
+  const { data: students } = await admin
+    .from('students')
+    .select('id, gender, care_experienced, has_asn, receives_free_school_meals, eal, is_young_carer, ethnicity, student_type, demographic_source')
+    .in('school_id', schoolIds)
+
+  const rows = (students ?? []) as StudentWithDemographics[]
+  if (rows.length === 0) {
+    return {
+      total_students: 0,
+      schools_count: schools.length,
+      overall_score: 1,
+      fields: calculateSchoolDataQuality([]).fields,
+    }
+  }
+
+  const summary = calculateSchoolDataQuality(rows)
+  return {
+    total_students: summary.total_students,
+    schools_count: schools.length,
+    overall_score: summary.overall_score,
+    fields: summary.fields,
+  }
+}
+
+const SCORE_LABELS: Record<1 | 2 | 3 | 4 | 5, { label: string; bg: string; fg: string }> = {
+  5: { label: 'Excellent', bg: '#dcfce7', fg: '#166534' },
+  4: { label: 'Good', bg: '#d1fae5', fg: '#065f46' },
+  3: { label: 'Fair', bg: '#fef3c7', fg: '#92400e' },
+  2: { label: 'Limited', bg: '#fed7aa', fg: '#9a3412' },
+  1: { label: 'Sparse', bg: '#fee2e2', fg: '#991b1b' },
+}
 
 export default async function AuthorityDashboardPage({
   searchParams,
@@ -39,6 +97,10 @@ export default async function AuthorityDashboardPage({
 
   const isVerified = la?.verified ?? false
   const isAdmin = staff.role === 'la_admin'
+
+  const dataQuality = isVerified && la?.name
+    ? await loadAuthorityDataQuality(admin, la.name)
+    : null
 
   return (
     <main style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
@@ -106,6 +168,54 @@ export default async function AuthorityDashboardPage({
             ? `${la?.name} authority portal — ${la?.subscription_tier ?? 'trial'} plan`
             : `Your registration for ${la?.name} is pending verification.`}
         </p>
+
+        {isVerified && dataQuality && (
+          <div
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: '12px',
+              padding: '24px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+              marginBottom: '24px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', gap: '16px', flexWrap: 'wrap' }}>
+              <div>
+                <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1.125rem', margin: 0, color: '#1a1a2e' }}>
+                  Student data quality
+                </h2>
+                <p style={{ color: '#64748b', fontSize: '0.875rem', margin: '4px 0 0' }}>
+                  Aggregated across {dataQuality.schools_count} school{dataQuality.schools_count === 1 ? '' : 's'} ({dataQuality.total_students.toLocaleString('en-GB')} students)
+                </p>
+              </div>
+              <span
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 700,
+                  fontSize: '0.875rem',
+                  padding: '6px 12px',
+                  borderRadius: '999px',
+                  backgroundColor: SCORE_LABELS[dataQuality.overall_score].bg,
+                  color: SCORE_LABELS[dataQuality.overall_score].fg,
+                }}
+              >
+                {SCORE_LABELS[dataQuality.overall_score].label} ({dataQuality.overall_score}/5)
+              </span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '12px', marginTop: '16px' }}>
+              {Object.entries(dataQuality.fields).map(([field, stat]) => (
+                <div key={field} style={{ borderLeft: '3px solid #e2e8f0', paddingLeft: '12px' }}>
+                  <p style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>
+                    {field.replace(/_/g, ' ')}
+                  </p>
+                  <p style={{ fontSize: '1.125rem', fontWeight: 700, color: '#1a1a2e', margin: '4px 0 0', fontFamily: "'Space Grotesk', sans-serif" }}>
+                    {stat.pct}%
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {isVerified ? (
           /* Verified: show feature tiles */

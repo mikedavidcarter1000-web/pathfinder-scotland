@@ -526,3 +526,64 @@ Add a "Profile" link in the account area (Authority-3 or standalone session).
 
 `/school/import/demographics` has no entry point from `/school/import`.
 Add a card to the import hub page for demographics upload (Authority-3).
+
+---
+
+## LA Portal -- deferred from Authority-3 (2026-04-25)
+
+### Wire `resetEngagementContext()` into auth state changes
+
+`lib/engagement/track.ts` caches the current student/school context at
+module scope. On sign-in/sign-out the cache is stale until a page
+reload. `resetEngagementContext()` is exported and ready to call from
+`hooks/use-auth.tsx`'s `onAuthStateChange` handler. Low-impact while
+single-tenant pilot is one student per browser, but worth wiring before
+production traffic where a shared device (school library, careers
+adviser desk) could see two different students sign in back-to-back.
+
+### Schedule `flag_stale_offers` now that pg_cron is installed
+
+CLAUDE.md notes that `flag_stale_offers()` was authored but never
+scheduled because pg_cron was not installed on the project. As of
+Authority-3 the extension is live (migration `20260425150251`). A
+follow-up session can run a single `cron.schedule(...)` call to wire
+the weekly refresh that's been deferred since the offers hub shipped.
+
+### Materialised view refresh on first dashboard load
+
+Both `mv_authority_subject_choices` and `mv_authority_engagement` are
+empty until the next pg_cron tick. For a freshly-verified LA the
+dashboard will look empty for up to 6 hours. Two options for the
+next session: (a) trigger an immediate refresh from the server-side
+verify-LA admin route, (b) add a "refresh now" button for LA admins
+that hits a service-role endpoint.
+
+### Authority dashboard data-quality drill-down
+
+The dashboard now shows aggregated student data quality across all
+schools in the LA. A QIO drilling into a single school will want
+the same view scoped to that school -- `calculateSchoolDataQuality`
+already supports it but no per-school dashboard route exists.
+Authority-4 or later.
+
+### Remaining LA Portal entities (architecture section 5)
+
+`authority_saved_reports` and `authority_alerts` tables exist (created
+in Authority-1) but have no UI yet. `platform_engagement_log` was added
+in Authority-3. The schema side of section 5 is now complete; UI sits
+behind feature flags / placeholder tiles on the dashboard.
+
+### LA admin verification UI (still manual)
+
+Carried over from Authority-2. `/admin/authorities` still not built;
+manual verification via Supabase Studio remains the workflow. Worth
+addressing before any real LA pilot to avoid Pathfinder admin needing
+direct DB access.
+
+### Engagement tracking is anon-only -- not yet wired into school staff
+
+Staff and parents are not students and currently get no engagement log
+rows. This is correct for the LA dashboard scope (the spec only counts
+student engagement). Phase-2: a separate `staff_engagement_log` if
+school-side dashboards ever need to track teacher tool adoption per the
+"Teacher adoption" metric in section 3d of the architecture doc.

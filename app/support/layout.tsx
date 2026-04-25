@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { FeedbackWidget } from '@/components/ui/feedback-widget'
+import { SupportPageTracker } from '@/components/engagement/support-page-tracker'
 
 export const metadata: Metadata = {
   title: 'Support',
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export default function SupportLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      <SupportPageTracker />
       {children}
       <FeedbackWidget />
     </>

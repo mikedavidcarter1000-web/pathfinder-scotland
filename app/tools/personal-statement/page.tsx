@@ -1,10 +1,14 @@
 'use client'
 
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { FeedbackWidget } from '@/components/ui/feedback-widget'
 import { PersonalStatementClient } from './personal-statement-client'
+import { trackEngagement } from '@/lib/engagement/track'
 
 export default function PersonalStatementPage() {
+  useEffect(() => {
+    trackEngagement('tool_use', 'personal_statement', 'started')
+  }, [])
   return (
     <>
       <Suspense fallback={<PageLoading />}>

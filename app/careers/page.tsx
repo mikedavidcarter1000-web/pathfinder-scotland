@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCareerSectors, type CareerSectorWithCount } from '@/hooks/use-subjects'
@@ -9,6 +9,7 @@ import { ErrorState } from '@/components/ui/error-state'
 import { AiImpactBadge } from '@/components/ui/ai-impact-badge'
 import { AI_IMPACT_META, isAiImpactRating, type AiImpactRating } from '@/lib/constants'
 import { classifyError } from '@/lib/errors'
+import { trackEngagement } from '@/lib/engagement/track'
 import {
   classifyRemoteWork,
   getCareerRealitiesBySectorName,
@@ -48,6 +49,10 @@ export default function CareersIndexPage() {
   const [search, setSearch] = useState('')
   const [aiFilter, setAiFilter] = useState<AiFilter>('all')
   const [sortByAi, setSortByAi] = useState(false)
+
+  useEffect(() => {
+    trackEngagement('page_view', 'career_sector', null)
+  }, [])
 
   const filtered = useMemo(() => {
     if (!sectors) return []

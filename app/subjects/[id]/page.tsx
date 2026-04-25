@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useMemo } from 'react'
+import { use, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import {
   useSubjectDetail,
@@ -25,6 +25,7 @@ import { ErrorState } from '@/components/ui/error-state'
 import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
+import { trackEngagement } from '@/lib/engagement/track'
 import type { Tables } from '@/types/database'
 
 type StudentGrade = Tables<'student_grades'>
@@ -60,6 +61,9 @@ type PathwayStep = {
 
 export default function SubjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
+  useEffect(() => {
+    trackEngagement('page_view', 'subject', id)
+  }, [id])
   const { data: subject, isLoading, error, refetch } = useSubjectDetail(id)
   const { data: studentGrades } = useStudentGrades() as { data: StudentGrade[] | undefined }
   const { data: careerRoles } = useSubjectCareerRoles(id)

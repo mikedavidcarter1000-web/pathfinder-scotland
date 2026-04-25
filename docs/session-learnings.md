@@ -1901,3 +1901,86 @@ Most recent session first.
   should never invent new students -- it updates matched records or skips.
   Unmatched SCNs become warnings, not errors, so the import still reports useful
   partial results.
+
+## 2026-04-25 Authority-3 -- Platform engagement logging, materialised views, pg_cron
+
+- The architecture spec's `subject_choices` table doesn't exist. Subject
+  enrolment in Pathfinder lives in `class_assignments`
+  (school_id, subject_id, year_group, academic_year) joined to
+  `class_students` (class_assignment_id, student_id). The materialised view
+  `mv_authority_subject_choices` was rewritten against this real schema.
+  Always validate spec table names against `information_schema.tables`
+  before authoring a materialised view -- the spec aged faster than the
+  schema this time.
+
+- `subjects.category` doesn't exist either; the equivalent is
+  `curricular_areas.name` joined via `subjects.curricular_area_id`. Same
+  pattern -- read the schema first.
+
+- Student demographic columns use legacy names: `care_experienced` (not
+  `is_care_experienced`), `receives_free_school_meals` (not
+  `is_fsm_registered`), `eal` (not `is_eal`). The Authority-2 deferral
+  lesson applies again -- audit existing columns before adding new ones
+  or renaming references in views. The materialised view aliases the
+  legacy names back to spec names so downstream dashboards aren't tied
+  to schema-archaeology decisions.
+
+- `NULLS NOT DISTINCT` (PG 15+) is the right tool for unique indexes
+  spanning nullable demographic columns on a materialised view. PG 17 is
+  in use here, so the index just works. Without it, every NULL would be
+  considered unique, and `REFRESH MATERIALIZED VIEW CONCURRENTLY` would
+  silently fail to dedupe rows that ought to collapse together.
+
+- pg_cron scheduling pattern: wrap `cron.schedule` in a `DO $$ ...
+  IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = X) THEN
+  PERFORM cron.unschedule(X); END IF; END $$;` block so the migration
+  is idempotent. `cron.schedule` itself errors on duplicate names if
+  rerun, which would block re-applying the migration after a cadence
+  tweak.
+
+- pg_cron extension was AVAILABLE on the project but NOT installed
+  before this session. `CREATE EXTENSION IF NOT EXISTS pg_cron` enables
+  it; nothing further was needed beyond Supabase's default privileges.
+  This unblocked the offers-hub `flag_stale_offers` weekly-refresh
+  scheduling that was deferred in CLAUDE.md -- worth wiring that up in
+  a follow-up session now that the extension is live.
+
+- Server-component-friendly tracking pattern: the `<TrackPageView>`
+  client component fires `trackEngagement` from `useEffect` on mount.
+  Drop into a server-rendered page without converting it to a client
+  component. For client pages, calling `trackEngagement(...)` directly
+  inside a `useEffect` is fine. Both paths share the same debounce
+  state via the `lib/engagement/track.ts` module.
+
+- Layout-level pathname trackers beat per-page instrumentation when
+  every page in a section needs the same shape of event. The 14
+  `/support/[group]` sub-pages were instrumented in one file change
+  via a `<SupportPageTracker>` mounted in the support layout that
+  reads `usePathname` and emits `resource_view` with the slug.
+
+- Engagement tracker context cache: the student/school lookup is
+  cached at module scope. `resetEngagementContext()` is exported for
+  the auth state-change handler to call on sign-in/sign-out -- not
+  yet wired, but the hook is there for the next session that touches
+  `use-auth.tsx`. Without it, a sign-out -> sign-in as a different
+  student would reuse the previous student's school_id until the page
+  reloaded.
+
+- MCP `apply_migration` tool produces a different timestamp than the
+  drafted local filename for the third session in a row. Renamed the
+  three local files to match the remote applied versions
+  (20260425145353, 20260425150156, 20260425150251). The
+  `scripts/apply-migration.sh` wrapper handles this for `supabase db
+  push` but not the MCP path -- the deferred backlog item from
+  Schools-9 is still unresolved.
+
+- `tsc --noEmit` and `npm run build` both clean on this session. The
+  Turbopack OOM noted in Authority-1 didn't recur; build completed in
+  a single run.
+
+- Authority layout was missing entirely. The previous session left
+  `useIdleTimeout` built but unmounted. Solution: thin
+  `app/authority/layout.tsx` that delegates to a client
+  `<AuthorityShell>` wrapper which mounts the hook and renders the
+  warning modal. The layout itself stays a server component so
+  authority pages keep their `force-dynamic` server-rendering pattern.

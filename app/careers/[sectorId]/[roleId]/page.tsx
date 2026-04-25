@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { CompareCareerButton } from '@/components/careers/compare-career-button'
 import { HorizonRatings } from '@/components/careers/HorizonRatings'
+import { TrackPageView } from '@/components/engagement/track-page-view'
 import { getAnonSupabase } from '@/lib/supabase-public'
 import type { Database } from '@/types/database'
 
@@ -114,6 +115,7 @@ export default async function RoleDetailPage({
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
+      <TrackPageView eventType="career_explore" eventCategory="career_role" eventDetail={role.id} />
       {role.image_url && (
         <div
           className="relative w-full"

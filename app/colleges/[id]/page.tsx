@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useMemo } from 'react'
+import { use, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { useCollege, useCollegeArticulation, type ArticulationWithUniversity } from '@/hooks/use-colleges'
 import { Skeleton } from '@/components/ui/loading-skeleton'
@@ -9,6 +9,7 @@ import { InstitutionHero } from '@/components/ui/institution-hero'
 import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
+import { trackEngagement } from '@/lib/engagement/track'
 import type { Tables, Json } from '@/types/database'
 
 type College = Tables<'colleges'>
@@ -21,6 +22,9 @@ type Campus = {
 
 export default function CollegeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
+  useEffect(() => {
+    trackEngagement('page_view', 'college', id)
+  }, [id])
   const { data: college, isLoading, error, refetch } = useCollege(id)
   const { data: articulation, isLoading: articulationLoading } = useCollegeArticulation(id)
 

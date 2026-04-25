@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useUniversitiesWithStats, useUniversityCities } from '@/hooks/use-universities'
 import { UniversityCard } from '@/components/ui/university-card'
 import { UniversityCardSkeleton } from '@/components/ui/loading-skeletons'
@@ -10,6 +10,7 @@ import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
 import { UNIVERSITY_TYPES } from '@/lib/constants'
+import { trackEngagement } from '@/lib/engagement/track'
 
 export default function UniversitiesPage() {
   const [typeFilter, setTypeFilter] = useState<string>('')
@@ -19,6 +20,10 @@ export default function UniversitiesPage() {
   const cities = useUniversityCities()
 
   useAuthErrorRedirect([error])
+
+  useEffect(() => {
+    trackEngagement('page_view', 'university', null)
+  }, [])
 
   const filteredUniversities = universities?.filter((uni) => {
     if (typeFilter && uni.type !== typeFilter) return false

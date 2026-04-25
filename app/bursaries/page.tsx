@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { BursariesClient } from './bursaries-client'
+import { TrackPageView } from '@/components/engagement/track-page-view'
 import type { Bursary, BursaryMatch, StudentMatchRow, StudentProfile } from './types'
 
 export const metadata: Metadata = {
@@ -60,7 +61,12 @@ export default async function BursariesPage() {
   const bursaries: Bursary[] = (bursariesData ?? []) as Bursary[]
 
   if (!user) {
-    return <BursariesClient loggedIn={false} bursaries={bursaries} />
+    return (
+      <>
+        <TrackPageView eventType="tool_use" eventCategory="bursary" />
+        <BursariesClient loggedIn={false} bursaries={bursaries} />
+      </>
+    )
   }
 
   const { data: profile } = await sb
@@ -109,14 +115,17 @@ export default async function BursariesPage() {
   } : null
 
   return (
-    <BursariesClient
-      loggedIn={true}
-      bursaries={bursaries}
-      matches={matches}
-      matchStatuses={statusByBursary}
-      missingProfile={deriveMissingProfile(profileData)}
-      matchError={matchError}
-      studentProfile={studentProfile}
-    />
+    <>
+      <TrackPageView eventType="tool_use" eventCategory="bursary" />
+      <BursariesClient
+        loggedIn={true}
+        bursaries={bursaries}
+        matches={matches}
+        matchStatuses={statusByBursary}
+        missingProfile={deriveMissingProfile(profileData)}
+        matchError={matchError}
+        studentProfile={studentProfile}
+      />
+    </>
   )
 }

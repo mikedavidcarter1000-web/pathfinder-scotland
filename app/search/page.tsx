@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useSearch } from '@/hooks/use-search'
 import type { SubjectWithArea } from '@/app/api/search/route'
 import { CourseCard } from '@/components/ui/course-card'
 import { UniversityCard } from '@/components/ui/university-card'
+import { trackEngagement } from '@/lib/engagement/track'
 import type { Tables } from '@/types/database'
 
 type SearchTab = 'all' | 'subjects' | 'courses' | 'universities' | 'careers'
@@ -47,6 +48,18 @@ export default function SearchPage() {
 
   useEffect(() => {
     setQuery(initialQuery)
+  }, [initialQuery])
+
+  // Log a single search event per submitted query (one per ?q= change),
+  // not on every keystroke. The hub debounces queries at the search-bar
+  // level, so /search?q=... carries the user-confirmed query.
+  const lastLoggedQueryRef = useRef<string | null>(null)
+  useEffect(() => {
+    const trimmed = initialQuery.trim()
+    if (trimmed.length < 2) return
+    if (lastLoggedQueryRef.current === trimmed) return
+    lastLoggedQueryRef.current = trimmed
+    trackEngagement('search', 'search', trimmed.slice(0, 200))
   }, [initialQuery])
 
   const subjects = useMemo(() => data?.subjects ?? [], [data])

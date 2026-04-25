@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 import { useAuth } from '@/hooks/use-auth'
 import { useStudentGrades } from '@/hooks/use-student'
 import { FeedbackWidget } from '@/components/ui/feedback-widget'
+import { trackEngagement } from '@/lib/engagement/track'
 import type { Tables } from '@/types/database'
 
 // UCAS tariff points for Scottish qualifications — current as at 2024-25.
@@ -70,6 +71,10 @@ function CalculatorContent() {
   const [rows, setRows] = useState<Row[]>([emptyRow()])
   const [prefillOffered, setPrefillOffered] = useState(false)
   const [prefillDismissed, setPrefillDismissed] = useState(false)
+
+  useEffect(() => {
+    trackEngagement('tool_use', 'tool', 'ucas_calculator')
+  }, [])
 
   // Offer to pre-fill once grades are loaded
   useEffect(() => {

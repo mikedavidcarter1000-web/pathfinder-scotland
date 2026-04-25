@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, Suspense } from 'react'
+import { useEffect, useState, useMemo, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useSubjects, useCurricularAreas, useCareerSectors } from '@/hooks/use-subjects'
@@ -12,6 +12,7 @@ import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
 import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
 import { classifyError } from '@/lib/errors'
 import { useAuthErrorRedirect } from '@/hooks/use-auth-error-redirect'
+import { trackEngagement } from '@/lib/engagement/track'
 
 type LevelFilter = 'all' | QualificationLevel
 
@@ -27,6 +28,10 @@ const LEVEL_BUTTONS: Array<{ value: LevelFilter; label: string; ariaLabel: strin
 function SubjectsPageContent() {
   const searchParams = useSearchParams()
   const careerSectorParam = searchParams.get('career_sector') || ''
+
+  useEffect(() => {
+    trackEngagement('page_view', 'subject', null)
+  }, [])
 
   const [search, setSearch] = useState('')
   const [areaId, setAreaId] = useState('')

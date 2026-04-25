@@ -15,6 +15,7 @@ import {
   type CourseRequirementRow,
 } from '@/hooks/use-course-matching'
 import { getSupabaseClient } from '@/lib/supabase'
+import { trackEngagement } from '@/lib/engagement/track'
 import { EmptyState, EmptyStateIcons } from '@/components/ui/empty-state'
 import { ErrorState } from '@/components/ui/error-state'
 import { ParentNotice } from '@/components/ui/parent-notice'
@@ -155,6 +156,11 @@ function CompareSubjectsContent() {
   const searchParams = useSearchParams()
   const { user } = useAuth()
   const { data: student } = useCurrentStudent() as { data: Student | null | undefined }
+
+  useEffect(() => {
+    trackEngagement('tool_use', 'comparison', null)
+  }, [])
+
   const { data: studentGrades } = useStudentGrades() as { data: StudentGrade[] | undefined }
   const gradeSummary = useGradeSummary()
   const toast = useToast()
