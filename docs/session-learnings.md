@@ -1860,3 +1860,44 @@ Most recent session first.
 
 - 32 Scottish LAs confirmed seeded from the migration. No separate seed
   script needed. Verified via execute_sql COUNT(*) = 32.
+
+## 2026-04-25 Authority-2 -- Student demographic flags, SEEMIS import, guidance flagging, self-declaration
+
+- Audit existing columns before speccing a migration. The task spec listed
+  is_care_experienced, is_fsm_registered, is_eal as new columns but the DB
+  already had care_experienced, receives_free_school_meals, eal. Adding
+  duplicate columns with different names would have created a split schema.
+  Always run the information_schema.columns query before writing any ALTER
+  TABLE that adds flags to a high-traffic table.
+
+- autoMatch hint strings must be pre-normalized. The autoMatch() helper
+  normalises candidate headers with s.toLowerCase().replace(/[^a-z0-9]+/g, '').
+  Hint arrays must therefore be written in the same form (no spaces, no
+  underscores, lowercase). Hints like 'care_experienced' or 'young_carer'
+  would never match; 'careexperienced' and 'youngcarer' are correct.
+
+- Dedicated demographics endpoint over extending an existing payload. Rather
+  than growing the ProfilePayload returned by /api/school/guidance/student/[id],
+  a separate /api/school/guidance/demographics/[studentId] route was created.
+  This keeps the caseload fetch hot-path unchanged and scopes the canViewSensitiveFlags
+  gate cleanly to its own route. Prefer narrow endpoints over fat payloads
+  when a feature has its own permission gate.
+
+- demographic_source escalation: four states form a DAG, not a simple counter.
+  null → self_declared or guidance_teacher (first writer wins direction).
+  seemis_import → mixed (any human edit after an import creates mixed).
+  guidance_teacher or mixed → unchanged (human edits don't degrade each other).
+  self_declared + guidance_teacher can both reach mixed. Encode this as explicit
+  if/else rather than a generic state machine; the logic is simple enough to read.
+
+- Student-facing API auth pattern differs from school-staff pattern. Account
+  routes (/api/account/*) must use createServerClient with the ANON key +
+  cookies, then call supabase.auth.getUser(). Never use the service-role admin
+  client or requireSchoolStaffApi for student-facing routes. Pattern confirmed
+  by existing /api/account/export-data route.
+
+- runDemographicImport never creates stub students. Unlike runPupilImport which
+  creates a minimal student record on name fallback, a demographics-only import
+  should never invent new students -- it updates matched records or skips.
+  Unmatched SCNs become warnings, not errors, so the import still reports useful
+  partial results.

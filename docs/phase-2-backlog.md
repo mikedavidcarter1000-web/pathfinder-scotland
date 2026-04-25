@@ -497,3 +497,32 @@ Architecture doc (Section 10e) specifies a founding-LA tier (first 3
 LAs get 12 months free). Needs a `founding_la boolean DEFAULT false`
 column on `local_authorities` and Stripe subscription logic to honour
 it. Defer to Authority-14 (Stripe session per the build plan).
+
+### Authority-2 deferred items
+
+#### `calculateSchoolDataQuality` not yet wired into LA dashboard
+
+`lib/authority/data-quality.ts` is implemented and tested at build time,
+but no LA-facing route or dashboard component consumes it yet. Wire into
+the Authority dashboard (student data quality panel) in Authority-3.
+
+#### Idle-timeout hook still unwired in authority layout (carried from Authority-1)
+
+`hooks/use-idle-timeout.tsx` exists but is not mounted in any layout wrapper
+for `/authority/**` routes. Add to a client layout boundary in Authority-3.
+
+#### LA admin verification UI still manual
+
+`/admin/authorities` route for verify/reject still not built. Manual
+Supabase Studio workaround remains. Authority-3.
+
+#### `/account/profile` not linked from account nav
+
+The profile page (`/account/profile`) exists and works but is not surfaced
+in the account navigation sidebar or the saved-comparisons page nav.
+Add a "Profile" link in the account area (Authority-3 or standalone session).
+
+#### SEEMIS import: no link from school/import hub
+
+`/school/import/demographics` has no entry point from `/school/import`.
+Add a card to the import hub page for demographics upload (Authority-3).
