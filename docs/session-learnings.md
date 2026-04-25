@@ -7,6 +7,90 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Career role card image fallback -- onError handler for broken URLs
+
+- **The root bug:** `next/image` components that render a truthy `image_url` with no `onError` handler show a broken-image browser icon when the file is missing. The existing fallback (letter initial) only fired when `image_url` was `null` — not when the URL was set but the file didn't exist on disk.
+
+- **Fix pattern:** extract a `RoleImageBlock` component with `useState(false)` for `imgFailed`. Render the letter fallback when `!src || imgFailed`; render the `<Image>` with `onError={() => setImgFailed(true)}` otherwise. The component accepts `fallbackBg`, `fallbackColor`, and `borderRadius` props so it can be reused across the two card styles (example-jobs blue palette, new-AI-roles green palette) without hardcoding colours.
+
+- **Two affected render sites in the same file:** `app/careers/[sectorId]/page.tsx` renders role images in both the "Example careers" section (inside a `map()` using an `imageBlock` variable) and the `NewAiRolesSection` component. Both are now routed through `RoleImageBlock`. The per-item `useState` is safe inside a `map()` as long as the parent `key` prop is stable, which it is (`key={job}` and `key={role.id}`).
+
+- **`borderRadius` on wrapper div must match the fallback div.** The example-jobs cards need `12px 12px 0 0` on the image container so the image clips to the card's top corners. Passing `borderRadius` as a prop keeps both the fallback div and the image wrapper in sync.
+
+- **Build OOM is a pre-existing machine-level constraint, not a code issue.** `npx tsc --noEmit` (with `--max-old-space-size=4096`) and `npx eslint` on the edited file both passed cleanly. The `next build` worker hits OOM on this machine regardless of the change. Tsc + eslint are the actionable quality gates here.
+
+## 2026-04-25 Authority-4 -- Academic year utilities, term dates config, get_academic_year SQL function
+
+- **`EXTRACT(YEAR/MONTH FROM timestamptz)` is STABLE, not IMMUTABLE.** The
+  first cut of `get_academic_year(TIMESTAMPTZ)` was marked `IMMUTABLE`
+  because the body looked deterministic, but `EXTRACT` on a timestamptz
+  silently depends on the session `TimeZone` GUC. Boundary events near
+  midnight UTC could land in the wrong academic year (a pageview at
+  2026-08-01 00:30 Europe/London = 2026-07-31 23:30 UTC would be
+  bucketed as 2025-26 under a UTC session). Fix shipped in
+  `20260425154714_fix_academic_year_function_tz.sql`: change to
+  `STABLE`, pin via `(d AT TIME ZONE 'Europe/London')::date`, add
+  `RETURNS NULL ON NULL INPUT`. **Rule: any time a SQL function takes
+  a `timestamptz` and reasons about calendar fields, pin the timezone
+  conversion explicitly. The function's volatility category should
+  reflect the underlying ops, not the apparent purity of the body.**
+
+- **Codex MCP second-opinion catches the high-value bugs.** Six of the
+  eight findings on the Authority-4 diff (timezone-dependent IMMUTABLE,
+  cron race window, shape-only date validation, suffix-rollover
+  validation, term-window-vs-AY constraint, missing try/finally) were
+  real and worth fixing. Two were false positives: the DO-block
+  `END $$;` syntax (already valid PG) and the `←` arrow in the UI (a
+  project convention, not an ASCII-violation). **Rule on triaging
+  Codex output: keep findings that change behaviour or close a real
+  attack surface; skip findings that flag project conventions or
+  compete with the real PG grammar.**
+
+- **Four independent `currentAcademicYear()` implementations exist
+  across the codebase, with three different formats:** `2025/26` in
+  `lib/school/cpd.ts` and `lib/school/dyw.ts`, `2025-26` in
+  `lib/school/import-parsing.ts`, and `2025/2026` in three
+  `app/school/...` page-level helpers. The new `lib/academic-year.ts`
+  uses the canonical hyphen format from the architecture spec but
+  doesn't reconcile the legacy callers (out of scope for this session).
+  Logged in `docs/phase-2-backlog.md` for a focused dedup pass.
+
+- **Materialised view recreation pattern: unschedule cron FIRST, do
+  DDL, reschedule LAST.** First-cut migration recreated the view
+  before unscheduling the refresh job, leaving a real (if narrow) race
+  window where `cron.schedule` could fire against a half-rebuilt view.
+  Reordered in the follow-up migration. **Rule: any DDL that drops
+  and recreates a materialised view should bracket itself with cron
+  unschedule -> DDL -> cron reschedule, in that order.**
+
+- **MCP timestamp drift on migration files happened a 4th consecutive
+  session.** `20260425153018` -> `20260425153131` for the first
+  migration, `20260425154630` -> `20260425154714` for the follow-up.
+  Manual rename both times. The `scripts/apply-migration.sh` wrapper
+  still doesn't cover the MCP path. Same backlog item as Authority-3.
+
+- **Materialised view columns don't appear in `information_schema.columns`.**
+  Used `pg_attribute` joined to `pg_class` instead. Pattern:
+  `SELECT attname, format_type(atttypid, atttypmod) FROM pg_attribute
+   WHERE attrelid = 'public.<view>'::regclass AND attnum > 0 AND NOT
+   attisdropped ORDER BY attnum`. Worth remembering for any future
+   view introspection.
+
+- **C: drive at 100% capacity caused intermittent Node OOMs on
+  `tsc --noEmit` and `eslint`.** First lint run completed clean
+  (exit 0); subsequent ones failed in NewSpace allocation despite a
+  heap bump. Workaround: `TMPDIR=D:/tmp-pf TMP=... TEMP=... NODE_OPTIONS="--max-old-space-size=8192"`.
+  Same intermittent OOM noted in Authority-1; root cause this time was
+  disk pressure on `%TEMP%`, not Turbopack. Real fix is to free space
+  on C:; redirecting TMP is a one-session unblock.
+
+- **`getAcademicYearDates()` doubles as an academic-year-key
+  validator.** The term-dates API route reuses it inside a try/catch
+  to reject `2025-27` (suffix rollover) without a separate validator.
+  The library helper covers shape, range, and suffix logic in one
+  call. Pattern worth repeating elsewhere when validating string
+  primary keys.
+
 ## 2026-04-25 Career role images -- 311 CC0 Pixabay photos, image_url column, UI integration
 
 **What shipped:**

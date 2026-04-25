@@ -6,6 +6,7 @@ import {
   calculateSchoolDataQuality,
   type StudentWithDemographics,
 } from '@/lib/authority/data-quality'
+import { DashboardYearFilter } from '@/components/authority/dashboard-year-filter'
 
 export const dynamic = 'force-dynamic'
 
@@ -116,9 +117,14 @@ export default async function AuthorityDashboardPage({
           </div>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
             {isAdmin && (
-              <Link href="/authority/settings/staff" style={{ color: 'var(--pf-blue-700, #1d4ed8)', fontSize: '0.875rem', textDecoration: 'none' }}>
-                Staff settings
-              </Link>
+              <>
+                <Link href="/authority/settings/term-dates" style={{ color: 'var(--pf-blue-700, #1d4ed8)', fontSize: '0.875rem', textDecoration: 'none' }}>
+                  Term dates
+                </Link>
+                <Link href="/authority/settings/staff" style={{ color: 'var(--pf-blue-700, #1d4ed8)', fontSize: '0.875rem', textDecoration: 'none' }}>
+                  Staff settings
+                </Link>
+              </>
             )}
             <Link href="/api/auth/signout" style={{ color: '#64748b', fontSize: '0.875rem', textDecoration: 'none' }}>
               Sign out
@@ -168,6 +174,8 @@ export default async function AuthorityDashboardPage({
             ? `${la?.name} authority portal — ${la?.subscription_tier ?? 'trial'} plan`
             : `Your registration for ${la?.name} is pending verification.`}
         </p>
+
+        {isVerified && <DashboardYearFilter />}
 
         {isVerified && dataQuality && (
           <div

@@ -513,33 +513,15 @@ export default function CareerSectorDetailPage({
               {exampleJobs.map((job) => {
                 const matchedRoleSlug = findRoleIdForExample(job)
                 const roleImage = matchedRoleSlug ? (roleImageBySlug.get(matchedRoleSlug) ?? null) : null
-                const imageBlock = roleImage ? (
-                  <div style={{ position: 'relative', height: '140px', overflow: 'hidden', borderRadius: '12px 12px 0 0' }}>
-                    <Image
-                      src={roleImage}
-                      alt={job}
-                      width={640}
-                      height={427}
-                      className="object-cover"
-                      style={{ width: '100%', height: '100%' }}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      height: '140px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'var(--pf-blue-50)',
-                      borderRadius: '12px 12px 0 0',
-                      fontSize: '2.5rem',
-                      fontWeight: 700,
-                      color: 'var(--pf-blue-300)',
-                    }}
-                  >
-                    {job.trim()[0]}
-                  </div>
+                const imageBlock = (
+                  <RoleImageBlock
+                    src={roleImage}
+                    alt={job}
+                    letter={job.trim()[0]}
+                    fallbackBg="var(--pf-blue-50)"
+                    fallbackColor="var(--pf-blue-300)"
+                    borderRadius="12px 12px 0 0"
+                  />
                 )
                 const textContent = (
                   <div style={{ padding: '16px 20px' }}>
@@ -832,6 +814,58 @@ export default function CareerSectorDetailPage({
         </section>
       </div>
       <FeedbackWidget />
+    </div>
+  )
+}
+
+function RoleImageBlock({
+  src,
+  alt,
+  letter,
+  fallbackBg,
+  fallbackColor,
+  borderRadius,
+}: {
+  src: string | null
+  alt: string
+  letter: string
+  fallbackBg: string
+  fallbackColor: string
+  borderRadius?: string
+}) {
+  const [imgFailed, setImgFailed] = useState(false)
+
+  if (!src || imgFailed) {
+    return (
+      <div
+        style={{
+          height: '140px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: fallbackBg,
+          borderRadius,
+          fontSize: '2.5rem',
+          fontWeight: 700,
+          color: fallbackColor,
+        }}
+      >
+        {letter}
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ position: 'relative', height: '140px', overflow: 'hidden', borderRadius }}>
+      <Image
+        src={src}
+        alt={alt}
+        width={640}
+        height={427}
+        className="object-cover"
+        style={{ width: '100%', height: '100%' }}
+        onError={() => setImgFailed(true)}
+      />
     </div>
   )
 }
@@ -1657,33 +1691,13 @@ function NewAiRolesSection({ roles, sectorSlug }: { roles: CareerRole[]; sectorS
               backgroundColor: 'rgba(16, 185, 129, 0.04)',
             }}
           >
-            {role.image_url ? (
-              <div style={{ position: 'relative', height: '140px', overflow: 'hidden' }}>
-                <Image
-                  src={role.image_url}
-                  alt={role.title}
-                  width={640}
-                  height={427}
-                  className="object-cover"
-                  style={{ width: '100%', height: '100%' }}
-                />
-              </div>
-            ) : (
-              <div
-                style={{
-                  height: '140px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                  fontSize: '2.5rem',
-                  fontWeight: 700,
-                  color: 'var(--pf-green-500)',
-                }}
-              >
-                {role.title.trim()[0]}
-              </div>
-            )}
+            <RoleImageBlock
+              src={role.image_url ?? null}
+              alt={role.title}
+              letter={role.title.trim()[0]}
+              fallbackBg="rgba(16, 185, 129, 0.08)"
+              fallbackColor="var(--pf-green-500)"
+            />
             <div style={{ padding: '18px 20px' }}>
             <h4
               style={{

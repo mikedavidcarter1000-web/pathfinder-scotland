@@ -587,3 +587,33 @@ rows. This is correct for the LA dashboard scope (the spec only counts
 student engagement). Phase-2: a separate `staff_engagement_log` if
 school-side dashboards ever need to track teacher tool adoption per the
 "Teacher adoption" metric in section 3d of the architecture doc.
+
+### Reconcile the four `currentAcademicYear()` implementations
+
+Authority-4 added `lib/academic-year.ts` as the canonical source of
+truth using the architecture-spec `YYYY-YY` hyphen format. Four
+pre-existing helpers still ship their own format-divergent versions:
+
+- `lib/school/cpd.ts` and `lib/school/dyw.ts` -> `2025/26` (slash, 2-digit suffix)
+- `lib/school/import-parsing.ts` -> `2025-26` (hyphen, matches the new module)
+- `app/school/tracking/page.tsx`, `app/school/tracking/classes/new/page.tsx`,
+  `app/school/choices/new/page.tsx` -> `2025/2026` (slash, 4-digit)
+
+The slash variants persist data into `attendance_records.academic_year`,
+`class_assignments.academic_year`, `bursaries.academic_year`,
+`tracking_cycles.academic_year` etc. as text. A reconciliation pass
+needs to (a) decide on the canonical format (default: hyphen, matching
+the new module + architecture spec), (b) backfill existing rows in
+each affected table, (c) replace the four legacy helpers with imports
+from `lib/academic-year`. Risk: the school-portal CPD / DYW filters
+may break mid-migration if data and code aren't backfilled together.
+
+### Backfill engagement view's academic_year column for historical events
+
+`get_academic_year` now buckets engagement events by Edinburgh-local
+academic year, but events logged before
+`20260425154714_fix_academic_year_function_tz` were grouped under the
+old (UTC-evaluated) function. The materialised view was rebuilt from
+scratch in the same migration, so the live data is consistent with
+the new function. No backfill needed today, but worth a sanity check
+when the view first carries production volume across an Aug 1 boundary.
