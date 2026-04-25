@@ -449,3 +449,51 @@ Two pages now exist: `/support/difficult-circumstances` (narrative tone, helplin
 
 The new `ResultsDayDecisionTree` is a manual chooser. The existing `AdviceCard` block in the same page auto-detects an outcome from `predicted vs actual` grade comparison. Phase-2: when a logged-in student enters their actual results, pre-select the matching radio in the decision tree so they don't have to repeat the choice. Avoid making it irreversible -- students may want to explore other branches.
 
+
+---
+
+## LA Portal -- deferred from Authority-1 (2026-04-25)
+
+### Idle timeout wiring to authority layout
+
+`hooks/use-idle-timeout.tsx` is built (8h timeout, 5-min warning modal,
+signOut + redirect on expiry) but not wired into any layout. Need a
+client layout wrapper covering `/authority/dashboard` and
+`/authority/settings/**` routes that mounts the hook with `enabled`
+when the user has an active session. Authority-2.
+
+### QIO school assignment UI
+
+The schema supports QIOs being assigned to a subset of schools
+(`authority_staff` has `assigned_school_ids uuid[]`) but there is no UI
+to set this from the staff management page. Authority-2.
+
+### Additional tables from architecture spec not yet built
+
+Architecture doc (Section 5) specifies three tables not yet created:
+- `authority_saved_reports` -- QIO/analyst saved report configs
+- `authority_alerts` -- configured alert rules per LA
+- `platform_engagement_log` -- LA-level event log for audit trail
+
+Build these in Authority-3 alongside the dashboard metrics feature.
+
+### LA verification admin route
+
+LAs register but verification is manual (Pathfinder admin must flip
+`local_authorities.verified = true` directly in Supabase Studio).
+Architecture spec calls for a `/admin/authorities` admin route with
+verify/reject actions. Build in Authority-2 alongside the dashboard.
+
+### `visible_to_authority` boolean on schools table
+
+Architecture doc (Section 2e) specifies schools can opt out of LA
+visibility via a `visible_to_authority boolean DEFAULT true` column on
+the `schools` table. Column does not yet exist. Add in Authority-2
+migration alongside dashboard query implementation.
+
+### Founding LA pilot programme flag
+
+Architecture doc (Section 10e) specifies a founding-LA tier (first 3
+LAs get 12 months free). Needs a `founding_la boolean DEFAULT false`
+column on `local_authorities` and Stripe subscription logic to honour
+it. Defer to Authority-14 (Stripe session per the build plan).

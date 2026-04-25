@@ -1807,3 +1807,56 @@ Most recent session first.
   Scottish equivalents (SSSC, Criminal Justice Social Work). Future 
   research prep for regulated professions should explicitly request 
   Scotland-specific detail up front.
+
+## 2026-04-25 Authority-1 -- LA portal foundation
+
+- Read the architecture spec before writing any marketing or pricing
+  copy. The /for-authorities page was written with placeholder pricing
+  (£5k base + £250-175/school) before the architecture doc was read.
+  Correct pricing is £5k base + £1,500/£1,250/£1,000 per-school tiers.
+  The comparison table also named the wrong competitors (MWoW, SDS
+  Skillsbridge) instead of the tools LA education teams actually use
+  (Insight, SEEMIS, LGBF). Always read docs/architecture/* before
+  writing public-facing copy for a new product area.
+
+- Turbopack OOM on production builds. `npm run build` crashed with
+  `memory allocation of 1572864 bytes failed` from the Rust allocator
+  (Turbopack). Workaround: use `npx tsc --noEmit` for type checking
+  during dev. The build job was re-run later and succeeded (exit code 0)
+  so the issue is intermittent. Do not treat a single OOM as a type
+  error -- verify by running tsc separately.
+
+- `useSearchParams()` requires a Suspense boundary in Next.js App
+  Router client components. The /authority/join page uses
+  useSearchParams for the token parameter; wrapping the inner form
+  component in <Suspense fallback={...}> is required or Next.js throws
+  at build time. Pattern: extract the component that calls
+  useSearchParams into a separate inner component and wrap it.
+
+- Invite-based account creation: use
+  admin.auth.admin.createUser({ email_confirm: true }) so the new user
+  is immediately active without needing an email confirmation step.
+  This is correct for invite flows where the admin has already
+  validated the email address via the invitation. If the subsequent
+  authority_staff insert fails, roll back with
+  admin.auth.admin.deleteUser(userId) to avoid orphaned auth users.
+
+- LA email domain validation is advisory, not a hard block. Several
+  Scottish LAs use non-.gov.uk domains (e.g. @ea.e-renfrew.sch.uk,
+  @highland.gov.uk varies by service). The isOfficialCouncilDomain()
+  helper shows an amber warning, not a rejection. Never hard-block on
+  domain pattern for Scottish councils -- the variation is too high.
+
+- SECURITY DEFINER on my_authority_id() is load-bearing. The function
+  reads authority_staff (RLS-protected) to return the caller's
+  authority_id. Without SECURITY DEFINER the function cannot bypass
+  RLS and returns null for all callers. The pattern mirrors
+  my_school_id() from the schools portal.
+
+- idle-timeout hook wiring: the hook is built (hooks/use-idle-timeout.tsx)
+  but NOT wired into any layout yet. It must be added to a client
+  layout wrapper that wraps /authority/dashboard and settings routes.
+  Deferred to Authority-2.
+
+- 32 Scottish LAs confirmed seeded from the migration. No separate seed
+  script needed. Verified via execute_sql COUNT(*) = 32.
