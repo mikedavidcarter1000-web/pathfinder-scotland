@@ -7,6 +7,80 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Authority-5 -- LA dashboard shell, tabs + URL filter state, overview tab, school scorecards
+
+- **Pattern: URL-state for tabs + filters via a single `use-authority-filters`
+  hook.** The hook reads search params, parses + validates them server-side
+  via `parseAuthorityFilters` / `parseDashboardTab`, and re-serialises via
+  `serializeAuthorityFilters` so default values (current AY, full term, empty
+  arrays) drop out of the URL. `router.replace(...)` with `scroll: false`
+  inside `startTransition` keeps the page in place when filters change. Tabs
+  are bookmarkable by the same mechanism (`?tab=...`), and the filter bar is
+  shared across all tabs without prop drilling.
+
+- **Defence-in-depth on PostgREST filter strings: don't ever interpolate user
+  input into `.or()`.** First cut of the school detail page used
+  `.or(`seed_code.eq.${seedCode},id.eq.${seedCode}`)` gated by a UUID-shape
+  regex. The regex would have prevented comma injection in practice, but
+  `/security-review` flagged it (confidence 8) on principle. Replaced with
+  two parameterised `.eq()` queries (id then seed_code fallback) — two
+  round-trips is fine for a dynamic page and the filter values never touch
+  the query string interpolation path again.
+
+- **Service-role client bypasses RLS, so authority + QIO scope must be
+  enforced explicitly in the application layer.** The dashboard query path
+  goes through `getAdminClient()` (service-role) for read perf reasons. Three
+  places enforce scope: (1) `loadSchoolFilterContext` filters schools to
+  `local_authority = authorityName AND visible_to_authority = true`, (2)
+  `resolveSchoolScope` intersects the URL-supplied selection with the
+  caller-visible school list AND the QIO `assigned_school_ids`, (3) every
+  query in `lib/authority/queries.ts` adds `.eq('local_authority', ...)`
+  AND `.in('school_id', scopedSchoolIds)`. Drop any one of those and you
+  open a cross-LA leak via `?schools=<other-LA-uuid>`.
+
+- **Statistical disclosure control as a one-liner: `formatCohortValue()` /
+  `applyDisclosureToArray()`.** Suppressing cohorts < 5 is a hard requirement
+  from section 6b of the architecture. Centralising it in
+  `lib/authority/disclosure.ts` means every metric card, table cell, and
+  chart goes through the same helper; the suppression label (`< 5`) and
+  threshold (5) live in one place. Chart data uses `mode: 'drop'` so
+  suppressed rows are not plotted; tabular data could use `mode: 'mask'`
+  later if a row's label has standalone meaning.
+
+- **MV refresh timestamp via SECURITY DEFINER function.** PostgREST does not
+  expose the `cron` schema, so the dashboard header's "Data refreshed X"
+  line could not be sourced directly. Added
+  `public.get_last_authority_mv_refresh()` (SECURITY DEFINER, STABLE,
+  pinned `search_path = public, cron, pg_temp`) returning `MAX(end_time)`
+  across the two refresh jobs. Granted EXECUTE only to `authenticated` and
+  `service_role`. Returns NULL when the cron job has never succeeded;
+  header shows "awaiting first refresh" in that case.
+
+- **MCP timestamp drift, fifth consecutive session.** Local file drafted as
+  `20260425192353`; MCP recorded version `20260425192411`. Manual rename
+  after `list_migrations`. The wrapper script still doesn't cover MCP.
+
+- **Recharts tooltip `formatter` typing on v3.8 wants `any`-typed args.**
+  Strict `(value: number, _name, entry)` triggers TS2322 because the recharts
+  3.x typings declare the formatter as
+  `Formatter<ValueType, NameType> & ((value, name, item, index, payload) => ...)`
+  and `ValueType` is `string | number | (string | number)[] | undefined`.
+  Pragmatic fix: take the args as `any` with eslint-disable. Same pattern
+  elsewhere in the codebase (see `compare/NumericBar.tsx`).
+
+- **`is_uuid_like` regex in URL parsing must be the exact 36-char UUID
+  pattern.** Loose patterns like `/^[a-f0-9-]+$/i` would match an attacker
+  payload that contained dashes and hex characters (`abc-d-e-f`). The
+  `parseAuthorityFilters` helper enforces the full
+  `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}` shape on
+  every entry of `?schools=`; `.in('school_id', filtered)` only fires
+  against UUID-shape values.
+
+- **Existing `dashboard-year-filter.tsx` component had local-state-only AY
+  selection, deleted.** Authority-4 shipped it as a placeholder; Authority-5's
+  shared filter bar owns AY now via URL state, so the file is no longer
+  imported. Removed cleanly.
+
 ## 2026-04-25 example_jobs alignment -- 103 mismatches resolved across 19 sectors
 
 - **Root cause of 103/190 mismatches:** `career_sectors.example_jobs` was originally
