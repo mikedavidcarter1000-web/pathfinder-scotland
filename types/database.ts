@@ -496,6 +496,7 @@ export type Database = {
           created_at: string | null
           growth_outlook: string | null
           id: string
+          image_url: string | null
           is_new_ai_role: boolean | null
           maturity_tier: 'foundational' | 'intermediate' | 'specialised' | null
           robotics_description: string | null
@@ -523,6 +524,7 @@ export type Database = {
           created_at?: string | null
           growth_outlook?: string | null
           id?: string
+          image_url?: string | null
           is_new_ai_role?: boolean | null
           maturity_tier?: 'foundational' | 'intermediate' | 'specialised' | null
           robotics_description?: string | null
@@ -550,6 +552,7 @@ export type Database = {
           created_at?: string | null
           growth_outlook?: string | null
           id?: string
+          image_url?: string | null
           is_new_ai_role?: boolean | null
           maturity_tier?: 'foundational' | 'intermediate' | 'specialised' | null
           robotics_description?: string | null

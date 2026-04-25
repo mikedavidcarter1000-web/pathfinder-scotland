@@ -338,6 +338,14 @@ export default function CareerSectorDetailPage({
     }
   }, [data])
 
+  const roleImageBySlug = useMemo(() => {
+    const map = new Map<string, string | null>()
+    for (const r of data?.career_roles ?? []) {
+      map.set(r.slug, r.image_url ?? null)
+    }
+    return map
+  }, [data])
+
   if (isLoading) {
     return (
       <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
@@ -499,8 +507,37 @@ export default function CareerSectorDetailPage({
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {exampleJobs.map((job) => {
                 const matchedRoleSlug = findRoleIdForExample(job)
-                const cardInner = (
-                  <>
+                const roleImage = matchedRoleSlug ? (roleImageBySlug.get(matchedRoleSlug) ?? null) : null
+                const imageBlock = roleImage ? (
+                  <div style={{ position: 'relative', height: '140px', overflow: 'hidden', borderRadius: '12px 12px 0 0' }}>
+                    <Image
+                      src={roleImage}
+                      alt={job}
+                      width={640}
+                      height={427}
+                      className="object-cover"
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      height: '140px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'var(--pf-blue-50)',
+                      borderRadius: '12px 12px 0 0',
+                      fontSize: '2.5rem',
+                      fontWeight: 700,
+                      color: 'var(--pf-blue-300)',
+                    }}
+                  >
+                    {job.trim()[0]}
+                  </div>
+                )
+                const textContent = (
+                  <div style={{ padding: '16px 20px' }}>
                     <h3
                       style={{
                         fontSize: '0.9375rem',
@@ -518,7 +555,7 @@ export default function CareerSectorDetailPage({
                       }}
                       dangerouslySetInnerHTML={{ __html: getJobBlurb(job) }}
                     />
-                  </>
+                  </div>
                 )
                 if (matchedRoleSlug) {
                   return (
@@ -526,16 +563,18 @@ export default function CareerSectorDetailPage({
                       key={job}
                       href={`/careers/${sector.slug}/${matchedRoleSlug}`}
                       className="pf-card-hover no-underline hover:no-underline"
-                      style={{ padding: '16px 20px', color: 'var(--pf-grey-900)' }}
+                      style={{ padding: 0, overflow: 'hidden', color: 'var(--pf-grey-900)' }}
                       aria-label={`Read more about ${job}`}
                     >
-                      {cardInner}
+                      {imageBlock}
+                      {textContent}
                     </Link>
                   )
                 }
                 return (
-                  <div key={job} className="pf-card" style={{ padding: '16px 20px' }}>
-                    {cardInner}
+                  <div key={job} className="pf-card" style={{ padding: 0, overflow: 'hidden' }}>
+                    {imageBlock}
+                    {textContent}
                   </div>
                 )
               })}
@@ -1608,11 +1647,39 @@ function NewAiRolesSection({ roles, sectorSlug }: { roles: CareerRole[]; sectorS
             key={role.id}
             className="pf-card"
             style={{
-              padding: '18px 20px',
+              overflow: 'hidden',
               borderTop: '3px solid var(--pf-green-500)',
               backgroundColor: 'rgba(16, 185, 129, 0.04)',
             }}
           >
+            {role.image_url ? (
+              <div style={{ position: 'relative', height: '140px', overflow: 'hidden' }}>
+                <Image
+                  src={role.image_url}
+                  alt={role.title}
+                  width={640}
+                  height={427}
+                  className="object-cover"
+                  style={{ width: '100%', height: '100%' }}
+                />
+              </div>
+            ) : (
+              <div
+                style={{
+                  height: '140px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
+                  color: 'var(--pf-green-500)',
+                }}
+              >
+                {role.title.trim()[0]}
+              </div>
+            )}
+            <div style={{ padding: '18px 20px' }}>
             <h4
               style={{
                 fontFamily: "'Space Grotesk', sans-serif",
@@ -1664,6 +1731,7 @@ function NewAiRolesSection({ roles, sectorSlug }: { roles: CareerRole[]; sectorS
                   up to £{role.salary_experienced.toLocaleString('en-GB')}
                 </span>
               )}
+            </div>
             </div>
           </div>
         ))}

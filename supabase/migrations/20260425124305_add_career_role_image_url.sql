@@ -1,0 +1,1 @@
+ALTER TABLE career_roles ADD COLUMN IF NOT EXISTS image_url TEXT;

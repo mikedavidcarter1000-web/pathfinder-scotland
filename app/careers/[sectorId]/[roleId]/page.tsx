@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
@@ -113,6 +114,25 @@ export default async function RoleDetailPage({
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pf-blue-50)' }}>
+      {role.image_url && (
+        <div
+          className="relative w-full"
+          style={{
+            height: 'clamp(180px, 26vw, 280px)',
+            backgroundColor: 'var(--pf-blue-100)',
+            overflow: 'hidden',
+          }}
+        >
+          <Image
+            src={role.image_url}
+            alt={role.title}
+            fill
+            priority
+            sizes="100vw"
+            style={{ objectFit: 'cover' }}
+          />
+        </div>
+      )}
       {/* Section 1 + 2 — Breadcrumb + Hero */}
       <div style={{ backgroundColor: 'var(--pf-white)' }}>
         <div className="pf-container pt-8 pb-6 sm:pt-10 sm:pb-8">
