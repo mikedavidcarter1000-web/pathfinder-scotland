@@ -12,13 +12,15 @@ export async function PUT(req: Request) {
     name?: unknown
     postcode?: unknown
     localAuthority?: unknown
+    visibleToAuthority?: unknown
   } | null
   if (!body) return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
 
-  const update: Record<string, string> = {}
+  const update: Record<string, unknown> = {}
   if (typeof body.name === 'string' && body.name.trim()) update.name = body.name.trim()
   if (typeof body.postcode === 'string') update.postcode = body.postcode.trim()
   if (typeof body.localAuthority === 'string') update.local_authority = body.localAuthority.trim()
+  if (typeof body.visibleToAuthority === 'boolean') update.visible_to_authority = body.visibleToAuthority
 
   if (Object.keys(update).length === 0) {
     return NextResponse.json({ error: 'Nothing to update.' }, { status: 400 })

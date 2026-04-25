@@ -25,6 +25,7 @@ import {
   SQA_HINTS,
   TRANSITION_HINTS,
   DESTINATION_HINTS,
+  DEMOGRAPHICS_HINTS,
   type ColumnMap,
   type ImportSummary,
 } from './import-parsing'
@@ -62,6 +63,23 @@ export function autoMapDestinations(headers: string[]): ColumnMap {
   const out: ColumnMap = {}
   for (const [field, hints] of Object.entries(DESTINATION_HINTS)) out[field] = autoMatch(headers, hints)
   return out
+}
+export function autoMapDemographics(headers: string[]): ColumnMap {
+  const out: ColumnMap = {}
+  for (const [field, hints] of Object.entries(DEMOGRAPHICS_HINTS)) out[field] = autoMatch(headers, hints)
+  return out
+}
+
+function normaliseGender(v: string | undefined | null): string | null {
+  if (!v) return null
+  const s = String(v).trim()
+  if (!s) return null
+  const l = s.toLowerCase()
+  if (['m', 'male', 'boy', 'man'].includes(l)) return 'male'
+  if (['f', 'female', 'girl', 'woman'].includes(l)) return 'female'
+  if (['nb', 'non-binary', 'nonbinary', 'non binary', 'x'].includes(l)) return 'non_binary'
+  if (['not stated', 'not known', 'unknown', 'prefer not to say', 'prefer_not_to_say'].includes(l)) return 'prefer_not_to_say'
+  return s
 }
 
 export function cellAt(row: Record<string, string>, map: ColumnMap, field: string): string {
@@ -209,6 +227,10 @@ export async function runPupilImport(
     if (eal != null) updates.eal = eal
     if (asn != null) updates.has_asn = asn
     if (lac != null) updates.care_experienced = lac
+    if (fsm != null || eal != null || asn != null || lac != null) {
+      updates.demographic_source = 'seemis_import'
+      updates.demographic_updated_at = new Date().toISOString()
+    }
 
     const match = existing.get(scn)
     if (match) {
@@ -1020,7 +1042,123 @@ export function mapDestinationType(raw: string):
 }
 
 // ------------------------------------------------------------------
-// 7. Re-match unmatched records (by SCN)
+// 7. Demographics-only import (SEEMIS supplemental extract)
+// ------------------------------------------------------------------
+
+export type DemographicImportInput = {
+  headers: string[]
+  rows: Record<string, string>[]
+  map: ColumnMap
+  schoolId: string
+  staffId: string
+  fileName: string
+}
+
+export async function runDemographicImport(
+  admin: SupabaseClient,
+  input: DemographicImportInput,
+): Promise<ImportSummary & { importId: string | null }> {
+  const summary = emptySummary()
+  summary.rowCount = input.rows.length
+
+  // SCN is strongly preferred; name fallback is supported.
+  const scns = input.rows
+    .map((r) => cellAt(r, input.map, 'scn'))
+    .filter((s) => s)
+  const existing = await loadStudentsByScn(admin, scns)
+  const fallbackNameList = await loadStudentsByName(admin, input.schoolId)
+
+  const now = new Date().toISOString()
+
+  for (let i = 0; i < input.rows.length; i++) {
+    const rowNum = i + 2
+    const row = input.rows[i]
+    const scn = cellAt(row, input.map, 'scn')
+    const forename = cellAt(row, input.map, 'forename')
+    const surname = cellAt(row, input.map, 'surname')
+
+    // Resolve student
+    let studentId: string | null = null
+    if (scn) {
+      const s = existing.get(scn)
+      if (s) studentId = s.id
+    }
+    if (!studentId && forename && surname) {
+      const hit = fallbackNameList.find((s) =>
+        nameMatches({ firstName: s.first_name, lastName: s.last_name }, `${forename} ${surname}`),
+      )
+      if (hit) {
+        studentId = hit.id
+        summary.warnings.push({ row: rowNum, message: `Matched by name (no SCN): ${forename} ${surname}` })
+      }
+    }
+    if (!studentId) {
+      summary.warnings.push({ row: rowNum, message: scn ? `No student for SCN ${scn}` : 'No SCN and name did not match; skipping' })
+      summary.skipped++
+      continue
+    }
+
+    const gender = normaliseGender(cellAt(row, input.map, 'gender'))
+    const fsm = normaliseBool(cellAt(row, input.map, 'fsm'))
+    const asn = normaliseBool(cellAt(row, input.map, 'asn'))
+    const lac = normaliseBool(cellAt(row, input.map, 'care_experienced'))
+    const eal = normaliseBool(cellAt(row, input.map, 'eal'))
+    const youngCarer = normaliseBool(cellAt(row, input.map, 'young_carer'))
+    const ethnicity = cellAt(row, input.map, 'ethnicity') || null
+
+    const updates: Record<string, any> = {
+      demographic_source: 'seemis_import',
+      demographic_updated_at: now,
+    }
+    if (gender != null) updates.gender = gender
+    if (fsm != null) updates.receives_free_school_meals = fsm
+    if (asn != null) updates.has_asn = asn
+    if (lac != null) updates.care_experienced = lac
+    if (eal != null) updates.eal = eal
+    if (youngCarer != null) updates.is_young_carer = youngCarer
+    if (ethnicity) updates.ethnicity = ethnicity
+
+    if (Object.keys(updates).length === 2) {
+      // Only the source/timestamp fields — nothing meaningful to update
+      summary.warnings.push({ row: rowNum, message: 'No demographic fields mapped for this row; skipping' })
+      summary.skipped++
+      continue
+    }
+
+    const { error } = await (admin as any).from('students').update(updates).eq('id', studentId)
+    if (error) {
+      summary.errors.push({ row: rowNum, message: `Update failed: ${error.message}` })
+      summary.errorCount++
+      continue
+    }
+    summary.updated++
+    summary.matched++
+  }
+
+  const { data: importRow } = await (admin as any)
+    .from('seemis_imports')
+    .insert({
+      school_id: input.schoolId,
+      import_type: 'demographics',
+      imported_by: input.staffId,
+      file_name: input.fileName,
+      row_count: summary.rowCount,
+      matched_count: summary.matched,
+      created_count: 0,
+      skipped_count: summary.skipped,
+      error_count: summary.errorCount,
+      errors: summary.errors,
+      warnings: summary.warnings,
+      notes: { updated: summary.updated },
+    })
+    .select('id')
+    .single()
+
+  return { ...summary, importId: importRow?.id ?? null }
+}
+
+// ------------------------------------------------------------------
+// 8. Re-match unmatched records (by SCN)
 // ------------------------------------------------------------------
 
 export async function rematchUnmatched(admin: SupabaseClient, schoolId: string): Promise<{ sqa: number; destinations: number; transitions: number }> {

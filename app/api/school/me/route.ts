@@ -12,7 +12,7 @@ export async function GET() {
   const { data: school } = await (admin as any)
     .from('schools')
     .select(
-      'id, name, slug, local_authority, postcode, school_type, subscription_status, subscription_tier, is_founding_school, trial_started_at, trial_expires_at, stripe_customer_id, stripe_subscription_id'
+      'id, name, slug, local_authority, postcode, school_type, subscription_status, subscription_tier, is_founding_school, trial_started_at, trial_expires_at, stripe_customer_id, stripe_subscription_id, visible_to_authority'
     )
     .eq('id', ctx.schoolId)
     .maybeSingle()

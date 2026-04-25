@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { ShanarriRadar } from '@/components/school-guidance/shanarri-radar'
 import { InterventionForm } from '@/components/school-guidance/intervention-form'
 
-type TabKey = 'overview' | 'interventions' | 'tracking' | 'wellbeing' | 'safeguarding' | 'asn' | 'placements' | 'notes'
+type TabKey = 'overview' | 'interventions' | 'tracking' | 'wellbeing' | 'safeguarding' | 'asn' | 'placements' | 'notes' | 'demographics'
 
 type ProfilePayload = {
   canViewSafeguarding: boolean
@@ -255,6 +255,9 @@ export default function StudentProfilePage() {
         <TabButton active={tab === 'asn'} onClick={() => setTab('asn')}>ASN ({payload.asn.length})</TabButton>
         <TabButton active={tab === 'placements'} onClick={() => setTab('placements')}>Placements</TabButton>
         <TabButton active={tab === 'notes'} onClick={() => setTab('notes')}>Notes</TabButton>
+        {payload.canViewSensitiveFlags && (
+          <TabButton active={tab === 'demographics'} onClick={() => setTab('demographics')}>Demographics</TabButton>
+        )}
       </div>
 
       {tab === 'overview' && <OverviewTab payload={payload} />}
@@ -271,6 +274,9 @@ export default function StudentProfilePage() {
       {tab === 'asn' && <AsnTab payload={payload} studentId={student.id} onRefetch={refetch} />}
       {tab === 'placements' && <PlacementsTab studentId={student.id} />}
       {tab === 'notes' && <NotesTab />}
+      {tab === 'demographics' && payload.canViewSensitiveFlags && (
+        <DemographicsTab studentId={student.id} />
+      )}
 
       {showInterventionForm && (
         <InterventionForm
@@ -963,6 +969,147 @@ function PsProgressRow({ label, len }: { label: string; len: number }) {
       <span style={{ color: '#666' }}>
         {len.toLocaleString()} chars — {status}
       </span>
+    </div>
+  )
+}
+
+type DemographicData = {
+  gender: string | null
+  careExperienced: boolean | null
+  hasAsn: boolean | null
+  fsm: boolean | null
+  eal: boolean | null
+  isYoungCarer: boolean | null
+  isHomeEducated: boolean | null
+  studentType: string | null
+  ethnicity: string | null
+  demographicSource: string | null
+  demographicUpdatedAt: string | null
+}
+
+const STUDENT_TYPES = [
+  { value: 'mainstream', label: 'Mainstream' },
+  { value: 'home_educated', label: 'Home educated' },
+  { value: 'part_time', label: 'Part-time' },
+  { value: 'flexible', label: 'Flexible' },
+  { value: 'alternative_provision', label: 'Alternative provision' },
+]
+
+function DemographicsTab({ studentId }: { studentId: string }) {
+  const [data, setData] = useState<DemographicData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [saveMsg, setSaveMsg] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch(`/api/school/guidance/demographics/${studentId}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => setData(d))
+      .finally(() => setLoading(false))
+  }, [studentId])
+
+  async function patch(update: Partial<DemographicData>) {
+    if (!data) return
+    const next = { ...data, ...update }
+    setData(next)
+    setSaveMsg(null)
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/school/guidance/demographics/${studentId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(update),
+      })
+      const j = await res.json()
+      if (!res.ok) throw new Error(j.error || 'Save failed')
+      setData((prev) => prev ? { ...prev, demographicSource: j.demographicSource, demographicUpdatedAt: new Date().toISOString() } : prev)
+      setSaveMsg('Saved')
+    } catch (e: unknown) {
+      setSaveMsg(e instanceof Error ? e.message : 'Save failed')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) return <div style={{ color: '#666' }}>Loading&hellip;</div>
+  if (!data) return <div style={{ color: '#666' }}>Could not load demographic data.</div>
+
+  const FlagRow = ({
+    label,
+    field,
+    value,
+  }: {
+    label: string
+    field: keyof DemographicData
+    value: boolean | null
+  }) => (
+    <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, cursor: 'pointer', padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
+      <input
+        type="checkbox"
+        checked={!!value}
+        onChange={(e) => patch({ [field]: e.target.checked } as Partial<DemographicData>)}
+        style={{ width: 16, height: 16 }}
+      />
+      <span>{label}</span>
+      {value && <span style={{ fontSize: 11, padding: '1px 6px', background: '#dbeafe', color: '#1e40af', borderRadius: 99 }}>Active</span>}
+    </label>
+  )
+
+  return (
+    <div style={card}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
+        <h2 style={cardHeader}>Demographic flags</h2>
+        {saving && <span style={{ fontSize: 12, color: '#666' }}>Saving&hellip;</span>}
+        {!saving && saveMsg && (
+          <span style={{ fontSize: 12, color: saveMsg === 'Saved' ? '#16a34a' : '#dc2626' }}>{saveMsg}</span>
+        )}
+      </div>
+
+      <FlagRow label="Care experienced" field="careExperienced" value={data.careExperienced} />
+      <FlagRow label="Additional support needs (ASN)" field="hasAsn" value={data.hasAsn} />
+      <FlagRow label="Free school meals (FSM)" field="fsm" value={data.fsm} />
+      <FlagRow label="English as additional language (EAL)" field="eal" value={data.eal} />
+      <FlagRow label="Young carer" field="isYoungCarer" value={data.isYoungCarer} />
+      <FlagRow label="Home educated" field="isHomeEducated" value={data.isHomeEducated} />
+
+      <div style={{ marginTop: 12 }}>
+        <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>Student type</label>
+        <select
+          value={data.studentType ?? 'mainstream'}
+          onChange={(e) => patch({ studentType: e.target.value })}
+          style={{ padding: '6px 10px', border: '1px solid #ccc', borderRadius: 4, fontSize: 13, width: 240 }}
+        >
+          {STUDENT_TYPES.map((t) => (
+            <option key={t.value} value={t.value}>{t.label}</option>
+          ))}
+        </select>
+      </div>
+
+      <div style={{ marginTop: 12 }}>
+        <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>Ethnicity</label>
+        <input
+          type="text"
+          value={data.ethnicity ?? ''}
+          onBlur={(e) => patch({ ethnicity: e.target.value || null })}
+          onChange={(e) => setData((prev) => prev ? { ...prev, ethnicity: e.target.value } : prev)}
+          placeholder="e.g. White Scottish, Asian Scottish, etc."
+          style={{ padding: '6px 10px', border: '1px solid #ccc', borderRadius: 4, fontSize: 13, width: '100%', maxWidth: 360 }}
+        />
+      </div>
+
+      <div style={{ marginTop: 14, fontSize: 12, color: '#888' }}>
+        Source:{' '}
+        <strong>
+          {data.demographicSource === 'seemis_import' ? 'SEEMIS import'
+            : data.demographicSource === 'guidance_teacher' ? 'Guidance teacher'
+            : data.demographicSource === 'self_declared' ? 'Self-declared'
+            : data.demographicSource === 'mixed' ? 'Mixed (SEEMIS + guidance)'
+            : 'Not set'}
+        </strong>
+        {data.demographicUpdatedAt && (
+          <> &middot; Last updated {new Date(data.demographicUpdatedAt).toLocaleDateString('en-GB')}</>
+        )}
+      </div>
     </div>
   )
 }

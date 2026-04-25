@@ -3,7 +3,7 @@ import { requireSchoolStaffApi } from '@/lib/school/auth'
 import { parseUploaded } from '@/lib/school/import-parsing'
 import {
   autoMapAttendance, autoMapClassList, autoMapDestinations,
-  autoMapPupils, autoMapSqa, autoMapTransition,
+  autoMapPupils, autoMapSqa, autoMapTransition, autoMapDemographics,
 } from '@/lib/school/import'
 
 export const runtime = 'nodejs'
@@ -29,6 +29,7 @@ export async function POST(req: NextRequest) {
     case 'sqa': autoMap = autoMapSqa(parsed.headers); break
     case 'transition': autoMap = autoMapTransition(parsed.headers); break
     case 'destinations': autoMap = autoMapDestinations(parsed.headers); break
+    case 'demographics': autoMap = autoMapDemographics(parsed.headers); break
     default: return NextResponse.json({ error: `Unknown kind: ${kind}` }, { status: 400 })
   }
 

@@ -161,6 +161,19 @@ export const TRANSITION_HINTS: Record<string, string[]> = {
   pastoral_notes: ['pastoral', 'pastoralnotes', 'wellbeing', 'wellbeingnotes'],
 }
 
+export const DEMOGRAPHICS_HINTS: Record<string, string[]> = {
+  scn: ['scn', 'scottishcandidatenumber', 'candidatenumber', 'studentid'],
+  forename: ['forename', 'firstname', 'givenname'],
+  surname: ['surname', 'lastname', 'familyname'],
+  gender: ['gender', 'sex'],
+  fsm: ['fsm', 'freeschoolmeals', 'freemeals', 'fsmregistered'],
+  asn: ['asn', 'additionalsupportneeds', 'asnflag'],
+  care_experienced: ['careexperienced', 'lookedafter', 'lac'],
+  eal: ['eal', 'englishasadditionallanguage', 'esol', 'ealflag'],
+  young_carer: ['youngcarer', 'carer'],
+  ethnicity: ['ethnicity', 'ethnicgroup', 'ethnicbackground'],
+}
+
 export const DESTINATION_HINTS: Record<string, string[]> = {
   scn: ['scn', 'studentnumber'],
   name: ['name', 'studentname', 'candidatename'],

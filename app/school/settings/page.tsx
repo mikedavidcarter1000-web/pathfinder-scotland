@@ -50,6 +50,7 @@ function SchoolSettingsInner() {
   const [schoolName, setSchoolName] = useState('')
   const [postcode, setPostcode] = useState('')
   const [localAuthority, setLocalAuthority] = useState('')
+  const [visibleToAuthority, setVisibleToAuthority] = useState(true)
   const [savingSchool, setSavingSchool] = useState(false)
 
   const [inviteEmail, setInviteEmail] = useState('')
@@ -72,6 +73,7 @@ function SchoolSettingsInner() {
           setSchoolName(m.school.name)
           setPostcode(m.school.postcode ?? '')
           setLocalAuthority(m.school.local_authority ?? '')
+          setVisibleToAuthority(m.school.visible_to_authority ?? true)
         } else {
           router.replace('/school/register')
         }
@@ -106,7 +108,7 @@ function SchoolSettingsInner() {
       const res = await fetch('/api/school/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: schoolName, postcode, localAuthority }),
+        body: JSON.stringify({ name: schoolName, postcode, localAuthority, visibleToAuthority }),
       })
       if (res.ok) toast.success('Saved', 'School details updated.')
       else toast.error('Could not save', '')
@@ -184,6 +186,37 @@ function SchoolSettingsInner() {
           </label>
           <SubmitButton isLoading={savingSchool}>Save</SubmitButton>
         </form>
+      </section>
+
+      <section style={card}>
+        <h2 style={h2}>Local authority data sharing</h2>
+        <p style={{ margin: '0 0 12px', fontSize: '0.9375rem', color: '#444' }}>
+          When enabled, anonymised aggregate data from your school will be visible to your local
+          authority&apos;s education team. Individual student data is never shared.
+        </p>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={visibleToAuthority}
+            onChange={async (e) => {
+              const next = e.target.checked
+              setVisibleToAuthority(next)
+              await fetch('/api/school/settings', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ visibleToAuthority: next }),
+              })
+              toast.success(
+                next ? 'Sharing enabled' : 'Sharing disabled',
+                next
+                  ? 'Your school now shares aggregate data with your local authority.'
+                  : 'Your school will no longer appear in local authority reports.'
+              )
+            }}
+            style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+          />
+          <span style={{ fontWeight: 600, fontSize: '0.9375rem' }}>Share data with local authority</span>
+        </label>
       </section>
 
       <BillingSection />
