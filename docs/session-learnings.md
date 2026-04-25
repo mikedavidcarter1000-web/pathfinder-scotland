@@ -7,6 +7,50 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 example_jobs alignment -- 103 mismatches resolved across 19 sectors
+
+- **Root cause of 103/190 mismatches:** `career_sectors.example_jobs` was originally
+  authored with informal/aspirational titles ("Farmer", "Gamekeeper", "Bank Manager",
+  "Clinical Psychologist") that never existed in `career_roles`. The 5-pass fuzzy
+  matcher on the sector page is good at bridging minor variants (punctuation,
+  basenames, plurals, phrase containment) but cannot invent a role that isn't there.
+
+- **Verification query pattern that confirms zero mismatches:**
+  ```sql
+  SELECT cs.name, job
+  FROM career_sectors cs, unnest(cs.example_jobs) AS job
+  WHERE NOT EXISTS (
+    SELECT 1 FROM career_roles cr
+    WHERE cr.career_sector_id = cs.id AND cr.title = job
+  );
+  ```
+  Run this after any `example_jobs` update. Expect zero rows.
+
+- **Migration is DML-only but use `apply_migration`, not `execute_sql`.** The UPDATE
+  statements belong in a migration file for auditability (19 sectors × 10 jobs = 190
+  rows changed). Using `execute_sql` for data corrections is fine; for a wholesale
+  replacement of a config array across every sector, a migration file is the right
+  home so `list_migrations` records when it happened.
+
+- **MCP timestamp drift, twelfth session.** Local file drafted as `20260425171309`;
+  MCP recorded version `20260425171445`. Manual rename after checking `list_migrations`.
+  Same rule applies: apply via MCP, read authoritative version from `list_migrations`,
+  rename local file immediately.
+
+- **JOB_BLURBS in `app/careers/[sectorId]/page.tsx` are now mostly stale.** The
+  hardcoded blurb map keys the old example_jobs titles. After this migration ~150 of
+  the 190 cards will fall back to "Works within this career sector." rather than
+  showing a tailored one-liner. The cards are now all clickable with images -- the
+  missing blurbs are a cosmetic follow-up. Logged in phase-2-backlog.md:
+  regenerate JOB_BLURBS for the 190 new exact titles.
+
+- **~50 roles exist in `example_jobs` but have no matching `career_roles` row.** Full
+  list is in the migration comment block at the top of
+  `supabase/migrations/20260425171445_align-example-jobs-with-role-titles.sql`.
+  Notable gaps: Gamekeeper, Conservation Officer, Clinical Psychologist, Hotel Manager,
+  Marine Biologist, Geologist, Forensic Scientist, Probation Officer, Town Planner.
+  These are candidates for a future content session.
+
 ## 2026-04-25 Career role card image fallback -- onError handler for broken URLs
 
 - **The root bug:** `next/image` components that render a truthy `image_url` with no `onError` handler show a broken-image browser icon when the file is missing. The existing fallback (letter initial) only fired when `image_url` was `null` — not when the URL was set but the file didn't exist on disk.
