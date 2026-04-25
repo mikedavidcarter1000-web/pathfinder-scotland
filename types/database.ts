@@ -53,6 +53,210 @@ export type Database = {
         }
         Relationships: []
       }
+      authority_audit_log: {
+        Row: {
+          action: string
+          authority_id: string | null
+          created_at: string | null
+          filters_applied: Json | null
+          id: string
+          ip_address: unknown
+          resource: string | null
+          staff_id: string | null
+        }
+        Insert: {
+          action: string
+          authority_id?: string | null
+          created_at?: string | null
+          filters_applied?: Json | null
+          id?: string
+          ip_address?: unknown
+          resource?: string | null
+          staff_id?: string | null
+        }
+        Update: {
+          action?: string
+          authority_id?: string | null
+          created_at?: string | null
+          filters_applied?: Json | null
+          id?: string
+          ip_address?: unknown
+          resource?: string | null
+          staff_id?: string | null
+        }
+        Relationships: []
+      }
+      authority_invitations: {
+        Row: {
+          accepted: boolean | null
+          accepted_at: string | null
+          authority_id: string | null
+          created_at: string | null
+          email: string
+          expires_at: string | null
+          id: string
+          invited_by: string | null
+          role: string
+          token: string
+        }
+        Insert: {
+          accepted?: boolean | null
+          accepted_at?: string | null
+          authority_id?: string | null
+          created_at?: string | null
+          email: string
+          expires_at?: string | null
+          id?: string
+          invited_by?: string | null
+          role: string
+          token?: string
+        }
+        Update: {
+          accepted?: boolean | null
+          accepted_at?: string | null
+          authority_id?: string | null
+          created_at?: string | null
+          email?: string
+          expires_at?: string | null
+          id?: string
+          invited_by?: string | null
+          role?: string
+          token?: string
+        }
+        Relationships: []
+      }
+      authority_staff: {
+        Row: {
+          authority_id: string | null
+          can_access_api: boolean | null
+          can_build_custom_reports: boolean | null
+          can_configure_alerts: boolean | null
+          can_export_data: boolean | null
+          can_manage_staff: boolean | null
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          last_active_at: string | null
+          role: string
+          user_id: string | null
+        }
+        Insert: {
+          authority_id?: string | null
+          can_access_api?: boolean | null
+          can_build_custom_reports?: boolean | null
+          can_configure_alerts?: boolean | null
+          can_export_data?: boolean | null
+          can_manage_staff?: boolean | null
+          created_at?: string | null
+          email: string
+          full_name: string
+          id?: string
+          last_active_at?: string | null
+          role: string
+          user_id?: string | null
+        }
+        Update: {
+          authority_id?: string | null
+          can_access_api?: boolean | null
+          can_build_custom_reports?: boolean | null
+          can_configure_alerts?: boolean | null
+          can_export_data?: boolean | null
+          can_manage_staff?: boolean | null
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          last_active_at?: string | null
+          role?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      local_authorities: {
+        Row: {
+          alert_config: Json | null
+          api_key_hash: string | null
+          code: string
+          created_at: string | null
+          id: string
+          name: string
+          primary_contact_email: string | null
+          primary_contact_name: string | null
+          primary_contact_role: string | null
+          report_schedule: Json | null
+          school_count: number | null
+          share_national: boolean | null
+          share_national_opted_at: string | null
+          slug: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_status: string | null
+          subscription_tier: string | null
+          term_dates: Json | null
+          trial_expires_at: string | null
+          trial_started_at: string | null
+          updated_at: string | null
+          verified: boolean | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          alert_config?: Json | null
+          api_key_hash?: string | null
+          code: string
+          created_at?: string | null
+          id?: string
+          name: string
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          primary_contact_role?: string | null
+          report_schedule?: Json | null
+          school_count?: number | null
+          share_national?: boolean | null
+          share_national_opted_at?: string | null
+          slug: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
+          term_dates?: Json | null
+          trial_expires_at?: string | null
+          trial_started_at?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          alert_config?: Json | null
+          api_key_hash?: string | null
+          code?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          primary_contact_role?: string | null
+          report_schedule?: Json | null
+          school_count?: number | null
+          share_national?: boolean | null
+          share_national_opted_at?: string | null
+          slug?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
+          term_dates?: Json | null
+          trial_expires_at?: string | null
+          trial_started_at?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
       benefit_categories: {
         Row: {
           description: string | null

@@ -31,6 +31,8 @@ export function Footer() {
       { label: 'Demo', href: '/demo' },
       { label: 'Pilot programme', href: 'mailto:hello@pathfinderscot.co.uk?subject=Pilot%20school%20interest', external: true },
       { label: 'Funding enquiries', href: 'mailto:hello@pathfinderscot.co.uk?subject=Funding%20enquiry', external: true },
+      { label: 'For Authorities', href: '/for-authorities' },
+      { label: 'Register your authority', href: '/authority/register' },
     ],
     useful: [
       { label: 'Qualifications Scotland', href: 'https://www.qualifications.gov.scot', external: true },
