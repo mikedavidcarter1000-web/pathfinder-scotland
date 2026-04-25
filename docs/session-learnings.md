@@ -7,6 +7,74 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Authority-13 -- LA alerts system: evaluation engine, notification centre, email digests, configuration, data quality nudges
+
+- **Two-layer auth pattern for the alert/dashboard split.** All authority API
+  routes flow through `requireAuthorityStaffApi()`; QIO scope is then enforced
+  at the *route* level by re-reading `assigned_school_ids` and clamping with
+  `.in('school_id', allowedSchoolIds)`. RLS on `authority_alerts` grants
+  blanket read to every staff member at the authority -- it is the route's
+  job to narrow, not Postgres'. The reason: `assigned_school_ids` is JSONB,
+  so a per-row jsonb-membership check in RLS would pay a real cost across
+  potentially thousands of alerts. **Rule for QIO:** an authority-level alert
+  (`school_id IS NULL`) is OUT of QIO scope for read AND for acknowledge --
+  the acknowledge route must reject `existing.school_id == null` for QIOs,
+  not just non-matching school_ids.
+
+- **Default config + read-time merge beats backfill migrations for JSONB
+  config columns.** `local_authorities.alert_config` defaults to `'{}'`
+  in the schema; `mergeAlertConfig(stored)` overlays it on
+  `DEFAULT_ALERT_CONFIG` at every read. Adding a new alert type (or a new
+  threshold field on an existing type) requires zero migration -- bump
+  `ALERT_TYPES` and `DEFAULT_ALERT_CONFIG` in `lib/authority/alerts.ts` and
+  the merge fills the gap on the next read. Validation is conservative
+  (known keys with the right shape pass, everything else dropped) so a
+  malformed PUT can never brick the engine.
+
+- **Dedup key for append-only alert ledgers: (alert_type, school_id,
+  acknowledged=false).** `hasOpenAlert()` runs as a SELECT before each
+  INSERT in the engine. The partial index
+  `idx_authority_alerts_unacknowledged ... WHERE acknowledged = false`
+  serves both the dedup lookup and the bell-count query. **Rule:** any
+  append-only ledger that is read as "what's currently open" benefits
+  from a partial index gated on the open-state column; it stays small as
+  the table grows.
+
+- **`pg_net` is NOT installed on this project.** The alert evaluator and
+  digest sender are HTTP endpoints; pg_cron alone cannot invoke them.
+  Documented three wiring options in `docs/authority-alerts-scheduling.md`
+  (Vercel cron preferred, Supabase Edge Function + pg_cron as fallback,
+  external scheduler as last resort). All three require
+  `Authorization: Bearer ${CRON_SECRET}` -- same pattern as
+  `app/api/reminders/send/route.ts`. **Rule:** anything scheduled to
+  invoke an internal HTTP endpoint at this project should reuse the
+  `authoriseCron(request)` helper, now extracted into
+  `lib/authority/cron-auth.ts`.
+
+- **MCP timestamp drift, sixth consecutive session.** Local file drafted
+  as `20260425194727`; MCP recorded version `20260425194808`. Manual
+  rename after `list_migrations`. The `scripts/apply-migration.sh`
+  wrapper still doesn't cover the MCP path.
+
+- **`react-hooks/set-state-in-effect` is a structural lint warning, not
+  an error.** The polling pattern (`useEffect(() => { fetchRows();
+  setInterval(fetchRows, ...) })` triggers it because fetchRows ends
+  with `setState`. Same pattern in the existing
+  `components/notifications/NotificationBell.tsx` -- it's a known
+  warning we live with, not something `void` wrappers fix. Don't waste
+  cycles trying to silence it.
+
+- **Engine evaluators per type stay small by leaning on existing
+  utilities.** `calculateSchoolDataQuality()` already exists from
+  Authority-4; the low_data_quality evaluator is ~15 lines. The
+  curriculum_narrowing and stem_gender_imbalance evaluators read from
+  `mv_authority_subject_choices` (already partitioned by school +
+  demographics) so they collapse to a single `.in()` query plus an
+  in-memory aggregation. **Rule:** before adding a new evaluator that
+  scans student-level data, check whether the materialised views
+  already aggregate the same dimensions; the engine should be a thin
+  consumer of pre-computed cohort counts.
+
 ## 2026-04-25 Authority-5 -- LA dashboard shell, tabs + URL filter state, overview tab, school scorecards
 
 - **Pattern: URL-state for tabs + filters via a single `use-authority-filters`
