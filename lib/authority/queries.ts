@@ -89,6 +89,29 @@ export interface AuthorityFilterContext {
 // School scope (used by every query so it ends up consistent with QIO scope)
 // ---------------------------------------------------------------------------
 
+/**
+ * Returns the raw (unsuppressed) student count in scope after applying
+ * demographic filters. Other tab queries use this as the denominator for
+ * percentage calculations; the displayed total in the dashboard header is
+ * the suppressed version on `AuthorityOverviewMetrics.total_students`.
+ *
+ * Returns 0 when the scope is empty or the query fails.
+ */
+export async function countStudentsInScope(
+  admin: Admin,
+  scopedSchoolIds: string[],
+  filters: AuthorityFilters,
+): Promise<number> {
+  if (scopedSchoolIds.length === 0) return 0
+  const { data, error } = await admin
+    .from('students')
+    .select('id, gender, simd_decile, school_stage')
+    .in('school_id', scopedSchoolIds)
+  if (error || !data) return 0
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (data as any[]).filter((r) => applyStudentFilters(r, filters)).length
+}
+
 export async function loadSchoolFilterContext(
   admin: Admin,
   authorityName: string,
@@ -274,7 +297,10 @@ function applyStudentFilters(row: any, filters: AuthorityFilters): boolean {
   }
   if (filters.yearGroups.length > 0) {
     const stage = row.school_stage as string | null
-    const yearGroup = stage && /^S[1-6]$/.test(stage) ? stage : null
+    // `students.school_stage` is stored lowercase ("s2", "s3", ...);
+    // filter values are uppercase ("S2", "S3", ...). Normalise before matching.
+    const upper = stage ? stage.toUpperCase() : null
+    const yearGroup = upper && /^S[1-6]$/.test(upper) ? upper : null
     if (!yearGroup || !filters.yearGroups.includes(yearGroup as never)) return false
   }
   return true

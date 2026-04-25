@@ -75,6 +75,107 @@ Most recent session first.
   already aggregate the same dimensions; the engine should be a thin
   consumer of pre-computed cohort counts.
 
+## 2026-04-25 Authority-6 -- LA dashboard subjects tab (uptake, STEM gender, breadth, heatmap, export)
+
+- **Disclosure control extends to derived percentages, not just counts.** A
+  3% figure with a known cohort denominator of 100 reveals the suppressed
+  numerator. First cut emitted `percentage` and per-cohort gender/SIMD
+  percentages whenever the denominator was non-zero, which leaks suppressed
+  counts. Fix shipped: a `safePercentage(numerator, denominator)` helper
+  in `lib/authority/subjects-queries.ts` returns null whenever either side
+  is < 5, the denominator is null, or the denominator is zero. Every
+  percentage in the subjects tab now goes through it. **Rule: never
+  divide a count by a denominator without first checking both sides
+  against the disclosure threshold.** The same rule applies to client-side
+  derivation -- the uptake table now reads pre-computed
+  `gender_percentages` / `simd_percentages` from the data layer rather
+  than dividing the suppressed nullable counts itself.
+
+- **`students.school_stage` is stored lowercase (`s2`-`s5`) but filter
+  values are uppercase (`S2`-`S5`).** `applyStudentFilters` in
+  `lib/authority/queries.ts` was matching against `/^S[1-6]$/` and
+  silently dropping every student when a year-group filter was active.
+  This is a pre-existing bug from Authority-5 surfaced by the new
+  Subjects tab's `countStudentsInScope` denominator. Fix: normalise to
+  uppercase before the regex test. **Rule: confirm enum-shape values
+  against the live DB before pattern-matching them in JS, especially
+  when the source column is text-typed.**
+
+- **Service-role export routes must re-resolve QIO scope, and they must
+  fail closed when `assigned_school_ids` is missing/null.** First cut of
+  the export route had:
+  ```ts
+  const qioAssignedIds = ctx.role === 'qio' && Array.isArray(staff?.assigned_school_ids)
+    ? (staff.assigned_school_ids as string[])
+    : null
+  ```
+  When a QIO's `assigned_school_ids` was somehow null or undefined, this
+  returned `null`, which `resolveSchoolScope` interpreted as "no QIO
+  restriction" -- a silent privilege escalation to LA-wide visibility.
+  Fixed to return `[]` (empty allowlist) for QIOs without a valid
+  assignment. **Rule: for export endpoints behind service-role, the
+  default branch when scope can't be derived must restrict, not relax.**
+
+- **STEM identification with no `is_stem` column = hardcoded list.** The
+  `subjects` table has no STEM flag and no category column other than
+  `curricular_area_id` (which maps to broad CfE areas like "Sciences"
+  and "Technologies"). `STEM_SUBJECT_NAMES` in `lib/authority/subjects-queries.ts`
+  enumerates the canonical 8 (Mathematics, Physics, Chemistry, Biology,
+  Computing Science, Engineering Science, Design and Manufacture,
+  Graphic Communication) and matches by exact `subjects.name`. Names
+  must be confirmed against the live DB before adding -- the MV passes
+  `subject_name` through verbatim, so a typo shows nothing.
+
+- **`mv_authority_subject_choices.subject_category` is the curricular
+  area name, not a STEM/non-STEM tag.** The MV joins
+  `subjects.curricular_area_id -> curricular_areas.name`, so values are
+  Expressive Arts / Health and Wellbeing / Languages / Mathematics /
+  Religious and Moral Education / Sciences / Social Studies /
+  Technologies. Eight is the natural denominator for the "categories
+  covered" curriculum-breadth metric.
+
+- **`xlsx` must be a runtime dependency, not a devDependency, when used
+  inside an API route.** Pre-existing `xlsx` was in `devDependencies`
+  for use by import scripts. The new `/api/authority/subjects/export`
+  route imports it server-side, so it had to move to `dependencies`.
+  Vercel does install devDeps during build, but the runtime classifier
+  expects production deps -- moving early avoids a "missing module"
+  error in production runtime that wouldn't show up in `next build`.
+
+- **`authority_audit_log` insert is fire-and-forget (`void` + Promise
+  swallow), not awaited.** Logging an export must not block the
+  download. The pattern is:
+  ```ts
+  void (admin as any).from('authority_audit_log').insert({ ... })
+    .then(() => undefined, () => undefined)
+  ```
+  RLS on the table allows authority staff to insert for their own
+  authority, so the service-role insert (with explicit `authority_id`)
+  satisfies the policy.
+
+- **Empty-state STEM headline math: don't say "0 of 8 balanced" when the
+  reality is "no STEM uptake".** First cut injected zero-count rows for
+  every canonical STEM subject so the chart always showed the full
+  list, then computed `stem_total_count = stemRows.length = 8`. With
+  an empty MV that rendered a "0/8 balanced" badge that misleads.
+  Fix: `stem_total_count` now counts only subjects with actual uptake
+  (`total > 0`); the chart still shows zero-bar context rows but the
+  headline says "no STEM uptake yet" via the existing
+  `stem_total_count === 0` branch.
+
+- **Codex MCP second-opinion on multi-file feature diffs catches the
+  high-value cases that are easy to miss in flow.** Eight of the eleven
+  Codex findings on this diff were real (one disclosure leak, one fail-
+  open QIO-scope bug, one case-mismatch year-group bug, one missing
+  permission check, several percentage-suppression leaks). One was a
+  duplicate of an already-fixed concern, two were stylistic suggestions
+  not aligned with project conventions (replacing British curriculum
+  acronyms; replacing intentional non-ASCII typography). **Rule on
+  triaging Codex output: keep findings that change behaviour, close
+  attack surfaces, or surface a hidden invariant; skip findings that
+  argue with established project terminology or compete with existing
+  visual-design choices.**
+
 ## 2026-04-25 Authority-5 -- LA dashboard shell, tabs + URL filter state, overview tab, school scorecards
 
 - **Pattern: URL-state for tabs + filters via a single `use-authority-filters`

@@ -9,15 +9,18 @@ import {
   type DashboardTab,
 } from '@/lib/authority/filters'
 import {
+  countStudentsInScope,
   getAuthorityOverview,
   getSchoolScorecards,
   loadSchoolFilterContext,
 } from '@/lib/authority/queries'
+import { getSubjectsTabData } from '@/lib/authority/subjects-queries'
 import { getLastMaterialisedViewRefresh } from '@/lib/authority/refresh-time'
 import { DashboardHeader } from '@/components/authority/dashboard-header'
 import { DashboardTabs } from '@/components/authority/dashboard-tabs'
 import { DashboardFilterBar } from '@/components/authority/dashboard-filter-bar'
 import { OverviewTab } from '@/components/authority/tabs/overview-tab'
+import { SubjectsTab } from '@/components/authority/tabs/subjects-tab'
 import { PlaceholderTab } from '@/components/authority/tabs/placeholder-tab'
 
 export const dynamic = 'force-dynamic'
@@ -90,6 +93,13 @@ export default async function AuthorityDashboardPage({
   const scorecards = isVerified && tab === 'overview'
     ? await getSchoolScorecards(admin, authorityName, filters, scopedSchoolIds)
     : []
+
+  const subjectsData = isVerified && tab === 'subjects'
+    ? await (async () => {
+        const totalInScope = await countStudentsInScope(admin, scopedSchoolIds, filters)
+        return getSubjectsTabData(admin, authorityName, filters, scopedSchoolIds, totalInScope)
+      })()
+    : null
 
   return (
     <main style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
@@ -177,7 +187,13 @@ export default async function AuthorityDashboardPage({
                 totalSchoolsInLa={filterCtx.totalSchools}
               />
             )}
-            {tab !== 'overview' && <PlaceholderTab tab={tab} />}
+            {tab === 'subjects' && subjectsData && (
+              <SubjectsTab
+                data={subjectsData}
+                totalSchoolsInLa={filterCtx.totalSchools}
+              />
+            )}
+            {tab !== 'overview' && tab !== 'subjects' && <PlaceholderTab tab={tab} />}
           </>
         )}
       </div>
