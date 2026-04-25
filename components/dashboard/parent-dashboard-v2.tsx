@@ -9,6 +9,7 @@ import {
   useRedeemParentInviteCode,
   type LinkedChild,
 } from '@/hooks/use-parent-link'
+import { ParentPersonalStatementCard } from '@/components/parent-dashboard/personal-statement-card'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { useToast } from '@/components/ui/toast'
 import { Skeleton } from '@/components/ui/loading-skeleton'
@@ -316,6 +317,10 @@ function LinkedChildCard({ child }: { child: LinkedChild }) {
           <ChildSavedCourses studentId={child.student_id} />
           <ChildGrades studentId={child.student_id} />
           <ChildQuizResult studentId={child.student_id} />
+          <ParentPersonalStatementCard
+            studentId={child.student_id}
+            childFirstName={child.first_name}
+          />
         </div>
       )}
     </div>

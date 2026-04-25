@@ -104,6 +104,9 @@ type ProfilePayload = {
     q2Len: number
     q3Len: number
     lastSavedAt: string | null
+    sharedWithSchool: boolean
+    feedbackTotal: number
+    feedbackUnresolved: number
   } | null
 }
 
@@ -399,7 +402,7 @@ function OverviewTab({ payload }: { payload: ProfilePayload }) {
         </section>
       )}
 
-      <PersonalStatementCard psDraft={payload.psDraft} schoolStage={student.schoolStage} />
+      <PersonalStatementCard psDraft={payload.psDraft} schoolStage={student.schoolStage} studentId={student.id} />
 
       <section style={card}>
         <h2 style={cardHeader}>Bursary matches ({bursaryMatches.length})</h2>
@@ -869,16 +872,18 @@ function PlacementsTab({ studentId }: { studentId: string }) {
 }
 
 // Personal statement indicator card.
-// Shows char counts per Q with a traffic light. Only a progress snapshot --
-// the full draft text is readable via RLS but is intentionally NOT surfaced
-// here; guidance staff can open the student's Pathfinder account to read
-// it during feedback sessions.
+// Shows char counts per Q with a traffic light, plus the shared-with-school
+// timestamp and a count of any unresolved feedback comments. When the student
+// has shared their statement, a "View statement" button opens the read-only
+// reader page where guidance can leave anchored / general comments.
 function PersonalStatementCard({
   psDraft,
   schoolStage,
+  studentId,
 }: {
   psDraft: ProfilePayload['psDraft']
   schoolStage: string | null
+  studentId: string
 }) {
   // Hide the card for pre-S5 students who would not yet be drafting.
   const isRelevantStage = schoolStage === 's5' || schoolStage === 's6'
@@ -906,6 +911,33 @@ function PersonalStatementCard({
             ? ` · last saved ${new Date(psDraft.lastSavedAt).toLocaleDateString('en-GB')}`
             : ''}
         </div>
+        {psDraft.feedbackTotal > 0 && (
+          <div style={{ fontSize: 12, color: psDraft.feedbackUnresolved > 0 ? '#92400e' : '#166534' }}>
+            {psDraft.feedbackTotal} comment{psDraft.feedbackTotal === 1 ? '' : 's'},{' '}
+            {psDraft.feedbackUnresolved} unresolved
+          </div>
+        )}
+        {psDraft.sharedWithSchool ? (
+          <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+            <Link
+              href={`/school/guidance/${studentId}/personal-statement`}
+              style={{ ...primaryButton, textDecoration: 'none' }}
+            >
+              View statement
+            </Link>
+            <Link
+              href={`/school/guidance/${studentId}/personal-statement`}
+              style={{ ...secondaryButton, textDecoration: 'none' }}
+            >
+              Leave feedback
+            </Link>
+          </div>
+        ) : (
+          <div style={{ fontSize: 12, color: '#666', marginTop: 6 }}>
+            Not yet shared with the school. The student can share from the personal statement
+            builder.
+          </div>
+        )}
       </div>
     </section>
   )

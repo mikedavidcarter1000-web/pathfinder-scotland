@@ -24,6 +24,7 @@ import { WellbeingBanner } from '@/components/dashboard/wellbeing-banner'
 import { WorkExperienceCard } from '@/components/dashboard/work-experience-card'
 import { ParentDashboardV2 } from '@/components/dashboard/parent-dashboard-v2'
 import { ShareWithParentButton } from '@/components/dashboard/share-with-parent-button'
+import { PersonalStatementCard } from '@/components/dashboard/personal-statement-card'
 import { StatsCard, StatsGrid } from '@/components/ui/stats-card'
 import { Skeleton } from '@/components/ui/loading-skeleton'
 import { SlowLoadingNotice } from '@/components/ui/slow-loading-notice'
@@ -237,6 +238,11 @@ export default function DashboardPage() {
       {/* Prep Hub Card (shows when accepted offer exists) */}
       <div className="mb-6">
         <PrepHubCard />
+      </div>
+
+      {/* Personal statement card — silently hidden for students with no draft */}
+      <div className="mb-6">
+        <PersonalStatementCard />
       </div>
 
       {/* Progress checklist */}

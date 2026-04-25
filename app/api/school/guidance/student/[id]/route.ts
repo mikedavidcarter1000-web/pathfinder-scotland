@@ -231,22 +231,41 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: psDraftRow } = await (admin as any)
     .from('personal_statement_drafts')
-    .select('q1_text, q2_text, q3_text, last_saved_at')
+    .select('id, q1_text, q2_text, q3_text, last_saved_at, shared_with_school')
     .eq('student_id', studentId)
     .maybeSingle()
   type PsDraftRow = {
+    id: string
     q1_text: string | null
     q2_text: string | null
     q3_text: string | null
     last_saved_at: string | null
+    shared_with_school: boolean
   }
   const psRow = (psDraftRow ?? null) as PsDraftRow | null
+
+  let feedbackTotal = 0
+  let feedbackUnresolved = 0
+  if (psRow) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: psFeedback } = await (admin as any)
+      .from('personal_statement_feedback')
+      .select('id, is_resolved')
+      .eq('draft_id', psRow.id)
+    const fb = (psFeedback ?? []) as Array<{ is_resolved: boolean }>
+    feedbackTotal = fb.length
+    feedbackUnresolved = fb.filter((r) => !r.is_resolved).length
+  }
+
   const psDraft = psRow
     ? {
         q1Len: (psRow.q1_text ?? '').length,
         q2Len: (psRow.q2_text ?? '').length,
         q3Len: (psRow.q3_text ?? '').length,
         lastSavedAt: psRow.last_saved_at,
+        sharedWithSchool: psRow.shared_with_school,
+        feedbackTotal,
+        feedbackUnresolved,
       }
     : null
 

@@ -32,6 +32,7 @@ export type NotificationType =
   | 'booking_confirmation'
   | 'attendance_alert'
   | 'bursary_reminder'
+  | 'ps_feedback'
   | 'custom'
 
 export type NotificationChannel = 'in_app' | 'email' | 'both'

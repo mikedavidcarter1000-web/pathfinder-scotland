@@ -2911,6 +2911,9 @@ export type Database = {
           q3_text: string
           last_saved_at: string
           created_at: string
+          shared_with_school: boolean
+          shared_with_parent: boolean
+          school_id: string | null
         }
         Insert: {
           id?: string
@@ -2920,6 +2923,9 @@ export type Database = {
           q3_text?: string
           last_saved_at?: string
           created_at?: string
+          shared_with_school?: boolean
+          shared_with_parent?: boolean
+          school_id?: string | null
         }
         Update: {
           id?: string
@@ -2928,6 +2934,103 @@ export type Database = {
           q2_text?: string
           q3_text?: string
           last_saved_at?: string
+          created_at?: string
+          shared_with_school?: boolean
+          shared_with_parent?: boolean
+          school_id?: string | null
+        }
+        Relationships: []
+      }
+      personal_statement_versions: {
+        Row: {
+          id: string
+          draft_id: string
+          student_id: string
+          version_number: number
+          q1_text: string
+          q2_text: string
+          q3_text: string
+          q1_char_count: number
+          q2_char_count: number
+          q3_char_count: number
+          total_char_count: number
+          saved_at: string
+          save_trigger: 'auto' | 'manual' | 'pre_feedback' | 'restore'
+        }
+        Insert: {
+          id?: string
+          draft_id: string
+          student_id: string
+          version_number: number
+          q1_text?: string
+          q2_text?: string
+          q3_text?: string
+          saved_at?: string
+          save_trigger?: 'auto' | 'manual' | 'pre_feedback' | 'restore'
+        }
+        Update: {
+          id?: string
+          draft_id?: string
+          student_id?: string
+          version_number?: number
+          q1_text?: string
+          q2_text?: string
+          q3_text?: string
+          saved_at?: string
+          save_trigger?: 'auto' | 'manual' | 'pre_feedback' | 'restore'
+        }
+        Relationships: []
+      }
+      personal_statement_feedback: {
+        Row: {
+          id: string
+          draft_id: string
+          version_id: string | null
+          question_number: number
+          author_type: 'student' | 'guidance' | 'parent'
+          author_user_id: string
+          author_name: string
+          comment: string
+          highlight_start: number | null
+          highlight_end: number | null
+          parent_feedback_id: string | null
+          is_resolved: boolean
+          resolved_at: string | null
+          resolved_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          draft_id: string
+          version_id?: string | null
+          question_number: number
+          author_type: 'student' | 'guidance' | 'parent'
+          author_user_id: string
+          author_name: string
+          comment: string
+          highlight_start?: number | null
+          highlight_end?: number | null
+          parent_feedback_id?: string | null
+          is_resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          draft_id?: string
+          version_id?: string | null
+          question_number?: number
+          author_type?: 'student' | 'guidance' | 'parent'
+          author_user_id?: string
+          author_name?: string
+          comment?: string
+          highlight_start?: number | null
+          highlight_end?: number | null
+          parent_feedback_id?: string | null
+          is_resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
           created_at?: string
         }
         Relationships: []

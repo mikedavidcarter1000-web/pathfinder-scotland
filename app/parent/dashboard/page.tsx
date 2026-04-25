@@ -10,6 +10,7 @@ import { ParentFundingCard } from '@/components/parent-dashboard/funding-card'
 import { ParentKeyDatesCard } from '@/components/parent-dashboard/key-dates-card'
 import { ParentBenchmarksCard } from '@/components/parent-dashboard/benchmarks-card'
 import { ParentEveningCard } from '@/components/parent-dashboard/parent-evening-card'
+import { ParentPersonalStatementCard } from '@/components/parent-dashboard/personal-statement-card'
 import { GoogleTranslate } from '@/components/parent/google-translate'
 
 export default function ParentDashboardPage() {
@@ -160,6 +161,10 @@ export default function ParentDashboardPage() {
       {selectedChild && (
         <div className="space-y-5">
           <ParentEveningCard studentId={selectedChild.student_id} />
+          <ParentPersonalStatementCard
+            studentId={selectedChild.student_id}
+            childFirstName={selectedChild.first_name}
+          />
           <ParentCoursesCard child={selectedChild} />
           <ParentFundingCard child={selectedChild} />
           <ParentKeyDatesCard child={selectedChild} />

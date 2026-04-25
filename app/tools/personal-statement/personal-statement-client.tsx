@@ -3,6 +3,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import examplesDataRaw from '@/data/personal-statement-examples.json'
+import { VersionHistoryPanel } from '@/components/personal-statement/version-history-panel'
+import { SharingControls } from '@/components/personal-statement/sharing-controls'
+import {
+  FeedbackSection,
+  useFeedback,
+  unresolvedCountByQuestion,
+  type FeedbackRow,
+} from '@/components/personal-statement/feedback-section'
 
 // ---- Types ------------------------------------------------------------------
 
@@ -84,21 +92,34 @@ const CHARACTER_LIMITS = {
 
 const DRAFT_STORAGE_KEY = 'pf_personal_statement_draft_v1'
 
+type CloudDraft = {
+  id: string
+  q1: string
+  q2: string
+  q3: string
+  lastSavedAt: string
+  createdAt: string
+  sharedWithSchool: boolean
+  sharedWithParent: boolean
+  schoolId: string | null
+}
+
 async function cloudSave(
   drafts: { q1: string; q2: string; q3: string },
   setState: (s: 'idle' | 'saving' | 'saved' | 'error') => void,
-  setLastSavedAt: (ts: string | null) => void,
+  setDraftMeta: (d: CloudDraft | null) => void,
+  saveTrigger: 'auto' | 'manual' | 'restore' = 'auto',
 ): Promise<void> {
   setState('saving')
   try {
     const res = await fetch('/api/personal-statement/drafts', {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(drafts),
+      body: JSON.stringify({ ...drafts, saveTrigger }),
     })
     if (!res.ok) throw new Error('save failed')
-    const json = (await res.json()) as { draft?: { lastSavedAt?: string } }
-    setLastSavedAt(json.draft?.lastSavedAt ?? null)
+    const json = (await res.json()) as { draft?: CloudDraft }
+    if (json.draft) setDraftMeta(json.draft)
     setState('saved')
   } catch {
     setState('error')
@@ -715,9 +736,12 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
   const [cloudState, setCloudState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
-  const [lastCloudSavedAt, setLastCloudSavedAt] = useState<string | null>(null)
+  const [draftMeta, setDraftMeta] = useState<CloudDraft | null>(null)
   const cloudTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const authedAfterLoad = ctx?.authenticated === true
+  const lastCloudSavedAt = draftMeta?.lastSavedAt ?? null
+  const draftId = draftMeta?.id ?? null
+  const { feedback, reload: reloadFeedback } = useFeedback(draftId)
 
   // Load on mount. For authenticated users we prefer the DB copy (cross-device
   // source of truth); anon users fall back to localStorage. If DB is empty but
@@ -755,17 +779,12 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
         const res = await fetch('/api/personal-statement/drafts', { cache: 'no-store' })
         if (!res.ok) throw new Error('load failed')
         const json = (await res.json()) as {
-          draft: {
-            q1: string
-            q2: string
-            q3: string
-            lastSavedAt: string
-          } | null
+          draft: CloudDraft | null
         }
         if (cancelled) return
         if (json.draft) {
           setDrafts({ q1: json.draft.q1, q2: json.draft.q2, q3: json.draft.q3 })
-          setLastCloudSavedAt(json.draft.lastSavedAt)
+          setDraftMeta(json.draft)
           setCloudState('saved')
         } else {
           // First login with no DB draft yet -- migrate localStorage if any
@@ -800,7 +819,7 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
     if (!authedAfterLoad) return
     if (cloudTimerRef.current) clearTimeout(cloudTimerRef.current)
     cloudTimerRef.current = setTimeout(() => {
-      void cloudSave(drafts, setCloudState, setLastCloudSavedAt)
+      void cloudSave(drafts, setCloudState, setDraftMeta, 'auto')
     }, 30_000)
     return () => {
       if (cloudTimerRef.current) clearTimeout(cloudTimerRef.current)
@@ -820,7 +839,7 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
     if (authedAfterLoad) {
       void fetch('/api/personal-statement/drafts', { method: 'DELETE' }).then(() => {
         setCloudState('idle')
-        setLastCloudSavedAt(null)
+        setDraftMeta(null)
       })
     }
   }, [authedAfterLoad])
@@ -858,8 +877,28 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
       clearTimeout(cloudTimerRef.current)
       cloudTimerRef.current = null
     }
-    await cloudSave(drafts, setCloudState, setLastCloudSavedAt)
+    await cloudSave(drafts, setCloudState, setDraftMeta, 'manual')
   }, [drafts, authedAfterLoad])
+
+  const restoreVersion = useCallback(
+    async (version: { q1: string; q2: string; q3: string; versionNumber: number }) => {
+      // Save current text first (manual snapshot of the current working copy
+      // before it gets overwritten), then write the version's text into the
+      // draft with saveTrigger='restore'.
+      await cloudSave(drafts, setCloudState, setDraftMeta, 'manual')
+      const restored = { q1: version.q1, q2: version.q2, q3: version.q3 }
+      setDrafts(restored)
+      await cloudSave(restored, setCloudState, setDraftMeta, 'restore')
+    },
+    [drafts]
+  )
+
+  const handleSharingChange = useCallback(
+    (next: { sharedWithSchool: boolean; sharedWithParent: boolean }) => {
+      setDraftMeta((prev) => (prev ? { ...prev, ...next } : prev))
+    },
+    []
+  )
 
   return (
     <section id="draft" style={{ paddingTop: '16px', paddingBottom: '32px' }}>
@@ -909,17 +948,26 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {data.questions.map((q, idx) => (
-            <DraftQuestionBlock
-              key={q.id}
-              index={idx + 1}
-              question={q}
-              value={drafts[q.id as 'q1' | 'q2' | 'q3']}
-              onChange={(v) => setDrafts((prev) => ({ ...prev, [q.id]: v }))}
-              onBlur={authedAfterLoad ? saveNow : undefined}
-              prompt={personalisedPrompts[q.id as 'q1' | 'q2' | 'q3']}
-            />
-          ))}
+          {data.questions.map((q, idx) => {
+            const questionNumber = (idx + 1) as 1 | 2 | 3
+            const unresolved = unresolvedCountByQuestion(feedback, questionNumber)
+            return (
+              <DraftQuestionBlock
+                key={q.id}
+                index={questionNumber}
+                question={q}
+                value={drafts[q.id as 'q1' | 'q2' | 'q3']}
+                onChange={(v) => setDrafts((prev) => ({ ...prev, [q.id]: v }))}
+                onBlur={authedAfterLoad ? saveNow : undefined}
+                prompt={personalisedPrompts[q.id as 'q1' | 'q2' | 'q3']}
+                draftId={draftId}
+                feedback={feedback}
+                onFeedbackChange={reloadFeedback}
+                unresolvedCount={unresolved}
+                showFeedback={authedAfterLoad}
+              />
+            )
+          })}
         </div>
 
         <TotalCounter total={total} />
@@ -966,6 +1014,27 @@ function DraftingTool({ ctx }: { ctx: ContextResponse | null }) {
           </button>
         </div>
 
+        {authedAfterLoad && draftId && (
+          <SharingControls
+            initial={{
+              sharedWithSchool: draftMeta?.sharedWithSchool ?? false,
+              sharedWithParent: draftMeta?.sharedWithParent ?? false,
+            }}
+            hasSchool={!!draftMeta?.schoolId}
+            onChange={handleSharingChange}
+          />
+        )}
+
+        {authedAfterLoad && draftId && (
+          <VersionHistoryPanel
+            draftId={draftId}
+            currentDraft={drafts}
+            onRestore={async (v) => {
+              await restoreVersion(v)
+            }}
+          />
+        )}
+
         <WarningBanner
           title="Do not paste AI-generated text"
           text="UCAS runs similarity and AI detection on every submission. AI-generated statements are easy to spot and will be flagged. Use AI to brainstorm or to proofread your own writing, never to write for you."
@@ -996,13 +1065,23 @@ function DraftQuestionBlock({
   onChange,
   onBlur,
   prompt,
+  draftId,
+  feedback,
+  onFeedbackChange,
+  unresolvedCount,
+  showFeedback,
 }: {
-  index: number
+  index: 1 | 2 | 3
   question: Question
   value: string
   onChange: (v: string) => void
   onBlur?: () => void
   prompt: string
+  draftId: string | null
+  feedback: FeedbackRow[]
+  onFeedbackChange: () => Promise<void>
+  unresolvedCount: number
+  showFeedback: boolean
 }) {
   const len = value.length
   const { color, label } = charCountBand(len)
@@ -1024,6 +1103,21 @@ function DraftQuestionBlock({
           }}
         >
           Question {index}
+          {showFeedback && unresolvedCount > 0 && (
+            <span
+              style={{
+                marginLeft: '8px',
+                padding: '2px 8px',
+                borderRadius: '999px',
+                backgroundColor: 'rgba(245,158,11,0.18)',
+                color: '#92400e',
+                fontWeight: 700,
+                fontSize: '0.6875rem',
+              }}
+            >
+              {unresolvedCount} unresolved comment{unresolvedCount === 1 ? '' : 's'}
+            </span>
+          )}
         </p>
         <h3 style={{ fontSize: '1.125rem', marginBottom: '4px' }}>{question.label}</h3>
         <p style={{ fontSize: '0.8125rem', color: 'var(--pf-grey-600)', lineHeight: 1.55 }}>
@@ -1086,6 +1180,18 @@ function DraftQuestionBlock({
           <strong>{Math.min(100, Math.round((len / CHARACTER_LIMITS.totalMax) * 100))}%</strong>
         </span>
       </div>
+
+      {showFeedback && draftId && feedback.some((f) => f.question_number === index) && (
+        <FeedbackSection
+          draftId={draftId}
+          questionNumber={index}
+          questionText={value}
+          feedback={feedback}
+          viewerRole="student"
+          onChange={onFeedbackChange}
+          textSelectionEnabled={false}
+        />
+      )}
     </div>
   )
 }
