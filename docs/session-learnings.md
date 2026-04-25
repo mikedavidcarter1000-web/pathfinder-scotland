@@ -7,6 +7,85 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Authority-14 -- LA Stripe subscriptions: pricing engine, checkout, webhooks, school tier bundling
+
+- **`local_authorities.subscription_status` CHECK does not include `'trial'`.**
+  Allowed values are `pending|active|expired|cancelled` -- trial is NOT a
+  status. First cut of `handleCheckoutCompleted` for founding LAs wrote
+  `subscription_status: 'trial'`, which would fail the CHECK constraint
+  on insert and silently hide a real bug behind a Stripe webhook 500
+  retry loop. Fix: founding LAs are stored as `active` with
+  `trial_started_at` / `trial_expires_at` set; the UI infers "in trial"
+  from `trial_expires_at > now`. Same trap exists for
+  `subscription_tier`, where `'free'` is NOT a valid value (allowed:
+  `trial|standard|premium|authority` or NULL) -- use NULL for the
+  no-paid-access state. **Rule: query the live CHECK constraint
+  (`pg_get_constraintdef`) before writing any status / tier value;
+  never infer the allowed set from the column name or related tables.**
+
+- **Webhook dispatch order matters when multiple customer types live in
+  the same Stripe account.** Authority customers and school customers
+  both live on their own table (`local_authorities.stripe_customer_id`
+  and `schools.stripe_customer_id`), NOT in `stripe_customers` (which
+  is keyed on `auth.user_id` for student subscriptions). Routing has
+  to be: authority -> school -> student, with each step checking
+  metadata first and falling back to a `stripe_subscription_id`
+  lookup against its own table. Without the authority branch, an LA
+  invoice would 404 in the student handler's `stripe_customers` lookup
+  and get logged as "customer not found".
+
+- **Trial-period stretch via Stripe `trial_period_days` is the cleanest
+  founding-authority path.** Stripe caps `trial_period_days` at 730
+  (two years), so 365 fits comfortably. The trial flag rides on
+  `subscription_data.trial_period_days` AND on `metadata.founding_authority`
+  -- the metadata is what tells the webhook to set `trial_expires_at`
+  on activation. Belt-and-braces because Stripe's `subscription.trial_end`
+  also comes through but only on the subscription event, not the
+  checkout.session.completed event.
+
+- **Bundled-school tier sync is asymmetric: grant on activation is
+  immediate, revoke on cancellation is deferred 30 days.** The
+  webhook calls `syncSchoolTiersForAuthority` on
+  `customer.subscription.created/updated` (status -> active) and on
+  `checkout.session.completed`. It does NOT call
+  `revertBundledSchoolTiersForAuthority` on
+  `customer.subscription.deleted`; instead a daily cron
+  (`/api/authority/subscription/revert-grace`, `CRON_SECRET`-gated)
+  scans `local_authorities` for rows cancelled more than 30 days ago
+  and reverts their bundled schools. This matches the spec's grace-
+  period requirement and avoids a single mis-fired Stripe event
+  ripping bundled access away mid-month.
+
+- **`subscription_source` ('individual' | 'authority_bundle') is the
+  fence that prevents a cancelled LA from accidentally tearing down
+  individually-paid school subs.** The grant step stamps every row it
+  touches with `subscription_source = 'authority_bundle'`. The revert
+  step filters strictly on `subscription_source = 'authority_bundle'`,
+  so a school that purchased its own tier (left with the default
+  'individual') keeps its subscription untouched even if its LA later
+  cancels. **Rule: any "grant on event A, revoke on event B" pattern
+  needs a per-row provenance flag; flipping back based on tier value
+  alone will trample whatever the user purchased in between.**
+
+- **The CLI wrapper script doesn't unblock MCP-applied migrations.**
+  `bash scripts/apply-migration.sh` errored out on "Remote migration
+  versions not found in local migrations directory" because many
+  remote migrations are not committed to the local tree. Falling back
+  to `mcp__claude_ai_Supabase__apply_migration` worked; afterwards I
+  ran `list_migrations` to discover the assigned timestamp
+  (20260425211229 vs my local 20260425211135) and renamed manually.
+  Seventh consecutive session with timestamp drift on MCP-applied
+  migrations -- consider extending `apply-migration.sh` to handle the
+  MCP path, or document this as a known workflow.
+
+- **Stripe `Invoice.hosted_invoice_url` and `invoice_pdf` are typed
+  `string | null | undefined`, but the route's response interface
+  declared `string | null`.** Strict TS rejected the assignment. Fix:
+  `inv.hosted_invoice_url ?? null`. Same pattern for `inv.invoice_pdf`
+  and `inv.number`. Worth checking when building any Stripe response
+  envelope -- the SDK is generated with `undefined` everywhere even
+  for "always present" fields.
+
 ## 2026-04-25 Authority-13 -- LA alerts system: evaluation engine, notification centre, email digests, configuration, data quality nudges
 
 - **Two-layer auth pattern for the alert/dashboard split.** All authority API

@@ -9,7 +9,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "type-check": "tsc --noEmit",
-    "test": "tsx --test lib/__tests__/*.test.ts lib/earnings/__tests__/*.test.ts lib/compare/__tests__/*.test.ts",
+    "test": "tsx --test lib/__tests__/*.test.ts lib/earnings/__tests__/*.test.ts lib/compare/__tests__/*.test.ts lib/authority/__tests__/*.test.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "PWDEBUG=1 playwright test",

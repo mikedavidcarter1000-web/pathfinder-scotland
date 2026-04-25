@@ -1,0 +1,57 @@
+{
+  "_comment": "Reference: Stripe configuration for the Pathfinder Local Authority tier. Update this file when prices, coupons, or product names change, but the authoritative state lives in the Stripe dashboard. Run scripts/setup-stripe-la-products.mjs to create the products / prices in your Stripe account; that script reads this file and writes the resulting price IDs to stdout for pasting into .env.local.",
+  "products": [
+    {
+      "name": "Pathfinder LA Portal -- Base Fee",
+      "description": "Annual base platform fee for Pathfinder Local Authority Portal. Includes the analytics layer, all reports, alerts, staff accounts, and audit log. Charged once per LA per year, regardless of school count.",
+      "price_gbp_per_year": 5000,
+      "stripe_metadata": { "tier": "la", "type": "authority", "component": "base" },
+      "env_var": "STRIPE_LA_BASE_PRICE_ID"
+    },
+    {
+      "name": "Pathfinder LA Portal -- Per School (Tier 1, schools 1-10)",
+      "description": "Annual per-school fee for the first 10 schools in a local authority subscription. Quantity = number of schools billed at this rate.",
+      "price_gbp_per_year": 1500,
+      "stripe_metadata": { "tier": "la", "type": "authority", "component": "per_school", "band": "1-10" },
+      "env_var": "STRIPE_LA_TIER1_PRICE_ID"
+    },
+    {
+      "name": "Pathfinder LA Portal -- Per School (Tier 2, schools 11-20)",
+      "description": "Annual per-school fee for schools 11-20 in a local authority subscription. Volume discount over Tier 1. Quantity = number of schools billed at this rate.",
+      "price_gbp_per_year": 1250,
+      "stripe_metadata": { "tier": "la", "type": "authority", "component": "per_school", "band": "11-20" },
+      "env_var": "STRIPE_LA_TIER2_PRICE_ID"
+    },
+    {
+      "name": "Pathfinder LA Portal -- Per School (Tier 3, schools 21+)",
+      "description": "Annual per-school fee for schools 21 and above in a local authority subscription. Largest volume discount. Quantity = number of schools billed at this rate.",
+      "price_gbp_per_year": 1000,
+      "stripe_metadata": { "tier": "la", "type": "authority", "component": "per_school", "band": "21+" },
+      "env_var": "STRIPE_LA_TIER3_PRICE_ID"
+    },
+    {
+      "name": "Pathfinder School Upgrade -- Standard to Premium",
+      "description": "Premium-feature upgrade for a school whose Local Authority subscription includes Standard tier. Charged separately to the school, not to the LA.",
+      "price_gbp_per_year": 1000,
+      "stripe_metadata": { "tier": "school", "type": "school_upgrade", "from": "standard", "to": "premium" },
+      "env_var": "STRIPE_LA_SCHOOL_UPGRADE_PRICE_ID"
+    }
+  ],
+  "trial": {
+    "founding_authority_trial_days": 365,
+    "founding_authority_limit": 3,
+    "notes": "First 3 LAs to subscribe receive a 12-month free trial. The /authority/subscribe checkout flow sets subscription_data.trial_period_days = 365 when the candidate qualifies under isFoundingAuthority(). After the trial, Stripe automatically transitions to the standard pricing on the same line items."
+  },
+  "webhook_events": [
+    "checkout.session.completed",
+    "customer.subscription.created",
+    "customer.subscription.updated",
+    "customer.subscription.deleted",
+    "invoice.payment_succeeded",
+    "invoice.payment_failed"
+  ],
+  "webhook_routing": {
+    "authority_vs_school_vs_student": "The shared webhook handler (app/api/stripe/webhook/route.ts) dispatches based on subscription.metadata.type. 'authority' -> handleAuthoritySubscriptionChange (this tier). 'school' -> handleSchoolSubscriptionChange. anything else -> student handler. Renewals where Stripe drops metadata fall back to matching local_authorities.stripe_subscription_id, then schools.stripe_subscription_id.",
+    "authority_customer_table": "LA customers are NOT inserted into stripe_customers (which is student-scoped and keyed on auth.user_id). Their customer id lives on local_authorities.stripe_customer_id only."
+  }
+}
