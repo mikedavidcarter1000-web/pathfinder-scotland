@@ -180,6 +180,7 @@ export type Database = {
           code: string
           created_at: string | null
           id: string
+          is_challenge_authority: boolean | null
           name: string
           primary_contact_email: string | null
           primary_contact_name: string | null
@@ -207,6 +208,7 @@ export type Database = {
           code: string
           created_at?: string | null
           id?: string
+          is_challenge_authority?: boolean | null
           name: string
           primary_contact_email?: string | null
           primary_contact_name?: string | null
@@ -234,6 +236,7 @@ export type Database = {
           code?: string
           created_at?: string | null
           id?: string
+          is_challenge_authority?: boolean | null
           name?: string
           primary_contact_email?: string | null
           primary_contact_name?: string | null

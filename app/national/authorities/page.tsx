@@ -1,7 +1,8 @@
-// Authority-15: placeholder LA list for the national tier. Authority-16
-// will surface scorecard tiles and per-LA drill-downs.
+// Authority-15/16: LA list for the national tier. Per-LA drill-downs and
+// the cross-LA comparison builder are wired up via Authority-16.
 
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { getNationalStaffContext } from '@/lib/national/auth'
 import { getAdminClient } from '@/lib/admin-auth'
 
@@ -50,8 +51,25 @@ export default async function NationalAuthoritiesPage() {
         >
           Local authorities
         </h1>
-        <p style={{ color: '#64748b', marginBottom: '24px', fontSize: '0.9375rem' }}>
+        <p style={{ color: '#64748b', marginBottom: '12px', fontSize: '0.9375rem' }}>
           {authorities.length} authorities · {optedIn} opted in to national data sharing · {challenge} Challenge Authorities
+        </p>
+        <p style={{ marginBottom: '24px' }}>
+          <Link
+            href="/national/authorities/compare"
+            style={{
+              display: 'inline-block',
+              padding: '8px 14px',
+              borderRadius: '8px',
+              backgroundColor: '#1d4ed8',
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: '0.875rem',
+              textDecoration: 'none',
+            }}
+          >
+            Open cross-LA comparison →
+          </Link>
         </p>
 
         <div
@@ -76,7 +94,18 @@ export default async function NationalAuthoritiesPage() {
               <tbody>
                 {authorities.map((a) => (
                   <tr key={a.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '12px 16px', color: '#1a1a2e', fontWeight: 600 }}>{a.name}</td>
+                    <td style={{ padding: '12px 16px', color: '#1a1a2e', fontWeight: 600 }}>
+                      {a.share_national ? (
+                        <Link
+                          href={`/national/authorities/${encodeURIComponent(a.code)}`}
+                          style={{ color: '#1d4ed8', textDecoration: 'none' }}
+                        >
+                          {a.name}
+                        </Link>
+                      ) : (
+                        a.name
+                      )}
+                    </td>
                     <td style={{ padding: '12px 16px', color: '#475569' }}>{a.code}</td>
                     <td style={{ padding: '12px 16px', color: '#475569' }}>{a.school_count ?? 0}</td>
                     <td style={{ padding: '12px 16px', color: a.share_national ? '#166534' : '#a16207', fontWeight: 600 }}>
