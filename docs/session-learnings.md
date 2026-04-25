@@ -7,6 +7,23 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Career role images -- 311 CC0 Pixabay photos, image_url column, UI integration
+
+**What shipped:**
+- `career_roles.image_url TEXT` column via migration `20260425124305_add_career_role_image_url`
+- 311 UPDATE statements set `/images/careers/{slug}.jpg` paths; all 311 rows non-null after seeding
+- 311 CC0 JPGs committed to `public/images/careers/`
+- Sector page: example-jobs cards and `NewAiRolesSection` cards now show a 140px image above text; letter fallback if null
+- Role detail page: full-width hero banner (clamp 180–280px) matching sector hero pattern
+
+**Process learnings:**
+- SQL file mixed DDL (`ALTER TABLE`) and DML (311 UPDATEs). Always split: DDL through `apply_migration`, DML through `execute_sql`. Running all 311 UPDATEs in a single `execute_sql` call worked fine -- no need to batch.
+- MCP timestamp drift: migration was applied with version `20260425124305`. Read `list_migrations` immediately after `apply_migration` to get the authoritative timestamp, then write the local file with that exact timestamp as the filename. The wrapper script `scripts/apply-migration.sh` automates this but MCP bypasses it -- this manual step is still needed when using MCP directly.
+- `types/database.ts` update: add `image_url: string | null` to Row; `image_url?: string | null` to Insert and Update. Add in alphabetical order (after `id`, before `is_new_ai_role`).
+- When adding an image header to existing padding-only cards, move padding from the outer card div to an inner wrapper div so the image can bleed to the card edges. Remember to close the inner wrapper `</div>` before the outer card `</div>`.
+- Role detail page (`[roleId]/page.tsx`) did not import `Image` from next/image -- verify import before adding JSX. It is a server component so onError fallback is not available; null-check on `image_url` is sufficient.
+- `next.config.js` needs no changes for local static images in `/public/` -- Next.js serves them natively without `remotePatterns` config.
+
 ## 2026-04-25 Career roles import -- 42 missing ONS roles seeded (career_roles 269 -> 311)
 
 - **Files touched:** new gitignored data files at `data/role-imports/pathfinder_missing_roles_complete.json` (input), `pathfinder_missing_roles_import.sql` (generated, 42 roles x 3 INSERTs = 126 statements + 133 subject mappings), `pathfinder_missing_roles_report.md`, plus per-batch and per-role splits under `data/role-imports/batches/` and `data/role-imports/single-roles/`. New tracked scripts at `scripts/role-import/generate-import-sql.js` (JSON -> SQL with value normalisation), `scripts/role-import/split-batches.js` (7-role chunks), `scripts/role-import/split-tiny.js` (per-role chunks for fallback paste-mode), and `scripts/role-import/apply-import.js` (pg-based direct DB applier with multi-endpoint fallback). No code changes outside scripts; pure data session.
