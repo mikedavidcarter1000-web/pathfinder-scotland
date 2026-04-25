@@ -7,6 +7,129 @@ logged for reference.
 
 Most recent session first.
 
+## 2026-04-25 Authority-8 -- LA dashboard careers tab: sector exploration, pathway split, DYW, personal statement progress
+
+- **Partitioned breakdowns need secondary suppression even when every cell
+  individually passes the threshold.** First cut of the sector exploration
+  table emitted gender (Male/Female/Other) and SIMD (Q1-Q5) per-sector cell
+  counts using only per-cell `suppressSmallCohorts`. Codex flagged that with
+  `unique_students = 11` and Q1=5, Q2=5, missing-SIMD=1, the suppressed
+  cell can be back-derived as `unique_students - sum(visible)`. Fix:
+  mask the entire partition when ANY cell is between 1 and 4, OR when only
+  one cell is non-zero (since the lone non-zero cell would equal
+  `unique_students`). **Rule:** for any breakdown that decomposes a
+  disclosed total into disjoint cells, secondary suppression applies even
+  if every individual cell is ≥ 5; one suppressed cell anywhere in the row
+  means the whole row goes opaque.
+
+- **The "missing" bucket counts as a partition cell even when not emitted.**
+  SIMD breakdown only outputs Q1-Q5 — but students with `simd_decile = null`
+  still contribute to `unique_students`. If 11 students explored a sector,
+  Q1=5, Q2=5, missing=1, then the disclosed Q1+Q2 plus the disclosed
+  unique_students leaks the missing-1 student. Fix: track `simdUnknown`
+  alongside Q1-Q5 and include it in the secondary-suppression check, even
+  though the unknown count is never returned in the payload. Same may apply
+  to the equity tab; logged as a follow-up.
+
+- **`unique_students - exploring_students = non_exploring` complement
+  leak.** Concentration table showed both `student_count` and
+  `exploring_students` whenever each individually passed the threshold,
+  but `student_count - exploring_students` could be 1-4. Example: 96
+  exploring of 100 exposes that exactly 4 students are not yet engaging.
+  Fix: a binary "exploringSuppressed" flag triggers when EITHER side of
+  the binary partition is below the threshold. **Rule for any 2-way
+  participation metric (started/not started, exploring/not exploring,
+  pass/fail):** suppress when `min(group, complement)` < 5, not just when
+  `group` < 5. Same fix applied to personal-statement started_count via
+  a `binarySuppress(started, total)` helper.
+
+- **Reusing whole-population buckets to compute sub-cohort percentages
+  is a correctness bug.** First cut of the pathway split passed a single
+  `buckets = bucketStudentsByPathway(allStudents, events)` into
+  `buildPathwaySplitRows(buckets, q1Cohort)`. Result: Q1 percentages were
+  computed as `everyone_who_explored_university / q1Cohort.length` which
+  produces nonsense (often >100%). Fix: `buildPathwaySplitRows(cohort,
+  events)` rebuilds the buckets internally against the cohort-restricted
+  student set so numerator and denominator are aligned. **Rule: when
+  computing per-sub-cohort metrics, recompute the numerator against the
+  sub-cohort -- never reuse a whole-population bucket as the numerator
+  with a sub-cohort denominator.**
+
+- **Authority-wide totals can leak per-school suppressed values via
+  subtraction.** DYW `total_placements` plus N-1 visible per-school
+  placement counts → reveals the suppressed school's count. Fix: same
+  pattern as the SIMD per-school distribution in equity-queries -- when
+  ANY per-school cell was suppressed, suppress the authority total too.
+  Implemented as `anyPlacementSchoolSuppressed` and
+  `anyPlacementStudentsSuppressed` flags driving the headline output.
+
+- **Aggregate counts beside suppressed unique-student counts can leak
+  individual activity.** `saved_courses.total_saves` was raw `number`
+  while `unique_students_saving` was suppressed below 5. A dataset where
+  4 students fired 12 saves between them would surface
+  `total_saves: 12, unique_students_saving: < 5` -- which still leaks
+  that fewer than 5 distinct students made the saves. Fix: make
+  `total_saves` nullable and suppress when the saving-student count is
+  below threshold. **Rule: any aggregate count derived from
+  student-attributable rows must inherit the suppression of its
+  unique-student denominator.**
+
+- **`event_detail` for `career_sector` is the sector UUID, not the
+  sector name.** The student tracker fires
+  `trackEngagement('page_view', 'career_sector', sectorId)` so engagement
+  rows carry sector IDs in `event_detail`. The careers query buckets by
+  `event_detail === sec.id`; do NOT match against `sec.name`. The equity
+  tab's avg_distinct_event_detail relies on the same convention but
+  doesn't care what the values are because it just counts distinct values.
+
+- **`mv_authority_engagement` cannot answer multi-week unique-student
+  questions.** The MV pre-groups by `(school_id, event_type,
+  event_category, event_detail, gender, simd_quintile, week)` -- summing
+  `unique_students` across weeks double-counts students who fired the
+  same category in two different weeks. The careers tab needs distinct
+  students across the 90-day window, so it reads
+  `platform_engagement_log` directly. **Rule:** check whether your
+  question requires distinct counts that span more than one MV grouping
+  dimension before deciding to use the MV.
+
+- **`pathway_plans` table doesn't exist.** Architecture spec section 3c
+  references it as the source for "pathway plans created" metric, but
+  the table was never created. The careers query returns `null` for
+  `pathway_plans` and the UI renders an "awaiting source data" empty
+  state. Same handling as the subjects-tab progression rates and
+  Foundation Apprenticeship sections. **Decision rule: when a spec
+  references a table that doesn't exist, return `null` (not `[]`); the
+  UI can then distinguish "queried but no data" from "feature not yet
+  wired".**
+
+- **Apprenticeship interest is detected via event_detail substring
+  match.** The `EVENT_CATEGORIES` enum has no `apprenticeship` slot --
+  only `university` and `college`. Pathway-page apprenticeship views
+  fire `event_category = 'pathway'` with various event_details.
+  Workaround: `/apprentice/i.test(event_detail)` across any category.
+  Same stop-gap pattern as the equity tab's WA tool detection
+  (`mapEventCategoryToTool`); both should be revisited if a dedicated
+  `apprenticeship` event_category is added.
+
+- **DYW per-school `employer_count` is institutional metadata, not a
+  student count.** Codex's first pass flagged it as a P0 disclosure
+  leak; on review, an employer count is a count of business
+  partnerships, not students. Left raw. Documented the call in the
+  per-school construction comment so a future reviewer doesn't have to
+  re-derive the reasoning. The placement counts and placement_students
+  ARE student-level and remain suppressed.
+
+- **Codex MCP review caught 8 P0 disclosure leaks pre-commit.** Same
+  workflow as Authority-6 / Authority-7: write the queries, run codex
+  review with `read-only` sandbox before committing. Of the 8 findings,
+  6 were genuine P0 leaks (sector breakdown subtraction, concentration
+  complement, Q1/Q5 bucket reuse, saved_courses total, personal
+  statement complement, DYW total subtractive) and 2 were judgement
+  calls (sectors_explored count, employer_count) that I argued back on
+  with documented rationale. Second-pass review surfaced one more P0
+  (SIMD-unknown bucket missing from secondary suppression) which was
+  also fixed before commit.
+
 ## 2026-04-25 Authority-15 -- National tier foundation: tables, RLS, opt-in toggle, MVs, Challenge Authority flag
 
 - **`SET search_path = public` is not enough on SECURITY DEFINER -- pin
